@@ -16,6 +16,7 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 from . import views
+from recetas import views as recetasviews
 
 urlpatterns = [
     url(r'^index$', views.index, name='index'),
@@ -46,8 +47,8 @@ urlpatterns = [
     url(r'^ciudades$',views.ciudades,name='ciudades'),
     url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
-    url(r'^insumos$',views.insumos,name='insumos'),
-    url(r'^insumosAlta$',views.insumosAlta,name='insumosAlta'),
+    url(r'^insumos$',recetasviews.insumos,name='insumos'),
+    url(r'^insumos/add$',recetasviews.insumos,name='insumosAlta'),
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
     url(r'^insumosModificar$',views.insumosModificar,name='insumosModificar'),
     url(r'^zonas$',views.zonas,name='zonas'),

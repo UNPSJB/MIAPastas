@@ -116,10 +116,6 @@ def ciudadesModificar(request):
     return render(request, "ciudadesModificar.html", {})
 
 
-def insumos(request):
-    return render(request, "insumos.html", {})
-
-
 def insumosAlta(request):
     return render(request, "insumosAlta.html", {})
 

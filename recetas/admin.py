@@ -4,4 +4,8 @@ from django.contrib import admin
 
 from . import models
 
-admin.site.register(models.Insumo)
+class InsumoAdmin(admin.ModelAdmin):
+    search_fields = ['nombre', 'descripcion']
+    list_display = ['nombre', 'descripcion']
+
+admin.site.register(models.Insumo, InsumoAdmin)

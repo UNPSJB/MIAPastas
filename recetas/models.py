@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Insumo(models.Model):
+    FILTROS = ['nombre__icontains', 'stock__lte']
     UNIDADES = (
         (1, "Kg"),
         (2, "Litro"),
@@ -16,4 +17,4 @@ class Insumo(models.Model):
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
 
     def __str__(self):
-        return self.nombre
+        return "%s (%d %s)" % (self.nombre, self.stock, self.get_unidad_medida_display())
