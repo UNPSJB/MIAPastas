@@ -1,0 +1,235 @@
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Prueba mia pastas</title>
+
+		<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/estilos_propios.css" %}">
+        <link rel="stylesheet" href="{% static "css/styles.css" %}">
+        <script src="{% static "js/jquery.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+    </head>
+
+
+    <!-- inicio del cuerpo -->
+    <body style="background-color:white;">
+    <div class="cabecera">
+
+            <!-- imagen de mia pastas -->
+            <div style="float:left;">
+                <img src="{% static "images/miaspastas.png" %}" alt="aca va el logo mia pastas" />
+			</div>
+
+            <!-- menu desplegable de la cabecera -->
+
+            <!-- boton desplegable "Usuario" -->
+			<div class="dropdown" style="float:right;">
+              <button class="btn btn-success btn-lg dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="glyphicon glyphicon-user" aria-hidden="true">    Usuario    <br> <br/></span>
+
+                <span class="caret"></span>
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="#">Ver Informacion</a></li>
+                  <li role="separator" class="divider"></li>
+                <li><a href="#">Cerrar Sesion</a></li>
+                  <li role="separator" class="divider"></li>
+                <li><a href="#">Something else here</a></li>
+                  <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+            </div>
+        <!-- boton "Contacto" -->
+            <div style="float:right;">
+            <button class="btn btn-success btn-lg" type="button">
+                <span class="glyphicon glyphicon-envelope" aria-hidden="true">    Contacto    <br> <br/></span>
+
+
+              </button>
+            </div>
+        <!-- boton "Acerca de " -->
+            <div style="float:right;">
+            <button class="btn btn-success btn-lg" type="button">
+                <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">    Acerca de    <br> <br/></span>
+
+
+              </button>
+            </div>
+        <!-- boton "Home" va a la pagina principal-->
+            <div style="float:right;">
+            <button class="btn btn-success btn-lg" type="button">
+                <span class="glyphicon glyphicon-home" aria-hidden="true">    Home    <br> <br/></span>
+
+
+              </button>
+            </div>
+
+            <div style="clear:both;"></div>
+
+		</div>
+
+
+
+
+<!-- barra de menu -->
+<div class="container">
+
+      <nav class="navbar navbar-default">
+  <div class="container-fluid">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+    </div>
+
+<!-- Hasta aca es al pedo lo de arriba, lo unico que sirve es el container -->
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+      <ul class="nav navbar-nav">
+
+<!-- lista desplegable de Recetas -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recetas<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Recetas</a></li>
+            <!--<li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>-->
+          </ul>
+          </li>
+
+<!-- lista desplegable de Produccion -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Produccion<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Produccion</a></li>
+            <!--<li><a href="#">Another action</a></li>
+            <li><a href="#">Something else here</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Separated link</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">One more separated link</a></li>-->
+          </ul>
+          </li>
+
+
+
+<!-- lista desplegable de Clientes y Pedidos -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Clientes<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Clientes</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">ABM Pedidos Clientes</a></li>
+          </ul>
+          </li>
+
+<!-- lista desplegable de Productos terminados -->
+        <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Productos Terminados<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Productos Terminados</a></li>
+          </ul>
+          </li>
+
+<!-- lista desplegable de Insumos -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Insumos<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Insumos</a></li>
+          </ul>
+          </li>
+<!-- lista desplegable de Proveedores -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Proveedores<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Proveedores</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">ABM Pedidos Proveedores</a></li>
+          </ul>
+          </li>
+<!-- lista desplegable de Choferes -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choferes<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">ABM Choferes</a></li>
+          </ul>
+          </li>
+<!-- lista desplegable de Reparto -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reparto<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Generar Hoja de Ruta</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Registrar Rendicion del Reparto</a></li>
+          </ul>
+          </li>
+<!-- lista desplegable de Listados -->
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Listados<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="#">Listado 1</a></li>
+            <li role="separator" class="divider"></li>
+            <li><a href="#">Listado 2</a></li>
+          </ul>
+          </li>
+
+
+
+
+      </ul>
+
+
+
+
+
+
+
+
+
+
+
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+</div> <!-- /container -->
+
+
+<div class="container marketing">
+<div class="jumbotron">
+
+
+
+<p align="center">
+
+    <img src="{% static "images/luigi.png" %}" alt="aca va el logo mia pastas" /></p>
+</div>
+    </div>
+
+
+
+
+
+<div class="container marketing">
+    <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p><br></br>
+        <p><i><small>Mia Pastas S.R.L.© 2015. Designed by Calfuquir Nicolas - Gomez Agustina - James Kevin - Lecuna Facundo - Parra Ivan. Todos los derechos reservados.</small> </i> </p>
+      </footer>
+
+
+
+</div><!-- /.container -->
+
+
+	</body>
+</html>

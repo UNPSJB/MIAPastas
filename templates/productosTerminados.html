@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block contenido %}
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Productos Terminados</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline">
+          <div class="form-group">
+            <label for="exampleInputName2">Nombre</label>
+            <input type="text" class="form-control" id="exampleInputName2" placeholder="Jane Doe">
+          </div>
+
+
+
+          <label>
+
+          </label>
+
+          <button type="submit" class="btn btn-default">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <div class="row">
+          <div class="col-md-10">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Stock</th>
+                <th>Unidad de Medida</th>
+                <th>Precio</th>
+
+            </tr>
+            </thead>
+              <tbody>
+
+              <tr>
+                    <th>Nombre 1</th>
+                    <th>Stock 1</th>
+                    <th>Unidad de Medida 1</th>
+                    <th>Precio 1</th>
+
+              </tr>
+          </tbody>
+          </table>
+          </div>
+      <div class="col-md-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+              <!-- AL PRECIONAR EL BOTON ELIMINAR SE DEBEN DAR DE BAJAS TODAS LAS RECETAS ASOCIADAS A ESE PRODUCTO TERMINADO-->
+          </div>
+          <p></p>
+          <p></p>
+</div>
+          </div>
+      <hr/>
+
+  </div>
+
+</div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+
+
+{% endblock %}

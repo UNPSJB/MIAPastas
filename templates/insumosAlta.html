@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block contenido %}
+<!-- Este es el formulario de INSUMOS PAPA -->
+
+<form action="">
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta de Insumo</b></font></p></div>
+
+        <div class="panel-body">
+              <!-- formulario -->
+            <!--<form class="form-inline"> -->
+            <form class=" form-horizontal col-md-12">
+
+
+                <div class="form-group col-md-6">
+
+                        <label for="exampleInputName2">Codigo</label>
+                        <input type="text" class="form-control" id="inputEmail4" required autofocus>
+                </div>
+                <div class="form-group col-md-6">
+                    <label for="exampleInputName2">Nombre</label>
+                    <input type="text" class="form-control" id="inputEmail4" required>
+                </div>
+
+                <div class="form-group col-md-6">
+                     <div class ="form-group col-md-6"about="">
+                        <label for="exampleInputName2">Unidad de Medida</label>
+                        <input type="text" class="form-control" id="inputEmail4" required>
+                    </div>
+                </div>
+
+                <div class="form-group col-md-6">
+                    <div class ="form-group col-md-6">
+                        <label for="exampleInputName2">Stock</label>
+                        <input type="text" class="form-control" id="inputEmail4" >
+                    </div>
+                </div>
+
+
+                 <div class="form-group col-md-12">
+                      <label>Descripción</label>
+                      <textarea class="form-control" rows="3" id="exampleInputName2" required> </textarea>
+                 </div>
+
+
+            </form>
+            <p>&nbsp;</p>
+            <div class="col-md-10">
+
+           <h2>Proveedores</h2>
+           <div class="row col-md-4">
+              <select class="form-control">
+                  <option>Proveedor1</option>
+                  <option>Proveedor2</option>
+                  <option>Proveedor3</option>
+                  <option>Proveedor4</option>
+                  <option>Proveedor5</option>
+                </select>
+
+               </div>
+
+           <div class="col-md-2 pull-left"></div>
+           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+
+            </div>
+            <p>&nbsp;</p>
+
+
+            <div class="row">
+
+                <div class="col-md-10">
+                    <p>&nbsp;</p>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Razon Social</th>
+                                <th>Cuit/Cuil</th>
+                                <th>Telefono</th>
+                                <th>Localidad</th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="col-md-2">
+                    <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
+                        <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+                    </div>
+                </div>
+            </div>
+            <hr/>
+
+            <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
+            <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+        </div>
+
+    </div>
+</div>
+</form>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+
+
+{% endblock %}

@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+
+
+
+
+
+
+
+
+{% block contenido %}
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Proveedores</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline">
+          <div class="form-group">
+            <label for="exampleInputName2">Cuit</label>
+            <input type="text" class="form-control" id="exampleInputName2" placeholder="Jane Doe">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Razón Social</label>
+            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Ciudad</label>
+            <input type="text" class="form-control" id="exampleInputEmail3" placeholder="jane.doe@example.com">
+          </div>
+          <hr>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Zona</label>
+            <input type="text" class="form-control" id="exampleInputEmail3" placeholder="jane.doe@example.com">
+          </div>
+
+          <label>
+
+          </label>
+          <button type="submit" class="btn btn-default">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <div class="row">
+          <div class="col-md-10">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Cuit/Cuil</th>
+                <th>Razón Social</th>
+
+            </tr>
+            </thead>
+              <tbody>
+            {% for cliente in Clientes %}
+                <tr>
+              <td>{{receta.nombre}}</td>
+              <td>{{receta.descripcion}}</td>
+          </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+          </div>
+      <div class="col-md-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+          </div>
+          <p></p>
+          <button class="btn" href="recetasAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+</div>
+          </div>
+      <hr/>
+
+  </div>
+
+</div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+
+
+{% endblock %}

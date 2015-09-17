@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block contenido %}
+<!-- Este es el formulario de INSUMOS PAPA -->
+
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos</b></font></p></div>
+
+        <div class="panel-body">
+              <!-- formulario -->
+            <!--<form class="form-inline"> -->
+            <form class=" form-inline col-md-12">
+
+                <div class="form-group">
+                    <label for="exampleInputEmail2">Nombre</label>
+                    <input type="text" class="form-control" id="inputEmail4" >
+                </div>
+                <div class="form-group">
+                    <label for="exampleInputEmail2">Codigo</label>
+                    <input type="text" class="form-control" id="inputEmail4" >
+                </div>
+                <button type="submit" class="btn btn-default">Filtrar</button>
+            </form>
+
+            <div class="row">
+
+                <div class="col-md-10">
+                    <p>&nbsp;</p>
+
+                          <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Codigo</th>
+                               <th>Nombre</th>
+                                <th>Unidad de Medida</th>
+                                <th>Stock</th>
+                            </tr>
+                            </thead>
+
+                          </table>
+                </div>
+                  <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+          </div>
+          <p></p>
+          <button class="btn" href="recetasAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+            </div>
+            <hr/>
+
+        </div>
+
+    </div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+
+
+{% endblock %}

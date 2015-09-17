@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block contenido %}
+
+
+
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedidos de Cliente</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline">
+          <div class="form-group">
+            <label for="exampleInputName2">N° Cuil/Cuit</label>
+            <input type="text" class="form-control" id="exampleInputName2" placeholder="Cuil/Cuit" >
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Razon social</label>
+            <input type="date" class="form-control" id="exampleInputEmail2" placeholder="huevo" >
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Fecha Desde</label>
+            <input type="date" class="form-control" id="exampleInputEmail2" placeholder="huevo" >
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Fecha Hasta</label>
+            <input type="date" class="form-control" id="exampleInputEmail2" placeholder="huevo" >
+          </div>
+          <p>&nbsp;</p>
+
+          <div class="form-group">
+                        <label for="inputEmail3">Tipo de Pedido</label>
+
+                          <select class="form-control">
+                              <option>Todos</option>
+                              <option>Pedido Fijo</option>
+                              <option>Pedido Ocacional</option>
+                              <option>Pedido de Cambio</option>
+                          </select>
+
+                   </div>
+
+          <button type="submit" class="btn btn-default col-md-offset-1">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <hr>
+      <div class="row">
+          <div class="col-md-6">
+          <table class="table table-hover">
+            <thead>
+
+            <tr>
+                <th>Fecha de Creacion</th> <!-- Fecha de realizacion -->
+                <th>N° Pedido</th>
+                <th>Cuil/Cuit</th>
+                <th>Razon social</th>
+
+
+            </tr>
+            </thead>
+              <tbody>
+
+                <tr>
+
+                    <td>manola</td>
+                    <td>pocha</td>
+                    <td>lola</td>
+                    <td>asdsa</td>
+                    <td><!-- Trigger the modal with a button -->
+</td>
+          </tr>
+
+          </tbody>
+          </table>
+          </div>
+          <div class="col-md-2">
+              <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModalModificar" data-backdrop="static"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+          </div>
+              <p></p>
+          <button class="btn" href="recetasAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+          </div>
+          <div class="col-md-4">
+
+              <div>
+
+
+              <h3>Totales de los pedidos</h3><table class="table table-hover">
+            <thead>
+
+            <tr>
+                <th>Producto Terminado</th>
+                <th>Cantidad Bolsones</th>
+
+            </tr>
+            </thead>
+              <tbody>
+
+          </tbody>
+          </table>
+          </div>
+              <hr>
+              <row>
+
+                  <div class="form-group col-md-6">
+            <label for="exampleInputName2">Total bolsones</label>
+            <input type="text" class="form-control" id="exampleInputName2" readonly="">
+          </div>
+                  </row>
+
+
+          </div>
+
+
+          </div>
+
+              <hr>
+
+
+          </div>
+
+      </div>
+       <div>
+
+
+
+
+
+
+</div>
+
+    <!-- Modal -->
+            <div id="myModalModificar" class="modal fade"  role="dialog"> <!--
+            con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal
+            - Con col-md-offset-4 corremos 4 espacios a la derecha, pdemos usar col-md2 col-md-offset-4 para que quede 4 espacios en blanco primero-->
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h1 align="center" class="modal-title center">Modificar Pedido</h1>
+                  </div>
+                  <div class="modal-body">
+
+
+                    <form class="form-horizontal col-md-12">
+
+                        <h4>Datos del Pedido</h4>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">N°Pedido</label>
+                            <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Tipo de Pedido</label>
+                              <div class=" col-md-5">
+                            <input type="date" class="form-control" id="exampleInputName2"  >
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Cuil/Cuit</label>
+                              <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">Razon Social</label>
+                            <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
+                          </div></div>
+                        <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Fecha de creacion</label>
+                              <div class=" col-md-5">
+                            <input type="date" class="form-control" id="exampleInputName2"  readonly>
+                          </div></div>
+
+                        <!-- DEPENDIENDO DE QUE TIPO DE PEDIDO ES(CAMBIO, FIJO, OCACIONAL) SE DEBEN MOSTRAR CAMPOS, COMO SE HACE???-->
+                      </form>
+
+                      <table class="table table-hover table table-condensed">
+                        <thead>
+                        <h4>Productos del pedido</h4>
+                        <tr>
+                            <th>Nombre Producto</th>
+                            <th>Cantidad</th>
+                            <th>Unidad Medida</th>
+
+                        </tr>
+                        </thead>
+                          <tbody>
+
+                            <tr>
+                          <td>nombre</td>
+                          <td>12</td>
+                                <td>Kg</td>
+                                <td>
+                                    <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
+                                    <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModalCantidad"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
+
+                                </td>
+                      </tr>
+
+                      </tbody>
+                      </table>
+
+                  </div>
+                  <div class="modal-footer">
+                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
+                       en el modelo, -->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+
+    <!-- Modal -->
+            <div id="myModalCantidad" class="modal fade"  role="dialog"> <!-- con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal -->
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h1 align="center" class="modal-title center">Ingrese nuevos datos al pedido</h1>
+                  </div>
+                  <div class="modal-body">
+
+                    <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">Cantidad</label>
+                            <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="Nueva Cantidad" >
+                          </div></div>
+
+                      <!-- Aca debe ir modificar los dias de la semana si es de tipo fijo , como????-->
+                      <br>
+                  </div>
+                  <div class="modal-footer">
+                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
+                       en el modelo, -->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+
+     <!-- Modal -->
+            <div id="myModal" class="modal fade"  role="dialog"> <!-- con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal -->
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h1 align="center" class="modal-title center">Detalles del Pedido</h1>
+                  </div>
+                  <div class="modal-body">
+
+
+                    <form class="form-horizontal col-md-12">
+
+                        <h4>Datos del Pedido</h4>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">N°Pedido</label>
+                            <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Tipo de Pedido</label>
+                              <div class=" col-md-5">
+                            <input type="date" class="form-control" id="exampleInputName2"  readonly>
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Cuil/Cuit</label>
+                              <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">Razon Social</label>
+                            <div class=" col-md-5">
+                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
+                          </div></div>
+                        <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Fecha de creacion</label>
+                              <div class=" col-md-5">
+                            <input type="date" class="form-control" id="exampleInputName2"  readonly>
+                          </div></div>
+
+                        <!-- DEPENDIENDO DE QUE TIPO DE PEDIDO ES(CAMBIO, FIJO, OCACIONAL) SE DEBEN MOSTRAR CAMPOS, COMO SE HACE???-->
+                      </form>
+
+                      <table class="table table-hover">
+                        <thead>
+                        <h4>Productos del pedido</h4>
+                        <tr>
+                            <th>Nombre Producto</th>
+                            <th>Cantidad</th>
+                            <th>Unidad Medida</th>
+
+                        </tr>
+                        </thead>
+                          <tbody>
+                        {% for receta in recetas %}
+                            <tr>
+                          <td>{{receta.nombre}}</td>
+                          <td>{{receta.descripcion}}</td>
+                      </tr>
+                        {% endfor %}
+                      </tbody>
+                      </table>
+
+                  </div>
+                  <div class="modal-footer">
+                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
+                       en el modelo, -->
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+{% endblock %}

@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block contenido %}
+
+
+<form action="">
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta de Cliente</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form role="form">
+                  <div class="form-group">
+                        <label for="inputEmail3">Cliente</label>
+
+                          <select class="form-control">
+                              <option>Cliente 1</option>
+                              <option>Cliente 2</option>
+                              <option>Cliente 3</option>
+                          </select>
+
+                   </div>
+                   <div class="form-group">
+                        <label for="inputEmail3">Tipo de Pedido</label>
+
+                          <select class="form-control">
+                              <option>Pedido Fijo</option>
+                              <option>Pedido Ocasional</option>
+                              <option>Pedido de Cambio</option>
+                          </select>
+
+                   </div>
+
+                  <div class="form-group">
+                    <label for="ejemplo_password_1">Fecha de Entrega</label>
+                    <input type="date" class="form-control" id="ejemplo_password_1" required>
+                  </div>
+
+
+
+                  <div class="form-group">
+                    <label for="ejemplo_password_1">Fecha de Inicio</label>
+                    <input type="date" class="form-control" id="ejemplo_password_1" required>
+                  </div>
+
+                    <label for="ejemplo_password_1">Dias de Semana</label>
+                    <div class="checkbox">
+
+                         <label>
+                            <input type="checkbox" name="vehicle" value="lunes">Lunes<br>
+                            <input type="checkbox" name="vehicle" value="Car">Martes<br>
+                             <input type="checkbox" name="vehicle" value="Car">Miercoles<br>
+                             <input type="checkbox" name="vehicle" value="Car">Jueves<br>
+                             <input type="checkbox" name="vehicle" value="Car">Viernes<br>
+                             <input type="checkbox" name="vehicle" value="Car">Sabado<br>
+                             <input type="checkbox" name="vehicle" value="Car">Domingo<br>
+
+                        </label>
+                    </div>
+
+
+
+
+
+
+
+
+        </form>
+        <div class="col-md-10">
+
+           <h2>Producto Terminado</h2>
+           <div class="row col-md-4">
+              <select class="form-control">
+                  <option>Producto Terminado 1</option>
+                  <option>Producto Terminado 2</option>
+                  <option>Producto Terminado 3</option>
+                  <option>Producto Terminado 4</option>
+                  <option>Producto Terminado 5</option>
+                </select>
+               <div class="form-group">
+
+                    <label for="inputEmail3" class=" control-label">Cantidad</label>
+
+                    <input type="text" class="form-control" id="inputEmail5" required>
+                   <label for="inputEmail3" class=" control-label">Unidad de Medida</label>
+
+                    <input type="text" class="form-control" id="inputEmail5" required>
+
+            </div>
+               </div>
+           <div class="col-md-2 pull-left"></div>
+                           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+
+            </div>
+
+      <div class="row">
+          <div class="col-md-10">
+
+          <table class="table table-hover">
+            <thead>
+            <tr>
+
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Unidad Medida</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for productoTerminado in productoTerminados %}
+                <tr>
+
+              <td>{{productoTerminado.nombre}}</td>
+              <td>{{productoTerminado.cantidad}}</td>
+              <td>{{productoTerminado.Umedida}}</td>
+
+          </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+
+          </div>
+          <div class="col-md-2">
+          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
+              <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+          </div>
+              </div>
+
+          </div>
+<hr/>
+      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
+      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+
+  </div>
+
+</div>
+</div>
+</form>
+
+    <!-- Este es el fin del formulario de recetas -->
+    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
+
+
+
+
+
+{% endblock %}

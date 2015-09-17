@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+{% block contenido %}
+
+
+
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Recetas</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline">
+          <div class="form-group">
+            <label for="exampleInputName2">Nombre</label>
+            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Ingrediente</label>
+            <input type="email" class="form-control" id="exampleInputEmail2" placeholder="huevo">
+          </div>
+          <button type="submit" class="btn btn-default">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <div class="row">
+          <div class="col-md-10">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Producto terminado</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for receta in recetas %}
+                <tr>
+              <td>{{receta.nombre}}</td>
+              <td>{{receta.descripcion}}</td>
+          </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+          </div>
+      <div class="col-md-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+          </div>
+          <p></p>
+          <button class="btn" href="recetasAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+      </div>
+          </div>
+  </div>
+
+</div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+{% endblock %}
+
+
