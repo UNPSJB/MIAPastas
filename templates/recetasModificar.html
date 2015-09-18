@@ -77,20 +77,54 @@
           </div>
           <div class="col-md-2">
           <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#ModalModificarInsumo"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
               <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
               </div>
 
           </div>
 <hr/>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+      <a class="btn pull-right" href="recetas"><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></a>
+      <a class="btn pull-right" href="recetas" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
 
 </div>
 </div>
 </form>
+
+
+<!-- Modal de insumos -->
+            <div id="ModalModificarInsumo" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Modificar Insumo de la Receta</h4>
+                  </div>
+                  <div class="modal-body">
+
+                      <div class="form-group col-md-5">
+                            <label for="exampleInputEmail2">Nueva cantidad</label>
+                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="cantidad" >
+                          </div>
+
+
+
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+                  </div>
+                </div>
+
+
+
+
+      </div>
+  </div>
 
     <!-- Este es el fin del formulario de recetas -->
 
