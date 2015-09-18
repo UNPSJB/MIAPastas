@@ -1,10 +1,24 @@
-{% extends 'base.html' %}
+
 {% load staticfiles %}
+<!DOCTYPE HTML>
+<html >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Mia Pastas SRL</title>
+         <!-- {% block stylesheet %}{% endblock %} -->
+		<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/estilos_propios.css" %}">
+        <link rel="stylesheet" href="{% static "css/styles.css" %}">
+        <script src="{% static "js/jquery.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
 
 
-{% block contenido %}
 
 
+    </head>
+
+
+<body>
         <div class="cabecera">
             <!-- imagen de mia pastas -->
             <div style="float:left;">
@@ -40,4 +54,21 @@
     </div>
 
 </div>
-{% endblock %}
+</body>
+<div class="container marketing">
+    <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p><br></br>
+          <div>
+            <input title= "Gmail" href="#" type = image src ="{% static "images/gmail.png" %}" alt="aca va el logo mia pastas" height = "40" ></input>
+            <input title= "Twitter" href="#" type = image src ="{% static "images/twitter.png" %}" alt="aca va el logo mia pastas" height = "40"  ></input>
+            <input title= "Facebook" href="#" type = image src ="{% static "images/facebook.png" %}" alt="aca va el logo mia pastas"  height = "40" ></input>
+        </div>
+        <p><i><small>Mia Pastas S.R.L.© 2015. Designed by Calfuquir Nicolas - Gómez Agustina - James Kevin - Lecuna Facundo - Parra Iván. Todos los derechos reservados.</small> </i> </p>
+
+      </footer>
+
+
+
+</div><!-- /.container -->
+
