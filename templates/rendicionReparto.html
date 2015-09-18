@@ -8,7 +8,7 @@
 <!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Cobrar a Cliente</b></font></p></div>
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendición de Reparto</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
       <form class="form-inline">
@@ -26,15 +26,15 @@
       </form>
           <p>&nbsp;</p>
       <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-9  ">
           <table class="table table-hover">
             <thead>
-            <h1>Pedidos no facturados</h1>
+            <h1>Hojas de Rutas</h1>
             <tr>
-                <th>N° Pedido</th>
+                <th>N° Hojja de ruta</th>
                 <th>Fecha</th>
-                <th>Precio total</th>
-                <th>Monto abonado</th>
+                <th>Chofer</th>
+                <th>zona</th>
 
 
             </tr>
@@ -43,10 +43,10 @@
 
                 <tr>
 
-                    <td>manola</td>
-                    <td>pocha</td>
-                    <td>lola</td>
-                    <td>asdsa</td>
+                    <td>3</td>
+                    <td>12-12-2015</td>
+                    <td>manolo</td>
+                    <td>Trelew</td>
                     <td><!-- Trigger the modal with a button -->
               <button type="button" class=" glyphicon glyphicon-zoom-in pull-left" data-toggle="modal" data-target="#myModal"></button>
 </td>
@@ -57,8 +57,6 @@
           </div>
           <div class="col-md-1">
               <div class="btn background-position:top center" role="group" aria-label="..." >
-                  <!-- Trigger the modal with a button -->
-              <button type="button" class=" glyphicon glyphicon-shopping-cart pull-right btn btn-info" data-toggle="modal" data-target="#ModalProductosExtra"> Agregar extras</button>
 
 
           </div>
@@ -87,15 +85,19 @@
                 <!-- Modal content-->
                 <div class="modal-content">
                   <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Recibos del pedido</h4>
+                      <button type="button" class="close" data-dismiss="modal">&times;</button>
+                      <h4 class="modal-title">Productos devueltos</h4>
+
+                  </div>
+
+                  <div class="modal-body">
                       <table class="table table-hover">
                         <thead>
-                        <h1></h1>
+
                         <tr>
-                            <th>N° Recibo</th>
-                            <th>Fecha</th>
-                            <th>Monto pagado</th>
+                            <th>Producto</th>
+                            <th>Cantidad devuelta</th>
+                            <th>Unidad medida</th>
 
                         </tr>
                         </thead>
@@ -108,44 +110,63 @@
                         {% endfor %}
                       </tbody>
                       </table>
+                      <div class="form-group ">
+                        <label for="inputEmail3">Cargar productos devueltos</label>
+
+                          <select class="form-control">
+                              <option>producto 1</option>
+                              <option>producto 2</option>
+                              <option>producto 3</option>
+                          </select>
+
+                   </div>
+
+                        <div class="form-group ">
+                            <label for="cantidad">Cantidad:</label>
+
+                            <input type="text" class="form-control" id="cantidad" placeholder="Cantidad" >
+                            <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></button>
+
+                         </div>
+
+
+
 
                   </div>
-                  <div class="modal-body">
-                    <form class="form-horizontal col-md-12">
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">N°Pedido</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino" readonly>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Tipo de pedido</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="huevo" readonly>
-                          </div></div>
-                        <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Cliente</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino" readonly>
-                          </div></div>
-                        <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">dirección</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino" readonly>
-                          </div></div>
+                    <hr>
+                  <div class="modal-footer ">
 
-                      </form>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                      <a class="btn btn-default page-scroll" href="rendicionRepartoPedidos"   >Aceptar</a> <!-- javascript:prueba();  en href-->
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >Cerrar</button>
                   </div>
                 </div>
 
               </div>
             </div>
 
+           <div style="height:50px;"></div>
 
 
+
+
+
+
+           <section id="about" class="about-section" style="margin-top:300px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1>About Section</h1>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        <script type="text/javascript">
+            function prueba(){
+                $("#myModal").modal('hide');
+            }
+
+        </script>
 
 </div>
 </div>
