@@ -191,3 +191,7 @@ def productosTerminadosActualizarPrecio(request):
 
 def pedidosClienteAlta(request):
     return render(request, "pedidosClienteAlta.html", {})
+
+
+def rendicionRepartoPedidos(request):
+    return render(request, "rendicionRepartoPedidos.html", {})

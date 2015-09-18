@@ -1,0 +1,210 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block contenido %}
+
+
+
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Productos entregados</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+
+
+      <div class="row">
+          <div class="col-md-8">
+          <table class="table table-hover">
+            <thead>
+            <h1>Pedidos de la hoja de Ruta</h1>
+            <tr>
+                <th>N° Pedido</th>
+                <th>Nombre de Comercio</th>
+                <th>Direccion</th>
+                <th>Tipo Pedido</th>
+                <th>Zona</th>
+
+
+
+            </tr>
+            </thead>
+              <tbody>
+
+                <tr>
+
+                    <td>3</td>
+                    <td>manolo</td>
+                    <td>Trelew
+                    <td></td>
+                    <td></td>
+                    <td><!-- Trigger the modal with a button -->
+              <button type="button" class=" glyphicon glyphicon-share btn btn-primary btn-xs pull-left" data-toggle="modal" data-target="#myModal"> Cargar</button>
+</td>
+          </tr>
+              <tr>
+
+                    <td>5</td>
+                    <td>manolo</td>
+                    <td>Rawson
+                    <td></td>
+                    <td></td>
+                    <td><!-- Trigger the modal with a button -->
+              <button type="button" class=" glyphicon glyphicon-share btn btn-primary btn-xs pull-left" data-toggle="modal" data-target="#myModal"> Cargar</button>
+</td>
+          </tr>
+
+          </tbody>
+          </table>
+          </div>
+          <div class="col-md-1">
+              <div class="btn background-position:top center" role="group" aria-label="..." >
+
+
+          </div>
+          <p></p>
+          </div>
+
+
+          </div>
+
+              <hr>
+
+
+          </div>
+
+      </div>
+       <div>
+            <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
+          <a type="button" href="index" class="btn btn-primary active pull-right"><span   aria-hidden="true"> Aceptar </span></a>
+          <a type="button" href="index" class="btn btn-primary active pull-right"><span  aria-hidden="true"> Cancelar </span></a>
+
+
+            <!-- Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h3 class="modal-title">Productos entregados</h3>
+
+
+                  </div>
+
+                  <div class="modal-body">
+                      <table class="table table-hover">
+                        <thead>
+
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad pedida</th>
+                            <th>Cantidad entregada</th>
+
+                        </tr>
+                        </thead>
+                          <tbody>
+                        {% for receta in recetas %}
+                            <tr>
+                          <td>{{receta.nombre}}</td>
+                          <td>{{receta.descripcion}}</td>
+                      </tr>
+                        {% endfor %}
+                      </tbody>
+                      </table>
+                      <hr>
+                      <div class="form-group col-md-4">
+                        <label for="inputEmail3">Producto Extra</label>
+
+                          <select class="form-control">
+                              <option>producto 1</option>
+                              <option>producto 2</option>
+                              <option>producto 3</option>
+                          </select>
+
+                   </div>
+                    <form class="form-horizontal">
+                        <div class="form-group col-md-6">
+                            <label for="exampleInputName2">Cantidad:</label>
+
+                            <input type="text" class="form-control" id="exampleInputName2" placeholder="Cantidad" readonly>
+
+                         </div>
+                            <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-ok" aria-hidden="true">  </span></button>
+
+
+                      </form>
+
+
+
+                    <div>
+
+                       <div class="col-md-12">
+                           <H4 class="pull-left col-md-12">Tipo de Boleta</H4>
+                    <div class="radio">
+
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios1" value="option1" checked>
+                            FACTURA
+                          </label>
+                        </div>
+                        <div class="radio">
+                          <label>
+                            <input type="radio" name="optionsRadios" id="optionsRadios2" value="option2">
+                                RECIBO
+                          </label>
+                        </div>
+                           </div>
+
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="ejemplo_password_1">Monto Total</label>
+                                <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                                <label for="ejemplo_password_1">Monto abonado</label>
+                                <input type="text" class="form-control" id="ejemplo_password_1" >
+                              </div>
+                        </div>
+                        </div>
+                      </div>
+
+                  <div class="modal-footer">
+
+                      <a class="btn btn-default"  data-dismiss="modal" >Aceptar</a> <!-- javascript:prueba();  en href   href="#about"-->
+                    <button type="button" class="btn btn-default" data-dismiss="modal" >Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+           <div style="height:50px;"></div>
+
+
+
+
+
+
+           <section id="about" class="about-section" style="margin-top:300px;">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-lg-12">
+                            <h1>About Section</h1>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        <script type="text/javascript">
+            function prueba(){
+                $("#myModal").modal('hide');
+
+            }
+
+        </script>
+
+</div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+{% endblock %}
