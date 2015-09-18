@@ -3,6 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Insumo(models.Model):
+
     FILTROS = ['nombre__icontains', 'stock__lte']
     UNIDADES = (
         (1, "Kg"),

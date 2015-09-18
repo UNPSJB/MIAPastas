@@ -47,6 +47,7 @@ urlpatterns = [
     url(r'^ciudades$',views.ciudades,name='ciudades'),
     url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
+
     url(r'^insumos$',recetasviews.insumos,name='insumos'),
     url(r'^insumos/add$',recetasviews.insumos,name='insumosAlta'),
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
