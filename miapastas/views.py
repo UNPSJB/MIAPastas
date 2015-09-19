@@ -33,8 +33,7 @@ def login(request):
     return render(request, "login.html", {})
 
 
-def recetas(request):
-    return render(request, "recetas.html", {})
+
 
 
 def recetasConsulta(request):

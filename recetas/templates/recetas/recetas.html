@@ -1,0 +1,129 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block contenido %}
+
+
+
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Recetas</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+
+            <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" placeholder="nombre">
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail2">Ingrediente</label>
+            <input type="email" class="form-control" id="exampleInputEmail2" placeholder="huevo">
+          </div>
+          <button type="submit" class="btn btn-default">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <div class="row">
+          <div class="col-md-10">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for receta in recetas %}
+                <tr>
+              <td>{{receta.nombre}}</td>
+              <td>{{receta.Descripcion}}</td>
+          </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+          </div>
+      <div class="col-md-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <a href="recetasConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a href="recetasModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+          </div>
+          <p></p>
+          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+      </div>
+          </div>
+  </div>
+
+</div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+<div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Registrar Nueva Receta</h4>
+                  </div>
+                  <div class="modal-body">
+
+ <form action="{% url 'recetasAlta' %}" method="post" class="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form layout='horizontal' %}
+                                {% buttons %}
+                                    <button type="submit" class="btn btn-primary">
+                                        {% bootstrap_icon "star" %} Submit
+                                    </button>
+                                {% endbuttons %}
+   </form>
+
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+<!--  tabla para mostrar TODOS los insumos de TODAS Las recetas que existan-->
+
+<!--
+ <div class="col-md-10">
+     <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Descripcion</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for insumo in insumos  %}
+                <tr>
+                      <td>{{insumo.nombre}}</td>
+                      <td>{{insumo.descripcion}}</td>
+                </tr>
+
+            {% endfor %}
+          </tbody>
+          </table>
+</div>-->
+
+{% endblock %}
+
+

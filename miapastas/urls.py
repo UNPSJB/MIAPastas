@@ -28,10 +28,8 @@ urlpatterns = [
     url(r'^prueba2$', views.prueba2, name='prueba2'),
     url(r'^prueba3$', views.prueba3, name='prueba3'),
     url(r'^login$', views.login, name='login'),
-    url(r'^recetas$',views.recetas,name='recetas'),
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
     url(r'^recetasModificar$',views.recetasModificar,name='recetasModificar'),
-    url(r'^recetasAlta$',views.recetasAlta,name='recetasAlta'),
     url(r'^clientes$',views.clientes,name='clientes'),
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
@@ -48,8 +46,14 @@ urlpatterns = [
     url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
 
+
+    # Hechos en forms
     url(r'^insumos$',recetasviews.insumos,name='insumos'),
     url(r'^insumos/add$',recetasviews.insumos,name='insumosAlta'),
+    url(r'^recetas$',recetasviews.recetas,name='recetas'),
+    url(r'^recetas/add$',recetasviews.recetas,name='recetasAlta'),
+
+
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
     url(r'^insumosModificar$',views.insumosModificar,name='insumosModificar'),
     url(r'^zonas$',views.zonas,name='zonas'),

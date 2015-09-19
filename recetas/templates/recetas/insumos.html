@@ -55,27 +55,56 @@
               <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
           <p></p>
-          <button class="btn" href="insumosAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
+
+          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
             </div>
             <hr/>
 
         </div>
 
     </div>
+
 </div>
 
     <!-- Este es el fin del formulario de recetas -->
 
 
-<form action="{% url 'insumosAlta' %}" method="post" class="form">
-    {% csrf_token %}
-    {% bootstrap_form form %}
-    {% buttons %}
-        <button type="submit" class="btn btn-primary">
-            {% bootstrap_icon "star" %} Submit
-        </button>
-    {% endbuttons %}
-</form>
+ <!-- Modal -->
+            <div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Registrar Nuevo Insumo</h4>
+                  </div>
+                  <div class="modal-body">
+                   <form action="{% url 'insumosAlta' %}" method="post" class="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form layout='horizontal' %}
+                                {% buttons %}
+                                    <button type="submit" class="btn btn-primary">
+                                        {% bootstrap_icon "star" %} Submit
+                                    </button>
+                                {% endbuttons %}
+                    </form>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+
+
+
+
+
 
 
 

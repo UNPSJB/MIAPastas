@@ -31,3 +31,26 @@ def insumos(request):
                   {"insumos": insumos,
                    "filtros": filters,
                    "form": form})
+
+
+
+def recetas(request):
+    filters = get_filtros(request.GET, models.Receta)
+    mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
+    recetas = models.Receta.objects.filter(**mfilters)
+    if request.method == "POST":
+        form = forms.RecetaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('recetas')
+    else:
+        form = forms.RecetaForm()
+
+    #recetas = models.Receta.objects.all()
+    i=[]
+    for r in recetas:
+        z = r.insumos.all()
+        for x in z:
+            i.append(x)
+
+    return render(request, "recetas/recetas.html",{"recetas": recetas,"insumos":i,"form": form})
