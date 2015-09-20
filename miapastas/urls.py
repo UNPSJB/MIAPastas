@@ -77,6 +77,7 @@ urlpatterns = [
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
     url(r'^pedidosClienteAlta$',views.pedidosClienteAlta,name='pedidosClienteAlta'),
     url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
+    url(r'^pedidosProveedores$',views.pedidosProveedores,name='pedidosProveedores'),
     url(r'^$',views.login,name='login')
 
 
