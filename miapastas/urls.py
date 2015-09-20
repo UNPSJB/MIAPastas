@@ -34,7 +34,6 @@ urlpatterns = [
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
-    url(r'^proveedores$',views.proveedores,name='proveedores'),
     url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
     url(r'^proveedoresAlta$',views.proveedoresAlta,name='proveedoresAlta'),
     url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
@@ -52,6 +51,8 @@ urlpatterns = [
     url(r'^insumos/add$',recetasviews.insumos,name='insumosAlta'),
     url(r'^recetas$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/add$',recetasviews.recetas,name='recetasAlta'),
+    url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
+    url(r'^proveedores/add$',recetasviews.proveedores,name='proveedoresAlta'),
 
 
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),

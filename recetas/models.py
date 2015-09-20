@@ -46,3 +46,25 @@ class Receta(models.Model):
 
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
+
+
+
+class Proveedor(models.Model):
+
+    FILTROS = ['cuit__icontains','razonSocial__icontains','ciudad__icontains']
+    razonSocial = models.CharField(max_length=100, unique=True)
+    nombreDueno = models.CharField(max_length=100, unique=True)
+    direccion = models.CharField(max_length=100, unique=True)
+    email = models.CharField(max_length=30, unique=True, blank=True) #blank=True indica que puede estar el campo vacio
+    localidad = models.CharField(max_length=50, unique=True)
+    numeroCuenta= models.PositiveIntegerField()
+    provincia = models.CharField(max_length=50, unique=True)
+    telefono= models.PositiveIntegerField()
+    cuit= models.PositiveIntegerField()
+    insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
+#RELACION UNO A MUCHOS CON pedidosProveedor
+
+    def __str__(self):
+        return "%s (%d %s)" % (self.razonSocial, self.telefono, self.cuit)
+
+

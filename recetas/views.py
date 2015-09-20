@@ -42,6 +42,7 @@ def recetas(request):
         form = forms.RecetaForm(request.POST)
         if form.is_valid():
             form.save()
+
             return redirect('recetas')
     else:
         form = forms.RecetaForm()
@@ -53,4 +54,24 @@ def recetas(request):
         for x in z:
             i.append(x)
 
+
     return render(request, "recetas/recetas.html",{"recetas": recetas,"insumos":i,"form": form})
+
+def proveedores(request):
+    filters = get_filtros(request.GET, models.Proveedor)
+    mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
+    proveedores = models.Proveedor.objects.filter(**mfilters)
+    if request.method == "POST":
+        form = forms.ProveedorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('proveedores')
+    else:
+        form = forms.ProveedorForm()
+
+    #recetas = models.Receta.objects.all()
+    i=[]
+
+
+
+    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"form": form,"filtros":filters})

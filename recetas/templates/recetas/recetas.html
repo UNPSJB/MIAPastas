@@ -27,9 +27,9 @@
           <p>&nbsp;</p>
       <div class="row">
           <div class="col-md-10">
-          <table class="table table-hover">
+          <table class="table table-hover" id="datatables" class="display">
             <thead>
-            <tr>
+            <tr style='cursor:pointer' class='desmarcado'>
                 <th>Nombre</th>
                 <th>Descripcion</th>
             </tr>
@@ -103,7 +103,7 @@
 
 <!--  tabla para mostrar TODOS los insumos de TODAS Las recetas que existan-->
 
-<!--
+
  <div class="col-md-10">
      <table class="table table-hover">
             <thead>
@@ -122,8 +122,7 @@
             {% endfor %}
           </tbody>
           </table>
-</div>-->
-
+</div>
 {% endblock %}
 
 
