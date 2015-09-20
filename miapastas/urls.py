@@ -54,7 +54,7 @@ urlpatterns = [
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedores/add$',recetasviews.proveedores,name='proveedoresAlta'),
     url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
-    url(r'^productosTerminados/add$$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
+    url(r'^productosTerminados/add$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
 
 
 

@@ -57,7 +57,6 @@ def recetas(request):
 
 
 
-    return render(request, "recetas/recetas.html",{"recetas": recetas,"insumos":i,"form": form})
 
 def proveedores(request):
     filters = get_filtros(request.GET, models.Proveedor)
