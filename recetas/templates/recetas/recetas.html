@@ -32,13 +32,21 @@
             <tr>
                 <th>Nombre</th>
                 <th>Descripcion</th>
+                <th>Producto Terminado</th>
+                <th>Cantidad</th>
+
+
             </tr>
             </thead>
               <tbody>
             {% for receta in recetas %}
                 <tr>
               <td>{{receta.nombre}}</td>
-              <td>{{receta.Descripcion}}</td>
+              <td>{{receta.descripcion}}</td>
+                    <td>{{receta.productoTerminado}}</td>
+                    <td>{{receta.cantProdTerminado}} {{receta.get_unidad_medida_display}}</td>
+
+
           </tr>
             {% endfor %}
           </tbody>
@@ -74,7 +82,7 @@
                   </div>
                   <div class="modal-body">
 
- <form action="{% url 'recetasAlta' %}" method="post" class="form">
+                    <form action="{% url 'recetasAlta' %}" method="post" class="form">
                                 {% csrf_token %}
                                 {% bootstrap_form form layout='horizontal' %}
                                 {% buttons %}

@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block contenido %}
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Productos Terminados</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline" method="get">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
+          </div>
+
+            <div class="form-group">
+            <label for="stock">Stock</label>
+            <input type="text" class="form-control" value="{{filtros.stock}}" id="stock" name = "stock" >
+          </div>
+
+          <label>
+
+          </label>
+
+          <button type="submit" class="btn btn-default">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <div class="row">
+          <div class="col-md-10">
+          <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Stock</th>
+                <th>Unidad de Medida</th>
+                <th>Precio</th>
+
+            </tr>
+            </thead>
+              <tbody>
+                                 {% for p in productosTerminados %}
+                                <tr>
+                                    <td>{{p.nombre}}</td>
+                                    <td>{{p.stock}}</td>
+                                    <td>{{p.get_unidad_medida_display}}</td>
+                                    <td>{{p.precio}}</td>
+                                </tr>
+                                {% endfor %}
+          </tbody>
+          </table>
+          </div>
+      <div class="col-md-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <a href="productosTerminadosModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+              <!-- AL PRECIONAR EL BOTON ELIMINAR SE DEBEN DAR DE BAJAS TODAS LAS RECETAS ASOCIADAS A ESE PRODUCTO TERMINADO-->
+          </div>
+          <p></p>
+
+          <p></p>
+
+          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+</div>
+          </div>
+
+      <hr/>
+<a href="index" type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Aceptar </span></a>
+
+  </div>
+
+</div>
+</div>
+        <div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Registrar Nuevo Producto</h4>
+                  </div>
+                  <div class="modal-body">
+                   <form action="{% url 'productosTerminadosAlta' %}" method="post" class="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form layout='horizontal' %}
+                                {% buttons %}
+                                    <button type="submit" class="btn btn-primary">
+                                        {% bootstrap_icon "star" %} Submit
+                                    </button>
+                                {% endbuttons %}
+                    </form>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+
+
+{% endblock %}

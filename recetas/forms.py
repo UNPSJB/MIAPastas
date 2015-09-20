@@ -11,4 +11,11 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "Descripcion", "fechaCreacion", "cantProdTerminado","unidad_medida","insumos"]
+        fields = ["nombre", "descripcion", "fechaCreacion", "productoTerminado","cantProdTerminado","unidad_medida","insumos"]
+
+
+class ProductoTerminadoForm(forms.ModelForm):
+    class Meta:
+        model = models.ProductoTerminado
+        fields = ["nombre","stock","unidad_medida","precio"]
+

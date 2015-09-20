@@ -52,5 +52,17 @@ def recetas(request):
         z = r.insumos.all()
         for x in z:
             i.append(x)
-
     return render(request, "recetas/recetas.html",{"recetas": recetas,"insumos":i,"form": form})
+
+def productosTerminados(request):
+    filters = get_filtros(request.GET, models.ProductoTerminado)
+    mfilters = dict(filter(lambda v: v[0] in models.ProductoTerminado.FILTROS, filters.items()))
+    productosTerminados = models.ProductoTerminado.objects.filter(**mfilters)
+    if request.method == "POST":
+        form = forms.ProductoTerminadoForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('productosTerminados')
+    else:
+        form = forms.ProductoTerminadoForm()
+    return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"form": form})

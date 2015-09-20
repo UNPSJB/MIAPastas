@@ -32,6 +32,8 @@
                             <thead>
                             <tr>
                                 <th>Nombre</th>
+                                <th>descripcion</th>
+
                                 <th>Stock</th>
                                 <th>Unidad de Medida</th>
                             </tr>
@@ -40,6 +42,8 @@
                                 {% for insumo in insumos %}
                                 <tr>
                                     <td>{{insumo.nombre}}</td>
+                                    <td>{{insumo.descripcion}}</td>
+
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
                                 </tr>
