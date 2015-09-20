@@ -53,6 +53,9 @@ urlpatterns = [
     url(r'^recetas/add$',recetasviews.recetas,name='recetasAlta'),
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedores/add$',recetasviews.proveedores,name='proveedoresAlta'),
+    url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
+    url(r'^productosTerminados/add$$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
+
 
 
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
@@ -68,8 +71,7 @@ urlpatterns = [
     url(r'^choferes$',views.choferes,name='choferes'),
     url(r'^choferesModificar$',views.choferesModificar,name='choferesModificar'),
     url(r'^choferesAlta$',views.choferesAlta,name='choferesAlta'),
-    url(r'^productosTerminados$',views.productosTerminados,name='productosTerminados'),
-    url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
+    #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarStock',views.productosTerminadosActualizarStock,name='productosTerminadosActualizarStock'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
