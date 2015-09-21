@@ -7,6 +7,10 @@
          <!-- {% block stylesheet %}{% endblock %} -->
 		<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
         <link rel="stylesheet" href="{% static "css/estilos_propios.css" %}">
+
+        <link rel="stylesheet" href="{% static "font-awesome-4.4.0/css/font-awesome.min.css" %}"> <!-- para poner iconos varios -->
+        <link rel="stylesheet" href="{% static "css/bootstrap-social.css" %}"> <!-- para poner iconos varios -->
+
         <link rel="stylesheet" href="{% static "css/styles.css" %}">
         <script src="{% static "js/jquery.js" %}"></script>
         <script src="{% static "js/bootstrap.min.js" %}"></script>
@@ -213,14 +217,25 @@
 
 <div class="container marketing">
     <!-- FOOTER -->
-      <footer>
+      <footer class="col-md-12">
         <p class="pull-right"><a href="#">Back to top</a></p><br></br>
           <div>
-            <input title= "Gmail" href="#" type = image src ="{% static "images/gmail.png" %}" alt="aca va el logo mia pastas" height = "40" ></input>
+            <!--
+              <a href=""  ><i class="fa fa-facebook-official fa-3x" ></i></a>
+              <a href="" style="color:#dd4b39;"><i class="fa fa-google-plus-square  fa-3x" ></i></a>
+              <a href=""><i class="fa fa-twitter-square fa-3x" style="color:#00aced;"></i></a>
+              -->
+
+
+              <input title= "Gmail" href="#" type = image src ="{% static "images/gmail.png" %}" alt="aca va el logo mia pastas" height = "40" ></input>
             <input title= "Twitter" href="#" type = image src ="{% static "images/twitter.png" %}" alt="aca va el logo mia pastas" height = "40"  ></input>
             <input title= "Facebook" href="#" type = image src ="{% static "images/facebook.png" %}" alt="aca va el logo mia pastas"  height = "40" ></input>
+
         </div>
         <p><i><small>Mia Pastas S.R.L.© 2015. Designed by Calfuquir Nicolas - Gómez Agustina - James Kevin - Lecuna Facundo - Parra Iván. Todos los derechos reservados.</small> </i> </p>
+
+
+
 
       </footer>
 
