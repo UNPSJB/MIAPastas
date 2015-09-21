@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<script type="text/javascript" src="main.js">
+</script>
+</head>
+<body>
+<table>
+<tr>
+	<td>Bat</td>
+	<td><input type="button" onclick="remove(this)" value="Eliminar" /></td>
+</tr>
+<tr>
+	<td>Bi</td>
+	<td><input type="button" onclick="remove(this)" value="Eliminar" /></td>
+</tr>
+<tr>
+	<td>Hiru</td>
+	<td><input type="button" onclick="remove(this)" value="Eliminar" /></td>
+</tr>
+</table>
+
+<script>
+
+    function remove(t)
+    {
+        var td = t.parentNode;
+        var tr = td.parentNode;
+        var table = tr.parentNode;
+        table.removeChild(tr);
+    }
+
+</script>
+
+</body>
+</html>
