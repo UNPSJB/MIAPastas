@@ -76,7 +76,9 @@ class Receta(models.Model):
         return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
 
 
-
+#********************************************************#
+               #     P R O V E E D O R E S    #
+#********************************************************#
 
 class Proveedor(models.Model):
 
