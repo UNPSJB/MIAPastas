@@ -73,11 +73,11 @@ class Receta(models.Model):
         return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
 
 
-<<<<<<< HEAD
+#<<<<<<< HEAD
 #********************************************************#
                #     P R O V E E D O R E S    #
 #********************************************************#
-=======
+#=======
 class RecetaDetalle(models.Model):
     class Meta:
         auto_created = True
@@ -86,7 +86,7 @@ class RecetaDetalle(models.Model):
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
->>>>>>> origin/master
+#>>>>>>> origin/master
 
 #********************************************************#
             #     P R O V E E D O R E S    #
