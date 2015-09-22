@@ -42,17 +42,19 @@ def recetas(request):
         form = forms.RecetaForm(request.POST)
         if form.is_valid():
             form.save()
-
+            # creo los detalles de la reseta que se corresponden con los insumos cargados en la tabla.
+            for i in request.POST.getlist('items'):
+                ins = models.Insumo.objects.get(pk=i)
+                item = models.RecetaDetalle.objects.create(cantidad= request.POST.get('cantInsumo'),
+                                        insumo = ins,
+                                        receta = form)
+                # A R R E G L A R !!! hay que permitir ingresar cantidad por cada insumo que selecciono.
+            item.save()
             return redirect('recetas')
     else:
         form = forms.RecetaForm()
 
-    #recetas = models.Receta.objects.all()
-    i=[]
-    for r in recetas:
-        z = r.insumos.all()
-        for x in z:
-            i.append(x)
+    i = models.Insumo.objects.all()
     return render(request, "recetas/recetas.html",{"recetas": recetas,"insumos":i,"form": form})
 
 
@@ -71,8 +73,6 @@ def proveedores(request):
         form = forms.ProveedorForm()
 
     #recetas = models.Receta.objects.all()
-    i=[]
-
 
 
     return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"form": form,"filtros":filters})
