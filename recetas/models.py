@@ -61,22 +61,30 @@ class Receta(models.Model):
         (5, "Bolsines"),
     )
     FILTROS = ['nombre__icontains']
-
-
-
     fechaCreacion= models.DateField()
     nombre = models.CharField(max_length=100, unique=True,help_text="El nombre de la receta")
     unidad_medida =  models.PositiveSmallIntegerField(choices=UNIDADES)
     descripcion = models.TextField()
     cantProdTerminado= models.PositiveIntegerField()
-    insumos = models.ManyToManyField(Insumo,blank = True)
+    items = models.ManyToManyField(Insumo, through="RecetaDetalle")
     productoTerminado = models.ForeignKey(ProductoTerminado)
 
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
 
 
+class RecetaDetalle(models.Model):
+    class Meta:
+        auto_created = True
 
+    cantidadInsumo = models.IntegerField()
+    insumo = models.ForeignKey(Insumo)
+    receta = models.ForeignKey(Receta)
+
+
+#********************************************************#
+            #     P R O V E E D O R E S    #
+#********************************************************#
 
 class Proveedor(models.Model):
 

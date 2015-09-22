@@ -5,7 +5,11 @@
 {% block contenido %}
 
 
-
+  <script>
+  $(function() {
+    $( "#fecha" ).datepicker();
+  });
+  </script>
 <!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
@@ -84,7 +88,11 @@
 
                     <form action="{% url 'recetasAlta' %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_form form layout='horizontal' %}
+                                {% bootstrap_form form layout='horizontal' %}>
+                                <div class="form-group">
+                                     <label for="cantInsumo">cantInsumo</label>
+                                     <input type="text" class="form-control" id="cantInsumo" name="cantInsumo" placeholder="huevo" required>
+                                 </div>
                                 {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         {% bootstrap_icon "star" %} Submit
