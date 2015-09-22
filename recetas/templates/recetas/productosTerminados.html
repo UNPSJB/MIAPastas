@@ -83,7 +83,7 @@
                     <h4 class="modal-title">Registrar Nuevo Producto</h4>
                   </div>
                   <div class="modal-body">
-                   <form action="{% url 'productosTerminadosAlta' %}" method="post" class="form">
+                   <form action="{% url 'zonasAlta' %}" method="post" class="form">
                                 {% csrf_token %}
                                 {% bootstrap_form form layout='horizontal' %}
                                 {% buttons %}

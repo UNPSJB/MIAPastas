@@ -90,3 +90,56 @@ def productosTerminados(request):
         form = forms.ProductoTerminadoForm()
     return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"form": form})
 
+
+
+def zonas(request):
+    filters = get_filtros(request.GET, models.Zona)
+    mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
+    zonas = models.Zona.objects.filter(**mfilters)
+    if request.method == 'POST':
+        form = forms.ZonaForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('zonas')
+    else:
+        form = forms.ZonaForm()
+    return render(request, "recetas/zonas.html",
+                  {"zonas": zonas,
+                   "filtros": filters,
+                   "form": form})
+
+
+
+def ciudades(request):
+    filters = get_filtros(request.GET, models.Ciudad)
+    mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
+    ciudades = models.Ciudad.objects.filter(**mfilters)
+    if request.method == 'POST':
+        form = forms.CiudadForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('ciudades')
+    else:
+        form = forms.CiudadForm()
+    return render(request, "recetas/ciudades.html",
+                  {"ciudades": ciudades,
+                   "filtros": filters,
+                   "form": form})
+
+
+
+def clientes(request):
+    filters = get_filtros(request.GET, models.Cliente)
+    mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
+    clientes = models.Cliente.objects.filter(**mfilters)
+    if request.method == 'POST':
+        form = forms.ClienteForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('clientes')
+    else:
+        form = forms.ClienteForm()
+    return render(request, "recetas/clientes.html",
+                  {"clientes": clientes,
+                   "filtros": filters,
+                   "form": form})

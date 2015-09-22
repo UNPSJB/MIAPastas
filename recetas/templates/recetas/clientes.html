@@ -1,0 +1,134 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+
+
+
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>CLIENTES</b></font></p></div>
+
+        <div class="panel-body">
+              <!-- formulario -->
+            <!--<form class="form-inline"> -->
+            <form method="get" class="form-inline col-md-12">
+
+                <div class="form-group">
+                    <label for="nombre">Cuit/Cuil</label>
+                    <input type="text" class="form-control" value="{{filtros.cuit_cuil}}" name="cuit_cuil" id="cuit_cuil" >
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Razon Social</label>
+                    <input type="text" class="form-control" value="{{filtros.razonSocial}}" name="razonSocial" id="razonSocial" >
+                </div>
+                <div class="form-group">
+                    <label for="nombre">Ciudad</label>
+                    <input type="text" class="form-control" value="{{filtros.ciudad}}" name="ciudad" id="ciudad" >
+                </div>
+                <div class="form-group">
+              <label>
+
+              </label>
+                    <div class="checkbox">
+                         <label>
+                          <input type="checkbox" class="form-control" value="{{filtros.esMoroso}}" name="esMoroso" id="esMoroso"> Morosos
+                        </label>
+                    </div>
+                  </div>
+              <label>
+
+              </label>
+                <button type="submit" class="btn btn-default">Filtrar</button>
+            </form>
+
+            <div class="row">
+
+                <div class="col-md-10">
+                    <p>&nbsp;</p>
+
+                          <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Cuit/Cuil</th>
+                                <th>Razón Social</th>
+                                <th>Tipo de Cliente</th>
+
+                            </tr>
+                            </thead>
+                              <tbody>
+                                {% for cliente in clientes %}
+                                <tr>
+                                    <td>{{cliente.cuit_cuil}}</td>
+                                    <td>{{cliente.razonSocial}}</td>
+                                    <td>{{cliente.tipo_cliente}}</td>
+
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                          </table>
+                </div>
+                  <div class="btn-group btn-group-sm" role="group" aria-label="...">
+
+
+              <a href ="insumosConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a href ="insumosModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+          </div>
+          <p></p>
+
+          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+            </div>
+            <hr/>
+
+        </div>
+
+    </div>
+
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+ <!-- Modal -->
+<div id="myModal" class="modal fade" role="dialog">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Registrar Nuevo Cliente</h4>
+                  </div>
+                  <div class="modal-body">
+                   <form action="{% url 'clientesAlta' %}" method="post" class="form">
+                                {% csrf_token %}
+                                {% bootstrap_form form layout='horizontal' %}
+                                {% buttons %}
+                                    <button type="submit" class="btn btn-primary">
+                                        {% bootstrap_icon "star" %} Submit
+                                    </button>
+                                {% endbuttons %}
+                    </form>
+
+                  </div>
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

@@ -28,3 +28,28 @@ class ProductoTerminadoForm(forms.ModelForm):
         fields = ["nombre","stock","unidad_medida","precio"]
 
 
+
+class CiudadForm(forms.ModelForm):
+    class Meta:
+        model = models.Ciudad
+        fields = ["nombre","codigoPostal","zona"]
+
+
+
+class ZonaForm(forms.ModelForm):
+    class Meta:
+        model = models.Zona
+        fields = ["nombre"]
+
+
+class ClienteForm(forms.ModelForm):
+    class Meta:
+        model = models.Cliente
+        fields = ["cuit_cuil","razonSocial","nombreDueno","tipo_cliente","ciudad","direccion","telefono","email","esMoroso"]
+
+
+
+
+
+
+
