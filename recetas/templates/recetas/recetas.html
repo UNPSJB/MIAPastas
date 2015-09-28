@@ -10,6 +10,12 @@
     $( "#fecha" ).datepicker();
   });
   </script>
+<script type="text/javascript">
+	function prueba(renglon){
+		alert(renglon.id);
+	}
+
+</script>
 <!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
@@ -22,10 +28,7 @@
 
             <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" placeholder="nombre">
           </div>
-          <div class="form-group">
-            <label for="exampleInputEmail2">Ingrediente</label>
-            <input type="email" class="form-control" id="exampleInputEmail2" placeholder="huevo">
-          </div>
+
           <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
           <p>&nbsp;</p>
@@ -38,17 +41,22 @@
                 <th>Descripcion</th>
                 <th>Producto Terminado</th>
                 <th>Cantidad</th>
+                <th>id</th>
 
 
             </tr>
             </thead>
               <tbody>
             {% for receta in recetas %}
+                a = {{receta.id}}
                 <tr>
               <td>{{receta.nombre}}</td>
               <td>{{receta.descripcion}}</td>
                     <td>{{receta.productoTerminado}}</td>
                     <td>{{receta.cantProdTerminado}} {{receta.get_unidad_medida_display}}</td>
+                <td>{{receta.id}}</td>
+                              <td>   <a type="button" href="{% url 'recetasID' receta.id %}" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
+
 
 
           </tr>
@@ -86,19 +94,24 @@
                   </div>
                   <div class="modal-body">
 
+
                     <form action="{% url 'recetasAlta' %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_form form layout='horizontal' %}>
-                                <div class="form-group">
-                                     <label for="cantInsumo">cantInsumo</label>
-                                     <input type="text" class="form-control" id="cantInsumo" name="cantInsumo" placeholder="huevo" required>
-                                 </div>
+                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
+
+                                {% bootstrap_form form layout='in-line' %}
+
+                        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Detalle Receta</b></font></p></div>
+
+                                {% bootstrap_formset formDetalles layout='in-line' %}
                                 {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         {% bootstrap_icon "star" %} Submit
                                     </button>
                                 {% endbuttons %}
-   </form>
+                     </form>
+
+
 
 
                   </div>

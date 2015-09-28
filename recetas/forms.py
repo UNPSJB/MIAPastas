@@ -11,9 +11,20 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "descripcion", "fechaCreacion", "productoTerminado","cantProdTerminado","unidad_medida","items"]
+        fields = ["nombre", "descripcion", "fechaCreacion", "productoTerminado","cantProdTerminado","unidad_medida"]
 
 
+
+
+class RecetaDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.RecetaDetalle
+        exclude = ['receta']
+
+        #fields  = ["cantidadInsumo","insumo"]
+
+    insumo = forms.ModelChoiceField(models.Insumo.objects.all(),label = "Insumo(*)")
+    cantidadInsumo = forms.IntegerField(label = "Cantidad Usada(*)")
 
 class ProveedorForm(forms.ModelForm):
     class Meta:

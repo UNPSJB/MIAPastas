@@ -66,20 +66,18 @@ class Receta(models.Model):
     unidad_medida =  models.PositiveSmallIntegerField(choices=UNIDADES)
     descripcion = models.TextField()
     cantProdTerminado= models.PositiveIntegerField()
-    items = models.ManyToManyField(Insumo, through="RecetaDetalle")
     productoTerminado = models.ForeignKey(ProductoTerminado)
+    insumos = models.ManyToManyField(Insumo, through="RecetaDetalle")
+
 
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
 
 
 class RecetaDetalle(models.Model):
-    class Meta:
-        auto_created = True
-
     cantidadInsumo = models.IntegerField()
     insumo = models.ForeignKey(Insumo)
-    receta = models.ForeignKey(Receta)
+    receta = models.ForeignKey(Receta,blank=False)
 
 
 #********************************************************#
