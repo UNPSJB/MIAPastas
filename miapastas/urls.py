@@ -48,6 +48,7 @@ urlpatterns = [
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
 
 
+
     # Hechos en forms
     url(r'^insumos$',recetasviews.insumos,name='insumos'),
     url(r'^insumos/add$',recetasviews.insumos,name='insumosAlta'),
@@ -61,13 +62,35 @@ urlpatterns = [
     url(r'^proveedores/add$',recetasviews.proveedores,name='proveedoresAlta'),
     url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
     url(r'^productosTerminados/add$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
+    url(r'^zonas$',recetasviews.zonas,name='zonas'),
+    url(r'^zonas/add$',recetasviews.zonas,name='zonasAlta'),
+    url(r'^ciudades$',recetasviews.ciudades,name='ciudades'),
+    url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
+    url(r'^clientes$',recetasviews.clientes,name='clientes'),
+    url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
 
 
+
+
+    url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
+    url(r'^recetasModificar$',views.recetasModificar,name='recetasModificar'),
+    url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
+    #url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
+    url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
+    url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
+    url(r'^proveedoresAlta$',views.proveedoresAlta,name='proveedoresAlta'),
+    url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
+    url(r'^producciones$',views.producciones,name='producciones'),
+    url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
+    url(r'^produccionesConsulta$',views.produccionesConsulta,name='produccionesConsulta'),
+    url(r'^produccionesModificar$',views.produccionesModificar,name='produccionesModificar'),
+    #url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
+    url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
     url(r'^insumosModificar$',views.insumosModificar,name='insumosModificar'),
-    url(r'^zonas$',views.zonas,name='zonas'),
-    url(r'^zonasAlta$',views.zonasAlta,name='zonasAlta'),
+    # url(r'^zonas$',views.zonas,name='zonas'),
+    #url(r'^zonasAlta$',views.zonasAlta,name='zonasAlta'),
     url(r'^zonasConsulta$',views.zonasConsulta,name='zonasConsulta'),
     url(r'^zonasModificar$',views.zonasModificar,name='zonasMoficar'),
     url(r'^hojaDeRuta$',views.hojaDeRuta,name='hojaDeRuta'),
