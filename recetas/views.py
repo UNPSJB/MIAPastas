@@ -36,7 +36,14 @@ def insumos(request):
 
 
 def recetas(request,receta_id=None):
-    print "MOSTRANDO IUD TARJETAAAA",receta_id
+
+    if receta_id is not None:
+        r = models.Receta.objects.get(pk=receta_id)
+        i = r.insumos.all()
+
+        return render(request, "recetasConsulta.html",{"receta": r,"insumos":i})
+
+
     filters = get_filtros(request.GET, models.Receta)
     mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
     recetas = models.Receta.objects.filter(**mfilters)
