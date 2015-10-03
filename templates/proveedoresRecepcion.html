@@ -1,0 +1,106 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block contenido %}
+
+
+  <script>
+  $(function() {
+    $( "#fecha-pedido" ).datepicker();
+  });
+  </script>
+
+
+<form action="">
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Recepcion de Pedidos a Proveedores</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form role="form">
+                  <div class="form-group">
+                        <label for="inputEmail3">Proveedor</label>
+
+                          <select class="form-control">
+                              <option>Proveedor 1</option>
+                              <option>Proveedor 2</option>
+                              <option>Proveedor 3</option>
+                          </select>
+
+                   </div>
+
+
+
+                  <div class="form-group">
+                    <label for="fecha_pedido">Fecha del Pedido</label>
+                    <input type="text" class="form-control" id="fecha-pedido" required>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="numero_pedido">Numero de Pedido</label>
+                    <input type="text" class="form-control" id="numero-pedido" required>
+                  </div>
+
+
+
+
+        </form>
+
+           <label>
+
+          </label>
+          <button type="submit" class="btn btn-default">Filtrar</button>
+
+      <div class="row">
+          <div class="col-md-10">
+
+          <table class="table table-hover">
+            <thead>
+            <tr>
+
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Unidad Medida</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for productoTerminado in productoTerminados %}
+                <tr>
+
+              <td>{{productoTerminado.nombre}}</td>
+              <td>{{productoTerminado.cantidad}}</td>
+              <td>{{productoTerminado.Umedida}}</td>
+
+          </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+
+          </div>
+          <div class="col-md-2">
+         <div class="btn-group btn-group-sm" role="group" aria-label="...">
+              <a  href ="proveedoresConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a href ="proveedoresModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+          </div>
+              </div>
+
+          </div>
+<hr/>
+      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
+      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+
+  </div>
+
+</div>
+</div>
+</form>
+
+    <!-- Este es el fin del formulario de recetas -->
+    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
+
+
+
+
+{% endblock %}

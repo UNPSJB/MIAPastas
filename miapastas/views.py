@@ -197,3 +197,6 @@ def rendicionRepartoPedidos(request):
 
 def pedidosProveedores(request):
     return render(request, "pedidosProveedores.html", {})
+
+def proveedoresRecepcion(request):
+    return render(request, "proveedoresRecepcion.html", {})
