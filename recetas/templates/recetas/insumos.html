@@ -86,7 +86,7 @@
                   <div class="modal-body">
                    <form action="{% url 'insumosAlta' %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_form form layout='horizontal' %}
+                                {% bootstrap_form insumos_form layout='horizontal' %}
                                 {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         {% bootstrap_icon "star" %} Submit

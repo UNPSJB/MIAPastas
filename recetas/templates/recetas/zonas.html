@@ -16,8 +16,7 @@
 
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
-                    <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
-
+                    <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" placeholder="nombre">
                 </div>
                 <button type="submit" class="btn btn-default">Filtrar</button>
             </form>
@@ -81,7 +80,7 @@
                   <div class="modal-body">
                    <form action="{% url 'zonasAlta' %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_form form layout='horizontal' %}
+                                {% bootstrap_form zonas_form layout='horizontal' %}
                                 {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         {% bootstrap_icon "star" %} Submit

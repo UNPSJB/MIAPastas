@@ -61,24 +61,24 @@ class Receta(models.Model):
         (5, "Bolsines"),
     )
     FILTROS = ['nombre__icontains']
-    fechaCreacion = models.DateField()
+    fecha_creacion = models.DateField()
     nombre = models.CharField(max_length=100, unique=True,help_text="El nombre de la receta")
     unidad_medida =  models.PositiveSmallIntegerField(choices=UNIDADES)
     descripcion = models.TextField()
-    cantProdTerminado= models.PositiveIntegerField()
-    productoTerminado = models.ForeignKey(ProductoTerminado)
+    cant_prod_terminado= models.PositiveIntegerField()
+    producto_terminado = models.ForeignKey(ProductoTerminado)
     insumos = models.ManyToManyField(Insumo, through="RecetaDetalle")
 
 
     def __str__(self):
-        return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
+        return "%s (%d %s)" % (self.nombre, self.cant_prod_terminado, self.get_unidad_medida_display())
 
 
 #********************************************************#
                #     P R O V E E D O R E S    #
 #********************************************************#
 class RecetaDetalle(models.Model):
-    cantidadInsumo = models.IntegerField()
+    cantidad_insumo = models.IntegerField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
@@ -89,13 +89,13 @@ class RecetaDetalle(models.Model):
 
 class Proveedor(models.Model):
 
-    FILTROS = ['cuit__icontains','razonSocial__icontains','ciudad__icontains']
-    razonSocial = models.CharField(max_length=100, unique=True)
-    nombreDueno = models.CharField(max_length=100, unique=True)
+    FILTROS = ['cuit__icontains','razon_social__icontains','ciudad__icontains']
+    razon_social = models.CharField(max_length=100, unique=True)
+    nombre_dueno = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=100, unique=True)
     email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
     localidad = models.CharField(max_length=50, unique=True)
-    numeroCuenta= models.PositiveIntegerField()
+    numero_cuenta= models.PositiveIntegerField()
     provincia = models.CharField(max_length=50, unique=True)
     telefono= models.PositiveIntegerField()
     cuit= models.PositiveIntegerField()
@@ -103,13 +103,7 @@ class Proveedor(models.Model):
 #RELACION UNO A MUCHOS CON pedidosProveedor
 
     def __str__(self):
-        return "%s (%d %s)" % (self.razonSocial, self.telefono, self.cuit)
-
-
-
-
-
-
+        return "%s (%d %s)" % (self.razon_social, self.telefono, self.cuit)
 
 
 
@@ -133,13 +127,13 @@ class Zona(models.Model):
 #********************************************************#
 class Ciudad(models.Model):
 
-    FILTROS = ['nombre__icontains','codigoPostal__icontains','zona']
+    FILTROS = ['nombre__icontains','codigo_postal__icontains','zona']
     nombre = models.CharField(max_length=100, unique=True)
-    codigoPostal = models.PositiveIntegerField()
+    codigo_postal = models.PositiveIntegerField()
     zona = models.ForeignKey(Zona)
 
     def __str__(self):
-        return "%s (%d %s)" % (self.nombre, self.codigoPostal, self.zona)
+        return "%s (%d %s)" % (self.nombre, self.codigo_postal, self.zona)
 
 
 
@@ -150,22 +144,21 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razonSocial__icontains','ciudad_icontains','esMoroso_icontains']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad_icontains','es_moroso_icontains']#'zona_icontains'
     TIPOCLIENTE = (
         (1, "Cliente Fijo"),
         (2, "Cliente Ocasional"),
     )
     cuit_cuil = models.PositiveIntegerField()
-    razonSocial = models.CharField(max_length=100, unique=True)
-    nombreDueno = models.CharField(max_length=100, unique=True)
+    razon_social = models.CharField(max_length=100, unique=True)
+    nombre_dueno = models.CharField(max_length=100, unique=True)
     tipo_cliente = models.PositiveSmallIntegerField(choices=TIPOCLIENTE)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
-    #zona = ....   ---> la saco de la ciudad
     direccion = models.CharField(max_length=100, unique=True)
     telefono= models.PositiveIntegerField()
     email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
-    esMoroso = models.BooleanField(default=False)
+    es_moroso = models.BooleanField(default=False)
 
 
     def __str__(self):
-        return "%s (%d %s)" % (self.cuit_cuil, self.razonSocial, self.get_tipo_cliente_display())
+        return "%s (%d %s)" % (self.cuit_cuil, self.razon_social, self.get_tipo_cliente_display())

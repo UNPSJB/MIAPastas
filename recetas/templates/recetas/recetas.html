@@ -36,8 +36,8 @@
             {% for receta in recetas %}
                 <tr>
               <td>{{receta.nombre}}</td>
-                    <td>{{receta.productoTerminado}}</td>
-                    <td>{{receta.cantProdTerminado}} {{receta.get_unidad_medida_display}}</td>
+                    <td>{{receta.producto_terminado}}</td>
+                    <td>{{receta.cant_prod_terminado}} {{receta.get_unidad_medida_display}}</td>
                 <td>{{receta.id}}</td>
                               <td>   <a type="button" href="{% url 'recetasID' receta.id %}" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
 
@@ -83,7 +83,8 @@
                     {% csrf_token %}
               <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
 
-                    {% bootstrap_form form %}
+                    {% bootstrap_form receta_form %}
+
 
             <div class="panel-heading"><p class="text-center login-title">
                 <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p></div>
@@ -106,14 +107,31 @@
 
 
 
-                {{ formDetalles.management_form }}
-                {% for form in formDetalles %}
+                {{ detalles_form_factory.management_form }}
+                {% for form in detalles_form_factory %}
                    <!-- {% for field in form %}
                         {% bootstrap_field field %}
                     {% endfor %}-->
                 {% endfor %}
                 <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
-                        <div id="detalles"></div>
+
+
+
+                 <table class="table table-hover" id="nueva" class="display">
+
+                <thead>
+                    <tr style='cursor:pointer' class='desmarcado'>
+                        <th>Insumo</th>
+                        <th>Cantidad</th>
+                     </tr>
+                </thead>
+                 <tbody>
+                  <table class="table table-hover" id="detalles" class="display"></table>
+
+                </tbody>
+
+            </table>
+
 
                 {% buttons %}
                     <button type="submit" class="btn btn-primary">
@@ -155,10 +173,10 @@
 {% block javascript %}
 <script>
 $(function() {
-  var detalle_tpl = $.tpl("<tr><td><%= cantidad %></td>" +
-                         "<td><%= texto %></td></tr>");
+  var detalle_tpl = $.tpl("<tr><td><%= texto %></td>" +
+                         "<td><%= cantidad %></td></tr>");
 
-  var detalle_cantInsumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidadInsumo"+" name="+"form-<%= i %>-cantidadInsumo"+" placeholder="+"CantidadInsumo"+" type="+"hidden"+" value=<%=cantidad %>>");
+  var detalle_cantInsumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidad_insumo"+" name="+"form-<%= i %>-cantidad_insumo"+" placeholder="+"Cantidad_insumo"+" type="+"hidden"+" value=<%=cantidad %>>");
   var detalle_insumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i%>-insumo"+" name="+"form-<%= i%>-insumo"+" placeholder="+"insumo"+" type="+"hidden"+" value=<%=insumo %>>");
 
   var detalles = [];

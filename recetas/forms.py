@@ -9,11 +9,11 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "descripcion", "fechaCreacion", "productoTerminado","cantProdTerminado","unidad_medida"]
+        fields = ["nombre", "descripcion", "fecha_creacion", "producto_terminado","cant_prod_terminado","unidad_medida"]
 
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
-        self.fields['fechaCreacion'].widget.attrs.update({'class' : 'datepicker'})
+        self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
 
 class RecetaDetalleForm(forms.ModelForm):
     class Meta:
@@ -23,7 +23,7 @@ class RecetaDetalleForm(forms.ModelForm):
 class ProveedorForm(forms.ModelForm):
     class Meta:
         model = models.Proveedor
-        fields = ["cuit", "razonSocial", "localidad","nombreDueno","direccion","email","numeroCuenta","provincia","telefono","insumos" ]
+        fields = ["cuit", "razon_social", "localidad","nombre_dueno","direccion","email","numero_cuenta","provincia","telefono","insumos" ]
 
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
@@ -33,8 +33,7 @@ class ProductoTerminadoForm(forms.ModelForm):
 class CiudadForm(forms.ModelForm):
     class Meta:
         model = models.Ciudad
-        fields = ["nombre","codigoPostal","zona"]
-
+        fields = ["nombre","codigo_postal","zona"]
 
 
 class ZonaForm(forms.ModelForm):
@@ -46,7 +45,7 @@ class ZonaForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
-        fields = ["cuit_cuil","razonSocial","nombreDueno","tipo_cliente","ciudad","direccion","telefono","email","esMoroso"]
+        fields = ["cuit_cuil","razon_social","nombre_dueno","tipo_cliente","ciudad","direccion","telefono","email","es_moroso"]
 
 
 

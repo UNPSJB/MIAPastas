@@ -15,11 +15,11 @@
           </div>
           <div class="form-group">
             <label for="razonSocial">Razón Social</label>
-            <input type="text" class="form-control" value="{{filtros.razonSocial}}" id="razonSocial" placeholder="Los Hermanos S.A." name="razonSocial">
+            <input type="text" class="form-control" value="{{filtros.razon_social}}" id="razon_social" placeholder="Razon Social" name="razon_social">
           </div>
           <div class="form-group">
             <label for="localidad">Localidad</label>
-            <input type="text" class="form-control" value="{{filtros.localidad}}" id="localidad" placeholder="Puerto Madrin" name="localidad">
+            <input type="text" class="form-control" value="{{filtros.localidad}}" id="localidad" placeholder="localidad" name="localidad">
           </div>
           <hr>
 
@@ -45,7 +45,7 @@
             {% for proveedor in proveedores %}
                 <tr>
               <td>{{proveedor.cuit}}</td>
-              <td>{{proveedor.razonSocial}}</td>
+              <td>{{proveedor.razon_social}}</td>
               <td>{{proveedor.localidad}}</td>
 
           </tr>
@@ -78,7 +78,7 @@
                   <div class="modal-body">
                    <form action="{% url 'proveedoresAlta' %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_form form layout='horizontal' %}
+                                {% bootstrap_form proveedores_form layout='horizontal' %}
                                 {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         {% bootstrap_icon "star" %} Aceptar

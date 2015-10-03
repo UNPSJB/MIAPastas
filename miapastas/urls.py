@@ -32,12 +32,10 @@ urlpatterns = [
 
     url(r'^recetasModificar$',recetasviews.recetasModificar,name='recetasModificar'),
 
-    url(r'^clientes$',views.clientes,name='clientes'),
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
     url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
-    url(r'^proveedoresAlta$',views.proveedoresAlta,name='proveedoresAlta'),
     url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
     url(r'^producciones$',views.producciones,name='producciones'),
     url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
@@ -78,7 +76,6 @@ urlpatterns = [
     #url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
     url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
-    url(r'^proveedoresAlta$',views.proveedoresAlta,name='proveedoresAlta'),
     url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
     url(r'^producciones$',views.producciones,name='producciones'),
     url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),

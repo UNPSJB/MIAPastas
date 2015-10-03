@@ -17,24 +17,30 @@ def get_filtros(get, modelo):
             mfilter[attr] = get[attr]
     return mfilter
 
+#********************************************************#
+               #     I N S U M O S    #
+#********************************************************#
 def insumos(request):
     filters = get_filtros(request.GET, models.Insumo)
     mfilters = dict(filter(lambda v: v[0] in models.Insumo.FILTROS, filters.items()))
     insumos = models.Insumo.objects.filter(**mfilters)
     if request.method == 'POST':
-        form = forms.InsumoForm(request.POST)
-        if form.is_valid():
-            form.save()
+        insumos_form = forms.InsumoForm(request.POST)
+        if insumos_form.is_valid():
+            insumos_form.save()
             return redirect('insumos')
     else:
-        form = forms.InsumoForm()
+        insumos_form = forms.InsumoForm()
     return render(request, "recetas/insumos.html",
                   {"insumos": insumos,
                    "filtros": filters,
-                   "form": form})
+                   "insumos_form": insumos_form})
 
 
 
+#********************************************************#
+               #     R E C E T A S    #
+#********************************************************#
 def recetas(request,receta_id=None):
 
     if receta_id is not None:
@@ -59,15 +65,14 @@ def recetas(request,receta_id=None):
                     d = detalle.save(commit=False)
                     d.receta = receta
                     d.save()
-                    print "agregue DETALLE","+"*20,d.cantidadInsumo
 
                 return redirect('recetas')
 
     insumos = models.Insumo.objects.all()
     return render(request, "recetas/recetas.html", {
         "recetas": recetas,
-        "form": receta_form or forms.RecetaForm(),
-        "formDetalles": detalles_form or detalles_form_class(),
+        "receta_form": receta_form or forms.RecetaForm(),
+        "detalles_form_factory": detalles_form or detalles_form_class(),
         "modal": request.method == "POST",
         "insumos":insumos})
 
@@ -84,35 +89,42 @@ def recetasModificar(request):
 
     # FIN BORRADOR
 
+#********************************************************#
+               #     P R O V E E D O R E S   #
+#********************************************************#
 def proveedores(request):
     filters = get_filtros(request.GET, models.Proveedor)
     mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
     proveedores = models.Proveedor.objects.filter(**mfilters)
     if request.method == "POST":
-        form = forms.ProveedorForm(request.POST)
-        if form.is_valid():
-            form.save()
+        proveedores_form = forms.ProveedorForm(request.POST)
+        if proveedores_form.is_valid():
+            proveedores_form.save()
             return redirect('proveedores')
     else:
-        form = forms.ProveedorForm()
+        proveedores_form = forms.ProveedorForm()
 
     #recetas = models.Receta.objects.all()
 
 
-    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"form": form,"filtros":filters})
+    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
 
+
+#********************************************************#
+               #     P R O D U C T O S   #
+#********************************************************#
 def productosTerminados(request):
     filters = get_filtros(request.GET, models.ProductoTerminado)
     mfilters = dict(filter(lambda v: v[0] in models.ProductoTerminado.FILTROS, filters.items()))
     productosTerminados = models.ProductoTerminado.objects.filter(**mfilters)
     if request.method == "POST":
-        form = forms.ProductoTerminadoForm(request.POST)
-        if form.is_valid():
-            form.save()
+        productos_form = forms.ProductoTerminadoForm(request.POST)
+        if productos_form.is_valid():
+            productos_form.save()
             return redirect('productosTerminados')
     else:
-        form = forms.ProductoTerminadoForm()
-    return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"form": form})
+        productos_form = forms.ProductoTerminadoForm()
+    return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"productos_form": productos_form})
 
 
 
@@ -121,16 +133,16 @@ def zonas(request):
     mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
     zonas = models.Zona.objects.filter(**mfilters)
     if request.method == 'POST':
-        form = forms.ZonaForm(request.POST)
-        if form.is_valid():
-            form.save()
+        zonas_form = forms.ZonaForm(request.POST)
+        if zonas_form.is_valid():
+            zonas_form.save()
             return redirect('zonas')
     else:
-        form = forms.ZonaForm()
+        zonas_form = forms.ZonaForm()
     return render(request, "recetas/zonas.html",
                   {"zonas": zonas,
                    "filtros": filters,
-                   "form": form})
+                   "zonas_form": zonas_form})
 
 
 
@@ -140,16 +152,16 @@ def ciudades(request):
     ciudades = models.Ciudad.objects.filter(**mfilters)
     zonas = models.Zona.objects.all() #zonas para poder filtrar
     if request.method == 'POST':
-        form = forms.CiudadForm(request.POST)
-        if form.is_valid():
-            form.save()
+        ciudades_form = forms.CiudadForm(request.POST)
+        if ciudades_form.is_valid():
+            ciudades_form.save()
             return redirect('ciudades')
     else:
-        form = forms.CiudadForm()
+        ciudades_form = forms.CiudadForm()
     return render(request, "recetas/ciudades.html",
                   {"ciudades": ciudades,
                    "filtros": filters,
-                   "form": form,
+                   "ciudades_form": ciudades_form,
                    "zonas":zonas})
 
 
@@ -159,13 +171,13 @@ def clientes(request):
     mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
     clientes = models.Cliente.objects.filter(**mfilters)
     if request.method == 'POST':
-        form = forms.ClienteForm(request.POST)
-        if form.is_valid():
-            form.save()
+        clientes_form = forms.ClienteForm(request.POST)
+        if clientes_form.is_valid():
+            clientes_form.save()
             return redirect('clientes')
     else:
-        form = forms.ClienteForm()
+        clientes_form = forms.ClienteForm()
     return render(request, "recetas/clientes.html",
                   {"clientes": clientes,
                    "filtros": filters,
-                   "form": form})
+                   "clientes_form": clientes_form})

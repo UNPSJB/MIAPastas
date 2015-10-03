@@ -20,7 +20,7 @@
                 </div>
                 <div class="form-group">
                     <label for="nombre">Codigo Postal</label>
-                    <input type="text" class="form-control" value="{{filtros.codigoPostal}}" name="codigoPostal" id="codigoPostal" >
+                    <input type="text" class="form-control" value="{{filtros.codigo_postal}}" name="codigo_postal" id="codigo_postal" >
                 </div>
 
 
@@ -57,7 +57,7 @@
                                 {% for ciudad in ciudades %}
                                 <tr>
                                     <td>{{ciudad.nombre}}</td>
-                                    <td>{{ciudad.codigoPostal}}</td>
+                                    <td>{{ciudad.codigo_postal}}</td>
                                     <td>{{ciudad.zona}}</td>
 
                                 </tr>
@@ -100,7 +100,7 @@
                   <div class="modal-body">
                    <form action="{% url 'ciudadesAlta' %}" method="post" class="form">
                                 {% csrf_token %}
-                                {% bootstrap_form form layout='horizontal' %}
+                                {% bootstrap_form ciudades_form layout='horizontal' %}
                                 {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         {% bootstrap_icon "star" %} Submit
