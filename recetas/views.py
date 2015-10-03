@@ -40,33 +40,36 @@ def recetas(request,receta_id=None):
     if receta_id is not None:
         r = models.Receta.objects.get(pk=receta_id)
         i = r.insumos.all()
-
         return render(request, "recetasConsulta.html",{"receta": r,"insumos":i})
-
-
     filters = get_filtros(request.GET, models.Receta)
     mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
     recetas = models.Receta.objects.filter(**mfilters)
-    formDetalles= formset_factory(forms.RecetaDetalleForm,extra=3)
+    detalles_form_class = formset_factory(forms.RecetaDetalleForm)
+    detalles_form = None
+    receta_form = None
     if request.method == "POST":
-        form = forms.RecetaForm(request.POST)
-        if form.is_valid():
-            form.save()
-            cant = int(request.POST.get('form-TOTAL_FORMS'))
-            for i in range(0,cant):
-                #falta validad que no vengan campos vacios.
-                string = 'form-'+str(i)+'-'
-                insumo = models.Insumo.objects.get(pk=int(request.POST.get(string+'insumo')))
-                item = models.RecetaDetalle.objects.create (cantidadInsumo = request.POST.get(string+'cantidadInsumo'),
-                                                            insumo = insumo,
-                                                            receta =  models.Receta.objects.get(nombre = request.POST.get('nombre')))
-                item.save()
-            return redirect('recetas')
-    else:
-        form = forms.RecetaForm()
+        receta_form = forms.RecetaForm(request.POST)
+        if receta_form.is_valid():
+            receta = receta_form.save()
+            detalles_form = detalles_form_class(request.POST, request.FILES)
+            if detalles_form.is_valid():
+                #detalles = detalles_form.save(commit=False)
+                #receta.save()
+                for detalle in detalles_form:
+                    d = detalle.save(commit=False)
+                    d.receta = receta
+                    d.save()
+                    print "agregue DETALLE","+"*20,d.cantidadInsumo
 
-    i = models.Insumo.objects.all()
-    return render(request, "recetas/recetas.html",{"recetas": recetas,"insumos":i,"form": form, "formDetalles":formDetalles})
+                return redirect('recetas')
+
+    insumos = models.Insumo.objects.all()
+    return render(request, "recetas/recetas.html", {
+        "recetas": recetas,
+        "form": receta_form or forms.RecetaForm(),
+        "formDetalles": detalles_form or detalles_form_class(),
+        "modal": request.method == "POST",
+        "insumos":insumos})
 
 
 
@@ -135,6 +138,7 @@ def ciudades(request):
     filters = get_filtros(request.GET, models.Ciudad)
     mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
     ciudades = models.Ciudad.objects.filter(**mfilters)
+    zonas = models.Zona.objects.all() #zonas para poder filtrar
     if request.method == 'POST':
         form = forms.CiudadForm(request.POST)
         if form.is_valid():
@@ -145,7 +149,8 @@ def ciudades(request):
     return render(request, "recetas/ciudades.html",
                   {"ciudades": ciudades,
                    "filtros": filters,
-                   "form": form})
+                   "form": form,
+                   "zonas":zonas})
 
 
 

@@ -43,7 +43,6 @@ urlpatterns = [
     url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
     url(r'^produccionesConsulta$',views.produccionesConsulta,name='produccionesConsulta'),
     url(r'^produccionesModificar$',views.produccionesModificar,name='produccionesModificar'),
-    url(r'^ciudades$',views.ciudades,name='ciudades'),
     url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
 

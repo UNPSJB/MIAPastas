@@ -23,7 +23,7 @@ class Insumo(models.Model):
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
 
     def __str__(self):
-        return "%s (%d %s)" % (self.nombre, self.stock, self.get_unidad_medida_display())
+        return "%s (%s)" % (self.nombre, self.get_unidad_medida_display())
 
 
 #********************************************************#
@@ -61,7 +61,7 @@ class Receta(models.Model):
         (5, "Bolsines"),
     )
     FILTROS = ['nombre__icontains']
-    fechaCreacion= models.DateField()
+    fechaCreacion = models.DateField()
     nombre = models.CharField(max_length=100, unique=True,help_text="El nombre de la receta")
     unidad_medida =  models.PositiveSmallIntegerField(choices=UNIDADES)
     descripcion = models.TextField()
@@ -74,17 +74,14 @@ class Receta(models.Model):
         return "%s (%d %s)" % (self.nombre, self.cantProdTerminado, self.get_unidad_medida_display())
 
 
-#<<<<<<< HEAD
 #********************************************************#
                #     P R O V E E D O R E S    #
 #********************************************************#
-#=======
 class RecetaDetalle(models.Model):
     cantidadInsumo = models.IntegerField()
     insumo = models.ForeignKey(Insumo)
-    receta = models.ForeignKey(Receta,blank=False)
+    receta = models.ForeignKey(Receta)
 
-#>>>>>>> origin/master
 
 #********************************************************#
             #     P R O V E E D O R E S    #
@@ -136,7 +133,7 @@ class Zona(models.Model):
 #********************************************************#
 class Ciudad(models.Model):
 
-    FILTROS = ['nombre__icontains','codigoPostal__icontains','zona_icontains']
+    FILTROS = ['nombre__icontains','codigoPostal__icontains','zona']
     nombre = models.CharField(max_length=100, unique=True)
     codigoPostal = models.PositiveIntegerField()
     zona = models.ForeignKey(Zona)

@@ -3,19 +3,6 @@
 {% load bootstrap3 %}
 
 {% block contenido %}
-
-
-  <script>
-  $(function() {
-    $( "#fecha" ).datepicker();
-  });
-  </script>
-<script type="text/javascript">
-	function prueba(renglon){
-		alert(renglon.id);
-	}
-
-</script>
 <!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
@@ -38,7 +25,6 @@
             <thead>
             <tr style='cursor:pointer' class='desmarcado'>
                 <th>Nombre</th>
-                <th>Descripcion</th>
                 <th>Producto Terminado</th>
                 <th>Cantidad</th>
                 <th>id</th>
@@ -48,10 +34,8 @@
             </thead>
               <tbody>
             {% for receta in recetas %}
-                a = {{receta.id}}
                 <tr>
               <td>{{receta.nombre}}</td>
-              <td>{{receta.descripcion}}</td>
                     <td>{{receta.productoTerminado}}</td>
                     <td>{{receta.cantProdTerminado}} {{receta.get_unidad_medida_display}}</td>
                 <td>{{receta.id}}</td>
@@ -84,55 +68,69 @@
 
 
 <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
+  <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Registrar Nueva Receta</h4>
-                  </div>
-                  <div class="modal-body">
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Registrar Nueva Receta</h4>
+      </div>
+      <div class="modal-body">
 
 
-                    <form action="{% url 'recetasAlta' %}" method="post" class="form">
-                                {% csrf_token %}
-                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
+        <form action="{% url 'recetasAlta' %}" method="post" class="form">
+                    {% csrf_token %}
+              <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
 
-                                {% bootstrap_form form layout='in-line' %}
+                    {% bootstrap_form form %}
 
-                        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Detalle Receta</b></font></p></div>
+            <div class="panel-heading"><p class="text-center login-title">
+                <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p></div>
 
-                                {% bootstrap_formset formDetalles layout='in-line' %}
-                                {% buttons %}
-                                    <button type="submit" class="btn btn-primary">
-                                        {% bootstrap_icon "star" %} Submit
-                                    </button>
-                                {% endbuttons %}
-                     </form>
+            <div id="detalles_forms"></div>
 
 
 
+            <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                <option value="" selected="selected">---------</option>
+                    {% for i in insumos %}
+                      <option value="{{i.id}}">{{i}}</option>
+                    {% endfor %}
+            </select>
 
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-
-              </div>
+            <div class="form-group">
+                 <label for="cantidadInsumo">Cantidad</label>
+                 <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad">
             </div>
 
 
 
+                {{ formDetalles.management_form }}
+                {% for form in formDetalles %}
+                   <!-- {% for field in form %}
+                        {% bootstrap_field field %}
+                    {% endfor %}-->
+                {% endfor %}
+                <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
+                        <div id="detalles"></div>
 
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
 
+         </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
 
-
-
+  </div>
+</div>
 <!--  tabla para mostrar TODOS los insumos de TODAS Las recetas que existan-->
-
-
  <div class="col-md-10">
      <table class="table table-hover">
             <thead>
@@ -154,4 +152,42 @@
 </div>
 {% endblock %}
 
+{% block javascript %}
+<script>
+$(function() {
+  var detalle_tpl = $.tpl("<tr><td><%= cantidad %></td>" +
+                         "<td><%= texto %></td></tr>");
+
+  var detalle_cantInsumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidadInsumo"+" name="+"form-<%= i %>-cantidadInsumo"+" placeholder="+"CantidadInsumo"+" type="+"hidden"+" value=<%=cantidad %>>");
+  var detalle_insumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i%>-insumo"+" name="+"form-<%= i%>-insumo"+" placeholder="+"insumo"+" type="+"hidden"+" value=<%=insumo %>>");
+
+  var detalles = [];
+  {% if modal %}
+    $("#myModal").modal("show");
+  {% endif %}
+  $("#add-detalle-receta").click(function(){
+    var cantidad = $("#cantidadInsumo").val();
+    var insumo = $("#id_insumo").val();
+    var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+    console.log(texto)
+    detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
+    var html = "";
+    var html_form = "";
+    console.log(detalles)
+    $(detalles).each(function(i, d) {
+        console.log(i);
+        console.log(d);
+        html = html + detalle_tpl(d);
+        d.i=String(i);
+        html_form = html_form +  detalle_cantInsumo_imput_tpl(d);
+        html_form = html_form +  detalle_insumo_imput_tpl(d);
+        document.getElementById("id_form-TOTAL_FORMS").value = i+1;
+
+    });
+    $('#detalles').html(html);
+    $('#detalles_forms').html(html_form);
+  });
+});
+</script>
+{% endblock %}
 

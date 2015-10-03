@@ -22,9 +22,18 @@
                     <label for="nombre">Codigo Postal</label>
                     <input type="text" class="form-control" value="{{filtros.codigoPostal}}" name="codigoPostal" id="codigoPostal" >
                 </div>
+
+
+
                 <div class="form-group">
-                    <label for="nombre">Zona</label>
-                    <input type="text" class="form-control" value="{{filtros.zona}}" name="zona" id="zona" >
+                    <label for="zona">Zona</label>
+
+                     <select class="form-control" id="zona" name="zona" title="">
+                    <option value="" selected="selected">---------</option>
+                        {% for z in zonas %}
+                          <option value="{{z.id}}">{{z}}</option>
+                        {% endfor %}
+                      </select>
                 </div>
 
                 <button type="submit" class="btn btn-default">Filtrar</button>

@@ -6,21 +6,11 @@
         <title>Mia Pastas SRL</title>
          <!-- {% block stylesheet %}{% endblock %} -->
 		<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
-        <link rel="stylesheet" href="{% static "css/estilos_propios.css" %}">
-
         <link rel="stylesheet" href="{% static "font-awesome-4.4.0/css/font-awesome.min.css" %}"> <!-- para poner iconos varios -->
         <link rel="stylesheet" href="{% static "css/bootstrap-social.css" %}"> <!-- para poner iconos varios -->
-
+        <link rel="stylesheet" href="{% static "css/jquery-ui.css" %}"> <!-- para poner iconos varios -->
+        <link rel="stylesheet" href="{% static "css/estilos_propios.css" %}">
         <link rel="stylesheet" href="{% static "css/styles.css" %}">
-        <script src="{% static "js/jquery.js" %}"></script>
-        <script src="{% static "js/bootstrap.min.js" %}"></script>
-
-
-        <link rel="stylesheet" href="//code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css">
-        <script src="//code.jquery.com/jquery-1.10.2.js"></script>
-        <script src="//code.jquery.com/ui/1.11.4/jquery-ui.js"></script>
-        <link rel="stylesheet" href="/resources/demos/style.css">
-        <!--bloque anterior para las fechas-->
     </head>
 
 
@@ -220,8 +210,6 @@
 
 {% block contenido %}{% endblock %}
 
-
-
 <div class="container marketing">
     <!-- FOOTER -->
       <footer class="col-md-12">
@@ -248,10 +236,16 @@
 
 
 
-</div><!-- /.container -->
-
-
+        </div><!-- /.container -->
+        <script src="{% static "js/jquery.js" %}"></script>
+        <script src="{% static "js/jquery-ui.js" %}"></script>
+        <script src="{% static "js/jquery.tpl.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
+        {% block javascript %}{% endblock %}
+        <script>
+          $(function() {
+            $(".datepicker").datepicker();
+          });
+        </script>
 	</body>
-
-
 </html>
