@@ -151,9 +151,8 @@ def zonas(request):
                #     C I U D A D E S   #
 #********************************************************#
 def ciudades(request):
-    filters = get_filtros(request.GET, models.Ciudad)
-    mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
-    ciudades = models.Ciudad.objects.filter(**mfilters)
+    filters = None
+    ciudades = None
     zonas = models.Zona.objects.all() #zonas para poder filtrar
     if request.method == 'POST':
         ciudades_form = forms.CiudadForm(request.POST)
@@ -161,17 +160,31 @@ def ciudades(request):
             ciudades_form.save()
             return redirect('ciudades')
     else:
+        filters = get_filtros(request.GET, models.Ciudad)
         ciudades_form = forms.CiudadForm()
+        mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
+        ciudades = models.Ciudad.objects.filter(**mfilters)
     return render(request, "recetas/ciudades.html",
                   {"ciudades": ciudades,
                    "filtros": filters,
                    "ciudades_form": ciudades_form,
                    "zonas":zonas})
 
+
+
 def ciudadesAlta(request):
-    ciudades_form = forms.CiudadForm()
-    print("puyo")
-    return render(request,"ciudadesAlta.html",{"ciudades_form": ciudades_form})
+
+    zonas_para_combo = models.Zona.objects.all()
+
+    print("hola mundo")
+
+    ciudades_form = None
+    if request.method == "POST":
+        ciudades_form = forms.CiudadForm(request.POST)
+        if ciudades_form.is_valid():
+            ciudades_form.save()
+            return redirect('ciudadesAlta')
+    return render(request,"ciudadesAlta.html",{"ciudades_form": ciudades_form or forms.CiudadForm(),"zonas_para_combo": zonas_para_combo})
 #********************************************************#
                #     C L I E N T E S   #
 #********************************************************#
