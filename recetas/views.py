@@ -172,8 +172,6 @@ def zonas(request,zona_id=None):
                   {"zonas": zonas,
                    "filtros": filters})
 
-def zonasAlta(request):
-    if request.method == "POST":
 #********************************************************#
                #     Z O N A S   #
 #********************************************************#
