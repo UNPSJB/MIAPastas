@@ -22,21 +22,52 @@ def get_filtros(get, modelo):
 #********************************************************#
                #     I N S U M O S    #
 #********************************************************#
-def insumos(request):
-    filters = get_filtros(request.GET, models.Insumo)
-    mfilters = dict(filter(lambda v: v[0] in models.Insumo.FILTROS, filters.items()))
-    insumos = models.Insumo.objects.filter(**mfilters)
-    if request.method == 'POST':
-        insumos_form = forms.InsumoForm(request.POST)
-        if insumos_form.is_valid():
-            insumos_form.save()
+
+
+
+
+def insumos(request,insumo_id=None):
+    if insumo_id is not None:
+        # consulta
+        insumo_instancia = models.Insumo.objects.get(pk=insumo_id)
+        insumo_form = forms.InsumoForm(instance= insumo_instancia)
+        return render(request, "insumosConsulta.html",{"insumo_form": insumo_form})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.Insumo)
+        mfilters = dict(filter(lambda v: v[0] in models.Insumo.FILTROS, filters.items()))
+        insumos = models.Insumo.objects.filter(**mfilters)
+        return render(request, "recetas/insumos.html",
+                  {"insumos": insumos,
+                   "filtros": filters})
+#chupala facurfvbggrf
+
+def insumosAlta(request):
+    if request.method == "POST":
+        insumo_form = forms.InsumoForm(request.POST)
+        if insumo_form.is_valid():
+            insumo_form.save()
             return redirect('insumos')
     else:
-        insumos_form = forms.InsumoForm()
-    return render(request, "recetas/insumos.html",
-                  {"insumos": insumos,
-                   "filtros": filters,
-                   "insumos_form": insumos_form})
+        insumo_form = forms.InsumoForm()
+    return render(request, "insumosAlta.html", {"insumo_form":insumo_form})
+
+
+def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
+    insumo_instancia = get_object_or_404(models.Insumo, pk=insumo_id)
+    if request.method=="POST":
+        insumo_form = forms.InsumoForm(request.POST,instance= insumo_instancia)
+        if insumo_form.is_valid():
+            insumo_form.save()
+        return redirect('insumos')
+    else:
+        insumo_form = forms.InsumoForm(instance= insumo_instancia)
+        return render(request,"insumosModificar.html",{"insumo_form":insumo_form,"id":insumo_id})
+
+
+
+
+
 
 
 
@@ -91,10 +122,15 @@ def recetasModificar(request):
 
     # FIN BORRADOR
 
+
 #********************************************************#
                #     P R O V E E D O R E S   #
 #********************************************************#
-def proveedores(request):
+def proveedores(request,proveedor_id=None):
+    if proveedor_id is not None:
+        p = models.Proveedor.objects.get(pk=proveedor_id)
+        i = p.insumos.all()
+        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
     filters = get_filtros(request.GET, models.Proveedor)
     mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
     proveedores = models.Proveedor.objects.filter(**mfilters)
@@ -110,6 +146,26 @@ def proveedores(request):
 
 
     return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+
+
+def proveedoresAlta(request):
+    if request.method == "POST":
+        proveedores_form = forms.ProveedorForm(request.POST)
+        if proveedores_form.is_valid():
+            proveedores_form.save()
+            return redirect('proveedores')
+    else:
+        proveedores_form = forms.ProveedorForm()
+        #recetas = models.Receta.objects.all()
+        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
+
+
+def proveedoresBaja(request):
+    print "holaaaa "
+    id_proveedor = request.POST["proveedor_id"]
+    p = models.Receta.objects.get(pk=id_proveedor)
+
+
 
 
 #********************************************************#
@@ -149,21 +205,13 @@ def zonas(request,zona_id=None):
 
 def zonasAlta(request):
     if request.method == "POST":
-#********************************************************#
-               #     Z O N A S   #
-#********************************************************#
-def zonas(request):
-    filters = get_filtros(request.GET, models.Zona)
-    mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
-    zonas = models.Zona.objects.filter(**mfilters)
-    if request.method == 'POST':
-        zonas_form = forms.ZonaForm(request.POST)
-        if zonas_form.is_valid():
-            zonas_form.save()
+        zona_form = forms.ZonaForm(request.POST)
+        if zona_form.is_valid():
+            zona_form.save()
             return redirect('zonas')
     else:
-        zonas_form = forms.ZonaForm()
-        return render(request, "zonasAlta.html", {"zonas_form":zonas_form})
+        zona_form = forms.ZonaForm()
+    return render(request, "zonasAlta.html", {"zona_form":zona_form})
 
 
 def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
@@ -226,10 +274,6 @@ def clientesAlta(request):
     return render(request, "clientesAlta.html", {"cliente_form":cliente_form})
 
 
-
-#********************************************************#
-              #     C I U D A D E S     #
-#********************************************************#
 
 #********************************************************#
                #     C I U D A D E S   #
