@@ -27,7 +27,6 @@
                 <th>Nombre</th>
                 <th>Producto Terminado</th>
                 <th>Cantidad</th>
-                <th>id</th>
 
 
             </tr>
@@ -38,7 +37,6 @@
               <td>{{receta.nombre}}</td>
                     <td>{{receta.producto_terminado}}</td>
                     <td>{{receta.cant_prod_terminado}} {{receta.get_unidad_medida_display}}</td>
-                <td>{{receta.id}}</td>
                               <td>   <a type="button" href="{% url 'recetasID' receta.id %}" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
 
 

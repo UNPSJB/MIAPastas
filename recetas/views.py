@@ -2,6 +2,8 @@ from django.shortcuts import render, redirect
 from . import models
 from . import forms
 from django.forms.formsets import formset_factory
+from django.shortcuts import get_object_or_404
+
 # Create your views here.
 
 def get_order(get):
@@ -126,25 +128,100 @@ def productosTerminados(request):
         productos_form = forms.ProductoTerminadoForm()
     return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"productos_form": productos_form})
 
+#********************************************************#
+              #     Z O N A S    #
+#********************************************************#
 
+def zonas(request,zona_id=None):
+    if zona_id is not None:
+        # consulta
+        zona = models.Zona.objects.get(pk=zona_id)
+        ciudades = zona.ciudades.all()
+        return render(request, "zonasConsulta.html",{"zona": zona,"ciudades":ciudades})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.Zona)
+        mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
+        zonas = models.Zona.objects.filter(**mfilters)
+        return render(request, "recetas/zonas.html",
+                  {"zonas": zonas,
+                   "filtros": filters})
 
-def zonas(request):
-    filters = get_filtros(request.GET, models.Zona)
-    mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
-    zonas = models.Zona.objects.filter(**mfilters)
-    if request.method == 'POST':
+def zonasAlta(request):
+    if request.method == "POST":
         zonas_form = forms.ZonaForm(request.POST)
         if zonas_form.is_valid():
             zonas_form.save()
             return redirect('zonas')
     else:
         zonas_form = forms.ZonaForm()
-    return render(request, "recetas/zonas.html",
-                  {"zonas": zonas,
+        return render(request, "zonasAlta.html", {"zonas_form":zonas_form})
+
+
+def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
+    zona_instancia = get_object_or_404(models.Zona, pk=zona_id)
+    if request.method=="POST":
+        zona_form = forms.ZonaForm(request.POST,instance= zona_instancia)
+        if zona_form.is_valid():
+            zona_form.save()
+        return redirect('zonas')
+    else:
+        zona_form = forms.ZonaForm(instance= zona_instancia)
+        return render(request,"zonasModificar.html",{"zona_form":zona_form,"id":zona_id})
+
+
+#********************************************************#
+              #     C L I E N T E S    #
+#********************************************************#
+
+def clientes(request,cliente_id=None):
+    if cliente_id is not None:
+        # consulta
+        cliente_instancia = models.Cliente.objects.get(pk=cliente_id)
+        cliente_form = forms.ClienteForm(instance= cliente_instancia)
+
+        return render(request, "clientesConsulta.html",{"cliente_form": cliente_form})
+    elif request.method == "GET":
+        #filtros
+        filters = get_filtros(request.GET, models.Cliente)
+        mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
+        clientes = models.Cliente.objects.filter(**mfilters)
+        clientes_form = forms.ClienteForm()
+        ciudades= models.Ciudad.objects.all()
+        return render(request, "recetas/clientes.html",
+                  {"clientes": clientes,
                    "filtros": filters,
-                   "zonas_form": zonas_form})
+                   "ciudades":ciudades})
 
 
+
+
+def clientesModificar(request,cliente_id = None):
+    cliente_instancia = get_object_or_404(models.Cliente, pk=cliente_id)
+    if request.method=="POST":
+        cliente_form = forms.ClienteForm(request.POST,instance= cliente_instancia)
+        if cliente_form.is_valid():
+            cliente_form.save()
+        return redirect('clientes')
+    else:
+        cliente_form = forms.ClienteForm(instance= cliente_instancia)
+        return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+
+def clientesAlta(request):
+    if request.method == "POST":
+        cliente_form = forms.ClienteForm(request.POST)
+        if cliente_form.is_valid():
+            cliente_form.save()
+            return redirect('clientes')
+    else:
+        cliente_form = forms.ClienteForm()
+    return render(request, "clientesAlta.html", {"cliente_form":cliente_form})
+
+
+
+#********************************************************#
+              #     C I U D A D E S     #
+#********************************************************#
 
 def ciudades(request):
     filters = get_filtros(request.GET, models.Ciudad)
@@ -165,19 +242,3 @@ def ciudades(request):
                    "zonas":zonas})
 
 
-
-def clientes(request):
-    filters = get_filtros(request.GET, models.Cliente)
-    mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
-    clientes = models.Cliente.objects.filter(**mfilters)
-    if request.method == 'POST':
-        clientes_form = forms.ClienteForm(request.POST)
-        if clientes_form.is_valid():
-            clientes_form.save()
-            return redirect('clientes')
-    else:
-        clientes_form = forms.ClienteForm()
-    return render(request, "recetas/clientes.html",
-                  {"clientes": clientes,
-                   "filtros": filters,
-                   "clientes_form": clientes_form})

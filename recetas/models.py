@@ -61,7 +61,8 @@ class Receta(models.Model):
         (5, "Bolsines"),
     )
     FILTROS = ['nombre__icontains']
-    fecha_creacion = models.DateField()
+    fecha_creacion = models.DateField(auto_now_add = True)
+
     nombre = models.CharField(max_length=100, unique=True,help_text="El nombre de la receta")
     unidad_medida =  models.PositiveSmallIntegerField(choices=UNIDADES)
     descripcion = models.TextField()
@@ -130,7 +131,7 @@ class Ciudad(models.Model):
     FILTROS = ['nombre__icontains','codigo_postal__icontains','zona']
     nombre = models.CharField(max_length=100, unique=True)
     codigo_postal = models.PositiveIntegerField()
-    zona = models.ForeignKey(Zona)
+    zona = models.ForeignKey(Zona,related_name="ciudades")
 
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.codigo_postal, self.zona)
