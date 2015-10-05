@@ -11,7 +11,7 @@
             <div class="panel-body">
                 <form action="{% url 'zonasAlta' %}" method="post" class="form">
                     {% csrf_token %}
-                    {% bootstrap_form zonas_form layout='horizontal' %}
+                    {% bootstrap_form zona_form layout='horizontal' %}
                     <p>&nbsp;</p>
                     {% buttons %}
                         <button type="submit" class="btn btn-primary">
