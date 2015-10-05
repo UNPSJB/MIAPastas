@@ -36,9 +36,12 @@
            <h2>Zona</h2>
            <div class="row col-md-4">
               <select class="form-control">
-                  <option>Zona1</option>
-                  <option>Zona2</option>
+                  {% for zona in zonas_para_combo %}
 
+
+                  <option>{{zona.nombre}}</option>
+
+                  {% endfor %}
                 </select>
 
                </div>
@@ -56,6 +59,22 @@
     </div>
 </div>
 </form>
+
+
+
+     <form action="{% url 'ciudadesAlta' %}" method="post" class="form">
+                    {% csrf_token %}
+              <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
+
+                    {% bootstrap_form ciudades_form %}
+
+                    {% buttons %}
+                    <button type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+
+         </form>
 
     <!-- Este es el fin del formulario de recetas -->
 
