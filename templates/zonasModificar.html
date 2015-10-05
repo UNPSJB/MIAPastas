@@ -1,90 +1,23 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block contenido %}
-<!-- Este es el formulario de INSUMOS PAPA -->
+{% load bootstrap3 %}
 
-<form action="">
 <div class="container">
 
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Zona</b></font></p></div>
-
-        <div class="panel-body">
-              <!-- formulario -->
-            <!--<form class="form-inline"> -->
-            <form class=" form-horizontal col-md-12">
-
-
-                <div class="form-group col-md-6">
-
-                        <label for="exampleInputName2">Codigo</label>
-                        <input type="text" class="form-control" id="inputEmail4" readonly>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="exampleInputName2">Nombre</label>
-                    <input type="text" class="form-control" id="inputEmail4" required autofocus>
-                </div>
-
-
-
-            </form>
-            <p>&nbsp;</p>
-            <div class="col-md-10">
-
-           <h2>Ciudades</h2>
-           <div class="row col-md-4">
-              <select class="form-control">
-                  <option>Ciudad1</option>
-                  <option>Ciudad2</option>
-                  <option>Ciudad3</option>
-                  <option>Ciudad4</option>
-                  <option>Ciudad5</option>
-                </select>
-
-               </div>
-
-           <div class="col-md-2 pull-left"></div>
-           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
-
-            </div>
-            <p>&nbsp;</p>
-
-
-            <div class="row">
-
-                <div class="col-md-10">
+           <p>&nbsp;</p>
+                <form action="{% url 'zonaModificar' id %}" method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form zona_form layout='horizontal' %}
                     <p>&nbsp;</p>
-
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>Nombre</th>
-                                <th>Codigo Postal</th>
-
-                            </tr>
-                        </thead>
-                    </table>
-                </div>
-                <div class="col-md-2">
-                    <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-                        <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-                    </div>
-                </div>
-            </div>
-            <hr/>
-
-            <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-            <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
-        </div>
-
+                        {% buttons %}
+                            <button type="submit" class="btn btn-primary">
+                                {% bootstrap_icon "star" %} Agregar
+                            </button>
+                        {% endbuttons %}
+                 </form>
     </div>
 </div>
-</form>
-
-    <!-- Este es el fin del formulario de recetas -->
-
-
-
-
-
 {% endblock %}

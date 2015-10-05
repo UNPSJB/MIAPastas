@@ -3,59 +3,49 @@
 {% load bootstrap3 %}
 {% block contenido %}
 
-
-
-
 <div class="container">
-
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>CLIENTES</b></font></p></div>
-
-        <div class="panel-body">
-              <!-- formulario -->
-            <!--<form class="form-inline"> -->
-            <form method="get" class="form-inline col-md-12">
-
-                <div class="form-group">
-                    <label for="nombre">Cuit/Cuil</label>
-                    <input type="text" class="form-control" value="{{filtros.cuit_cuil}}" name="cuit_cuil" id="cuit_cuil" >
-                </div>
-                <div class="form-group">
-                    <label for="nombre">Razon Social</label>
-                    <input type="text" class="form-control" value="{{filtros.razon_social}}" name="razon_social" id="razon_social" >
-                </div>
-                <div class="form-group">
-                    <label for="nombre">Ciudad</label>
-                    <input type="text" class="form-control" value="{{filtros.ciudad}}" name="ciudad" id="ciudad" >
-                </div>
-                <div class="form-group">
-              <label>
-
-              </label>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Clientes</b></font></p></div>
+            <div class="panel-body">
+                 <form method="get" class="form-inline col-md-12">
+                    <div class="form-group">
+                        <label for="cuit_cuil">Cuit/Cuil</label>
+                        <input type="text" class="form-control" value="{{filtros.cuit_cuil}}" name="cuit_cuil" id="cuit_cuil" >
+                    </div>
+                    <div class="form-group">
+                        <label for="razon_social">Razon Social</label>
+                        <input type="text" class="form-control" value="{{filtros.razon_social}}" name="razon_social" id="razon_social" >
+                    </div>
+                    <div class="form-group">
+                        <label for="ciudad">Ciudad</label>
+                        <select class="form-control" id="ciudad" name="ciudad" title="">
+                            <option value="" selected="selected">---------</option>
+                            {% for c in ciudades %}
+                                <option value="{{c.id}}">{{c}}</option>
+                            {% endfor %}
+                      </select>
+                    </div>
                     <div class="checkbox">
                          <label>
                           <input type="checkbox" class="form-control" value="{{filtros.es_moroso}}" name="es_moroso" id="es_moroso"> Morosos
                         </label>
                     </div>
-                  </div>
-              <label>
+                    <button type="submit" class="btn btn-default">Filtrar</button>
+                                         <p>&nbsp;</p>
 
-              </label>
-                <button type="submit" class="btn btn-default">Filtrar</button>
-            </form>
+                  </form>
 
             <div class="row">
-
                 <div class="col-md-10">
                     <p>&nbsp;</p>
-
                           <table class="table table-hover">
                             <thead>
                             <tr>
                                 <th>Cuit/Cuil</th>
                                 <th>Razón Social</th>
                                 <th>Tipo de Cliente</th>
-
+                                <th>Ciudad</td>
+                                <th>Moroso</td>
                             </tr>
                             </thead>
                               <tbody>
@@ -64,6 +54,11 @@
                                     <td>{{cliente.cuit_cuil}}</td>
                                     <td>{{cliente.razon_social}}</td>
                                     <td>{{cliente.get_tipo_cliente_display}}</td>
+                                    <td>{{cliente.ciudad}}</td>
+                                    <td>{{cliente.es_moroso}}</td>
+                                    <td>  <a type="button" href="{% url 'clienteConsulta' cliente.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
+                                    <td>  <a type="button" href ="{% url 'clienteModificar' cliente.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
+                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
 
                                 </tr>
                                 {% endfor %}
@@ -78,8 +73,8 @@
               <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
           <p></p>
+          <a class="btn" href = "{% url 'clientesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
 
-          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
             </div>
             <hr/>
 
@@ -88,44 +83,6 @@
     </div>
 
 </div>
-
-    <!-- Este es el fin del formulario de recetas -->
-
-
- <!-- Modal -->
-<div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Registrar Nuevo Cliente</h4>
-                  </div>
-                  <div class="modal-body">
-                   <form action="{% url 'clientesAlta' %}" method="post" class="form">
-                                {% csrf_token %}
-                                {% bootstrap_form clientes_form layout='horizontal' %}
-                                {% buttons %}
-                                    <button type="submit" class="btn btn-primary">
-                                        {% bootstrap_icon "star" %} Submit
-                                    </button>
-                                {% endbuttons %}
-                    </form>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-
-
-
-
 
 
 

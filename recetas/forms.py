@@ -9,11 +9,11 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "descripcion", "fecha_creacion", "producto_terminado","cant_prod_terminado","unidad_medida"]
+        fields = ["nombre", "descripcion", "producto_terminado","cant_prod_terminado","unidad_medida"]
 
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
-        self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
 
 class RecetaDetalleForm(forms.ModelForm):
     class Meta:

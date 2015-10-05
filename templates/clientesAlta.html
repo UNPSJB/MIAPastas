@@ -1,78 +1,28 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load bootstrap3 %}
 
 
 {% block contenido %}
 
 
-<form action="">
 <div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta de Cliente</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form role="form">
-                  <div class="form-group">
-                    <label for="ejemplo_email_1">Cuit/Cuil</label>
-                    <input type="text" class="form-control" id="ejemplo_email_1" required autofocus>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Razón Social</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-                 <div class="form-group">
-                    <label for="ejemplo_password_1">Nombre del Dueño</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1">
-                  </div>
-                   <div class="form-group">
-                        <label for="inputEmail3">Tipo de Cliente</label>
-
-                          <select class="form-control">
-                              <option>Cliente Fijo</option>
-                              <option>Cliente Ocasional</option>
-                          </select>
-
-                   </div>
-                  <div class="form-group">
-                        <label for="inputEmail3">Ciudad</label>
-
-                          <select class="form-control">
-                              <option>Ciudad 1</option>
-                              <option>Ciudad 2</option>
-                              <option>Ciudad 3</option>
-                          </select>
-
-                   </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Zona</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Dirección</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Teléfono</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1">
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Email</label>
-                    <input type="email" class="form-control" id="ejemplo_password_1">
-                  </div>
-
-
-        </form>
-        <a href="clientes" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></a>
-        <a href="clientes" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-
-  </div>
-
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Cliente</b></font></p></div>
+            <div class="panel-body">
+                <form action="{% url 'clientesAlta' %}" method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form cliente_form layout='horizontal' %}
+                    <p>&nbsp;</p>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">
+                            {% bootstrap_icon "star" %} Aceptar
+                        </button>
+                    {% endbuttons %}
+                </form>
+            </div>
+    </div>
 </div>
-</div>
-</form>
-
-    <!-- Este es el fin del formulario de recetas -->
-    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
 
 
 
