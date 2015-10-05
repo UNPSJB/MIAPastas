@@ -149,6 +149,14 @@ def zonas(request,zona_id=None):
 
 def zonasAlta(request):
     if request.method == "POST":
+#********************************************************#
+               #     Z O N A S   #
+#********************************************************#
+def zonas(request):
+    filters = get_filtros(request.GET, models.Zona)
+    mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
+    zonas = models.Zona.objects.filter(**mfilters)
+    if request.method == 'POST':
         zonas_form = forms.ZonaForm(request.POST)
         if zonas_form.is_valid():
             zonas_form.save()
@@ -223,6 +231,9 @@ def clientesAlta(request):
               #     C I U D A D E S     #
 #********************************************************#
 
+#********************************************************#
+               #     C I U D A D E S   #
+#********************************************************#
 def ciudades(request):
     filters = get_filtros(request.GET, models.Ciudad)
     mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
@@ -242,3 +253,7 @@ def ciudades(request):
                    "zonas":zonas})
 
 
+def ciudadesAlta(request):
+    ciudades_form = forms.CiudadForm()
+    print("puyo")
+    return render(request,"ciudadesAlta.html",{"ciudades_form": ciudades_form})
