@@ -44,6 +44,9 @@
 
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
+                                       <td>  <a type="button" href="{% url 'insumoConsulta' insumo.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
+                                    <td>  <a type="button" href ="{% url 'insumoModificar' insumo.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
+                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
@@ -58,7 +61,7 @@
           </div>
           <p></p>
 
-          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+                     <a class="btn" href = "{% url 'insumosAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
             </div>
             <hr/>
 
@@ -68,37 +71,6 @@
 
 </div>
 
-    <!-- Este es el fin del formulario de recetas -->
 
-
- <!-- Modal -->
-            <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Registrar Nuevo Insumo</h4>
-                  </div>
-                  <div class="modal-body">
-                   <form action="{% url 'insumosAlta' %}" method="post" class="form">
-                                {% csrf_token %}
-                                {% bootstrap_form insumos_form layout='horizontal' %}
-                                {% buttons %}
-                                    <button type="submit" class="btn btn-primary">
-                                        {% bootstrap_icon "star" %} Submit
-                                    </button>
-                                {% endbuttons %}
-                    </form>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
 
 {% endblock %}
