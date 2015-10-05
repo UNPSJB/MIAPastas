@@ -24,6 +24,7 @@
           <hr>
 
 
+
           <label>
 
           </label>
@@ -47,6 +48,10 @@
               <td>{{proveedor.cuit}}</td>
               <td>{{proveedor.razon_social}}</td>
               <td>{{proveedor.localidad}}</td>
+              <!--<td> <a type="button" href="{% url 'proveedoresID' proveedor.id %}" class="btn btn-ok "><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
+-->
+
+              <td> <a type="button" onclick="obtenerId({{proveedor.id}});" class="btn btn-ok "><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
 
           </tr>
             {% endfor %}
@@ -57,48 +62,45 @@
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
               <a  href ="proveedoresConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
               <a href ="proveedoresModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+              <a  type="button" onclick="eliminar();" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
           </div>
           <p></p>
-          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+          <a class="btn" href="proveedoresAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
 </div>
           </div>
       <hr/>
 
   </div>
-      <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
 
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Registrar Nuevo Proveedor</h4>
-                  </div>
-                  <div class="modal-body">
-                   <form action="{% url 'proveedoresAlta' %}" method="post" class="form">
-                                {% csrf_token %}
-                                {% bootstrap_form proveedores_form layout='horizontal' %}
-                                {% buttons %}
-                                    <button type="submit" class="btn btn-primary">
-                                        {% bootstrap_icon "star" %} Aceptar
-                                    </button>
-                                {% endbuttons %}
-                    </form>
-
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
 
 </div>
+   <!-- Este es el fin del formulario de recetas -->
+<script>
+    var id;
+    function obtenerId(a){
+        id=a;       //usar esta variable para las funciones de eliminar, consulta o modificacion
+
+    }
+    function eliminar(){
+        alert("eliminar "+id);
+        $.ajax({alert("sdfsdfdsf")
+                    url:"proveedoresBaja",
+                    type: "POST",
+                    data: ({"proveedor_id":id}),
+                    dataType: "json",
+                    async: false,
+                    success: function(json){
+                        alert(json.mensaje)
+                    },
+                    error:function (xhr, ajaxOptions, thrownError){
+                        alert(thrownError);
+                    },
+                });
+
+                }
+</script>
 </div>
 
-    <!-- Este es el fin del formulario de recetas -->
 
 
 

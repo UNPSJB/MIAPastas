@@ -5,7 +5,6 @@
 {% block contenido %}
 
 
-
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Proveedor</b></font></p></div>
@@ -14,40 +13,40 @@
       <form role="form">
                   <div class="form-group">
                     <label for="ejemplo_email_1">Cuit</label>
-                    <input type="text" class="form-control" id="ejemplo_email_1" readonly>
+                    <input value="{{proveedor.cuit}}" type="text" class="form-control" id="ejemplo_email_1" readonly>
                   </div>
                   <div class="form-group">
                     <label for="ejemplo_password_1">Razón Social</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.razon_social}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
                  <div class="form-group">
                     <label for="ejemplo_password_1">Nombre del Dueño</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.nombre_dueno}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
 
                   <div class="form-group">
-                    <label for="ejemplo_password_1">Ciudad</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="ejemplo_password_1">Localidad</label>
+                    <input value="{{proveedor.localidad}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
                   <div class="form-group">
                     <label for="ejemplo_password_1">Provincia</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.provincia}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
                   <div class="form-group">
                     <label for="ejemplo_password_1">Dirección</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.direccion}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
                   <div class="form-group">
                     <label for="ejemplo_password_1">Teléfono</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.telefono}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
                   <div class="form-group">
                     <label for="ejemplo_password_1">Email</label>
-                    <input type="email" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.email}}" type="email" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
                   <div class="form-group">
                     <label for="ejemplo_password_1">Número de Cuenta</label>
-                    <input type="email" class="form-control" id="ejemplo_password_1" readonly>
+                    <input value="{{proveedor.numero_cuenta}}" type="email" class="form-control" id="ejemplo_password_1" readonly>
                   </div>
 
 
@@ -58,16 +57,18 @@
           <table class="table table-hover">
             <thead>
             <tr>
-                <th>Codigo</th>
+
                 <th>Nombre</th>
+                <th>Unidad Medida</th>
 
             </tr>
             </thead>
               <tbody>
             {% for insumo in insumos %}
                 <tr>
-              <td>{{insumo.codigo}}</td>
+
               <td>{{insumo.nombre}}</td>
+              <td>{{insumo.get_unidad_medida_display}}</td>
 
 
           </tr>
