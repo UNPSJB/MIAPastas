@@ -49,6 +49,7 @@ urlpatterns = [
 
     url(r'^recetas$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetasID'),
+    url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
 
 
 
@@ -78,7 +79,8 @@ urlpatterns = [
 
     url(r'^recetas/add$',recetasviews.recetas,name='recetasAlta'),
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
-    url(r'^proveedores/add$',recetasviews.proveedores,name='proveedoresAlta'),
+    url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
+
     url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
     url(r'^productosTerminados/add$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
     url(r'^ciudades$',recetasviews.ciudades,name='ciudades'),
@@ -88,6 +90,7 @@ urlpatterns = [
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
 
+    url(r'^proveedoresBaja$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
 
 
 

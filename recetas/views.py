@@ -122,10 +122,15 @@ def recetasModificar(request):
 
     # FIN BORRADOR
 
+
 #********************************************************#
                #     P R O V E E D O R E S   #
 #********************************************************#
-def proveedores(request):
+def proveedores(request,proveedor_id=None):
+    if proveedor_id is not None:
+        p = models.Proveedor.objects.get(pk=proveedor_id)
+        i = p.insumos.all()
+        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
     filters = get_filtros(request.GET, models.Proveedor)
     mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
     proveedores = models.Proveedor.objects.filter(**mfilters)
@@ -141,6 +146,26 @@ def proveedores(request):
 
 
     return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+
+
+def proveedoresAlta(request):
+    if request.method == "POST":
+        proveedores_form = forms.ProveedorForm(request.POST)
+        if proveedores_form.is_valid():
+            proveedores_form.save()
+            return redirect('proveedores')
+    else:
+        proveedores_form = forms.ProveedorForm()
+        #recetas = models.Receta.objects.all()
+        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
+
+
+def proveedoresBaja(request):
+    print "holaaaa "
+    id_proveedor = request.POST["proveedor_id"]
+    p = models.Receta.objects.get(pk=id_proveedor)
+
+
 
 
 #********************************************************#
