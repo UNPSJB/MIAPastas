@@ -33,7 +33,6 @@ urlpatterns = [
     url(r'^recetasModificar$',recetasviews.recetasModificar,name='recetasModificar'),
 
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
-    url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
     url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
     url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
@@ -41,7 +40,7 @@ urlpatterns = [
     url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
     url(r'^produccionesConsulta$',views.produccionesConsulta,name='produccionesConsulta'),
     url(r'^produccionesModificar$',views.produccionesModificar,name='produccionesModificar'),
-    url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
+
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
 
 
@@ -55,18 +54,31 @@ urlpatterns = [
     url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
 
 
+
+
+    url(r'^zonas/$',recetasviews.zonas,name='zonas'),
+    url(r'^zonas/alta/$',recetasviews.zonasAlta,name='zonasAlta'),
+    url(r'^zonas/(?P<zona_id>[0-9]+)/$',recetasviews.zonas,name='zonaConsulta'),
+    url(r'^zonas/modificar/(?P<zona_id>[0-9]+)/$',recetasviews.zonasModificar,name='zonaModificar'),
+
+    url(r'^clientes/$',recetasviews.clientes,name='clientes'),
+    url(r'^clientes/alta/$',recetasviews.clientesAlta,name='clientesAlta'),
+    url(r'^clientes/(?P<cliente_id>[0-9]+)/$',recetasviews.clientes,name='clienteConsulta'),
+    url(r'^clientes/modificar/(?P<cliente_id>[0-9]+)/$',recetasviews.clientesModificar,name='clienteModificar'),
+
+
+
     url(r'^recetas/add$',recetasviews.recetas,name='recetasAlta'),
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
     url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
     url(r'^productosTerminados/add$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
-    url(r'^zonas$',recetasviews.zonas,name='zonas'),
-    url(r'^zonas/add$',recetasviews.zonas,name='zonasAlta'),
     url(r'^ciudades$',recetasviews.ciudades,name='ciudades'),
     url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
-    url(r'^clientes$',recetasviews.clientes,name='clientes'),
-    url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
+    url(r'^ciudadesAlta/$',recetasviews.ciudadesAlta,name='ciudadesAlta'),
+    #url(r'^clientes$',recetasviews.clientes,name='clientes'),
+    #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
 
     url(r'^proveedoresBaja$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
@@ -84,7 +96,7 @@ urlpatterns = [
     url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
     url(r'^produccionesConsulta$',views.produccionesConsulta,name='produccionesConsulta'),
     url(r'^produccionesModificar$',views.produccionesModificar,name='produccionesModificar'),
-    #url(r'^ciudadesAlta$',views.ciudadesAlta,name='ciudadesAlta'),
+
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
     url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
     url(r'^insumosModificar$',views.insumosModificar,name='insumosModificar'),
