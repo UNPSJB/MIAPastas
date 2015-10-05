@@ -40,7 +40,7 @@ def insumos(request,insumo_id=None):
         return render(request, "recetas/insumos.html",
                   {"insumos": insumos,
                    "filtros": filters})
-
+#chupala facurfvbggrf
 
 def insumosAlta(request):
     if request.method == "POST":
