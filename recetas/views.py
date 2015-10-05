@@ -127,7 +127,9 @@ def productosTerminados(request):
     return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"productos_form": productos_form})
 
 
-
+#********************************************************#
+               #     Z O N A S   #
+#********************************************************#
 def zonas(request):
     filters = get_filtros(request.GET, models.Zona)
     mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
@@ -145,7 +147,9 @@ def zonas(request):
                    "zonas_form": zonas_form})
 
 
-
+#********************************************************#
+               #     C I U D A D E S   #
+#********************************************************#
 def ciudades(request):
     filters = get_filtros(request.GET, models.Ciudad)
     mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
@@ -164,19 +168,26 @@ def ciudades(request):
                    "ciudades_form": ciudades_form,
                    "zonas":zonas})
 
-
-
+def ciudadesAlta(request):
+    ciudades_form = forms.CiudadForm()
+    print("puyo")
+    return render(request,"ciudadesAlta.html",{"ciudades_form": ciudades_form})
+#********************************************************#
+               #     C L I E N T E S   #
+#********************************************************#
 def clientes(request):
-    filters = get_filtros(request.GET, models.Cliente)
-    mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
-    clientes = models.Cliente.objects.filter(**mfilters)
+    clientes = None
+    filters = None
     if request.method == 'POST':
         clientes_form = forms.ClienteForm(request.POST)
         if clientes_form.is_valid():
             clientes_form.save()
             return redirect('clientes')
     else:
+        filters = get_filtros(request.GET, models.Cliente)
         clientes_form = forms.ClienteForm()
+        mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
+        clientes = models.Cliente.objects.filter(**mfilters)
     return render(request, "recetas/clientes.html",
                   {"clientes": clientes,
                    "filtros": filters,

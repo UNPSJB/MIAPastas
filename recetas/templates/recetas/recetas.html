@@ -172,12 +172,18 @@
 
 {% block javascript %}
 <script>
-$(function() {
-  var detalle_tpl = $.tpl("<tr><td><%= texto %></td>" +
-                         "<td><%= cantidad %></td></tr>");
 
-  var detalle_cantInsumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidad_insumo"+" name="+"form-<%= i %>-cantidad_insumo"+" placeholder="+"Cantidad_insumo"+" type="+"hidden"+" value=<%=cantidad %>>");
-  var detalle_insumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i%>-insumo"+" name="+"form-<%= i%>-insumo"+" placeholder="+"insumo"+" type="+"hidden"+" value=<%=insumo %>>");
+
+var detalle_tpl;
+var detalle_cantInsumo_imput_tpl;
+var detalle_insumo_imput_tpl;
+
+
+$(function() {
+  detalle_tpl = $.tpl("<tr><td><%= texto %></td>" + "<td><%= cantidad %></td>" + "<td><input type=" + "button " + "value=" + "Eliminar " + "onclick=" + "Eliminar(this.parentNode.parentNode.rowIndex)" + "/></td>" + "</tr>");
+
+  detalle_cantInsumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidad_insumo"+" name="+"form-<%= i %>-cantidad_insumo"+" placeholder="+"Cantidad_insumo"+" type="+"hidden"+" value=<%=cantidad %>>");
+  detalle_insumo_imput_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i%>-insumo"+" name="+"form-<%= i%>-insumo"+" placeholder="+"insumo"+" type="+"hidden"+" value=<%=insumo %>>");
 
   var detalles = [];
   {% if modal %}
