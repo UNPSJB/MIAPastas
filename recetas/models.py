@@ -145,7 +145,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad_icontains','es_moroso_icontains']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
     TIPOCLIENTE = (
         (1, "Cliente Fijo"),
         (2, "Cliente Ocasional"),

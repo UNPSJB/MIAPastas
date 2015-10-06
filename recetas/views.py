@@ -278,26 +278,41 @@ def clientesAlta(request):
 #********************************************************#
                #     C I U D A D E S   #
 #********************************************************#
-def ciudades(request):
-    filters = get_filtros(request.GET, models.Ciudad)
-    mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
-    ciudades = models.Ciudad.objects.filter(**mfilters)
-    zonas = models.Zona.objects.all() #zonas para poder filtrar
-    if request.method == 'POST':
-        ciudades_form = forms.CiudadForm(request.POST)
-        if ciudades_form.is_valid():
-            ciudades_form.save()
-            return redirect('ciudades')
-    else:
-        ciudades_form = forms.CiudadForm()
-    return render(request, "recetas/ciudades.html",
+def ciudades(request,ciudad_id=None):
+    if ciudad_id is not None:
+        # consulta
+        ciudad = models.Ciudad.objects.get(pk=ciudad_id)
+        return render(request, "ciudadesConsulta.html",{"ciudad": ciudad})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.Ciudad)
+        mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
+        ciudades = models.Ciudad.objects.filter(**mfilters)
+        zonas = models.Zona.objects.all()
+        return render(request, "recetas/ciudades.html",
                   {"ciudades": ciudades,
                    "filtros": filters,
-                   "ciudades_form": ciudades_form,
                    "zonas":zonas})
 
 
 def ciudadesAlta(request):
-    ciudades_form = forms.CiudadForm()
-    print("puyo")
-    return render(request,"ciudadesAlta.html",{"ciudades_form": ciudades_form})
+    if request.method == "POST":
+        ciudad_form = forms.CiudadForm(request.POST)
+        if ciudad_form.is_valid():
+            ciudad_form.save()
+            return redirect('ciudades')
+    else:
+        ciudad_form = forms.CiudadForm()
+    return render(request, "ciudadesAlta.html", {"ciudad_form":ciudad_form})
+
+
+def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
+    ciudad_instancia = get_object_or_404(models.Ciudad, pk=ciudad_id)
+    if request.method=="POST":
+        ciudad_form = forms.CiudadForm(request.POST,instance= ciudad_instancia)
+        if ciudad_form.is_valid():
+            ciudad_form.save()
+        return redirect('ciudades')
+    else:
+        ciudad_form = forms.CiudadForm(instance= ciudad_instancia)
+        return render(request,"ciudadesModificar.html",{"ciudad_form":ciudad_form,"id":ciudad_id})
