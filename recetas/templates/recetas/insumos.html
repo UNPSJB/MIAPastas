@@ -41,7 +41,6 @@
                                 {% for insumo in insumos %}
                                 <tr>
                                     <td>{{insumo.nombre}}</td>
-
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
                                        <td>  <a type="button" href="{% url 'insumoConsulta' insumo.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
