@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+
+
+{% block contenido %}
+
+
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción de la Ciudad</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form role="form">
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input value="{{ciudad.nombre}}" type="text" class="form-control" id="nombre" name ="nombre" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label for="codigo_postal">Codigo Postal</label>
+                    <input value="{{ciudad.codigo_postal}}" type="text" class="form-control" id="codigo_postal" readonly>
+                  </div>
+                 <div class="form-group">
+                    <label for="zona">Zona</label>
+                    <input value="{{ciudad.zona.nombre}}" type="text" class="form-control" id="zona" readonly>
+                  </div>
+        </form>
+      <a href = "{%url 'ciudades' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+  </div>
+
+</div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+
+
+
+    {% endblock %}

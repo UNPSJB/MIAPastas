@@ -54,7 +54,7 @@
                                     <td>{{cliente.cuit_cuil}}</td>
                                     <td>{{cliente.razon_social}}</td>
                                     <td>{{cliente.get_tipo_cliente_display}}</td>
-                                    <td>{{cliente.ciudad}}</td>
+                                    <td>{{cliente.ciudad.nombre}}</td>
                                     <td>{{cliente.es_moroso}}</td>
                                     <td>  <a type="button" href="{% url 'clienteConsulta' cliente.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
                                     <td>  <a type="button" href ="{% url 'clienteModificar' cliente.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>

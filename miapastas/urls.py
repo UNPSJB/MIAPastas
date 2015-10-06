@@ -74,7 +74,10 @@ urlpatterns = [
     url(r'^clientes/(?P<cliente_id>[0-9]+)/$',recetasviews.clientes,name='clienteConsulta'),
     url(r'^clientes/modificar/(?P<cliente_id>[0-9]+)/$',recetasviews.clientesModificar,name='clienteModificar'),
 
-
+    url(r'^ciudades/$',recetasviews.ciudades,name='ciudades'),
+    url(r'^ciudades/alta/$',recetasviews.ciudadesAlta,name='ciudadesAlta'),
+    url(r'^ciudades/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudades,name='ciudadConsulta'),
+    url(r'^ciudades/modificar/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudadesModificar,name='ciudadModificar'),
     #falta producto
 
                 # FIN PRIMERA ENTREGA

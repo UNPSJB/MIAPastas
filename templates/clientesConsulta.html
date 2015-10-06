@@ -14,63 +14,60 @@
       <!-- formulario -->
 
 
-      <form action="{% url 'clientes' %}" method="post" class="form">
-
-                     {% csrf_token %}
-                    {% bootstrap_form cliente_form layout='horizontal' %}
-        </form>
 
 
-      <!--
       <form role="form">
                   <div class="form-group">
-                    <label for="ejemplo_email_1">Cuit/Cuil</label>
-                    <input type="text" class="form-control" id="ejemplo_email_1" readonly>
+                    <label for="cuit_cuil">Cuit/Cuil</label>
+                    <input type="text" value="{{cliente.cuit_cuil}}"  class="form-control" id="cuit_cuil" readonly>
                   </div>
                   <div class="form-group">
-                    <label for="ejemplo_password_1">Razón Social</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="razon_social">Razón Social</label>
+                    <input type="text" value ="{{cliente.razon_social}}" class="form-control" id="razon_social" readonly>
                   </div>
                  <div class="form-group">
-                    <label for="ejemplo_password_1">Nombre del Dueño</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="nombre_dueño">Nombre del Dueño</label>
+                    <input type="text" value ="{{cliente.nombre_dueno}}" class="form-control" id="nombre_dueño" readonly>
                   </div>
                   <div class="form-group">
-                    <label for="ejemplo_password_1">Tipo de Cliente</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="tipo_cliente">Tipo de Cliente</label>
+                    <input type="text" value ="{{cliente.get_tipo_cliente_display}}" class="form-control" id="tipo_cliente" readonly>
+                  </div>
+
+
+                  <div class="form-group">
+                    <label for="ciudad">Ciudad</label>
+                    <input type="text" value ="{{cliente.ciudad}}" class="form-control" id="ciudad" readonly>
+                  </div>
+
+                  <div class="form-group">
+                    <label for="direccion">Dirección</label>
+                    <input type="text" value ="{{cliente.direccion}}" class="form-control" id="direccion" readonly>
                   </div>
                   <div class="form-group">
-                    <label for="ejemplo_password_1">Ciudad</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="telefono">Teléfono</label>
+                    <input type="text" value ="{{cliente.telefono}}" class="form-control" id="telefono" readonly>
                   </div>
                   <div class="form-group">
-                    <label for="ejemplo_password_1">Zona</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="email">Email</label>
+                    <input type="email" value ="{{cliente.email}}" class="form-control" id="email" readonly>
                   </div>
                   <div class="form-group">
-                    <label for="ejemplo_password_1">Dirección</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Teléfono</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Email</label>
-                    <input type="email" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Es moroso</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="es_moroso">Es moroso</label>
+                    <input type="text" value ="{{cliente.es_moroso}}" class="form-control" id="es_moroso" readonly>
                   </div>
                    <div class="form-group">
-                    <label for="ejemplo_password_1">Saldo</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
+                    <label for="saldo">Saldo</label>
+                    <input type="text" value ="{{cliente.saldo}}" class="form-control" id="saldo" readonly>
                   </div>
         </form>
-      <a href="clientes" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+      <a href="{%url 'clientes' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
 
--->
+
+
+
+
+
   </div>
 
 </div>
