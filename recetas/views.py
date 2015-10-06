@@ -234,9 +234,9 @@ def clientes(request,cliente_id=None):
     if cliente_id is not None:
         # consulta
         cliente_instancia = models.Cliente.objects.get(pk=cliente_id)
-        cliente_form = forms.ClienteForm(instance= cliente_instancia)
+        #cliente_form = forms.ClienteForm(instance= cliente_instancia)
 
-        return render(request, "clientesConsulta.html",{"cliente_form": cliente_form})
+        return render(request, "clientesConsulta.html",{"cliente": cliente_instancia})
     elif request.method == "GET":
         #filtros
         filters = get_filtros(request.GET, models.Cliente)
