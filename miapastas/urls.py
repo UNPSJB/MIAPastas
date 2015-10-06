@@ -12,6 +12,7 @@ Class-based views
 Including another URLconf
     1. Add an import:  from blog import urls as blog_urls
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
+    borrar esto
 """
 from django.conf.urls import include, url
 from django.contrib import admin
@@ -47,9 +48,11 @@ urlpatterns = [
 
                     # Hechos en forms
 
+
     url(r'^recetas$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetasID'),
     url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
+
 
 
 

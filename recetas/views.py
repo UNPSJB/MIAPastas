@@ -23,9 +23,6 @@ def get_filtros(get, modelo):
                #     I N S U M O S    #
 #********************************************************#
 
-
-
-
 def insumos(request,insumo_id=None):
     if insumo_id is not None:
         # consulta
@@ -203,6 +200,7 @@ def zonas(request,zona_id=None):
                   {"zonas": zonas,
                    "filtros": filters})
 
+
 def zonasAlta(request):
     if request.method == "POST":
         zona_form = forms.ZonaForm(request.POST)
@@ -289,10 +287,7 @@ def ciudades(request,ciudad_id=None):
         mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
         ciudades = models.Ciudad.objects.filter(**mfilters)
         zonas = models.Zona.objects.all()
-        return render(request, "recetas/ciudades.html",
-                  {"ciudades": ciudades,
-                   "filtros": filters,
-                   "zonas":zonas})
+        return render(request, "recetas/ciudades.html",{"ciudades":ciudades,"zonas":zonas})
 
 
 def ciudadesAlta(request):
@@ -316,3 +311,4 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
     else:
         ciudad_form = forms.CiudadForm(instance= ciudad_instancia)
         return render(request,"ciudadesModificar.html",{"ciudad_form":ciudad_form,"id":ciudad_id})
+
