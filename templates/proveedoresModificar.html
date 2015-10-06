@@ -1,8 +1,30 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
-
 {% block contenido %}
+
+
+
+
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Zona</b></font></p></div>
+           <p>&nbsp;</p>
+                <form action="{% url 'zonaModificar' id %}" method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form zona_form layout='horizontal' %}
+                    <p>&nbsp;</p>
+                        {% buttons %}
+                            <button type="submit" class="btn btn-primary">
+                                {% bootstrap_icon "star" %} Agregar
+                            </button>
+                        {% endbuttons %}
+                 </form>
+    </div>
+</div>
+
+
+
 
 
 

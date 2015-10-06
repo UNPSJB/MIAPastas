@@ -64,9 +64,6 @@ def clientesModificar(request):
     return render(request, "clientesModificar.html", {})
 
 
-def proveedores(request):
-    return render(request, "proveedores.html", {})
-
 
 def proveedoresConsulta(request):
     return render(request, "proveedoresConsulta.html", {})
