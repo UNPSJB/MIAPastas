@@ -37,7 +37,7 @@ def insumos(request,insumo_id=None):
         return render(request, "recetas/insumos.html",
                   {"insumos": insumos,
                    "filtros": filters})
-#chupala facurfvbggrf
+
 
 def insumosAlta(request):
     if request.method == "POST":
@@ -120,9 +120,17 @@ def recetasModificar(request):
     # FIN BORRADOR
 
 
+
+
+
+
 #********************************************************#
                #     P R O V E E D O R E S   #
 #********************************************************#
+
+
+
+
 def proveedores(request,proveedor_id=None):
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
@@ -138,10 +146,6 @@ def proveedores(request,proveedor_id=None):
             return redirect('proveedores')
     else:
         proveedores_form = forms.ProveedorForm()
-
-    #recetas = models.Receta.objects.all()
-
-
     return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
 
 
@@ -157,10 +161,32 @@ def proveedoresAlta(request):
         return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
 
 
+def proveedoresConsulta(request):
+    print "Consultaaa"
+
 def proveedoresBaja(request):
-    print "holaaaa "
+    print "BAJAAAA"
     id_proveedor = request.POST["proveedor_id"]
     p = models.Receta.objects.get(pk=id_proveedor)
+    print p
+    return redirect('proveedores')
+
+
+
+
+
+
+def proveedoresModificar(request,proveedor_id =None):
+    proveedor_instancia = get_object_or_404(models.Proveedor, pk=proveedor_id)
+    if request.method=="POST":
+        proveedor_form = forms.ProveedorForm(request.POST,instance= proveedor_instancia)
+        if proveedor_form.is_valid():
+            proveedor_form.save()
+        return redirect('zonas')
+    else:
+        proveedor_form = forms.ZonaForm(instance= proveedor_instancia)
+        return render(request,"zonasModificar.html",{"zona_form":proveedor_form,"id":proveedor_id})
+
 
 
 
@@ -290,6 +316,7 @@ def ciudades(request,ciudad_id=None):
         return render(request, "recetas/ciudades.html",{"ciudades":ciudades,"zonas":zonas})
 
 
+
 def ciudadesAlta(request):
     if request.method == "POST":
         ciudad_form = forms.CiudadForm(request.POST)
@@ -311,4 +338,7 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
     else:
         ciudad_form = forms.CiudadForm(instance= ciudad_instancia)
         return render(request,"ciudadesModificar.html",{"ciudad_form":ciudad_form,"id":ciudad_id})
+
+
+
 

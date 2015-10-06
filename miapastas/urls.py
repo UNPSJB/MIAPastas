@@ -97,6 +97,8 @@ urlpatterns = [
 
 
     url(r'^proveedoresBaja$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
+    url(r'^proveedoresConsulta$',recetasviews.proveedoresConsulta,name='proveedoresConsulta'),
+    url(r'^proveedoresModificar$',recetasviews.proveedoresModificar,name='proveedoresModificar'),
 
 
 
@@ -105,8 +107,6 @@ urlpatterns = [
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     #url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
-    url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
-    url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
     url(r'^producciones$',views.producciones,name='producciones'),
     url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
     url(r'^produccionesConsulta$',views.produccionesConsulta,name='produccionesConsulta'),
