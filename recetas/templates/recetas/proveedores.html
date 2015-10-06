@@ -129,8 +129,10 @@
 
 
         function eliminar() {
-            $.post("{% url "proveedoresBaja" %}",
-                  {"proveedor_id":id},
+
+
+            $.get("{% url 'proveedoresBaja' id %}",
+                  {},
                   function() {
                     alert('Respuesta');
                   });

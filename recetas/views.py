@@ -3,6 +3,7 @@ from . import models
 from . import forms
 from django.forms.formsets import formset_factory
 from django.shortcuts import get_object_or_404
+from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 
@@ -132,6 +133,8 @@ def recetasModificar(request):
 
 
 def proveedores(request,proveedor_id=None):
+    print "soy prinsipa",proveedor_id
+
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         i = p.insumos.all()
@@ -164,11 +167,20 @@ def proveedoresAlta(request):
 def proveedoresConsulta(request):
     print "Consultaaa"
 
-def proveedoresBaja(request):
-    print "BAJAAAA"
-    id_proveedor = request.POST["proveedor_id"]
-    p = models.Receta.objects.get(pk=id_proveedor)
+@csrf_exempt
+def proveedoresBaja(request,proveedor_id =None):
+    #id_proveedor = request.POST["proveedor_id"]
+    p = models.Proveedor.objects.get(pk=proveedor_id)
     print p
+    p.delete()
+    #return redirect('proveedores')
+    proveedores = models.Proveedor.objects.all()
+    proveedores_form = forms.ProveedorForm()
+    filters = get_filtros(request.GET, models.Proveedor)
+    mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
+    proveedores = models.Proveedor.objects.filter(**mfilters)
+    #return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+
     return redirect('proveedores')
 
 
