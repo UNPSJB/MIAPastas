@@ -161,7 +161,8 @@ def proveedoresAlta(request):
         return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
 
 
-
+def proveedoresConsulta(request):
+    print "Consultaaa"
 
 def proveedoresBaja(request):
     print "BAJAAAA"

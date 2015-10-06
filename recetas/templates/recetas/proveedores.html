@@ -63,7 +63,7 @@
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
               <a  href ="proveedoresConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
               <a href ="proveedoresModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <a id="eliminar-proveedor" type="button" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+              <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
           </div>
           <p></p>
           <a class="btn" href="proveedoresAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
@@ -73,6 +73,35 @@
 
   </div>
 </div>
+
+
+
+<div id="myModalEliminar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Eliminar Proveedor</h4>
+      </div>
+      <div class="modal-body">
+          <label for="">Confirma que decea borrar: </label>
+
+
+      </div>
+      <div class="modal-footer">
+          <a id="eliminar-proveedor"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
    <!-- Este es el fin del formulario de recetas -->
 {% endblock %}
 {% block javascript %}
@@ -91,23 +120,45 @@
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
+         function mostrarModal(){
+            $("#myModalEliminar").modal("show");
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+
+
         function eliminar() {
             $.post("{% url "proveedoresBaja" %}",
                   {"proveedor_id":id},
                   function() {
                     alert('Respuesta');
                   });
-
-
         }
 
-        $("#eliminar-proveedor").click(eliminar);       //con # indico que el elemento con id "eliminar-proveedor", al hacer clic ejecuto eliminar()
 
         function modificar(){
-
-
+            $.post("{% url "proveedoresModificar" %}",
+                  {"proveedor_id":id},
+                  function() {
+                    alert('Respuesta');
+                  });
         }
+
+
+        function consultar(){
+            $.post("{% url "proveedoresConsulta" %}",
+                  {"proveedor_id":id},
+                  function() {
+                    alert('Respuesta');
+                  });
+        }
+
+
         $("#modificar-proveedor").click(modificar);
+        $("#eliminar-proveedor").click(eliminar);       //con # indico que el elemento con id "eliminar-proveedor", al hacer clic ejecuto eliminar()
+        $("#consulta-proveedor").click(consutar);
+
 
     });
 </script>
