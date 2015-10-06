@@ -169,8 +169,9 @@
 {% endblock %}
 
 {% block javascript %}
-<script>
 
+
+<script>
 
 var detalle_tpl;
 var detalle_cantInsumo_imput_tpl;
@@ -178,10 +179,19 @@ var detalle_insumo_imput_tpl;
 
 
 $(function() {
-  detalle_tpl = $.tpl("<tr><td><%= texto %></td>" + "<td><%= cantidad %></td>" + "<td><input type=" + "button " + "value=" + "Eliminar " + "onclick=" + "Eliminar(this.parentNode.parentNode.rowIndex)" + "/></td>" + "</tr>");
+
+
+ function Eliminar(event){
+        alert("asdasd");
+        console.log('sad');
+  }
+
+  detalle_tpl = $.tpl("<tr><td><%= texto %></td>" + "<td><%= cantidad %></td>" + "<td><button type=" + "button " + "value=" + "Eliminar " + "data-id="+"<%= insumo%>"+" id="+"renglon-<%= insumo%> class="+"btn-eliminar" + ">Eliminar</button></td>" + "</tr>");
 
   detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidad_insumo"+" name="+"form-<%= i %>-cantidad_insumo"+" placeholder="+"Cantidad_insumo"+" type="+"hidden"+" value=<%=cantidad %>>");
   detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i%>-insumo"+" name="+"form-<%= i%>-insumo"+" placeholder="+"insumo"+" type="+"hidden"+" value=<%=insumo %>>");
+    $(".btn-eliminar").click(Eliminar);
+
 
   var detalles = [];
   {% if modal %}
@@ -193,6 +203,7 @@ $(function() {
     var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
     console.log(texto)
     detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
+    console.log(insumo)
     var html = "";
     var html_form = "";
     console.log(detalles)
@@ -209,6 +220,10 @@ $(function() {
     $('#detalles').html(html);
     $('#detalles_forms').html(html_form);
   });
+
+
+
+
 });
 </script>
 {% endblock %}
