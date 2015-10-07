@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Producto Terminado</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form role="form">
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input value="{{producto.nombre}}" type="text" class="form-control" id="nombre" name ="nombre" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input value="{{producto.stock}}" type="text" class="form-control" id="stock" readonly>
+                  </div>
+                 <div class="form-group">
+                    <label for="unidad_medida">Unidad de Medida</label>
+                    <input value="{{producto.get_unidad_medida_display}}" type="text" class="form-control" id="unidad_medida" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label for="precio">Precio</label>
+                    <input value="{{producto.precio}}" type="text" class="form-control" id="precio" readonly>
+                  </div>
+        </form>
+      <a href = "{%url 'productosTerminados' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+      <!-- fin formulario -->
+  </div>
+</div>
+</div>
+{% endblock %}
