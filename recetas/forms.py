@@ -18,7 +18,7 @@ class RecetaForm(forms.ModelForm):
 class RecetaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.RecetaDetalle
-        exclude = ['receta']
+        exclude = ['receta'] #setea todos campos menos receta
 
 class ProveedorForm(forms.ModelForm):
     class Meta:

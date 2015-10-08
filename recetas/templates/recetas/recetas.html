@@ -12,9 +12,20 @@
       <form class="form-inline">
           <div class="form-group">
             <label for="nombre">Nombre</label>
-
             <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" placeholder="nombre">
           </div>
+
+          <div class="form-group">
+              <label for="producto_terminado">Producto</label>
+
+              <select class="form-control" id="producto_terminado" name="producto_terminado">
+                              <option value="" selected="selected">---------</option>
+                                 {% for p in productos_terminados %}
+                                     <option value="{{p.id}}">{{p}}</option>
+                                {% endfor %}
+              </select>
+          </div>
+
 
           <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
@@ -27,19 +38,14 @@
                 <th>Nombre</th>
                 <th>Producto Terminado</th>
                 <th>Cantidad</th>
-
-
             </tr>
             </thead>
               <tbody>
             {% for receta in recetas %}
-                <tr>
-              <td>{{receta.nombre}}</td>
-                    <td>{{receta.producto_terminado}}</td>
-                    <td>{{receta.cant_prod_terminado}} {{receta.get_unidad_medida_display}}</td>
-                              <td>   <a type="button" href="{% url 'recetasID' receta.id %}" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
-
-
+            <tr class="renglon select-item" data-id="{{receta.id}}" id="renglon-{{receta.id}}">
+                <td>{{receta.nombre}}</td>
+                <td>{{receta.producto_terminado}}</td>
+                <td>{{receta.cant_prod_terminado}} {{receta.get_unidad_medida_display}}</td>
 
           </tr>
             {% endfor %}
@@ -48,12 +54,12 @@
           </div>
       <div class="col-md-2">
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
-              <a href="recetasConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a href="recetasModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a id="receta-consultar" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a id ="receta-modificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
               <a type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
           </div>
           <p></p>
-          <a class="btn" data-toggle="modal" data-target="#myModal"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+          <a class="btn" href="{%url 'recetasAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
       </div>
           </div>
   </div>
@@ -61,111 +67,6 @@
 </div>
 </div>
 
-    <!-- Este es el fin del formulario de recetas -->
-
-
-
-<div id="myModal" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Registrar Nueva Receta</h4>
-      </div>
-      <div class="modal-body">
-
-
-        <form action="{% url 'recetasAlta' %}" method="post" class="form">
-                    {% csrf_token %}
-              <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
-
-                    {% bootstrap_form receta_form %}
-
-
-            <div class="panel-heading"><p class="text-center login-title">
-                <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p></div>
-
-            <div id="detalles_forms"></div>
-
-
-
-            <select class="form-control" id="id_insumo" name="id_insumo" title="">
-                <option value="" selected="selected">---------</option>
-                    {% for i in insumos %}
-                      <option value="{{i.id}}">{{i}}</option>
-                    {% endfor %}
-            </select>
-
-            <div class="form-group">
-                 <label for="cantidadInsumo">Cantidad</label>
-                 <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad">
-            </div>
-
-
-
-                {{ detalles_form_factory.management_form }}
-                {% for form in detalles_form_factory %}
-                   <!-- {% for field in form %}
-                        {% bootstrap_field field %}
-                    {% endfor %}-->
-                {% endfor %}
-                <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
-
-
-
-                 <table class="table table-hover" id="nueva" class="display">
-
-                <thead>
-                    <tr style='cursor:pointer' class='desmarcado'>
-                        <th>Insumo</th>
-                        <th>Cantidad</th>
-                     </tr>
-                </thead>
-                 <tbody>
-                  <table class="table table-hover" id="detalles" class="display"></table>
-
-                </tbody>
-
-            </table>
-
-
-                {% buttons %}
-                    <button type="submit" class="btn btn-primary">
-                        {% bootstrap_icon "star" %} Submit
-                    </button>
-                {% endbuttons %}
-
-         </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-<!--  tabla para mostrar TODOS los insumos de TODAS Las recetas que existan-->
- <div class="col-md-10">
-     <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Nombre</th>
-                <th>Descripcion</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for insumo in insumos  %}
-                <tr>
-                      <td>{{insumo.nombre}}</td>
-                      <td>{{insumo.descripcion}}</td>
-                </tr>
-
-            {% endfor %}
-          </tbody>
-          </table>
-</div>
 {% endblock %}
 
 {% block javascript %}
@@ -173,58 +74,31 @@
 
 <script>
 
-var detalle_tpl;
-var detalle_cantInsumo_imput_tpl;
-var detalle_insumo_imput_tpl;
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
 
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
-$(function() {
+        $("#receta-consultar").click(function(){
+              //window.location('/recetas/'+id);
+              window.open('/recetas/'+id+'',"_self")
+        });
 
-
- function Eliminar(event){
-        alert("asdasd");
-        console.log('sad');
-  }
-
-  detalle_tpl = $.tpl("<tr><td><%= texto %></td>" + "<td><%= cantidad %></td>" + "<td><button type=" + "button " + "value=" + "Eliminar " + "data-id="+"<%= insumo%>"+" id="+"renglon-<%= insumo%> class="+"btn-eliminar" + ">Eliminar</button></td>" + "</tr>");
-
-  detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i %>-cantidad_insumo"+" name="+"form-<%= i %>-cantidad_insumo"+" placeholder="+"Cantidad_insumo"+" type="+"hidden"+" value=<%=cantidad %>>");
-  detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"+" id="+"id_form-<%= i%>-insumo"+" name="+"form-<%= i%>-insumo"+" placeholder="+"insumo"+" type="+"hidden"+" value=<%=insumo %>>");
-    $(".btn-eliminar").click(Eliminar);
-
-
-  var detalles = [];
-  {% if modal %}
-    $("#myModal").modal("show");
-  {% endif %}
-  $("#add-detalle-receta").click(function(){
-    var cantidad = $("#cantidadInsumo").val();
-    var insumo = $("#id_insumo").val();
-    var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
-    console.log(texto)
-    detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
-    console.log(insumo)
-    var html = "";
-    var html_form = "";
-    console.log(detalles)
-    $(detalles).each(function(i, d) {
-        console.log(i);
-        console.log(d);
-        html = html + detalle_tpl(d);
-        d.i=String(i);
-        html_form = html_form +  detalle_cantInsumo_input_tpl(d);
-        html_form = html_form +  detalle_insumo_input_tpl(d);
-        document.getElementById("id_form-TOTAL_FORMS").value = i+1;
+        $("#receta-modificar").click(function(){
+              //window.location = ('/recetas/'+id);
+              window.open('/recetas/modificar/'+id+'',"_self")
+        });
 
     });
-    $('#detalles').html(html);
-    $('#detalles_forms').html(html_form);
-  });
-
-
-
-
-});
 </script>
 {% endblock %}
 
