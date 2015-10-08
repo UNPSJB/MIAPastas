@@ -78,13 +78,19 @@ urlpatterns = [
     url(r'^ciudades/modificar/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudadesModificar,name='ciudadModificar'),
     #falta producto
 
+    url(r'^productosTerminados/$',recetasviews.productosTerminados,name='productosTerminados'),
+    url(r'^productosTerminados/alta/$',recetasviews.productosTerminadosAlta,name='productosTerminadosAlta'),
+    url(r'^productosTerminados/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminados,name='productosTerminadosConsulta'),
+    url(r'^productosTerminados/modificar/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosModificar,name='productosTerminadosModificar'),
+
                 # FIN PRIMERA ENTREGA
 
 
     url(r'^recetas/add$',recetasviews.recetas,name='recetasAlta'),
 
-    url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
-    url(r'^productosTerminados/add$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
+
+
+
     url(r'^ciudades$',recetasviews.ciudades,name='ciudades'),
     url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     url(r'^ciudadesAlta/$',recetasviews.ciudadesAlta,name='ciudadesAlta'),

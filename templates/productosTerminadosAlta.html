@@ -1,62 +1,26 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load bootstrap3 %}
 {% block contenido %}
 
-<form action="">
+
 <div class="container">
-
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Producto Terminado</b></font></p></div>
-
-        <div class="panel-body">
-              <!-- formulario -->
-            <!--<form class="form-inline"> -->
-            <form class=" form-horizontal col-md-12">
-
-
-                <div class="form-group col-md-6">
-
-                        <label for="exampleInputName2">Nombre</label>
-                        <input type="text" class="form-control" id="inputEmail4" required autofocus>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="exampleInputName2">Stock</label>
-                    <input type="text" class="form-control" id="inputEmail4">
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="exampleInputName2">Unidad de Medida</label>
-                    <input type="text" class="form-control" id="inputEmail4" required>
-                </div>
-                <div class="form-group col-md-6">
-                    <label for="exampleInputName2">Precio</label>
-                    <input type="text" class="form-control" id="inputEmail4" required>
-                </div>
-
-
-
-
-
-            </form>
-            <p>&nbsp;</p>
-
-
-
-
-</div>
-
-            <p>&nbsp;</p>
-
-            <div class="row"></div>
-            <hr/>
-                <a href="productosTerminados" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></a>
-                <a href="productosTerminados" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta de Producto Terminado</b></font></p></div>
+            <div class="panel-body">
+                <form action="{% url 'productosTerminadosAlta' %}" method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form producto_form layout='horizontal' %}
+                    <p>&nbsp;</p>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">
+                            {% bootstrap_icon "star" %} Aceptar
+                        </button>
+                    {% endbuttons %}
+                </form>
             </div>
-
     </div>
 </div>
-</form>
-
-    <!-- Este es el fin del formulario de recetas -->
 
 
 
