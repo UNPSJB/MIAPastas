@@ -296,16 +296,16 @@ def productosTerminadosModificar(request,producto_id = None):
         print("estoy en post")
         print(producto_instancia.stock)
         producto_form = forms.ProductoTerminadoForm(request.POST, instance = producto_instancia)
-
-
+        #nombre = request.POST.get('stock')
+        #print(nombre)
         if producto_form.is_valid():
             print("el formulario es valido")
             producto_form.save()
-        print(producto_instancia.stock)
-        return redirect('productosTerminados')
+            print(producto_instancia.stock)
+            return redirect('productosTerminados')
     else:
         producto_form = forms.ProductoTerminadoForm(instance= producto_instancia)
-        return render(request,"productosTerminadosModificar.html",{"producto_form":producto_form,"id":producto_id,"producto":producto_instancia})
+    return render(request,"productosTerminadosModificar.html",{"producto_form":producto_form,"id":producto_id,"producto":producto_instancia})
 
 
 
