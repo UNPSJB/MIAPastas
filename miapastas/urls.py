@@ -50,8 +50,6 @@ urlpatterns = [
 
 
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetasID'),
-    url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
-
 
     url(r'^recetas/$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/alta/$',recetasviews.recetasAlta,name='recetasAlta'),
@@ -84,14 +82,20 @@ urlpatterns = [
     url(r'^ciudades/modificar/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudadesModificar,name='ciudadModificar'),
     #falta producto
 
+    url(r'^productosTerminados/$',recetasviews.productosTerminados,name='productosTerminados'),
+    url(r'^productosTerminados/alta/$',recetasviews.productosTerminadosAlta,name='productosTerminadosAlta'),
+    url(r'^productosTerminados/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminados,name='productosTerminadosConsulta'),
+    url(r'^productosTerminados/modificar/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosModificar,name='productosTerminadosModificar'),
+
                 # FIN PRIMERA ENTREGA
 
 
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
-    url(r'^productosTerminados$',recetasviews.productosTerminados,name='productosTerminados'),
-    url(r'^productosTerminados/add$',recetasviews.productosTerminados,name='productosTerminadosAlta'),
+
+
+
     url(r'^ciudades$',recetasviews.ciudades,name='ciudades'),
     url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     url(r'^ciudadesAlta/$',recetasviews.ciudadesAlta,name='ciudadesAlta'),
@@ -99,9 +103,20 @@ urlpatterns = [
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
 
+
+
+
+
     url(r'^proveedoresBaja$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
+    #url(r'^proveedoresBaja/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
     url(r'^proveedoresConsulta$',recetasviews.proveedoresConsulta,name='proveedoresConsulta'),
     url(r'^proveedoresModificar$',recetasviews.proveedoresModificar,name='proveedoresModificar'),
+    url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
+    url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
+    url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
+
+
+
 
 
 

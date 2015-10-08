@@ -5,6 +5,8 @@ from django.forms.formsets import formset_factory
 from django.shortcuts import get_object_or_404
 from django.forms.models import BaseModelFormSet
 from django.forms.models import modelformset_factory
+from django.views.decorators.csrf import csrf_exempt
+
 # Create your views here.
 
 def get_order(get):
@@ -188,6 +190,8 @@ def recetasAlta(request):
 
 
 def proveedores(request,proveedor_id=None):
+    print "soy prinsipa",proveedor_id
+
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         i = p.insumos.all()
@@ -220,11 +224,20 @@ def proveedoresAlta(request):
 def proveedoresConsulta(request):
     print "Consultaaa"
 
+@csrf_exempt
 def proveedoresBaja(request):
-    print "BAJAAAA"
-    id_proveedor = request.POST["proveedor_id"]
-    p = models.Receta.objects.get(pk=id_proveedor)
-    print p
+    print "estoy en bajaaa"
+    proveedor_id = request.POST["proveedor_id"]
+    p = models.Proveedor.objects.get(pk=proveedor_id)
+    p.delete()
+    return redirect('proveedores')
+    proveedores = models.Proveedor.objects.all()
+    proveedores_form = forms.ProveedorForm()
+    filters = get_filtros(request.GET, models.Proveedor)
+    mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
+    proveedores = models.Proveedor.objects.filter(**mfilters)
+    #return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+
     return redirect('proveedores')
 
 
@@ -246,18 +259,63 @@ def proveedoresModificar(request,proveedor_id =None):
 #********************************************************#
                #     P R O D U C T O S   #
 #********************************************************#
-def productosTerminados(request):
-    filters = get_filtros(request.GET, models.ProductoTerminado)
-    mfilters = dict(filter(lambda v: v[0] in models.ProductoTerminado.FILTROS, filters.items()))
-    productosTerminados = models.ProductoTerminado.objects.filter(**mfilters)
+
+
+
+def productosTerminados(request,producto_id=None):
+    if producto_id is not None:
+        # consulta
+        producto = models.ProductoTerminado.objects.get(pk=producto_id)
+
+        return render(request, "productosTerminadosConsulta.html",{"producto": producto})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.ProductoTerminado)
+        mfilters = dict(filter(lambda v: v[0] in models.ProductoTerminado.FILTROS, filters.items()))
+        productos = models.ProductoTerminado.objects.filter(**mfilters)
+        return render(request, "recetas/productosTerminados.html",
+                  {"productos": productos,
+                   "filtros": filters})
+
+
+def productosTerminadosAlta(request):
     if request.method == "POST":
-        productos_form = forms.ProductoTerminadoForm(request.POST)
-        if productos_form.is_valid():
-            productos_form.save()
+        producto_form = forms.ProductoTerminadoForm(request.POST)
+        if producto_form.is_valid():
+            producto_form.save()
             return redirect('productosTerminados')
     else:
-        productos_form = forms.ProductoTerminadoForm()
-    return render(request, "recetas/productosTerminados.html",{"productosTerminados": productosTerminados,"productos_form": productos_form})
+        producto_form = forms.ProductoTerminadoForm()
+    return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
+
+
+
+def productosTerminadosModificar(request,producto_id = None):
+    producto_instancia = get_object_or_404(models.ProductoTerminado, pk = producto_id)
+    print(producto_instancia.nombre)
+    print(producto_instancia.nombre)
+    #producto_instancia.unidad_medida=5
+    if request.method=="POST":
+        print("estoy en post")
+        print(producto_instancia.stock)
+        producto_form = forms.ProductoTerminadoForm(request.POST, instance = producto_instancia)
+
+
+        if producto_form.is_valid():
+            print("el formulario es valido")
+            producto_form.save()
+        print(producto_instancia.stock)
+        return redirect('productosTerminados')
+    else:
+        producto_form = forms.ProductoTerminadoForm(instance= producto_instancia)
+        return render(request,"productosTerminadosModificar.html",{"producto_form":producto_form,"id":producto_id,"producto":producto_instancia})
+
+
+
+
+
+
+
 
 #********************************************************#
               #     Z O N A S    #

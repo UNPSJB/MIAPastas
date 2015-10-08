@@ -128,7 +128,21 @@
 
 
         function eliminar() {
-            $.post("{% url "proveedoresBaja" %}",
+            BootstrapDialog.show({
+                title: "Error",
+                cssClass: 'error-dialog',
+                message: "prueba de bootstrap-dialog ",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+
+
+            $.post("{% url "proveedoresBaja"%}",
                   {"proveedor_id":id},
                   function() {
                     alert('Respuesta');
