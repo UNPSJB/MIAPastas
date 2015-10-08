@@ -1,129 +1,160 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
-
-
+{% load bootstrap3 %}
 {% block contenido %}
 
-<!-- la fecha de modificacion se creará autaticamente al modificar la receta -->
+<!-- Este es el formulario de INSUMOS PAPA -->
 
-
-<form action="">
 <div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción de la Receta</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form class=" form-horizontal col-md-12">
-          <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Nombre</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputEmail3" required autofocus>
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Receta</b></font></p></div>
+            <div class="panel-body">
+
+
+                <form action="{% url 'recetasAlta' %}" method="post" class="form" onsubmit="return validarForm()">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
+                     {% csrf_token %}
+                     {% bootstrap_form receta_form %}
+                      <div class="panel-heading"><p class="text-center login-title">
+                            <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
+                      </div>
+
+                      <div id="detalles_forms"></div>
+
+                      <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for i in insumos %}
+                                 <option value="{{i.id}}">{{i}}</option>
+                            {% endfor %}
+                         </select>
+
+                        <div class="form-group">
+                             <label for="cantidadInsumo">Cantidad</label>
+                             <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                        </div>
+
+                     {{ detalles_form_factory.management_form }}
+
+                    <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
+                    <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>Insumo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
+
+                    </table>
+                {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+                </form>
             </div>
-          </div>
-
-          <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Producto Terminado</label>
-            <div class="col-sm-10">
-              <select class="form-control">
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-            </div>
-          </div>
-           <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Cantidad que produce</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" required>
-            </div>
-          </div>
-            <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Unidad medida</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputEmail5" required>
-            </div>
-          </div>
-          <div class="form-group col-md-12">
-            <label>Descripción</label>
-            <textarea class="form-control" rows="3" id="exampleInputName2" required> </textarea>
-          </div>
-      </form>
-
-
-
-
-       <div class="col-md-10">
-
-           <h2>Insumos</h2>
-           <div class="row col-md-4">
-              <select class="form-control">
-                  <option>1</option>
-                  <option>2</option>
-                  <option>3</option>
-                  <option>4</option>
-                  <option>5</option>
-                </select>
-               <div class="form-group">
-
-                    <label for="inputEmail3" class=" control-label">Cantidad</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-
-            </div>
-               </div>
-           <div class="col-md-2 pull-left"></div>
-                           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
-
-            </div>
-
-      <div class="row">
-          <div class="col-md-10">
-
-          <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Codigo</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Unidad Medida</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for insumo in insumos %}
-                <tr>
-              <td>{{insumo.codigo}}</td>
-              <td>{{insumo.nombre}}</td>
-              <td>{{insumo.cantidad}}</td>
-              <td>{{insumo.Umedida}}</td>
-
-          </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-
-          </div>
-          <div class="col-md-2">
-          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-              </div>
-
-          </div>
-<hr/>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
-
-
+    </div>
 </div>
-</div>
-</form>
-
-    <!-- Este es el fin del formulario de recetas -->
-
 
 
 {% endblock %}
+{% block javascript %}
 
+
+<script>
+
+var tabla_detalle_tpl;
+var detalle_cantInsumo_imput_tpl;
+var detalle_insumo_imput_tpl;
+var detalles = [];
+
+tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
+                    + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
+                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
+                    +">Eliminar</button></td>" + "</tr>");
+
+
+detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"id_form-<%= i %>-cantidad_insumo"
+                                    +" name="+"form-<%= i %>-cantidad_insumo"
+                                    +" placeholder="+"Cantidad_insumo"
+                                    +" type="+"hidden"+" value=<%=cantidad %>>");
+
+detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"id_form-<%= i%>-insumo"
+                                    +" name="+"form-<%= i%>-insumo"
+                                    +" placeholder="+"insumo"+" type="
+                                    +"hidden"+" value=<%=insumo %>>");
+
+
+
+        // saco insumo del arreglo detalles
+ function eliminar(ins){
+        var isumo = _.where(detalles, {insumo:String(ins)});  // obtengo el insumo que quiero borrar, hay q borrarlo
+        detalles = _.filter(detalles,function(element){
+                    return element.insumo != String(ins);                      //filtro los insumos que no tengan el id a borrar.
+        });
+        armar_tabla(); //refresco la tabla
+  }
+
+
+function armar_form(){
+            var html_form = "";
+            $(detalles).each(function(i, d) {
+                d.i=String(i);
+                html_form = html_form +  detalle_cantInsumo_input_tpl(d);
+                html_form = html_form +  detalle_insumo_input_tpl(d);
+                document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
+            });
+            $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+    var html_tabla = "";
+    $(detalles).each(function(i, d) {
+        html_tabla = html_tabla + tabla_detalle_tpl(d);
+    });
+    $('#detalles').html(html_tabla);
+}
+
+
+function validarForm(){
+    if (_.size(detalles) == 0){
+         alert("FALTA LLENAR DETALLES");
+        return false;
+    }else{
+        armar_form();
+        return true;
+    }
+
+}
+
+$(function() {
+
+
+  {% if modal %}
+    $("#myModal").modal("show");
+  {% endif %}
+
+  $("#add-detalle-receta").click(function(){
+        var cantidad = $("#cantidadInsumo").val();
+        var insumo = $("#id_insumo").val();
+        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        var ins = _.find(detalles,{insumo:insumo});
+        if ((cantidad == "") || (insumo == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            if (ins == undefined){
+                detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
+                armar_tabla();
+            }else{
+                alert("Insumo ya cargado");
+            }
+        }
+  });
+
+});
+</script>
+{% endblock %}

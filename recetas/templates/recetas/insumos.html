@@ -39,13 +39,10 @@
                             </thead>
                               <tbody>
                                 {% for insumo in insumos %}
-                                <tr>
+                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}">
                                     <td>{{insumo.nombre}}</td>
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
-                                       <td>  <a type="button" href="{% url 'insumoConsulta' insumo.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
-                                    <td>  <a type="button" href ="{% url 'insumoModificar' insumo.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
-                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
@@ -54,9 +51,10 @@
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
 
 
-              <a href ="insumosConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a href ="insumosModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+              <!-- <a href ="insumosConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a> -->
+              <a id="insumo-consultar" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a id ="insumo-modificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <button id ="insumo-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
           <p></p>
 
@@ -70,6 +68,41 @@
 
 </div>
 
+{% endblock %}
 
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+        $("#insumo-consultar").click(function(){
+              //window.location('/insumos/'+id);
+              window.open('/insumos/'+id+'',"_self")
+        });
+
+        $("#insumo-modificar").click(function(){
+              //window.location('/insumos/'+id);
+              window.open('/insumos/modificar/'+id+'',"_self")
+        });
+
+        $("#insumo-eliminar").click(function(){
+
+
+        });
+
+
+    });
+</script>
 
 {% endblock %}
