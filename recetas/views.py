@@ -168,12 +168,12 @@ def proveedoresConsulta(request):
     print "Consultaaa"
 
 @csrf_exempt
-def proveedoresBaja(request,proveedor_id =None):
-    #id_proveedor = request.POST["proveedor_id"]
+def proveedoresBaja(request):
+    print "estoy en bajaaa"
+    proveedor_id = request.POST["proveedor_id"]
     p = models.Proveedor.objects.get(pk=proveedor_id)
-    print p
     p.delete()
-    #return redirect('proveedores')
+    return redirect('proveedores')
     proveedores = models.Proveedor.objects.all()
     proveedores_form = forms.ProveedorForm()
     filters = get_filtros(request.GET, models.Proveedor)
