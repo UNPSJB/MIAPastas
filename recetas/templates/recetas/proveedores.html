@@ -61,12 +61,12 @@
           </div>
       <div class="col-md-2">
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
-              <a  href ="proveedoresConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a href ="proveedoresModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a  type="button" id="consulta-proveedor" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a type="button" id="modificar-proveedor" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
               <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
           </div>
           <p></p>
-          <a class="btn" href="proveedoresAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+          <a class="btn" href="{% url 'proveedoresAlta' %}" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
 </div>
           </div>
       <hr/>
@@ -121,18 +121,11 @@
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
          function mostrarModal(){
-            $("#myModalEliminar").modal("show");
-        }
-
-        $("#modal-eliminar").click(mostrarModal);
-
-
-
-        function eliminar() {
-            BootstrapDialog.show({
-                title: "Error",
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error al Intentar Eliminar",
                 cssClass: 'error-dialog',
-                message: "prueba de bootstrap-dialog ",
+                message: "Debe seleccionar un proveedor",
                 type: BootstrapDialog.TYPE_DANGER,
                 buttons: [{
                         label: 'Aceptar',
@@ -141,37 +134,60 @@
                         }
                 }]
             });
-
-
-            $.post("{% url "proveedoresBaja"%}",
-                  {"proveedor_id":id},
-                  function() {
-                    alert('Respuesta');
-                  });
+            }else{
+            $("#myModalEliminar").modal("show");
+            }
         }
 
+        $("#modal-eliminar").click(mostrarModal);
+
+        function eliminar() {
+            window.open('/proveedores/Baja/'+id+'',"_self")
+        }
 
         function modificar(){
-            $.post("{% url "proveedoresModificar" %}",
-                  {"proveedor_id":id},
-                  function() {
-                    alert('Respuesta');
-                  });
-        }
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Modificar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un proveedor",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/proveedores/Modificar/'+id+'',"_self")
+        }}
 
 
         function consultar(){
-            $.post("{% url "proveedoresConsulta" %}",
-                  {"proveedor_id":id},
-                  function() {
-                    alert('Respuesta');
-                  });
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Consulta",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un proveedor",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/proveedores/Consulta/'+id+'',"_self")
+            }
+
         }
 
 
         $("#modificar-proveedor").click(modificar);
         $("#eliminar-proveedor").click(eliminar);       //con # indico que el elemento con id "eliminar-proveedor", al hacer clic ejecuto eliminar()
-        $("#consulta-proveedor").click(consutar);
+        $("#consulta-proveedor").click(consultar);
 
 
     });

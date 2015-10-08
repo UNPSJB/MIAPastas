@@ -1,5 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
+{% load bootstrap3 %}
 {% block contenido %}
 
 
@@ -8,11 +9,11 @@
 <div class="container">
 
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Zona</b></font></p></div>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Proveedor</b></font></p></div>
            <p>&nbsp;</p>
-                <form action="{% url 'zonaModificar' id %}" method="post" class="form">
+                <form action="{% url 'proveedoresModificar' id %}" method="post" class="form">
                     {% csrf_token %}
-                    {% bootstrap_form zona_form layout='horizontal' %}
+                    {% bootstrap_form proveedor_form layout='horizontal' %}
                     <p>&nbsp;</p>
                         {% buttons %}
                             <button type="submit" class="btn btn-primary">
@@ -23,72 +24,6 @@
     </div>
 </div>
 
-
-
-
-
-
-<form action="">
-<div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificación de Proveedor</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form role="form">
-                  <div class="form-group">
-                    <label for="ejemplo_email_1">Cuit</label>
-                    <input type="text" class="form-control" id="ejemplo_email_1" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Razón Social</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
-                 <div class="form-group">
-                    <label for="ejemplo_password_1">Nombre del Dueño</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1">
-                  </div>
-
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Ciudad</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Provincia</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Dirección</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" required >
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Teléfono</label>
-                    <input type="text" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Email</label>
-                    <input type="email" class="form-control" id="ejemplo_password_1">
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Número de Cuenta</label>
-                    <input type="email" class="form-control" id="ejemplo_password_1">
-                  </div>
-
-
-        </form>
-
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-      <a href = "proveedores" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-
-  </div>
-
-</div>
-</div>
-</form>
-
     <!-- Este es el fin del formulario de recetas -->
-
-
-
-
 
     {% endblock %}

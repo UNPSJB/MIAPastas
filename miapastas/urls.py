@@ -91,9 +91,7 @@ urlpatterns = [
 
 
 
-    url(r'^ciudades$',recetasviews.ciudades,name='ciudades'),
     url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
-    url(r'^ciudadesAlta/$',recetasviews.ciudadesAlta,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
@@ -102,11 +100,11 @@ urlpatterns = [
 
 
 
-    url(r'^proveedoresBaja$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
+    url(r'^proveedores/Baja/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
     #url(r'^proveedoresBaja/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedoresBaja,name='proveedoresBaja'),
-    url(r'^proveedoresConsulta$',recetasviews.proveedoresConsulta,name='proveedoresConsulta'),
-    url(r'^proveedoresModificar$',recetasviews.proveedoresModificar,name='proveedoresModificar'),
-    url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
+    url(r'^proveedores/Consulta/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresConsulta'),
+    url(r'^proveedores/Modificar/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedoresModificar,name='proveedoresModificar'),
+    url(r'^proveedores/Alta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
     url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
     url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
 

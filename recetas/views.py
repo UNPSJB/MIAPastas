@@ -164,17 +164,14 @@ def proveedoresAlta(request):
         return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
 
 
-def proveedoresConsulta(request):
-    print "Consultaaa"
 
 @csrf_exempt
-def proveedoresBaja(request):
+def proveedoresBaja(request,proveedor_id =None):
     print "estoy en bajaaa"
-    proveedor_id = request.POST["proveedor_id"]
     p = models.Proveedor.objects.get(pk=proveedor_id)
     p.delete()
     return redirect('proveedores')
-    proveedores = models.Proveedor.objects.all()
+    proveedores = models.Proveedor.objects.all  ()
     proveedores_form = forms.ProveedorForm()
     filters = get_filtros(request.GET, models.Proveedor)
     mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
@@ -194,10 +191,10 @@ def proveedoresModificar(request,proveedor_id =None):
         proveedor_form = forms.ProveedorForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
             proveedor_form.save()
-        return redirect('zonas')
+        return redirect('proveedores')
     else:
-        proveedor_form = forms.ZonaForm(instance= proveedor_instancia)
-        return render(request,"zonasModificar.html",{"zona_form":proveedor_form,"id":proveedor_id})
+        proveedor_form = forms.ProveedorForm(instance= proveedor_instancia)
+        return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
 
 
 
