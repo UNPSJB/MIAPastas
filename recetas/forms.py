@@ -1,5 +1,6 @@
 from django import forms
 from . import models
+from django.core.exceptions import ValidationError
 
 class InsumoForm(forms.ModelForm):
     class Meta:
@@ -14,6 +15,14 @@ class RecetaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+
+    def clean_producto_terminado(self):
+        producto_terminado=self.cleaned_data['producto_terminado']
+        receta=models.Receta.objets.get (producto_terminado=producto_terminado)
+        if (receta is not None):
+            raise ValidationError("ya hay una receta para esta producto")
+        return producto_terminado
+
 
 class RecetaDetalleForm(forms.ModelForm):
     class Meta:

@@ -23,6 +23,27 @@ def get_filtros(get, modelo):
     return mfilter
 
 #********************************************************#
+               #     C H O F E R E S    #
+#********************************************************#
+def choferes (request, chofer_id=None):
+
+    if chofer_id is not None:
+        #consulta
+        chofer=models.Chofer.objects.get(pk=chofer_id)
+        print "PK",chofer_id
+        return render(request,"choferesConsulta.html",{"chofer":chofer})
+    else:
+        # filtros
+        filters = get_filtros(request.GET, models.Chofer)
+        mfilters = dict(filter(lambda v: v[0] in models.Chofer.FILTROS, filters.items()))
+        choferes = models.Chofer.objects.filter(**mfilters)
+        return render(request, "recetas/choferes.html",
+                  {"choferes": choferes,
+                   "filtros": filters})
+        choferes=models.Chofer.objects.all()
+
+
+#********************************************************#
                #     I N S U M O S    #
 #********************************************************#
 
