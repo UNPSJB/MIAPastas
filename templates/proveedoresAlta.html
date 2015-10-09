@@ -14,7 +14,22 @@
                 <form action="{% url 'proveedoresAlta' %}" method="post" class="form" onsubmit="return validarForm()">
                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Proveedor</b></font></p></div>
                      {% csrf_token %}
-                     {% bootstrap_form proveedores_form %}
+                    <!-- {% bootstrap_form proveedores_form %} -->
+
+
+                    <label for="">Cuit</label>{{proveedores_form.cuit}}
+                    {{proveedores_form.razon_social}}
+                    {{proveedores_form.localidad}}
+                    {{proveedores_form.nombre_dueno}}
+                    {{proveedores_form.direccion}}
+                    {{proveedores_form.email}}
+                    {{proveedores_form.numero_cuenta}}
+                    {{proveedores_form.provincias}}
+                    {{proveedores_form.telefono}}
+                    {{proveedores_form.insumos}}
+
+
+
                       <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
                       </div>

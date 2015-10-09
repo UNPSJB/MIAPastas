@@ -225,6 +225,7 @@ def proveedoresAlta(request):
 
 
 
+
 '''
 detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
