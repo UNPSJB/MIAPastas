@@ -213,12 +213,56 @@ def proveedoresAlta(request):
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
-            proveedores_form.save()
+            proveedor_instancia=proveedores_form.save()
+
             return redirect('proveedores')
     else:
         proveedores_form = forms.ProveedorForm()
+        insumos = models.Insumo.objects.all()
         #recetas = models.Receta.objects.all()
-        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
+        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form,"insumos":insumos})
+
+
+
+
+'''
+detalles_form_class = formset_factory(forms.RecetaDetalleForm)
+    detalles_form = None
+    receta_form = None
+    if request.method == "POST":
+        receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
+        if receta_form.is_valid():
+           - receta_instancia = receta_form.save() #commit false
+            detalles_form = detalles_form_class(request.POST, request.FILES)
+            if detalles_form.is_valid():
+                #detalles = detalles_form.save(commit=False)
+                #receta.save()
+                for detalle in detalles_form:
+                    detalle_instancia = detalle.save(commit=False)
+                    detalle_instancia.receta = receta_instancia
+                    detalle_instancia.save()
+                return redirect('recetas')
+    else:
+        insumos = models.Insumo.objects.all()
+        return render(request, "recetasAlta.html", {
+            "insumos":insumos,
+            "receta_form": receta_form or forms.RecetaForm(),
+            "detalles_form_factory": detalles_form or detalles_form_class()})
+    return redirect('recetas')
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -233,8 +277,6 @@ def proveedoresBaja(request,proveedor_id =None):
     filters = get_filtros(request.GET, models.Proveedor)
     mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
     proveedores = models.Proveedor.objects.filter(**mfilters)
-    #return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
-
     return redirect('proveedores')
 
 

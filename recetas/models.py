@@ -74,9 +74,6 @@ class Receta(models.Model):
         return "%s (%d %s)" % (self.nombre, self.cant_prod_terminado, self.get_unidad_medida_display())
 
 
-#********************************************************#
-               #     P R O V E E D O R E S    #
-#********************************************************#
 class RecetaDetalle(models.Model):
     cantidad_insumo = models.IntegerField()
     insumo = models.ForeignKey(Insumo)
@@ -104,8 +101,6 @@ class Proveedor(models.Model):
 
     def __str__(self):
         return "%s (%d %s)" % (self.razon_social, self.telefono, self.cuit)
-
-
 
 
 #********************************************************#
