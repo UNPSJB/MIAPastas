@@ -55,6 +55,7 @@ urlpatterns = [
     url(r'^recetas/alta/$',recetasviews.recetasAlta,name='recetasAlta'),
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetaConsulta'),
     url(r'^recetas/modificar/(?P<receta_id>[0-9]+)/$',recetasviews.recetasModificar,name='recetaModificar'),
+    url(r'^recetas/baja/(?P<receta_id>[0-9]+)/$',recetasviews.recetasBaja,name='recetasBaja'),
 
 
 
@@ -62,6 +63,7 @@ urlpatterns = [
     url(r'^insumos/alta/$',recetasviews.insumosAlta,name='insumosAlta'),
     url(r'^insumos/(?P<insumo_id>[0-9]+)/$',recetasviews.insumos,name='insumoConsulta'),
     url(r'^insumos/modificar/(?P<insumo_id>[0-9]+)/$',recetasviews.insumosModificar,name='insumoModificar'),
+    url(r'^insumos/baja/(?P<insumo_id>[0-9]+)/$',recetasviews.insumosBaja,name='insumosBaja'),
 
 
 

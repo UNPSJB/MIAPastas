@@ -19,7 +19,7 @@ class Insumo(models.Model):
     )
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
-    stock = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField(blank= True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
 
     def __str__(self):

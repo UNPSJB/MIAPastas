@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404
 from django.forms.models import BaseModelFormSet
 from django.forms.models import modelformset_factory
 from django.views.decorators.csrf import csrf_exempt
-
+from django.contrib.messages import get_messages
 # Create your views here.
 
 def get_order(get):
@@ -27,7 +27,6 @@ def get_filtros(get, modelo):
 #********************************************************#
 
 def insumos(request,insumo_id=None):
-    print "INSUMOS PRINCIPAL"
     if insumo_id is not None:
         # consulta
         insumo_instancia = models.Insumo.objects.get(pk=insumo_id)
@@ -44,8 +43,6 @@ def insumos(request,insumo_id=None):
 
 
 def insumosAlta(request):
-    print "INSUMOS ALTA"
-
     if request.method == "POST":
         insumo_form = forms.InsumoForm(request.POST)
         if insumo_form.is_valid():
@@ -57,8 +54,6 @@ def insumosAlta(request):
 
 
 def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
-    print "INSUMOS MODIFICAR"
-
     insumo_instancia = get_object_or_404(models.Insumo, pk=insumo_id)
     if request.method=="POST":
         insumo_form = forms.InsumoForm(request.POST,instance= insumo_instancia)
@@ -70,6 +65,11 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
         return render(request,"insumosModificar.html",{"insumo_form":insumo_form,"id":insumo_id})
 
 
+def insumosBaja(request,insumo_id):
+    insumo = models.Insumo.objects.get(pk=insumo_id)
+    # HAY Q HACER VALIDACIONES.
+    #insumos.delete()
+    return redirect('insumos')
 
 
 
@@ -147,8 +147,8 @@ def recetasModificar(request,receta_id):
         return redirect('recetas')
     else:
         receta_form = forms.RecetaForm(instance= receta_instancia)
-        detaless = models.RecetaDetalle.objects.filter(receta = receta_instancia)
-        detalles_formset = detalles_form_factory()
+        detalles = models.RecetaDetalle.objects.filter(receta = receta_instancia).values()
+        detalles_formset = detalles_form_factory(initial = detalles)
         return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,"detalles_formset":detalles_formset})
 
     # FIN BORRADOR
@@ -182,7 +182,12 @@ def recetasAlta(request):
     return redirect('recetas')
 
 
+def recetasBaja(request,receta_id):
+    print "estoy en bajaaa"
+    p = models.Receta.objects.get(pk=receta_id)
+    p.delete()
 
+    return redirect('recetas')
 
 #********************************************************#
                #     P R O V E E D O R E S   #
@@ -218,7 +223,7 @@ def proveedoresAlta(request):
     else:
         proveedores_form = forms.ProveedorForm()
         #recetas = models.Receta.objects.all()
-        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
+    return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
 
 
 
@@ -248,9 +253,6 @@ def proveedoresModificar(request,proveedor_id =None):
     else:
         proveedor_form = forms.ProveedorForm(instance= proveedor_instancia)
         return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
-
-
-
 
 
 #********************************************************#

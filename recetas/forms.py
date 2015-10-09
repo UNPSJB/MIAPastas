@@ -9,16 +9,27 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "descripcion", "producto_terminado","cant_prod_terminado","unidad_medida"]
+        fields = ["nombre", "producto_terminado","cant_prod_terminado","unidad_medida", "descripcion"]
 
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
 
+
+    def clean_producto_terminado(self):
+        producto_terminado = self.cleaned_data['producto_terminado']
+
+        if (producto_terminado.receta is not None):
+            raise ValidationError("ya hay una receta para este producto.")
+        return producto_terminado
+
+
+
 class RecetaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.RecetaDetalle
         exclude = ['receta'] #setea todos campos menos receta
+
 
 class ProveedorForm(forms.ModelForm):
     class Meta:
