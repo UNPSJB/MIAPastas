@@ -25,20 +25,18 @@
                             </thead>
                               <tbody>
                                 {% for zona in zonas %}
-                                <tr>
+                                <tr class="renglon select-item" data-id="{{zona.id}}" id="renglon-{{zona.id}}">
                                     <td>{{zona.nombre}}</td>
-                                    <td>  <a type="button" href="{% url 'zonaConsulta' zona.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
-                                    <td>  <a type="button" href ="{% url 'zonaModificar' zona.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
-                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
+                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
                           </table>
                 </div>
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
-                        <a  href ="proveedoresConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-                        <a href ="proveedoresModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-                        <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+                        <a type="button" id="consulta-zona" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+                        <a type="button" id="modificar-zona" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+                        <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
                   </div>
                 <p></p>
                      <a class="btn" href = "{% url 'zonasAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
@@ -49,6 +47,121 @@
 
     </div>
 
+<div id="myModalEliminar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Eliminar Zona</h4>
+      </div>
+      <div class="modal-body">
+          <label for="">Confirma que desea eliminar: </label>
+
+
+      </div>
+      <div class="modal-footer">
+          <a id="eliminar-zona"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
+
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+         function mostrarModal(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error al Intentar Eliminar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar una Zona",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            $("#myModalEliminar").modal("show");
+            }
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+        function eliminar() {
+            window.open('/zonas/baja/'+id+'',"_self")
+        }
+
+        function modificar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Modificar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar una Zona",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/zonas/modificar/'+id+'',"_self")
+        }}
+
+
+        function consultar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Consulta",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar una Zona",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/zonas/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#modificar-zona").click(modificar);
+        $("#eliminar-zona").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
+        $("#consulta-zona").click(consultar);
+
+
+    });
+</script>
+</div>
 {% endblock %}

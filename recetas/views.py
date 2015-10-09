@@ -309,6 +309,12 @@ def productosTerminadosModificar(request,producto_id = None):
 
 
 
+@csrf_exempt
+def productosTerminadosBaja(request,producto_id =None):
+    print "estoy en bajaaa"
+    p = models.ProductoTerminado.objects.get(pk=producto_id)
+    p.delete()
+    return redirect('productosTerminados')
 
 
 
@@ -356,6 +362,13 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
         zona_form = forms.ZonaForm(instance= zona_instancia)
         return render(request,"zonasModificar.html",{"zona_form":zona_form,"id":zona_id})
 
+
+@csrf_exempt
+def zonasBaja(request,zona_id =None):
+    print "estoy en bajaaa"
+    p = models.Zona.objects.get(pk=zona_id)
+    p.delete()
+    return redirect('zonas')
 
 #********************************************************#
               #     C L I E N T E S    #
@@ -406,6 +419,14 @@ def clientesAlta(request):
 
 
 
+@csrf_exempt
+def clientesBaja(request,cliente_id =None):
+    print "estoy en bajaaa"
+    p = models.Cliente.objects.get(pk=cliente_id)
+    p.delete()
+    return redirect('clientes')
+
+
 #********************************************************#
                #     C I U D A D E S   #
 #********************************************************#
@@ -447,5 +468,10 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
         return render(request,"ciudadesModificar.html",{"ciudad_form":ciudad_form,"id":ciudad_id})
 
 
-
+@csrf_exempt
+def ciudadesBaja(request,ciudad_id =None):
+    print "estoy en bajaaa"
+    p = models.Ciudad.objects.get(pk=ciudad_id)
+    p.delete()
+    return redirect('ciudades')
 

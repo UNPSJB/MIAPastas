@@ -41,14 +41,12 @@
             </thead>
               <tbody>
                                  {% for p in productos %}
-                                <tr>
+                                 <tr class="renglon select-item" data-id="{{p.id}}" id="renglon-{{p.id}}">
                                     <td>{{p.nombre}}</td>
                                     <td>{{p.stock}}</td>
                                     <td>{{p.get_unidad_medida_display}}</td>
                                     <td>{{p.precio}}</td>
-                                    <td>  <a type="button" href="{% url 'productosTerminadosConsulta' p.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
-                                    <td>  <a type="button" href ="{% url 'productosTerminadosModificar' p.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
-                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
+                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
           </tbody>
@@ -56,25 +54,41 @@
           </div>
       <div class="col-md-2">
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
-              <button type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
-              <a href="productosTerminadosModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+              <a type="button" id="consulta-producto" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a type="button" id="modificar-producto" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
               <!-- AL PRECIONAR EL BOTON ELIMINAR SE DEBEN DAR DE BAJAS TODAS LAS RECETAS ASOCIADAS A ESE PRODUCTO TERMINADO-->
           </div>
           <p></p>
-
-          <p></p>
-
           <a class="btn" href = "{% url 'productosTerminadosAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
-</div>
-          </div>
-
+      </div>
+      </div>
       <hr/>
-<a href="index" type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Aceptar </span></a>
-
   </div>
-
 </div>
+
+
+
+<div id="myModalEliminar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Eliminar Producto Terminado</h4>
+      </div>
+      <div class="modal-body">
+          <label for="">Confirma que desea eliminar: </label>
+
+
+      </div>
+      <div class="modal-footer">
+          <a id="eliminar-producto"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
@@ -82,7 +96,94 @@
     <!-- Este es el fin del formulario de recetas -->
 
 
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+         function mostrarModal(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error al Intentar Eliminar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un producto",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            $("#myModalEliminar").modal("show");
+            }
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+        function eliminar() {
+            window.open('/productosTerminados/baja/'+id+'',"_self")
+        }
+
+        function modificar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Modificar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un producto",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/productosTerminados/modificar/'+id+'',"_self")
+        }}
 
 
+        function consultar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Consulta",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un producto",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/productosTerminados/'+id+'',"_self")
+            }
 
+        }
+
+
+        $("#modificar-producto").click(modificar);
+        $("#eliminar-producto").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
+        $("#consulta-producto").click(consultar);
+
+
+    });
+</script>
+</div>
 {% endblock %}

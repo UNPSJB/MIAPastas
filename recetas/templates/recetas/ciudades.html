@@ -54,37 +54,143 @@
                             </thead>
                               <tbody>
                                 {% for ciudad in ciudades %}
-                                <tr>
+                                <tr class="renglon select-item" data-id="{{ciudad.id}}" id="renglon-{{ciudad.id}}">
                                     <td>{{ciudad.nombre}}</td>
                                     <td>{{ciudad.codigo_postal}}</td>
                                     <td>{{ciudad.zona}}</td>
-                                    <td>  <a type="button" href="{% url 'ciudadConsulta' ciudad.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
-                                    <td>  <a type="button" href ="{% url 'ciudadModificar' ciudad.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
-                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
-
+                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
                           </table>
                 </div>
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
-
-
-              <a href ="insumosConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a href ="insumosModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-          <p></p>
-
-           <a class="btn" href="ciudadesAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
-            </div>
-
-
+                      <a type="button" id="consulta-ciudad" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+                      <a type="button" id="modificar-ciudad" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+                      <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+                  </div>
+                  <p></p>
+                  <a class="btn" href = "{% url 'ciudadesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+                </div>
         </div>
- <hr/>
+        <hr/>
     </div>
 
+<div id="myModalEliminar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Eliminar Ciudad</h4>
+      </div>
+      <div class="modal-body">
+          <label for="">Confirma que desea eliminar: </label>
+
+
+      </div>
+      <div class="modal-footer">
+          <a id="eliminar-ciudad"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
+
+    <!-- Este es el fin del formulario de recetas -->
+
+
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+         function mostrarModal(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error al Intentar Eliminar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un Ciudad",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            $("#myModalEliminar").modal("show");
+            }
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+        function eliminar() {
+            window.open('/ciudades/baja/'+id+'',"_self")
+        }
+
+        function modificar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Modificar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar una Ciudad",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/ciudades/modificar/'+id+'',"_self")
+        }}
+
+
+        function consultar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Consulta",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar una Ciudad",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/ciudades/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#modificar-ciudad").click(modificar);
+        $("#eliminar-ciudad").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
+        $("#consulta-ciudad").click(consultar);
+
+
+    });
+</script>
+</div>
 {% endblock %}
