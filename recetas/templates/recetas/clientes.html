@@ -50,42 +50,150 @@
                             </thead>
                               <tbody>
                                 {% for cliente in clientes %}
-                                <tr>
+                                <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
                                     <td>{{cliente.cuit_cuil}}</td>
                                     <td>{{cliente.razon_social}}</td>
                                     <td>{{cliente.get_tipo_cliente_display}}</td>
                                     <td>{{cliente.ciudad.nombre}}</td>
                                     <td>{{cliente.es_moroso}}</td>
-                                    <td>  <a type="button" href="{% url 'clienteConsulta' cliente.id %}" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">    </span></a></td>
-                                    <td>  <a type="button" href ="{% url 'clienteModificar' cliente.id %}" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a></td>
-                                    <td>  <a  type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a></td>
-
+                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
                           </table>
                 </div>
+           <div class="col-md-2">
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
-
-
-              <a href ="insumosConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a href ="insumosModificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-          <p></p>
-          <a class="btn" href = "{% url 'clientesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
-
+                          <a type="button" id="consulta-cliente" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+                          <a type="button" id="modificar-cliente" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+                          <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+                  </div>
+                  <p></p>
+                  <a class="btn" href = "{% url 'clientesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+           </div>
             </div>
             <hr/>
-
         </div>
-
     </div>
 
+
+
+
+<div id="myModalEliminar" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- NICO ES GAY-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Eliminar Cliente</h4>
+      </div>
+      <div class="modal-body">
+          <label for="">Confirma que desea eliminar: </label>
+
+
+      </div>
+      <div class="modal-footer">
+          <a id="eliminar-cliente"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 
 
+    <!-- Este es el fin del formulario de recetas -->
 
 
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+         function mostrarModal(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error al Intentar Eliminar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un Cliente",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            $("#myModalEliminar").modal("show");
+            }
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+        function eliminar() {
+            window.open('/clientes/baja/'+id+'',"_self")
+        }
+
+        function modificar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Modificar",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un Cliente",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/clientes/modificar/'+id+'',"_self")
+        }}
+
+
+        function consultar(){
+            if(id==undefined){
+                BootstrapDialog.show({
+                title: "Error de Consulta",
+                cssClass: 'error-dialog',
+                message: "Debe seleccionar un Cliente",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+            }else{
+            window.open('/clientes/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#modificar-cliente").click(modificar);
+        $("#eliminar-cliente").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
+        $("#consulta-cliente").click(consultar);
+
+
+    });
+</script>
+</div>
 {% endblock %}
