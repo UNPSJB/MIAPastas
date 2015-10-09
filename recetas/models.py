@@ -38,7 +38,7 @@ class ProductoTerminado(models.Model):
         (5, "Bolsines"),
     }
     FILTROS = ['nombre__icontains','stock__lte']
-    nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del insumo")
+    nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
     stock = models.IntegerField()
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
     precio= models.DecimalField(max_digits=10, decimal_places=2)
