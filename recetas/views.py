@@ -190,8 +190,6 @@ def recetasAlta(request):
 
 
 def proveedores(request,proveedor_id=None):
-    print "soy prinsipa",proveedor_id
-
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         i = p.insumos.all()
@@ -221,50 +219,6 @@ def proveedoresAlta(request):
         insumos = models.Insumo.objects.all()
         #recetas = models.Receta.objects.all()
         return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form,"insumos":insumos})
-
-
-
-
-
-'''
-detalles_form_class = formset_factory(forms.RecetaDetalleForm)
-    detalles_form = None
-    receta_form = None
-    if request.method == "POST":
-        receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
-        if receta_form.is_valid():
-           - receta_instancia = receta_form.save() #commit false
-            detalles_form = detalles_form_class(request.POST, request.FILES)
-            if detalles_form.is_valid():
-                #detalles = detalles_form.save(commit=False)
-                #receta.save()
-                for detalle in detalles_form:
-                    detalle_instancia = detalle.save(commit=False)
-                    detalle_instancia.receta = receta_instancia
-                    detalle_instancia.save()
-                return redirect('recetas')
-    else:
-        insumos = models.Insumo.objects.all()
-        return render(request, "recetasAlta.html", {
-            "insumos":insumos,
-            "receta_form": receta_form or forms.RecetaForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
-    return redirect('recetas')
-
-'''
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 @csrf_exempt
@@ -352,6 +306,12 @@ def productosTerminadosModificar(request,producto_id = None):
 
 
 
+@csrf_exempt
+def productosTerminadosBaja(request,producto_id =None):
+    print "estoy en bajaaa"
+    p = models.ProductoTerminado.objects.get(pk=producto_id)
+    p.delete()
+    return redirect('productosTerminados')
 
 
 
@@ -399,6 +359,13 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
         zona_form = forms.ZonaForm(instance= zona_instancia)
         return render(request,"zonasModificar.html",{"zona_form":zona_form,"id":zona_id})
 
+
+@csrf_exempt
+def zonasBaja(request,zona_id =None):
+    print "estoy en bajaaa"
+    p = models.Zona.objects.get(pk=zona_id)
+    p.delete()
+    return redirect('zonas')
 
 #********************************************************#
               #     C L I E N T E S    #
@@ -449,6 +416,14 @@ def clientesAlta(request):
 
 
 
+@csrf_exempt
+def clientesBaja(request,cliente_id =None):
+    print "estoy en bajaaa"
+    p = models.Cliente.objects.get(pk=cliente_id)
+    p.delete()
+    return redirect('clientes')
+
+
 #********************************************************#
                #     C I U D A D E S   #
 #********************************************************#
@@ -490,5 +465,10 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
         return render(request,"ciudadesModificar.html",{"ciudad_form":ciudad_form,"id":ciudad_id})
 
 
-
+@csrf_exempt
+def ciudadesBaja(request,ciudad_id =None):
+    print "estoy en bajaaa"
+    p = models.Ciudad.objects.get(pk=ciudad_id)
+    p.delete()
+    return redirect('ciudades')
 

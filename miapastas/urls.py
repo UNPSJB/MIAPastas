@@ -73,23 +73,27 @@ urlpatterns = [
     url(r'^zonas/alta/$',recetasviews.zonasAlta,name='zonasAlta'),
     url(r'^zonas/(?P<zona_id>[0-9]+)/$',recetasviews.zonas,name='zonaConsulta'),
     url(r'^zonas/modificar/(?P<zona_id>[0-9]+)/$',recetasviews.zonasModificar,name='zonaModificar'),
+    url(r'^zonas/baja/(?P<zona_id>[0-9]+)/$',recetasviews.zonasBaja,name='zonasBaja'),
+
 
     url(r'^clientes/$',recetasviews.clientes,name='clientes'),
     url(r'^clientes/alta/$',recetasviews.clientesAlta,name='clientesAlta'),
     url(r'^clientes/(?P<cliente_id>[0-9]+)/$',recetasviews.clientes,name='clienteConsulta'),
     url(r'^clientes/modificar/(?P<cliente_id>[0-9]+)/$',recetasviews.clientesModificar,name='clienteModificar'),
+    url(r'^clientes/baja/(?P<cliente_id>[0-9]+)/$',recetasviews.clientesBaja,name='clienteBaja'),
 
     url(r'^ciudades/$',recetasviews.ciudades,name='ciudades'),
     url(r'^ciudades/alta/$',recetasviews.ciudadesAlta,name='ciudadesAlta'),
     url(r'^ciudades/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudades,name='ciudadConsulta'),
     url(r'^ciudades/modificar/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudadesModificar,name='ciudadModificar'),
+    url(r'^ciudades/baja/(?P<ciudad_id>[0-9]+)/$',recetasviews.ciudadesBaja,name='ciudadesBaja'),
     #falta producto
 
     url(r'^productosTerminados/$',recetasviews.productosTerminados,name='productosTerminados'),
     url(r'^productosTerminados/alta/$',recetasviews.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminados/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminados,name='productosTerminadosConsulta'),
     url(r'^productosTerminados/modificar/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosModificar,name='productosTerminadosModificar'),
-
+    url(r'^productosTerminados/baja/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosBaja,name='productosTerminadosBaja'),
                 # FIN PRIMERA ENTREGA
 
 
@@ -99,7 +103,7 @@ urlpatterns = [
 
 
 
-    url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
+    #url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
