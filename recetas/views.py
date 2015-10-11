@@ -79,44 +79,8 @@ def insumosBaja(request,insumo_id):
 #********************************************************#
                #     R E C E T A S    #
 #********************************************************#
-"""
+
 def recetas(request,receta_id=None):
-
-    if receta_id is not None:
-        r = models.Receta.objects.get(pk=receta_id)
-        i = r.insumos.all()
-        return render(request, "recetasConsulta.html",{"receta": r,"insumos":i})
-    filters = get_filtros(request.GET, models.Receta)
-    mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
-    recetas = models.Receta.objects.filter(**mfilters)
-    detalles_form_class = formset_factory(forms.RecetaDetalleForm)
-    detalles_form = None
-    receta_form = None
-    if request.method == "POST":
-        receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
-        if receta_form.is_valid():
-            receta_instancia = receta_form.save() #commit false
-            detalles_form = detalles_form_class(request.POST, request.FILES)
-            if detalles_form.is_valid():
-                #detalles = detalles_form.save(commit=False)
-                #receta.save()
-                for detalle in detalles_form:
-                    detalle_instancia = detalle.save(commit=False)
-                    detalle_instancia.receta = receta_instancia
-                    detalle_instancia.save()
-                return redirect('recetas')
-
-    insumos = models.Insumo.objects.all()
-    return render(request, "recetas/recetas.html", {
-        "recetas": recetas,
-        "receta_form": receta_form or forms.RecetaForm(),
-        "detalles_form_factory": detalles_form or detalles_form_class(),
-        "modal": request.method == "POST",
-        "insumos":insumos})
-
-"""
-def recetas(request,receta_id=None):
-    print "PRINCIPAL"
     if receta_id is not None:
         # consulta
         receta = models.Receta.objects.get(pk=receta_id)
@@ -127,6 +91,7 @@ def recetas(request,receta_id=None):
         filters = get_filtros(request.GET, models.Receta)
         mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
         recetas = models.Receta.objects.filter(**mfilters)
+        # filtrar recetas por productos
         productos_terminados= models.ProductoTerminado.objects.all()
         return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
@@ -136,22 +101,23 @@ def recetas(request,receta_id=None):
 
 
 def recetasModificar(request,receta_id):
-
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
+    detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     detalles_form_factory = formset_factory(forms.RecetaDetalleForm)
-
+    insumos = models.Insumo.objects.all() #para detalles
     if request.method=="POST":
         receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
         if receta_form.is_valid():
             receta_form.save()
-        return redirect('recetas')
+            return redirect('recetas')
     else:
         receta_form = forms.RecetaForm(instance= receta_instancia)
-        detalles = models.RecetaDetalle.objects.filter(receta = receta_instancia).values()
-        detalles_formset = detalles_form_factory(initial = detalles)
-        return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,"detalles_formset":detalles_formset})
-
-    # FIN BORRADOR
+        #si el form no es valido, le mando todo al html para que muestre los errores#
+    return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,"detalles_receta":detalles_instancias,
+                                                   "insumos":insumos,
+                                                   "detalles_form_factory":detalles_form_factory(),
+                                                   "receta_id":receta_id
+                                                   })
 
 
 
@@ -160,26 +126,25 @@ def recetasAlta(request):
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
+    insumos = models.Insumo.objects.all()
     if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
         if receta_form.is_valid():
-            receta_instancia = receta_form.save() #commit false
+            receta_instancia = receta_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
             if detalles_form.is_valid():
                 #detalles = detalles_form.save(commit=False)
-                #receta.save()
+                receta_instancia.save()
                 for detalle in detalles_form:
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.receta = receta_instancia
                     detalle_instancia.save()
                 return redirect('recetas')
-    else:
-        insumos = models.Insumo.objects.all()
-        return render(request, "recetasAlta.html", {
+        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
+    return render(request, "recetasAlta.html", {
             "insumos":insumos,
             "receta_form": receta_form or forms.RecetaForm(),
             "detalles_form_factory": detalles_form or detalles_form_class()})
-    return redirect('recetas')
 
 
 def recetasBaja(request,receta_id):

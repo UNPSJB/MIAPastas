@@ -78,7 +78,7 @@ class Receta(models.Model):
                #     P R O V E E D O R E S    #
 #********************************************************#
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.IntegerField()
+    cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 

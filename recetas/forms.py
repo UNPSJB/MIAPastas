@@ -1,5 +1,7 @@
 from django import forms
 from . import models
+from django.core.exceptions import ValidationError
+from django.shortcuts import get_object_or_404
 
 class InsumoForm(forms.ModelForm):
     class Meta:
@@ -17,10 +19,15 @@ class RecetaForm(forms.ModelForm):
 
 
     def clean_producto_terminado(self):
+        print "CLEAN DE RECETA"
         producto_terminado = self.cleaned_data['producto_terminado']
-
-        if (producto_terminado.receta is not None):
-            raise ValidationError("ya hay una receta para este producto.")
+        try:
+            receta = get_object_or_404(models.Receta, producto_terminado=producto_terminado)
+        except:
+            return producto_terminado
+        #if receta is not None:
+        #    if receta.id != self.instance.id:
+        raise ValidationError("ya hay una receta para este producto.")
         return producto_terminado
 
 
@@ -30,6 +37,13 @@ class RecetaDetalleForm(forms.ModelForm):
         model = models.RecetaDetalle
         exclude = ['receta'] #setea todos campos menos receta
 
+    def clean_cantidad_insumo(self):
+        print "entre al clean de cantidad de insumo de detalles"
+        cantidad = self.clean_cantidad_insumo<0
+        if cantidad<0:
+            print "LANZO"
+            raise ValidationError("ya hay una receta para este producto.")
+        return cantidad
 
 class ProveedorForm(forms.ModelForm):
     class Meta:

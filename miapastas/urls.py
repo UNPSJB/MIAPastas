@@ -31,7 +31,6 @@ urlpatterns = [
     url(r'^login$', views.login, name='login'),
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 
-    url(r'^recetasModificar$',recetasviews.recetasModificar,name='recetasModificar'),
 
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
@@ -50,6 +49,7 @@ urlpatterns = [
 
 
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetasID'),
+
 
     url(r'^recetas/$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/alta/$',recetasviews.recetasAlta,name='recetasAlta'),
@@ -125,7 +125,6 @@ urlpatterns = [
 
 
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
-    url(r'^recetasModificar$',views.recetasModificar,name='recetasModificar'),
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     #url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
