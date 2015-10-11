@@ -34,7 +34,6 @@ urlpatterns = [
     url(r'^login$', views.login, name='login'),
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 
-    url(r'^recetasModificar$',recetasviews.recetasModificar,name='recetasModificar'),
 
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
@@ -52,12 +51,16 @@ urlpatterns = [
                     # Hechos en forms
 
 
+    url(r'^choferes$',recetasviews.choferes,name='choferes'),
+    url(r'^choferes/(?P<chofer_id>[0-9]+)/$',recetasviews.choferes,name='choferConsulta'),
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetasID'),
+
 
     url(r'^recetas/$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/alta/$',recetasviews.recetasAlta,name='recetasAlta'),
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetaConsulta'),
     url(r'^recetas/modificar/(?P<receta_id>[0-9]+)/$',recetasviews.recetasModificar,name='recetaModificar'),
+    url(r'^recetas/baja/(?P<receta_id>[0-9]+)/$',recetasviews.recetasBaja,name='recetasBaja'),
 
 
 
@@ -65,6 +68,7 @@ urlpatterns = [
     url(r'^insumos/alta/$',recetasviews.insumosAlta,name='insumosAlta'),
     url(r'^insumos/(?P<insumo_id>[0-9]+)/$',recetasviews.insumos,name='insumoConsulta'),
     url(r'^insumos/modificar/(?P<insumo_id>[0-9]+)/$',recetasviews.insumosModificar,name='insumoModificar'),
+    url(r'^insumos/baja/(?P<insumo_id>[0-9]+)/$',recetasviews.insumosBaja,name='insumosBaja'),
 
 
 
@@ -126,7 +130,6 @@ urlpatterns = [
 
 
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
-    url(r'^recetasModificar$',views.recetasModificar,name='recetasModificar'),
     url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
     #url(r'^clientesAlta$',views.clientesAlta,name='clientesAlta'),
     url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
@@ -146,7 +149,6 @@ urlpatterns = [
     url(r'^rendicionReparto$',views.rendicionReparto,name='rendicionReparto'),
     url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
     url(r'^pedidosCliente$',views.pedidosCliente,name='pedidosCliente'),
-    url(r'^choferes$',views.choferes,name='choferes'),
     url(r'^choferesModificar$',views.choferesModificar,name='choferesModificar'),
     url(r'^choferesAlta$',views.choferesAlta,name='choferesAlta'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),

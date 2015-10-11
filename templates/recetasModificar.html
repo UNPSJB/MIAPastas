@@ -3,12 +3,8 @@
 {% load bootstrap3 %}
 {% block contenido %}
 
-<!-- la fecha de modificacion se creará autaticamente al modificar la receta -->
-
-
 <div class="container">
 <div class="panel panel-default">
-
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Receta</b></font></p></div>
 
 
@@ -97,23 +93,174 @@
 
 
 
-  <form action="{% url 'recetasModificar' %}" method="post" class="form">
-      {% csrf_token %}
-      {% bootstrap_form receta_form layout='horizontal' %}
+              <form action="{% url 'recetaModificar' receta_id %}" method="post" class="form">
+                  {% csrf_token %}
+                  {% bootstrap_form receta_form layout='horizontal' %}
+                  {{ detalles_form_factory.management_form }}
+                  <p>&nbsp;</p>
+                  <div class="panel-heading"><p class="text-center login-title">
+                            <font face="tahoma" size="4" color="black"><b>Modificar Detalles</b></font></p>
+                  </div>
 
-      {% bootstrap_formset detalles_formset  %}
 
-  </form>
+                  <label for="id_insumo">Insumo</label>
+                  <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                       <option value="" selected="selected">---------</option>
+                             {% for i in insumos %}
+                                 <option value="{{i.id}}">{{i}}</option>
+                            {% endfor %}
+                  </select>
 
+                  <div class="form-group">
+                       <label for="cantidadInsumo">Cantidad</label>
+                       <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                  </div>
+
+
+                  <button id="add-detalle-receta" type="button" class="btn btn-primary">Agregar Detalle</button>
+                  <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>Insumo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
+                    </table>
+
+                  {% buttons %}
+
+
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                  {% endbuttons %}
+              </form>
             <a class="btn pull-right" href="{%url 'recetas'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
-
 </div>
 </div>
 </div>
-    <!-- Este es el fin del formulario de recetas -->
 
 
 
+{% if receta_form.errors %}
+    {% for field in receta_form %}
+        {% for error in field.errors %}
+            <div class="alert alert-error">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in receta_form.non_field_errors %}
+        <div class="alert alert-error">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
+
+
+
+
+
+
+
+
+
+{% endblock %}
+{% block javascript %}
+
+
+<script>
+
+var tabla_detalle_tpl;
+var detalle_cantInsumo_imput_tpl;
+var detalle_insumo_imput_tpl;
+var detalles = [];
+
+tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
+                    + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
+                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
+                    +">Eliminar</button></td></tr>");
+
+
+detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"id_form-<%= i %>-cantidad_insumo"
+                                    +" name="+"form-<%= i %>-cantidad_insumo"
+                                    +" placeholder="+"Cantidad_insumo"
+                                    +" type="+"hidden"+" value=<%=cantidad %>>");
+
+detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"id_form-<%= i%>-insumo"
+                                    +" name="+"form-<%= i%>-insumo"
+                                    +" placeholder="+"insumo"+" type="
+                                    +"hidden"+" value=<%=insumo %>>");
+
+            // saco insumo del arreglo detalles
+ function eliminar(ins){
+        var isumo = _.where(detalles, {insumo:String(ins)});  // obtengo el insumo que quiero borrar, hay q borrarlo
+        detalles = _.filter(detalles,function(element){
+                    return element.insumo != String(ins);                      //filtro los insumos que no tengan el id a borrar.
+        });
+        armar_tabla(); //refresco la tabla
+  }
+
+function modificar_detalle(ins){
+    console.log("en modificar papa");
+}
+
+function armar_form(){
+            var html_form = "";
+            $(detalles).each(function(i, d) {
+                d.i=String(i);
+                html_form = html_form +  detalle_cantInsumo_input_tpl(d);
+                html_form = html_form +  detalle_insumo_input_tpl(d);
+                document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
+            });
+            $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+    var html_tabla = "";
+    $(detalles).each(function(i, d) {
+        html_tabla = html_tabla + tabla_detalle_tpl(d);
+    });
+    $('#detalles').html(html_tabla);
+}
+
+
+function validarForm(){
+    if (_.size(detalles) == 0){
+         alert("Debe agregar al menos un detalle");
+        return false;
+    }else{
+        armar_form();
+        return true;
+    }
+}
+
+$(function() {
+
+  $("#add-detalle-receta").click(function(){
+        var cantidad = $("#cantidadInsumo").val();
+        var insumo = $("#id_insumo").val();
+        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        var ins = _.find(detalles,{insumo:insumo});
+        if ((cantidad == "") || (insumo == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            if (ins == undefined){
+                detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
+                armar_tabla();
+            }else{
+                alert("Insumo ya cargado");
+            }
+        }
+  });
+
+});
+</script>
 {% endblock %}
 
