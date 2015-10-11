@@ -2,6 +2,16 @@
 from django.db import models
 
 # Create your models here.
+#********************************************************#
+               #     C H O F E R E S    #
+#********************************************************#
+class Chofer (models.Model):
+    FILTROS = ['cuit_icontains', 'nombre_icontains']
+    cuit= models.CharField(max_length=20, unique=True)
+    nombre= models.CharField(max_length=100)
+    direccion= models.CharField(max_length=100)
+    telefono=models.PositiveIntegerField()
+    e_mail=models.CharField(max_length=100)
 
 #********************************************************#
                #     I N S U M O     #

@@ -48,6 +48,8 @@ urlpatterns = [
                     # Hechos en forms
 
 
+    url(r'^choferes$',recetasviews.choferes,name='choferes'),
+    url(r'^choferes/(?P<chofer_id>[0-9]+)/$',recetasviews.choferes,name='choferConsulta'),
     url(r'^recetas/(?P<receta_id>[0-9]+)/$',recetasviews.recetas,name='recetasID'),
 
 
@@ -144,7 +146,6 @@ urlpatterns = [
     url(r'^rendicionReparto$',views.rendicionReparto,name='rendicionReparto'),
     url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
     url(r'^pedidosCliente$',views.pedidosCliente,name='pedidosCliente'),
-    url(r'^choferes$',views.choferes,name='choferes'),
     url(r'^choferesModificar$',views.choferesModificar,name='choferesModificar'),
     url(r'^choferesAlta$',views.choferesAlta,name='choferesAlta'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),

@@ -8,19 +8,17 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Choferes</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
-      <form class="form-inline">
+      <form method="get" class="form-inline col-md-12">
+
           <div class="form-group">
-            <label for="exampleInputName2">Cuit/Cuil</label>
-            <input type="text" class="form-control" id="exampleInputName2" placeholder="Jane Doe">
+            <label for="cuit">Cuit</label>
+            <input type="text" class="form-control"  value="{{filtros.cuit}}" id="cuit" placeholder="cuit">
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail2">Nombre</label>
-            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control"  value="{{filtros.nombre}}" id="nombre" placeholder="nombre">
           </div>
-          <div class="form-group">
-            <label for="exampleInputEmail2">Apellido</label>
-            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="jane.doe@example.com">
-          </div>
+
 
 
           <label>
@@ -29,6 +27,7 @@
 
           <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
+
           <p>&nbsp;</p>
       <div class="row">
           <div class="col-md-10">
@@ -37,7 +36,6 @@
             <tr>
                 <th>Cuit/Cuil</th>
                 <th>Nombre</th>
-                <th>Apellido</th>
                 <th>Direccion</th>
                 <th>Telefono</th>
                 <th>e-mail</th>
@@ -45,14 +43,15 @@
             </thead>
               <tbody>
 
+              {%for c in choferes%}
               <tr>
-                  <td>cuit cuil1</td>
-                  <td>nombre1</td>
-                  <td>direccion1</td>
-                  <td>telefno1</td>
-                    <td>email1</td>
-
+                    <td>{{c.cuit}}</td>
+                    <td>{{c.nombre}}</td>
+                    <td>{{c.direccion}}</td>
+                    <td>{{c.telefono}}</td>
+                    <td>{{c.e_mail}}</td>
               </tr>
+              {%endfor%}
           </tbody>
           </table>
           </div>
