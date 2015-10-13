@@ -203,15 +203,10 @@ def proveedoresAlta(request):
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
             proveedor_instancia=proveedores_form.save()
-
             return redirect('proveedores')
-    else:
-        proveedores_form = forms.ProveedorForm()
-        insumos = models.Insumo.objects.all()
-        #recetas = models.Receta.objects.all()
-        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form,"insumos":insumos})
-
-
+    proveedores_form = forms.ProveedorForm()
+    insumos = models.Insumo.objects.all()
+    return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
 
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):

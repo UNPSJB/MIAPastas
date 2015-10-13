@@ -70,7 +70,23 @@
             </div>
     </div>
 </div>
+<!--
+{% if proveedores_form.errors %}
+    {% for field in proveedores_form %}
+        {% for error in field.errors %}
+            <div class="alert alert-error">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in proveedores_form.non_field_errors %}
+        <div class="alert alert-error">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
 
+-->
 
 {% endblock %}
 {% block javascript %}
@@ -111,7 +127,6 @@ function armar_form(){
             var n = _.size(detalles);
             $(detalles).each(function(i, d) {
                 d.i=String(i);
-                alert(i+"sdf "+d);
                 html_form = html_form +  detalle_insumo_input_tpl(d);
             });
             $('#detalles_forms').html(html_form);
@@ -128,7 +143,18 @@ function armar_tabla(){
 
 function validarForm(){
     if (_.size(detalles) == 0){
-         alert("Falta ingresar datos");
+         BootstrapDialog.show({
+                title: "Error de Alta",
+                cssClass: 'error-dialog',
+                message: "Falta cargar datos",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
         return false;
     }else{
         armar_form();
@@ -156,7 +182,19 @@ $(function() {
                 detalles.push({insumo: insumo,texto:texto});
                 armar_tabla();
             }else{
-                alert("Insumo ya cargado");
+                BootstrapDialog.show({
+                title: "Error de Insumos",
+                cssClass: 'error-dialog',
+                message: "Insumo ya cargado",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+
             }
         }
   });
