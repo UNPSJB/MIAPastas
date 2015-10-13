@@ -142,7 +142,7 @@ class Ciudad(models.Model):
 
     FILTROS = ['nombre__icontains','codigo_postal__icontains','zona']
     nombre = models.CharField(max_length=100, unique=True)
-    codigo_postal = models.PositiveIntegerField()
+    codigo_postal = models.PositiveIntegerField(unique=True)
     zona = models.ForeignKey(Zona,related_name="ciudades")
 
     def __str__(self):
