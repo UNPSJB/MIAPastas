@@ -136,7 +136,8 @@ def recetasModificar(request,receta_id):
     else:
         receta_form = forms.RecetaForm(instance= receta_instancia)
         #si el form no es valido, le mando todo al html para que muestre los errores#
-    return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,"detalles_receta":detalles_instancias,
+    return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
+                                                   "detalles_receta":detalles_instancias,
                                                    "insumos":insumos,
                                                    "detalles_form_factory":detalles_form_factory(),
                                                    "receta_id":receta_id
