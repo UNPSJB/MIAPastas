@@ -86,19 +86,55 @@
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
+       function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar un insumo",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+        }}]});}
+
         $("#insumo-consultar").click(function(){
-              //window.location('/insumos/'+id);
-              window.open('/insumos/'+id+'',"_self")
+            if (id == undefined){
+                mostrar_error();
+            }else{
+              window.open('/insumos/'+id+'',"_self");
+              }
         });
 
         $("#insumo-modificar").click(function(){
-              //window.location('/insumos/'+id);
-              window.open('/insumos/modificar/'+id+'',"_self")
+            if (id == undefined){
+                mostrar_error();
+            }else{
+              window.open('/insumos/modificar/'+id+'',"_self");
+              }
         });
 
+
         $("#insumo-eliminar").click(function(){
-
-
+            if (id == undefined){
+                mostrar_error();
+            }else{
+                BootstrapDialog.show({
+                    title: "Eliminar",
+                    cssClass: 'aviso-dialog',
+                    message: "¿Seguro que desea borrar?",
+                    type: BootstrapDialog.TYPE_WARNING,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                window.open('/insumos/baja/'+id+'',"_self");
+                                dialogRef.close();
+                            }},{
+                            label: 'Cancelar',
+                            action:function(dialogRef){
+                            dialogRef.close();
+                    }}]});
+            }
         });
 
 

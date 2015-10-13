@@ -3,6 +3,16 @@ from django.db import models
 from django.core.validators import MinValueValidator
 
 # Create your models here.
+#********************************************************#
+               #     C H O F E R E S    #
+#********************************************************#
+class Chofer (models.Model):
+    FILTROS = ['cuit_icontains', 'nombre_icontains']
+    cuit= models.CharField(max_length=20, unique=True)
+    nombre= models.CharField(max_length=100)
+    direccion= models.CharField(max_length=100)
+    telefono=models.PositiveIntegerField()
+    e_mail=models.CharField(max_length=100)
 
 #********************************************************#
                #     I N S U M O     #
@@ -20,7 +30,7 @@ class Insumo(models.Model):
     )
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
-    stock = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField(blank= True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
 
     def __str__(self):
@@ -81,7 +91,7 @@ class Receta(models.Model):
                #     P R O V E E D O R E S    #
 #********************************************************#
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.IntegerField()
+    cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
