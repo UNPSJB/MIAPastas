@@ -87,9 +87,6 @@ class Receta(models.Model):
         return "%s (%d %s)" % (self.nombre, self.cant_prod_terminado, self.get_unidad_medida_display())
 
 
-#********************************************************#
-               #     P R O V E E D O R E S    #
-#********************************************************#
 class RecetaDetalle(models.Model):
     cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
@@ -108,17 +105,15 @@ class Proveedor(models.Model):
     direccion = models.CharField(max_length=100, unique=True)
     email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
     localidad = models.CharField(max_length=50, unique=True)
-    numero_cuenta= models.PositiveIntegerField()
+    numero_cuenta= models.PositiveIntegerField(unique=True)
     provincia = models.CharField(max_length=50, unique=True)
     telefono= models.PositiveIntegerField()
-    cuit= models.PositiveIntegerField()
+    cuit= models.PositiveIntegerField(unique=True)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
 #RELACION UNO A MUCHOS CON pedidosProveedor
 
     def __str__(self):
         return "%s (%d %s)" % (self.razon_social, self.telefono, self.cuit)
-
-
 
 
 #********************************************************#

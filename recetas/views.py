@@ -135,6 +135,7 @@ def recetasModificar(request,receta_id):
             return redirect('recetas')
     else:
         receta_form = forms.RecetaForm(instance= receta_instancia)
+
         #si el form no es valido, le mando todo al html para que muestre los errores#
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
@@ -142,8 +143,6 @@ def recetasModificar(request,receta_id):
                                                    "detalles_form_factory":detalles_form_factory(),
                                                    "receta_id":receta_id
                                                    })
-
-
 
 
 def recetasAlta(request):
@@ -184,8 +183,6 @@ def recetasBaja(request,receta_id):
 
 
 def proveedores(request,proveedor_id=None):
-    print "soy prinsipa",proveedor_id
-
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         i = p.insumos.all()
@@ -207,14 +204,11 @@ def proveedoresAlta(request):
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
-            proveedores_form.save()
+            proveedor_instancia=proveedores_form.save()
             return redirect('proveedores')
-    else:
-        proveedores_form = forms.ProveedorForm()
-        #recetas = models.Receta.objects.all()
-    return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form})
-
-
+    proveedores_form = forms.ProveedorForm()
+    insumos = models.Insumo.objects.all()
+    return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
 
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):
@@ -227,8 +221,6 @@ def proveedoresBaja(request,proveedor_id =None):
     filters = get_filtros(request.GET, models.Proveedor)
     mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
     proveedores = models.Proveedor.objects.filter(**mfilters)
-    #return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
-
     return redirect('proveedores')
 
 

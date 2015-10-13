@@ -20,6 +20,9 @@ from . import views
 from recetas import views as recetasviews
 
 urlpatterns = [
+
+
+
     url(r'^index$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^ayuda$', views.ayuda, name='ayuda'),

@@ -1,40 +1,204 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load bootstrap3 %}
-
-
 {% block contenido %}
 
-
-
+<!-- Este es el formulario de INSUMOS PAPA -->
 
 <div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta de Proveedor</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form action="{% url 'proveedoresAlta' %}" method="post" class="form">
-                                {% csrf_token %}
-                                {% bootstrap_form proveedores_form layout='horizontal' %}
-                                {% buttons %}
-                                    <button type="submit" class="btn btn-primary">
-                                        {% bootstrap_icon "star" %} Aceptar
-                                    </button>
-                                {% endbuttons %}
-                    </form>
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Proveedor</b></font></p></div>
+            <div class="panel-body">
 
-      <a><button  class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button></a>
-      <a href="proveedores"><button class="btn pull-right"><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button></a>
 
-  </div>
+                <form action="{% url 'proveedoresAlta' %}" method="post" class="form" onsubmit="return validarForm()">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Proveedor</b></font></p></div>
+                     {% csrf_token %}
+                    <!-- {% bootstrap_form proveedores_form %} -->
 
+
+                    <div class="col-md-6"><label for="">Cuit:  </label>{{proveedores_form.cuit}}</div>
+                    <div class="col-md-6"><label for="">Razon social  </label>{{proveedores_form.razon_social}}</div>
+                    <div class="col-md-6"><label for="">Localidad  </label>{{proveedores_form.localidad}}</div>
+                    <div class="col-md-6"><label for="">Nombre dueño  </label>{{proveedores_form.nombre_dueno}}</div>
+                    <div class="col-md-6"><label for="">Direccion </label>{{proveedores_form.direccion}}</div>
+                    <div class="col-md-6"><label for="">Email  </label> {{proveedores_form.email}}</div>
+                    <div class="col-md-6"><label for="">Numero Cuenta  </label>{{proveedores_form.numero_cuenta}}</div>
+                    <div class="col-md-6"><label for="">Provincia</label>{{proveedores_form.provincia}}</div>
+                    <div class="col-md-6"><label for="">Telefono</label>{{proveedores_form.telefono}}</div>
+
+
+
+
+
+                      <div class="panel-heading"><p class="text-center login-title">
+                            <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
+                      </div>
+
+                      <div id="detalles_forms"></div>
+
+                      <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for i in insumos %}
+                                 <option value="{{i.id}}">{{i}}</option>
+                            {% endfor %}
+                         </select>
+
+
+
+                     {{ detalles_form_factory.management_form }}
+
+                    <button id="add-detalle-proveedor" type="button" class="btn btn-primary">Add</button>
+                    <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>Insumo</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
+
+                    </table>
+                {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+                </form>
+            </div>
+    </div>
 </div>
-</div>
+<!--
+{% if proveedores_form.errors %}
+    {% for field in proveedores_form %}
+        {% for error in field.errors %}
+            <div class="alert alert-error">
+                <strong>{{ error|escape }}</strong>
+            </div>
+        {% endfor %}
+    {% endfor %}
+    {% for error in proveedores_form.non_field_errors %}
+        <div class="alert alert-error">
+            <strong>{{ error|escape }}</strong>
+        </div>
+    {% endfor %}
+{% endif %}
 
-    <!-- Este es el fin del formulario de recetas -->
+-->
+
+{% endblock %}
+{% block javascript %}
+
+
+<script>
+
+var tabla_detalle_tpl;
+var detalle_insumo_imput_tpl;
+var detalles = [];
+
+tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"
+                    +"<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
+                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
+                    +">Eliminar</button></td>" + "</tr>");
+
+
+detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"insumos"
+                                    +" name="+"insumos"
+                                    +" placeholder="+"insumo"+" type="
+                                    +"hidden"+" value=<%=insumo %>>");
 
 
 
+        // saco insumo del arreglo detalles
+ function eliminar(ins){
+        var isumo = _.where(detalles, {insumo:String(ins)});  // obtengo el insumo que quiero borrar, hay q borrarlo
+        detalles = _.filter(detalles,function(element){
+                    return element.insumo != String(ins);                      //filtro los insumos que no tengan el id a borrar.
+        });
+        armar_tabla(); //refresco la tabla
+  }
 
 
-    {% endblock %}
+function armar_form(){
+            var html_form = "";
+            var n = _.size(detalles);
+            $(detalles).each(function(i, d) {
+                d.i=String(i);
+                html_form = html_form +  detalle_insumo_input_tpl(d);
+            });
+            $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+    var html_tabla = "";
+    $(detalles).each(function(i, d) {
+        html_tabla = html_tabla + tabla_detalle_tpl(d);
+    });
+    $('#detalles').html(html_tabla);
+}
+
+
+function validarForm(){
+    if (_.size(detalles) == 0){
+         BootstrapDialog.show({
+                title: "Error de Alta",
+                cssClass: 'error-dialog',
+                message: "Falta cargar datos",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+        return false;
+    }else{
+        armar_form();
+        return true;
+    }
+
+}
+
+$(function() {
+
+
+  {% if modal %}
+    $("#myModal").modal("show");
+  {% endif %}
+
+  $("#add-detalle-proveedor").click(function(){
+
+        var insumo = $("#id_insumo").val();
+        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        var ins = _.find(detalles,{insumo:insumo});
+        if (insumo == ""){
+            alert("Debe indicar almenos un insumo");
+        }else{
+            if (ins == undefined){
+                detalles.push({insumo: insumo,texto:texto});
+                armar_tabla();
+            }else{
+                BootstrapDialog.show({
+                title: "Error de Insumos",
+                cssClass: 'error-dialog',
+                message: "Insumo ya cargado",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                        label: 'Aceptar',
+                        action: function(dialogRef){
+                            dialogRef.close();
+                        }
+                }]
+            });
+
+            }
+        }
+  });
+
+});
+</script>
+{% endblock %}
