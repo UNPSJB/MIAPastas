@@ -26,8 +26,8 @@ class RecetaForm(forms.ModelForm):
         except:
             return producto_terminado
         #if receta is not None:
-        #    if receta.id != self.instance.id:
-        raise ValidationError("ya hay una receta para este producto.")
+        if receta.id != self.instance.id:
+            raise ValidationError("ya hay una receta para este producto.")
         return producto_terminado
 
 
