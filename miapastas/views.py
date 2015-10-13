@@ -1,7 +1,8 @@
 from django.shortcuts import render
-
+from django.contrib import messages
 
 def index(request):
+    messages.success(request, 'Hola usuario.')
     return render(request, "index.html", {})
 
 

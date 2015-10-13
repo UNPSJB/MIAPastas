@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.db import models
+from django.core.validators import MinValueValidator
 
 # Create your models here.
 
@@ -33,15 +34,17 @@ class Insumo(models.Model):
 class ProductoTerminado(models.Model):
     UNIDADES = {
         (1, "Kg"),
-        (3, "Unidad"),
-        (5, "Bolson"),
-        (5, "Bolsines"),
+        (2, "Unidad"),
+        (3, "Bolson"),
+        (4, "Bolsines"),
     }
     FILTROS = ['nombre__icontains','stock__lte']
     nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
-    stock = models.IntegerField()
+    stock = models.PositiveIntegerField()
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
-    precio= models.DecimalField(max_digits=10, decimal_places=2)
+    precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
+    #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
+
 
     def __str__(self):
         return "%s"% self.nombre

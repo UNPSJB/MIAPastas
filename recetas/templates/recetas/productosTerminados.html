@@ -16,7 +16,7 @@
           </div>
 
             <div class="form-group">
-            <label for="stock">Stock</label>
+            <label for="stock">Stock (Menor o igual a)</label>
             <input type="text" class="form-control" value="{{filtros.stock}}" id="stock" name = "stock" >
           </div>
 
@@ -27,29 +27,33 @@
           <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
           <p>&nbsp;</p>
-      <div class="row">
+      <div class="row"><!-- <div style="height:100px;overflow-y:scroll;;">-->
           <div class="col-md-10">
           <table class="table table-hover">
+
             <thead>
             <tr>
                 <th>Nombre</th>
                 <th>Stock</th>
                 <th>Unidad de Medida</th>
                 <th>Precio</th>
-
+                <th>Recetas</th>
             </tr>
             </thead>
+
               <tbody>
                                  {% for p in productos %}
-                                 <tr class="renglon select-item" data-id="{{p.id}}" id="renglon-{{p.id}}">
+                                 <tr class="renglon select-item" data-id="{{p.id}}" id="renglon-{{p.id}}" data-recetas="{{p.receta_set.exists}}">
                                     <td>{{p.nombre}}</td>
                                     <td>{{p.stock}}</td>
                                     <td>{{p.get_unidad_medida_display}}</td>
-                                    <td>{{p.precio}}</td>
+                                    <td>${{p.precio}}</td>
+                                    <td>{{p.receta_set.all|join:", "}}</td>
                                     <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
           </tbody>
+
           </table>
           </div>
       <div class="col-md-2">
@@ -79,9 +83,6 @@
         <h4 class="modal-title">Eliminar Producto Terminado</h4>
       </div>
       <div class="modal-body">
-          <label for="">Confirma que desea eliminar: </label>
-
-
       </div>
       <div class="modal-footer">
           <a id="eliminar-producto"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
@@ -101,9 +102,14 @@
 <script>
     $(function() {
         var id;
+        var tiene_receta;
+        var una_col_recetas;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
+            tiene_receta = $el.data()["recetas"] == "True";
+            una_col_recetas = $el.data();
+            console.log(una_col_recetas);
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -128,7 +134,14 @@
                 }]
             });
             }else{
-            $("#myModalEliminar").modal("show");
+                var $modal = $("#myModalEliminar");
+                var $texto = $(".modal-body", $modal);
+                if (tiene_receta==true){
+                    $texto.html("<p>El producto que intenta eliminar tiene recetas asociados. Si elimina este producto, sus recetas asociadas tambien se eliminaran.</p><p>Esta seguro que quiere eliminar?</p>");
+                }else{
+                    $texto.html("<p>Esta seguro que quiere eliminar?</p>");
+                }
+                $("#myModalEliminar").modal("show");
             }
         }
 

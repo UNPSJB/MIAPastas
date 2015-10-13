@@ -6,6 +6,8 @@ from django.shortcuts import get_object_or_404
 from django.forms.models import BaseModelFormSet
 from django.forms.models import modelformset_factory
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib import messages
+from django.http import HttpResponseRedirect
 
 # Create your views here.
 
@@ -285,6 +287,26 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 
+"""
+def productosTerminadosAlta(request):
+    if request.method == "POST":
+        producto_form = forms.ProductoTerminadoForm(request.POST)
+        if producto_form.is_valid():
+            nombre = producto_form.cleaned_data['nombre']
+            datos = models.ProductoTerminado.objects.filter(nombre__icontains=nombre)
+            if datos == None: #significa que no existe un producto con ese nombre. Ejemplo receta1 != Receta1 != ReCeTa1
+                producto_form.save()
+                messages.success(request, 'El Producto: ' + nombre + ', ha sido dado de alta correctamente.')
+                return redirect('productosTerminados')
+            else:
+                messages.error(request, 'El Producto: ' + nombre + ', ya existe.')
+                return HttpResponseRedirect('')
+                #return render(request,'productosTerminadosAlta.html',{"producto_form": producto_form})
+
+    else:
+        producto_form = forms.ProductoTerminadoForm()
+    return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
+"""
 
 
 def productosTerminadosModificar(request,producto_id = None):
@@ -310,12 +332,19 @@ def productosTerminadosModificar(request,producto_id = None):
 
 
 @csrf_exempt
-def productosTerminadosBaja(request,producto_id =None):
+def productosTerminadosBaja(request, producto_id=None):
     print "estoy en bajaaa"
     p = models.ProductoTerminado.objects.get(pk=producto_id)
-    p.delete()
-    return redirect('productosTerminados')
+    if p.receta_set.exists():
+        messages.success(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
+            [ "%s" % r for r in p.receta_set.all()]
+        ))
+        p.delete()
+    else:
+        messages.success(request, 'El Producto: ' + p.nombre + ', ha sido eliminado correctamente.')
+        p.delete()
 
+    return redirect('productosTerminados')
 
 
 
