@@ -127,10 +127,12 @@ def recetasModificar(request,receta_id):
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     detalles_form_factory = formset_factory(forms.RecetaDetalleForm)
+    print detalles_instancias[0].insumo
     insumos = models.Insumo.objects.all() #para detalles
     if request.method=="POST":
         receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
         if receta_form.is_valid():
+            messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
             receta_form.save()
             return redirect('recetas')
     else:
@@ -162,6 +164,8 @@ def recetasAlta(request):
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.receta = receta_instancia
                     detalle_instancia.save()
+                messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido registrada correctamente.')
+
                 return redirect('recetas')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
     return render(request, "recetasAlta.html", {
@@ -171,10 +175,9 @@ def recetasAlta(request):
 
 
 def recetasBaja(request,receta_id):
-    print "estoy en bajaaa"
-    p = models.Receta.objects.get(pk=receta_id)
-    p.delete()
-
+    receta = models.Receta.objects.get(pk=receta_id)
+    messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
+    receta.delete()
     return redirect('recetas')
 
 #********************************************************#

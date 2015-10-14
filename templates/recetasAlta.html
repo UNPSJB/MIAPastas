@@ -14,7 +14,7 @@
                 <form action="{% url 'recetasAlta' %}" method="post" class="form" onsubmit="return validarForm()">
                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
                      {% csrf_token %}
-                     {% bootstrap_form receta_form%}
+                     {% bootstrap_form receta_form layout='horizontal'%}
                       <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
                       </div>
@@ -60,20 +60,6 @@
     </div>
 </div>
 
-{% if receta_form.errors %}
-    {% for field in receta_form %}
-        {% for error in field.errors %}
-            <div class="alert alert-error">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in receta_form.non_field_errors %}
-        <div class="alert alert-error">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
 
 {% endblock %}
 {% block javascript %}

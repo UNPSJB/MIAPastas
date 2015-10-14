@@ -17,8 +17,8 @@
                 <div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
-                    <label for="stock">Stock</label>
-                    <input type="text" class="form-control" value="{{filtros.stock}}" name="stock" id="stock" >
+                    <label for="stock">Stock (Menor o igual a)</label>
+                    <input type="number" class="form-control" value="{{filtros.stock}}" name="stock" id="stock" >
                 </div>
                 <button type="submit" class="btn btn-default">Filtrar</button>
             </form>
@@ -32,14 +32,13 @@
                             <thead>
                             <tr>
                                 <th>Nombre</th>
-
                                 <th>Stock</th>
                                 <th>Unidad de Medida</th>
                             </tr>
                             </thead>
                               <tbody>
                                 {% for insumo in insumos %}
-                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}">
+                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}" data-recetas="{{p.recetadetalle_set.exists}}">
                                     <td>{{insumo.nombre}}</td>
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
@@ -74,9 +73,12 @@
 <script>
     $(function() {
         var id;
+        var tiene_receta;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
+            tiene_receta = $el.data()["recetas"] == "True";
+
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -119,21 +121,27 @@
             if (id == undefined){
                 mostrar_error();
             }else{
-                BootstrapDialog.show({
-                    title: "Eliminar",
-                    cssClass: 'aviso-dialog',
-                    message: "¿Seguro que desea borrar?",
-                    type: BootstrapDialog.TYPE_WARNING,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                window.open('/insumos/baja/'+id+'',"_self");
-                                dialogRef.close();
-                            }},{
-                            label: 'Cancelar',
-                            action:function(dialogRef){
-                            dialogRef.close();
-                    }}]});
+                
+                if (tiene_receta== true){
+                    alert("tiene detalles");
+                }else{
+                            BootstrapDialog.show({
+                                title: "Eliminar",
+                                cssClass: 'aviso-dialog',
+                                message: "¿Seguro que desea borrar?",
+                                type: BootstrapDialog.TYPE_WARNING,
+                                buttons: [{
+                                        label: 'Aceptar',
+                                        action: function(dialogRef){
+
+                                            window.open('/insumos/baja/'+id+'',"_self");
+                                            dialogRef.close();
+                                        }},{
+                                        label: 'Cancelar',
+                                        action:function(dialogRef){
+                                        dialogRef.close();
+                                }}]});
+                    }
             }
         });
 
