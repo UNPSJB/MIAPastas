@@ -103,13 +103,10 @@
     $(function() {
         var id;
         var tiene_receta;
-        var una_col_recetas;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             tiene_receta = $el.data()["recetas"] == "True";
-            una_col_recetas = $el.data();
-            console.log(una_col_recetas);
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
