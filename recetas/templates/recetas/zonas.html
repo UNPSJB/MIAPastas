@@ -18,20 +18,25 @@
                 <div class="col-md-10">
                     <p>&nbsp;</p>
                           <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>Nombre</th>
-                            </tr>
-                            </thead>
-                              <tbody>
-                                {% for zona in zonas %}
-                                <tr class="renglon select-item" data-id="{{zona.id}}" id="renglon-{{zona.id}}">
-                                    <td>{{zona.nombre}}</td>
+
+                                <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Ciudades</th>
+                                </tr>
+                                </thead>
+                                <!-- z.ciudades.all() -->
+                         <tbody>
+                                 {% for z in zonas %}
+                                 <tr class="renglon select-item" data-id="{{z.id}}" id="renglon-{{z.id}}" data-ciudades="{{z.ciudades.exists}}">
+                                    <td>{{z.nombre}}</td>
+                                    <td>{{z.ciudades.all|join:", "}}</td>
                                     <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
-                              </tbody>
-                          </table>
+                        </tbody>
+
+          </table>
                 </div>
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
                         <a type="button" id="consulta-zona" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
@@ -79,9 +84,13 @@
 <script>
     $(function() {
         var id;
+        var tiene_ciudad;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
+            tiene_ciudad = $el.data()["ciudades"] == "True";
+            una_col_recetas = $el.data();//esto no va
+            console.log(una_col_recetas);//esto tampoco va...es para ver su funciona tiene_ciudad en la consola
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -92,6 +101,8 @@
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
          function mostrarModal(){
+
+
             if(id==undefined){
                 BootstrapDialog.show({
                 title: "Error al Intentar Eliminar",
@@ -106,8 +117,41 @@
                 }]
             });
             }else{
-            $("#myModalEliminar").modal("show");
+                  if(tiene_ciudad){
+                      BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "La zona que intenta eliminar tiene ciudades asociadas. Imposible eliminar.",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                            }]
+                        });
+                  }else{
+                        BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar esta zona?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                   }
             }
+
         }
 
         $("#modal-eliminar").click(mostrarModal);

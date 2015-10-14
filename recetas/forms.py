@@ -50,6 +50,9 @@ class ProveedorForm(forms.ModelForm):
         model = models.Proveedor
         fields = ["cuit", "razon_social", "localidad","nombre_dueno","direccion","email","numero_cuenta","provincia","telefono","insumos" ]
 
+    def __init__(self, *args, **kwargs):
+        super(ProveedorForm, self).__init__(*args, **kwargs)
+        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
 
 
 

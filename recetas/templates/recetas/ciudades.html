@@ -54,7 +54,7 @@
                             </thead>
                               <tbody>
                                 {% for ciudad in ciudades %}
-                                <tr class="renglon select-item" data-id="{{ciudad.id}}" id="renglon-{{ciudad.id}}">
+                                <tr class="renglon select-item" data-id="{{ciudad.id}}" data-clientes="{{ciudad.cliente_set.exists}}" id="renglon-{{ciudad.id}}">
                                     <td>{{ciudad.nombre}}</td>
                                     <td>{{ciudad.codigo_postal}}</td>
                                     <td>{{ciudad.zona}}</td>
@@ -76,46 +76,19 @@
         <hr/>
     </div>
 
-<div id="myModalEliminar" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Eliminar Ciudad</h4>
-      </div>
-      <div class="modal-body">
-          <label for="">Confirma que desea eliminar: </label>
-
-
-
-      </div>
-      <div class="modal-footer">
-          <a id="eliminar-ciudad"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- Hola Mundo -->
-    <!-- Hola Mundo -->
-
-    <!-- Hola Mundo -->
-    <!-- Hola Mundo -->
-    <!-- Hola Mundo -->
-
-    <!-- Este es el fin del formulario de recetas -->
 
 
 {% endblock %}
 {% block javascript %}
 <script>
+var tiene_clientes;
     $(function() {
         var id;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             $el.addClass("active");
+            tiene_clientes = $el.data()["clientes"] == "True";
             var _renglon = "";
             _renglon= "#renglon-"+id;
             $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
@@ -129,7 +102,7 @@
                 BootstrapDialog.show({
                 title: "Error al Intentar Eliminar",
                 cssClass: 'error-dialog',
-                message: "Debe seleccionar un Ciudad",
+                message: "Debe seleccionar una Ciudad",
                 type: BootstrapDialog.TYPE_DANGER,
                 buttons: [{
                         label: 'Aceptar',
@@ -139,7 +112,39 @@
                 }]
             });
             }else{
-            $("#myModalEliminar").modal("show");
+                  if(tiene_clientes){
+                      BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Existen clientes que pertenecen a la ciudad que intenta eliminar. Imposible borrar.",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                            }]
+                        });
+                  }else{
+                        BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar la ciudad?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                   }
             }
         }
 

@@ -54,7 +54,7 @@ def insumos(request,insumo_id=None):
         # consulta
         insumo_instancia = models.Insumo.objects.get(pk=insumo_id)
         insumo_form = forms.InsumoForm(instance= insumo_instancia)
-        return render(request, "insumosConsulta.html",{"insumo_form": insumo_form})
+        return render(request, "insumosConsulta.html",{"insumo":insumo_instancia})
     elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.Insumo)
@@ -204,13 +204,14 @@ def proveedores(request,proveedor_id=None):
 
 
 def proveedoresAlta(request):
+    proveedores_form = forms.ProveedorForm()
+    insumos = models.Insumo.objects.all()
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
             proveedor_instancia=proveedores_form.save()
             return redirect('proveedores')
-    proveedores_form = forms.ProveedorForm()
-    insumos = models.Insumo.objects.all()
+        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
     return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
 
 @csrf_exempt
@@ -233,7 +234,8 @@ def proveedoresModificar(request,proveedor_id =None):
         proveedor_form = forms.ProveedorForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
             proveedor_form.save()
-        return redirect('proveedores')
+            return redirect('proveedores')
+        return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
     else:
         proveedor_form = forms.ProveedorForm(instance= proveedor_instancia)
         return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
@@ -380,8 +382,18 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
 def zonasBaja(request,zona_id =None):
     print "estoy en bajaaa"
     p = models.Zona.objects.get(pk=zona_id)
-    p.delete()
+    if p.ciudades.exists():
+        messages.error(request, 'La zona: ' + p.nombre + ', no se puede eliminar porque tiene las siguientes ciudades asociadas: %s .' % ", ".join(
+            [ "%s" % r for r in p.ciudades.all()]
+        ))
+
+    else:
+        messages.success(request, 'La zona: ' + p.nombre + ', ha sido eliminado correctamente.')
+        p.delete()
+
     return redirect('zonas')
+
+
 
 #********************************************************#
               #     C L I E N T E S    #

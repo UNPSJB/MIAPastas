@@ -69,9 +69,9 @@ class ProductoTerminado(models.Model):
 class Receta(models.Model):
     UNIDADES = (
         (1, "Kg"),
-        (3, "Unidad"),
-        (5, "Bolson"),
-        (5, "Bolsines"),
+        (2, "Unidad"),
+        (3, "Bolson"),
+        (4, "Bolsines"),
     )
     FILTROS = ['nombre__icontains','producto_terminado']
     fecha_creacion = models.DateField(auto_now_add = True)
@@ -137,7 +137,7 @@ class Ciudad(models.Model):
 
     FILTROS = ['nombre__icontains','codigo_postal__icontains','zona']
     nombre = models.CharField(max_length=100, unique=True)
-    codigo_postal = models.PositiveIntegerField()
+    codigo_postal = models.PositiveIntegerField(unique=True)
     zona = models.ForeignKey(Zona,related_name="ciudades")
 
     def __str__(self):
@@ -157,7 +157,7 @@ class Cliente(models.Model):
         (1, "Cliente Fijo"),
         (2, "Cliente Ocasional"),
     )
-    cuit_cuil = models.PositiveIntegerField()
+    cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100, unique=True)
     tipo_cliente = models.PositiveSmallIntegerField(choices=TIPOCLIENTE)
