@@ -33,8 +33,8 @@
       </form>
           <p>&nbsp;</p>
       <div class="row">
-          <div class="col-md-10">
-          <table class="table table-hover">
+          <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
+          <table class="table" >
             <thead>
             <tr>
                 <th>Cuit/Cuil</th>
@@ -119,19 +119,24 @@
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
+        function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar un proveedor",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+        }
+
          function mostrarModal(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error al Intentar Eliminar",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar un proveedor",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
+                mostrar_error()
             });
             }else{
             $("#myModalEliminar").modal("show");
@@ -146,17 +151,7 @@
 
         function modificar(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error de Modificar",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar un proveedor",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
+                mostrar_error()
             });
             }else{
             window.open('/proveedores/Modificar/'+id+'',"_self")
@@ -165,17 +160,7 @@
 
         function consultar(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error de Consulta",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar un proveedor",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
+            mostrar_error()
             });
             }else{
             window.open('/proveedores/Consulta/'+id+'',"_self")

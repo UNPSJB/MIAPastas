@@ -27,14 +27,12 @@ def get_filtros(get, modelo):
 #********************************************************#
                #     C H O F E R E S    #
 #********************************************************#
-def choferes (request, chofer_id=None):
-
+def choferes(request,chofer_id=None):
     if chofer_id is not None:
-        #consulta
-        chofer=models.Chofer.objects.get(pk=chofer_id)
-        print "PK",chofer_id
-        return render(request,"choferesConsulta.html",{"chofer":chofer})
-    else:
+        # consulta
+        chofer = models.Chofer.objects.get(pk=chofer_id)
+        return render(request, "choferesConsulta.html",{"chofer": chofer})
+    elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.Chofer)
         mfilters = dict(filter(lambda v: v[0] in models.Chofer.FILTROS, filters.items()))
@@ -42,7 +40,39 @@ def choferes (request, chofer_id=None):
         return render(request, "recetas/choferes.html",
                   {"choferes": choferes,
                    "filtros": filters})
-        choferes=models.Chofer.objects.all()
+
+
+def choferesAlta(request):
+    if request.method == "POST":
+        chofer_form = forms.ChoferForm(request.POST)
+        if chofer_form.is_valid():
+            chofer_form.save()
+            return redirect('choferes')
+    else:
+        chofer_form = forms.ChoferForm()
+
+    return render(request, "choferesAlta.html", {"chofer_form":chofer_form})
+
+
+
+def choferesModificar(request,chofer_id =None):
+    chofer_instancia = get_object_or_404(models.Chofer, pk=chofer_id)
+    if request.method=="POST":
+        chofer_form = forms.ChoferForm(request.POST,instance= chofer_instancia)
+        if chofer_form.is_valid():
+            chofer_form.save()
+        return redirect('choferes')
+    else:
+        chofer_form = forms.ChoferForm(instance= chofer_instancia)
+        return render(request,"choferesModificar.html",{"chofer_form":chofer_form,"id":chofer_id})
+
+
+@csrf_exempt
+def choferesBaja(request,chofer_id=None):
+    chofer = models.Chofer.objects.get(pk=chofer_id)
+    # HAY Q HACER VALIDACIONES.
+    chofer.delete()
+    return redirect('choferes')
 
 
 #********************************************************#
