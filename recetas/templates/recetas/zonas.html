@@ -18,20 +18,25 @@
                 <div class="col-md-10">
                     <p>&nbsp;</p>
                           <table class="table table-hover">
-                            <thead>
-                            <tr>
-                                <th>Nombre</th>
-                            </tr>
-                            </thead>
-                              <tbody>
-                                {% for zona in zonas %}
-                                <tr class="renglon select-item" data-id="{{zona.id}}" id="renglon-{{zona.id}}">
-                                    <td>{{zona.nombre}}</td>
+
+                                <thead>
+                                <tr>
+                                    <th>Nombre</th>
+                                    <th>Ciudades</th>
+                                </tr>
+                                </thead>
+                                <!-- z.ciudades.all() -->
+                         <tbody>
+                                 {% for z in zonas %}
+                                 <tr class="renglon select-item" data-id="{{z.id}}" id="renglon-{{z.id}}" data-ciudades="{{z.ciudades.exists}}">
+                                    <td>{{z.nombre}}</td>
+                                    <td>{{z.ciudades.all|join:", "}}</td>
                                     <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
-                              </tbody>
-                          </table>
+                        </tbody>
+
+          </table>
                 </div>
                   <div class="btn-group btn-group-sm" role="group" aria-label="...">
                         <a type="button" id="consulta-zona" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
@@ -79,9 +84,13 @@
 <script>
     $(function() {
         var id;
+        var tiene_ciudad;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
+            tiene_ciudad = $el.data()["ciudades"] == "True";
+            una_col_recetas = $el.data();//esto no va
+            console.log(una_col_recetas);//esto tampoco va...es para ver su funciona tiene_ciudad en la consola
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -106,7 +115,14 @@
                 }]
             });
             }else{
-            $("#myModalEliminar").modal("show");
+                var $modal = $("#myModalEliminar");
+                var $texto = $(".modal-body", $modal);
+                if (tiene_ciudad==true){
+                    $texto.html("<p>La zona que intenta eliminar tiene ciudades asociadas. Si elimina esta zona, sus ciudades asociadas tambien se eliminaran.</p><p>Esta seguro que quiere eliminar?</p>");
+                }else{
+                    $texto.html("<p>Esta seguro que desea eliminar esta zona?</p>");
+                }
+                $("#myModalEliminar").modal("show");
             }
         }
 

@@ -379,8 +379,18 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
 def zonasBaja(request,zona_id =None):
     print "estoy en bajaaa"
     p = models.Zona.objects.get(pk=zona_id)
-    p.delete()
+    if p.ciudades.exists():
+        messages.success(request, 'La zona: ' + p.nombre + ', se elimino correctamente junto a las ciudades: %s .' % ", ".join(
+            [ "%s" % r for r in p.ciudades.all()]
+        ))
+        p.delete()
+    else:
+        messages.success(request, 'El Producto: ' + p.nombre + ', ha sido eliminado correctamente.')
+        p.delete()
+
     return redirect('zonas')
+
+
 
 #********************************************************#
               #     C L I E N T E S    #
