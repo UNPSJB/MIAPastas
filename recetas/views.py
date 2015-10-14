@@ -54,7 +54,7 @@ def insumos(request,insumo_id=None):
         # consulta
         insumo_instancia = models.Insumo.objects.get(pk=insumo_id)
         insumo_form = forms.InsumoForm(instance= insumo_instancia)
-        return render(request, "insumosConsulta.html",{"insumo_form": insumo_form})
+        return render(request, "insumosConsulta.html",{"insumo":insumo_instancia})
     elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.Insumo)
@@ -173,6 +173,7 @@ def recetasAlta(request):
 def recetasBaja(request,receta_id):
     print "estoy en bajaaa"
     p = models.Receta.objects.get(pk=receta_id)
+    messages.success(request, 'La receta: ' + p.nombre + ', ha sido eliminado correctamente.')
     p.delete()
 
     return redirect('recetas')
@@ -380,12 +381,12 @@ def zonasBaja(request,zona_id =None):
     print "estoy en bajaaa"
     p = models.Zona.objects.get(pk=zona_id)
     if p.ciudades.exists():
-        messages.success(request, 'La zona: ' + p.nombre + ', se elimino correctamente junto a las ciudades: %s .' % ", ".join(
+        messages.error(request, 'La zona: ' + p.nombre + ', no se puede eliminar porque tiene las siguientes ciudades asociadas: %s .' % ", ".join(
             [ "%s" % r for r in p.ciudades.all()]
         ))
-        p.delete()
+
     else:
-        messages.success(request, 'El Producto: ' + p.nombre + ', ha sido eliminado correctamente.')
+        messages.success(request, 'La zona: ' + p.nombre + ', ha sido eliminado correctamente.')
         p.delete()
 
     return redirect('zonas')

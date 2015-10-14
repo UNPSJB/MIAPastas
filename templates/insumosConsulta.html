@@ -11,11 +11,26 @@
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Insumo</b></font></p></div>
   <div class="panel-body">
-      <form action="{% url 'insumos' %}" method="post" class="form">
-          {% csrf_token %}
-                    {% bootstrap_form insumo_form layout='horizontal' %}
-                <a href="{%url 'insumos' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+        <form role="form">
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input value="{{insumo.nombre}}" type="text" class="form-control" id="nombre" name ="nombre" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label for="descripcion">Descripcion</label>
+                    <input value="{{insumo.descripcion}}" type="text" class="form-control" id="descripcion" readonly>
+                  </div>
+                  <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input value="{{insumo.stock}}" type="text" class="form-control" id="stock" readonly>
+                  </div>
+                 <div class="form-group">
+                    <label for="unidad_medida">Unidad de medida</label>
+                    <input value="{{insumo.get_unidad_medida_display}}" type="text" class="form-control" id="unidad_medida" readonly>
+                  </div>
+
         </form>
+      <a href = "{%url 'insumos' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
 
 

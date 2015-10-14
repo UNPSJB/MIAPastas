@@ -121,7 +121,7 @@
                 BootstrapDialog.show({
                 title: "Error al Intentar Eliminar",
                 cssClass: 'error-dialog',
-                message: "Debe seleccionar un producto",
+                message: "Debe seleccionar un Producto Terminado",
                 type: BootstrapDialog.TYPE_DANGER,
                 buttons: [{
                         label: 'Aceptar',
@@ -131,14 +131,45 @@
                 }]
             });
             }else{
-                var $modal = $("#myModalEliminar");
-                var $texto = $(".modal-body", $modal);
-                if (tiene_receta==true){
-                    $texto.html("<p>El producto que intenta eliminar tiene recetas asociados. Si elimina este producto, sus recetas asociadas tambien se eliminaran.</p><p>Esta seguro que quiere eliminar?</p>");
-                }else{
-                    $texto.html("<p>Esta seguro que quiere eliminar?</p>");
-                }
-                $("#myModalEliminar").modal("show");
+                  if(tiene_receta){
+                      BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Existen receta que pertenecen al produto terminado que intenta eliminar. Si lo elimina, se eliminaran estas recetas. Desea continuar?.",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                  }else{
+                        BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar el producto terminado?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                   }
             }
         }
 

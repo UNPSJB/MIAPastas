@@ -101,6 +101,8 @@
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
          function mostrarModal(){
+
+
             if(id==undefined){
                 BootstrapDialog.show({
                 title: "Error al Intentar Eliminar",
@@ -115,15 +117,41 @@
                 }]
             });
             }else{
-                var $modal = $("#myModalEliminar");
-                var $texto = $(".modal-body", $modal);
-                if (tiene_ciudad==true){
-                    $texto.html("<p>La zona que intenta eliminar tiene ciudades asociadas. Si elimina esta zona, sus ciudades asociadas tambien se eliminaran.</p><p>Esta seguro que quiere eliminar?</p>");
-                }else{
-                    $texto.html("<p>Esta seguro que desea eliminar esta zona?</p>");
-                }
-                $("#myModalEliminar").modal("show");
+                  if(tiene_ciudad){
+                      BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "La zona que intenta eliminar tiene ciudades asociadas. Imposible eliminar.",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                            }]
+                        });
+                  }else{
+                        BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar esta zona?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                   }
             }
+
         }
 
         $("#modal-eliminar").click(mostrarModal);
