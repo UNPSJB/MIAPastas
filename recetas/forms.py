@@ -3,6 +3,12 @@ from . import models
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 
+class ChoferForm(forms.ModelForm):
+    class Meta:
+        model = models.Chofer
+        fields = ["cuit", "nombre", "direccion", "telefono", "e_mail"]
+
+
 class InsumoForm(forms.ModelForm):
     class Meta:
         model = models.Insumo
@@ -53,14 +59,6 @@ class ProveedorForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
-
-
-
-
-
-
-
-
 
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
