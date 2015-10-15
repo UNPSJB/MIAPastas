@@ -70,12 +70,27 @@ class CiudadForm(forms.ModelForm):
         model = models.Ciudad
         fields = ["nombre","codigo_postal","zona"]
 
+def texto_lindo(texto, titulo=False):
+    #esta funcion es generica, la pueda llamar en cualquier lugar
+    #Sirve para que ante una entrada de texto fea, por ej: " dsadasd     hola  dasda", me la junte toda
+    #titulo=True significa que si ingresamos un texto "hola mundo" se transformara en "Hola Mundo".
+    #si titulo=False significa que si ingresamos un texto "HOLA MUNDO" se tranformara en "Hola mundo"
+    # Quitamos espacios extra en todo el texto
+    texto = " ".join(texto.split())
+    texto = ". ".join(map(lambda t: t.strip().capitalize(), texto.split(".")))
+    return titulo and texto.title() or texto
 
 class ZonaForm(forms.ModelForm):
     class Meta:
         model = models.Zona
         fields = ["nombre"]
 
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        nombre = texto_lindo(nombre, True)
+        if models.Zona.objects.filter(nombre=nombre).exists():
+            raise ValidationError('Ya existe una Zona con ese nombre.')
+        return nombre
 
 class ClienteForm(forms.ModelForm):
     class Meta:
