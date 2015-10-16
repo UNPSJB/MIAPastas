@@ -124,6 +124,8 @@ class Zona(models.Model):
 
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
+    #el campo "activo" es para las bajas logicas
+    activo = models.BooleanField(default=True);
 
     def __str__(self):
         return (self.nombre)
@@ -159,7 +161,7 @@ class Cliente(models.Model):
     )
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
-    nombre_dueno = models.CharField(max_length=100, unique=True)
+    nombre_dueno = models.CharField(max_length=100)
     tipo_cliente = models.PositiveSmallIntegerField(choices=TIPOCLIENTE)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
     direccion = models.CharField(max_length=100, unique=True)
