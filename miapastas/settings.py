@@ -78,6 +78,11 @@ STATICFILES_DIRS = (
 WSGI_APPLICATION = 'miapastas.wsgi.application'
 
 
+
+LOGIN_REDIRECT_URL = "/index"
+LOGIN_URL = "/"
+
+
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 

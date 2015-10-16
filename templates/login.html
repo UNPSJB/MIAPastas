@@ -35,26 +35,35 @@
             <h1 class="text-center login-title"><font face="tahoma" size="3" color="green"><b>Mía Pastas System</font><font face="verdana" size="1" color="green" ><br>versión 1.0</br></b></font></h1>
 
             <div class="account-wall">
-                <img class="profile-img" src="{% static "images/avatar.png" %}" alt="La imagen no se pudo cargar">
-                <form class="form-signin">
-                <input type="text" class="form-control" placeholder="Usuario" required autofocus>
-                <input type="password" class="form-control" placeholder="Contraseña" required>
-                <a href="index" class="btn btn-lg btn-success btn-block" type="submit">
-                    Iniciar Sesión</a>
+               <img class="profile-img" src="{% static "images/avatar.png" %}" alt="La imagen no se pudo cargar">
+               <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+                        {% csrf_token %}
+                   <input type="text" class="form-control" id="username" placeholder="Usuario" name="username" data-icon="U" tabindex="1" required autofocus>
+                   <input placeholder="Contraseña" class="form-control" type="password" name="password" id="password" data-icon="x" tabindex="2" required>
+                   <input class="btn btn-lg btn-success btn-block" type="submit" value="Iniciar Sesión"/> <input type="hidden" name="next"
+                                                    value="{{ next }}"/>
+
                 <!-- <label class="checkbox pull-left">
                     <input type="checkbox" value="remember-me">
                     Remember me
                 </label>-->
-                <a href="#" class="pull-right need-help"> ¿Necesita ayuda? </a><span class="clearfix"></span>
-                </form>
+                    <a href="#" class="pull-right need-help"> ¿Necesita ayuda? </a><span class="clearfix"></span>
+
+               </form>
             </div>
-            <a href="#" class="text-center new-account">Crear una Cuenta</a>
+            <a href="{% url 'signup' %}" class="text-center new-account">Crear una Cuenta</a>
 
         </div>
     </div>
 
 </div>
 </body>
+
+
+
+
+
+
 <div class="container marketing">
     <!-- FOOTER -->
       <footer>
