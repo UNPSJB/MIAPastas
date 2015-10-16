@@ -73,25 +73,6 @@
 
 
 
-<div id="myModalEliminar" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Eliminar Producto Terminado</h4>
-      </div>
-      <div class="modal-body">
-      </div>
-      <div class="modal-footer">
-          <a id="eliminar-producto"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
-
 
 
     <!-- Este es el fin del formulario de recetas -->
@@ -114,14 +95,11 @@
             $(_renglon).addClass("active");
         }
 
-        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
-
-         function mostrarModal(){
-            if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error al Intentar Eliminar",
+          mostrar_error(){
+            BootstrapDialog.show({
+                title: "Error de Consulta",
                 cssClass: 'error-dialog',
-                message: "Debe seleccionar un Producto Terminado",
+                message: "Debe seleccionar un producto",
                 type: BootstrapDialog.TYPE_DANGER,
                 buttons: [{
                         label: 'Aceptar',
@@ -130,6 +108,14 @@
                         }
                 }]
             });
+        }
+
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+         function mostrarModal(){
+            if(id==undefined){
+                mostrar_error();
             }else{
                   if(tiene_receta){
                       BootstrapDialog.show({
@@ -173,7 +159,7 @@
             }
         }
 
-        $("#modal-eliminar").click(mostrarModal);
+
 
         function eliminar() {
             window.open('/productosTerminados/baja/'+id+'',"_self")
@@ -181,44 +167,23 @@
 
         function modificar(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error de Modificar",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar un producto",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
-            });
+                mostrar_error();
             }else{
             window.open('/productosTerminados/modificar/'+id+'',"_self")
         }}
 
 
+
         function consultar(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error de Consulta",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar un producto",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
-            });
+                mostrar_error();
             }else{
             window.open('/productosTerminados/'+id+'',"_self")
             }
 
         }
 
-
+        $("#modal-eliminar").click(mostrarModal);
         $("#modificar-producto").click(modificar);
         $("#eliminar-producto").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
         $("#consulta-producto").click(consultar);

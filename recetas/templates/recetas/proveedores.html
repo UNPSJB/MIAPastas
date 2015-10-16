@@ -12,7 +12,7 @@
       <form class="form-inline">
           <div class="form-group">
             <label for="cuit">Cuit</label>
-            <input type="text" class="form-control" value="{{filtros.cuit}}" id="cuit" placeholder="Jane Doe" name="ciut">
+            <input type="text" class="form-control" value="{{filtros.cuit}}" id="cuit" placeholder="Jane Doe" name="cuit">
           </div>
           <div class="form-group">
             <label for="razonSocial">Razón Social</label>
@@ -40,7 +40,6 @@
                 <th>Cuit/Cuil</th>
                 <th>Razón Social</th>
                 <th>Localidad</th>
-
             </tr>
             </thead>
               <tbody>
@@ -136,8 +135,7 @@
 
          function mostrarModal(){
             if(id==undefined){
-                mostrar_error()
-            });
+                mostrar_error();
             }else{
             $("#myModalEliminar").modal("show");
             }
@@ -151,8 +149,7 @@
 
         function modificar(){
             if(id==undefined){
-                mostrar_error()
-            });
+                mostrar_error();
             }else{
             window.open('/proveedores/Modificar/'+id+'',"_self")
         }}
@@ -160,8 +157,7 @@
 
         function consultar(){
             if(id==undefined){
-            mostrar_error()
-            });
+            mostrar_error();
             }else{
             window.open('/proveedores/Consulta/'+id+'',"_self")
             }

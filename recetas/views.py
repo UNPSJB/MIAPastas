@@ -121,7 +121,15 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
 def insumosBaja(request,insumo_id):
     insumo = models.Insumo.objects.get(pk=insumo_id)
     # HAY Q HACER VALIDACIONES.
-    #insumos.delete()
+    if insumo.receta_set.exists():
+        messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
+            [ "%s" % r for r in insumo.receta_set.all()]
+        ))
+        insumo.delete()
+    else:
+        messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
+        insumo.delete()
+
     return redirect('insumos')
 
 
