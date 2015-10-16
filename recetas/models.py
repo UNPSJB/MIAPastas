@@ -176,13 +176,14 @@ class Cliente(models.Model):
 
 
 #********************************************************#
-         #     P E D I D O S   A  P R O V E E D O R   #
+         #   P E D I D O S   A  P R O V E E D O R   #
 #********************************************************#
 class PedidoProveedor(models.Model):
 
-    FILTROS = ['nombre__icontains','proveedor']
+    FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
     fecha_realizacion = models.DateField()
     fecha_probable_entrega = models.DateField()
     proveedor = models.ForeignKey(Proveedor)
     #relacion con proveedor
     #relacion con
+    #https://jqueryui.com/datepicker/

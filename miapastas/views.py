@@ -193,8 +193,8 @@ def pedidosClienteAlta(request):
 def rendicionRepartoPedidos(request):
     return render(request, "rendicionRepartoPedidos.html", {})
 
-def pedidosProveedores(request):
-    return render(request, "pedidosProveedores.html", {})
+def pedidosProveedor(request):
+    return render(request, "pedidosProveedor.html", {})
 
 def proveedoresRecepcion(request):
     return render(request, "proveedoresRecepcion.html", {})

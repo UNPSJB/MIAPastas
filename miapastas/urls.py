@@ -102,12 +102,16 @@ urlpatterns = [
                 # FIN PRIMERA ENTREGA
 
 
+
+
+                # INICIO SEGUNDA ENTREGA
+
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
+    url(r'^pedidosProveedor$',views.pedidosProveedor,name='pedidosProveedor'),
 
-
-
+                # FIN SEGUNDA ENTREGA
     #url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
@@ -156,7 +160,7 @@ urlpatterns = [
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
     url(r'^pedidosClienteAlta$',views.pedidosClienteAlta,name='pedidosClienteAlta'),
     url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
-    url(r'^pedidosProveedores$',views.pedidosProveedores,name='pedidosProveedores'),
+
     url(r'^proveedoresRecepcion$',views.proveedoresRecepcion,name='proveedoresRecepcion'),
     url(r'^$',views.login,name='login')
 
