@@ -39,7 +39,7 @@
                             </thead>
                               <tbody>
                                 {% for insumo in insumos %}
-                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}">
+                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}" data-recetas="{{insumo.receta_set.exists}}">
                                     <td>{{insumo.nombre}}</td>
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
@@ -52,9 +52,9 @@
 
 
               <!-- <a href ="insumosConsulta" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a> -->
-              <a id="insumo-consultar" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a id ="insumo-modificar" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <button id ="insumo-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+              <a id="consulta-insumo" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a id ="modificar-insumo" type="button" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <button id ="modal-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
           <p></p>
                 <a class="btn" href = "{% url 'insumosAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
@@ -69,10 +69,12 @@
 {% block javascript %}
 <script>
     $(function() {
+        var tiene_receta;
         var id;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
+            tiene_receta = $el.data()["recetas"] == "True";
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -81,6 +83,10 @@
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+        function eliminar() {
+            window.open('/insumos/baja/'+id+'',"_self")
+        }
 
        function mostrar_error(){
             BootstrapDialog.show({
@@ -94,44 +100,79 @@
                                 dialogRef.close();
         }}]});}
 
-        $("#insumo-consultar").click(function(){
-            if (id == undefined){
+            function mostrarModal(){
+            if(id==undefined){
                 mostrar_error();
             }else{
-              window.open('/insumos/'+id+'',"_self");
-              }
-        });
-
-        $("#insumo-modificar").click(function(){
-            if (id == undefined){
-                mostrar_error();
-            }else{
-              window.open('/insumos/modificar/'+id+'',"_self");
-              }
-        });
-
-
-        $("#insumo-eliminar").click(function(){
-            if (id == undefined){
-                mostrar_error();
-            }else{
-                BootstrapDialog.show({
-                    title: "Eliminar",
-                    cssClass: 'aviso-dialog',
-                    message: "¿Seguro que desea borrar?",
-                    type: BootstrapDialog.TYPE_WARNING,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                window.open('/insumos/baja/'+id+'',"_self");
-                                dialogRef.close();
-                            }},{
-                            label: 'Cancelar',
-                            action:function(dialogRef){
-                            dialogRef.close();
-                    }}]});
+                  if(tiene_receta){
+                      BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Existen receta que pertenecen al produto terminado que intenta eliminar. Si lo elimina, se eliminaran estas recetas. Desea continuar?.",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                  }else{
+                        BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar el insumo?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                   }
             }
-        });
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+
+
+        function modificar(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+            window.open('/insumos/modificar/'+id+'',"_self")
+        }}
+
+
+
+        function consultar(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+            window.open('/insumos/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#modificar-insumo").click(modificar);
+        $("#eliminar-insumo").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
+        $("#consulta-insumo").click(consultar);
+
 
 
     });

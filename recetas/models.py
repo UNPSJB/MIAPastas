@@ -99,7 +99,7 @@ class RecetaDetalle(models.Model):
 
 class Proveedor(models.Model):
 
-    FILTROS = ['cuit__icontains','razon_social__icontains','ciudad__icontains']
+    FILTROS = ['cuit__icontains','razon_social__icontains','localidad__icontains']
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=100, unique=True)
