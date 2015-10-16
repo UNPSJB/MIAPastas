@@ -125,7 +125,7 @@ class Zona(models.Model):
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
     #el campo "activo" es para las bajas logicas
-    activo = models.BooleanField(default=True);
+    #activo = models.BooleanField(default=True);
 
     def __str__(self):
         return (self.nombre)
@@ -172,3 +172,17 @@ class Cliente(models.Model):
 
     def __str__(self):
         return "%s (%d %s)" % (self.cuit_cuil, self.razon_social, self.get_tipo_cliente_display())
+
+
+
+#********************************************************#
+         #     P E D I D O S   A  P R O V E E D O R   #
+#********************************************************#
+class PedidoProveedor(models.Model):
+
+    FILTROS = ['nombre__icontains','proveedor']
+    fecha_realizacion = models.DateField()
+    fecha_probable_entrega = models.DateField()
+    proveedor = models.ForeignKey(Proveedor)
+    #relacion con proveedor
+    #relacion con
