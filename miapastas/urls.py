@@ -14,10 +14,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  url(r'^blog/', include(blog_urls))
     borrar esto
 """
-from django.conf.urls import include, url
+from django.conf.urls import include, url, patterns
 from django.contrib import admin
 from . import views
 from recetas import views as recetasviews
+from django.contrib.auth.views import login,logout
+
 
 urlpatterns = [
 
@@ -31,7 +33,10 @@ urlpatterns = [
     url(r'^prueba$', views.prueba, name='prueba'),
     url(r'^prueba2$', views.prueba2, name='prueba2'),
     url(r'^prueba3$', views.prueba3, name='prueba3'),
-    url(r'^login$', views.login, name='login'),
+    url(r'^login$', login, {'template_name': 'login.html', }, name="login"),
+    url(r'^logout$', logout, {'template_name': 'login.html', }, name="logout"),
+
+    url(r'^signup$', views.signup, name='signup'),
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 
 
@@ -102,12 +107,16 @@ urlpatterns = [
                 # FIN PRIMERA ENTREGA
 
 
+
+
+                # INICIO SEGUNDA ENTREGA
+
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
+    url(r'^pedidosProveedor$',views.pedidosProveedor,name='pedidosProveedor'),
 
-
-
+                # FIN SEGUNDA ENTREGA
     #url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
@@ -126,7 +135,6 @@ urlpatterns = [
     url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
 
     url(r'^pedidosCliente$',recetasviews.pedidosClientes,name='pedidosCliente'),
-
 
 
 
@@ -157,9 +165,10 @@ urlpatterns = [
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
     url(r'^pedidosClienteAlta$',views.pedidosClienteAlta,name='pedidosClienteAlta'),
     url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
-    url(r'^pedidosProveedores$',views.pedidosProveedores,name='pedidosProveedores'),
-    url(r'^proveedoresRecepcion$',views.proveedoresRecepcion,name='proveedoresRecepcion'),
-    url(r'^$',views.login,name='login')
 
+    url(r'^proveedoresRecepcion$',views.proveedoresRecepcion,name='proveedoresRecepcion'),
+
+
+    url(r'^$', login, {'template_name': 'login.html', }, name="login"),
 
 ]

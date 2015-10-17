@@ -125,7 +125,7 @@ class Zona(models.Model):
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
     #el campo "activo" es para las bajas logicas
-    activo = models.BooleanField(default=True);
+    #activo = models.BooleanField(default=True);
 
     def __str__(self):
         return (self.nombre)
@@ -170,6 +170,12 @@ class Cliente(models.Model):
 
 
 
+
+#************************************************************************#
+               #     P E D I D O S  D E  C L I E N T E S    #
+#************************************************************************#
+
+
 class PedidoCliente(models.Model):
     FILTROS = ['fecha_creacion__icontains','fecha_desde__icontains','fecha_hasta__icontains' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
@@ -206,4 +212,18 @@ class PedidoCambio(PedidoCliente):
 class PedidoOcacional(PedidoCliente):
     fecha_entrega = models.DateField()
 
+
+
+#********************************************************#
+         #   P E D I D O S   A  P R O V E E D O R   #
+#********************************************************#
+class PedidoProveedor(models.Model):
+
+    FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
+    fecha_realizacion = models.DateField()
+    fecha_probable_entrega = models.DateField()
+    proveedor = models.ForeignKey(Proveedor)
+    #relacion con proveedor
+    #relacion con
+    #https://jqueryui.com/datepicker/
 

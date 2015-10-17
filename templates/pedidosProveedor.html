@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block contenido %}
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Recetas</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+      <form class="form-inline">
+          <div class="form-group">
+            <label for="nombre">Nombre</label>
+            <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" placeholder="nombre">
+          </div>
+
+
+
+
+          <button type="submit" class="btn btn-default">Filtrar</button>
+      </form>
+          <p>&nbsp;</p>
+      <div class="row">
+          <div class="col-md-10">
+          <table class="table table-hover" id="datatables" class="display">
+            <thead>
+            <tr>
+                <th>Numero de Pedido</th>
+                <th>Fecha de Realizacion</th>
+                <th>Fecha Probabla de Entrega</th>
+                <th>Proveedor</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for pedido in pedidos %}
+            <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                <td>{{pedido.id}}</td>
+                <td>{{pedido.fecha_realizacion}}</td>
+                <td>{{pedido.fecha_probable_entrega}}</td>
+                <td>{{pedido.proveedor}}</td>
+          </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+          </div>
+
+          </div>
+  </div>
+
+</div>
+
+
+
+</div>
+
+{% endblock %}
+

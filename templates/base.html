@@ -36,7 +36,7 @@
               <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
                 <li><a href="#">Ver Informacion</a></li>
                   <li role="separator" class="divider"></li>
-                <li><a href="login">Cerrar Sesion</a></li>
+                <li><a href="{% url 'logout' %}">Cerrar Sesion</a></li>
 
               </ul>
             </div>
@@ -163,7 +163,7 @@
           <ul class="dropdown-menu">
             <li><a href="{%url 'proveedores'%}">ABM Proveedores</a></li>
             <li role="separator" class="divider"></li>
-            <li><a href="{%url 'pedidosProveedores'%}">ABM Pedidos Proveedores</a></li>
+            <li><a href="{%url 'pedidosProveedor'%}">ABM Pedidos Proveedores</a></li>
               <li role="separator" class="divider"></li>
             <li><a href="{%url 'proveedoresRecepcion'%}">Recepcion de Pedidos Proveedores</a></li>
           </ul>
@@ -277,6 +277,8 @@
           });
           $(".alert").delay(5000).fadeOut();
         </script>
+
+
 
 
 

@@ -561,3 +561,23 @@ def pedidosClientes(request,pedido_id=None):
                        "filtros": filters,
                        "clientes":clientes})
 
+
+
+#********************************************************#
+         #    P E D I D O S   A   P R O V E E D O R   #
+#********************************************************#
+
+def pedidosProveedor(request,pedido_id=None):
+    if pedido_id is not None:
+        # consulta
+        pedido_instancia = models.PedidoProveedor.objects.get(pk=pedido_id)
+        pedido_form = forms.PedidoProveedorForm(instance= pedido_instancia)
+        return render(request, "insumosConsulta.html",{"pedido":pedido_instancia})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.PedidoProveedor)
+        mfilters = dict(filter(lambda v: v[0] in models.PedidoProveedor.FILTROS, filters.items()))
+        pedidos = models.PedidoProveedor.objects.filter(**mfilters)
+        return render(request, "pedidosProveedor.html",
+                  {"pedidos": pedidos,
+                   "filtros": filters})
