@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
+{% load bootstrap3 %}
 {% block contenido %}
 
 
@@ -18,69 +18,70 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedidos de Cliente</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
+
       <form class="form-inline">
-          <div class="form-group">
-            <label for="exampleInputName2">N° Cuil/Cuit</label>
-            <input type="text" class="form-control" id="exampleInputName2" placeholder="Cuil/Cuit" >
-          </div>
-          <div class="form-group">
-            <label for="exampleInputEmail2">Razon social</label>
-            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="huevo" >
-          </div>
-          <div class="form-group">
-            <label for="fecha_desde">Fecha Desde</label>
-            <input type="text" class="form-control" id="fecha-desde">
-          </div>
-          <div class="form-group">
-            <label for="fecha_hasta">Fecha Hasta</label>
-            <input type="text" class="form-control" id="fecha-hasta">
-          </div>
-          <p>&nbsp;</p>
+
 
           <div class="form-group">
-                        <label for="inputEmail3">Tipo de Pedido</label>
 
-                          <select class="form-control">
-                              <option>Todos</option>
-                              <option>Pedido Fijo</option>
-                              <option>Pedido Ocacional</option>
-                              <option>Pedido de Cambio</option>
-                          </select>
+              <div class="form-group">
+                    <label for="cuil">Fecha Creacion</label>
+                    <input type="text" value="{{filtros.fecha_creacion}}" class="form-control" id="fecha_creacion" placeholder="fecha creacion" >
+              </div>
+              <div class="form-group">
+                    <label for="razon_social">Razon social</label>
+                    <input type="text" value="{{filtros.razon_social}}" class="form-control" id="razon_social" placeholder="huevo" >
+              </div>
+              <div class="form-group">
+                    <label for="fecha_desde">Fecha Desde</label>
+                    <input type="text" value="{{filtros.fecha_desde}}" class="form-control" id="fecha_desde">
+              </div>
+              <div class="form-group">
+                    <label for="fecha_hasta">Fecha Hasta</label>
+                    <input type="text" value="{{filtros.fecha_hasta}}" class="form-control" id="fecha_hasta">
+              </div>
+                <p>&nbsp;</p>
 
-                   </div>
 
-          <button type="submit" class="btn btn-default col-md-offset-1">Filtrar</button>
+              <label for="producto_terminado">Tipo Pedido</label>
+
+              <select class="form-control" id="cliente" name="cliente">
+                              <option value="" selected="selected">---------</option>
+                                 {% for p in clientes %}
+                                     <option value="{{p.id}}">{{p.razon_social}}</option>
+                                {% endfor %}
+              </select>
+          </div>
+
+
+          <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
+
           <p>&nbsp;</p>
       <hr>
       <div class="row">
           <div class="col-md-6">
-          <table class="table table-hover">
+
+          <table class="table table-hover" id="datatables" class="display">
             <thead>
-
-            <tr>
-                <th>Fecha de Creacion</th> <!-- Fecha de realizacion -->
-                <th>N° Pedido</th>
-                <th>Cuil/Cuit</th>
-                <th>Razon social</th>
-
-
+            <tr style='cursor:pointer' class='desmarcado'>
+                <th>Tipo Pedido</th>
+                <th>Cliente</th>
+                <th>fecha</th>
             </tr>
             </thead>
               <tbody>
+            {% for pedido in pedidos %}
+            <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                <td>{{pedido.tipo_pedido}}</td>
+                <td>{{pedido.fecha_creacion}}</td>
+                <td>{{pedido.fecha_creacion}}</td>
 
-                <tr>
-
-                    <td>manola</td>
-                    <td>pocha</td>
-                    <td>lola</td>
-                    <td>asdsa</td>
-                    <td><!-- Trigger the modal with a button -->
-</td>
           </tr>
-
+            {% endfor %}
           </tbody>
           </table>
+
           </div>
           <div class="col-md-2">
               <div class="btn-group btn-group-sm" role="group" aria-label="...">
@@ -89,7 +90,10 @@
               <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
               <p></p>
-          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Fijo</span></b></font></a>
+          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Ocacional</span></b></font></a>
+          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Cambio</span></b></font></a>
+
           </div>
           <div class="col-md-4">
 
@@ -132,10 +136,6 @@
 
       </div>
        <div>
-
-
-
-
 
 
 </div>
@@ -319,10 +319,10 @@
                         </tr>
                         </thead>
                           <tbody>
-                        {% for receta in recetas %}
+                        {% for pedido in pedidos %}
                             <tr>
-                          <td>{{receta.nombre}}</td>
-                          <td>{{receta.descripcion}}</td>
+                          <td>{{pedido.tipo_pedido}}</td>
+                          <td>{{pedido.fecha_crecion}}</td>
                       </tr>
                         {% endfor %}
                       </tbody>

@@ -155,14 +155,9 @@ class Ciudad(models.Model):
 class Cliente(models.Model):
 
     FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
-    TIPOCLIENTE = (
-        (1, "Cliente Fijo"),
-        (2, "Cliente Ocasional"),
-    )
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
-    tipo_cliente = models.PositiveSmallIntegerField(choices=TIPOCLIENTE)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
     direccion = models.CharField(max_length=100, unique=True)
     telefono= models.PositiveIntegerField()
@@ -172,3 +167,43 @@ class Cliente(models.Model):
 
     def __str__(self):
         return "%s (%d %s)" % (self.cuit_cuil, self.razon_social, self.get_tipo_cliente_display())
+
+
+
+class PedidoCliente(models.Model):
+    FILTROS = ['fecha_creacion__icontains','fecha_desde__icontains','fecha_hasta__icontains' ] #,'tipo_pedido__' como hacer para filtrar
+    TIPOPEDIDO = (
+        (1, "Pedido Fijo"),
+        (2, "Pedido Ocasional"),
+        (3,"Pedido de Cambio")
+    )
+    fecha_creacion = models.DateField(auto_now_add = True)
+    tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
+    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
+    cliente = models.ForeignKey(Cliente)
+
+    def __str__(self):
+        return "%s (%d %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class PedidoClienteDetalle(models.Model):
+    cantidad_producto = models.PositiveIntegerField()
+    producto_terminado = models.ForeignKey(ProductoTerminado)
+    pedido_cliente = models.ForeignKey(PedidoCliente)
+
+
+class DiasSemana(models.Model):
+    dia = models.CharField(unique=True,max_length=100)
+
+
+class PedidoFijo(PedidoCliente):
+    fecha_inicio = models.DateField()
+    fecha_cancelacion = models.DateField(blank=True)
+    dias = models.ForeignKey(DiasSemana)
+
+class PedidoCambio(PedidoCliente):
+    fecha_entrega = models.DateField()
+
+class PedidoOcacional(PedidoCliente):
+    fecha_entrega = models.DateField()
+
+

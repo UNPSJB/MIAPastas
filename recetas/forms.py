@@ -161,7 +161,7 @@ class ZonaForm(forms.ModelForm):
 class ClienteForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
-        fields = ["cuit_cuil","razon_social","nombre_dueno","tipo_cliente","ciudad","direccion","telefono","email","es_moroso"]
+        fields = ["cuit_cuil","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
@@ -182,4 +182,20 @@ class ClienteForm(forms.ModelForm):
 
 
 
+
+class PedidoClienteForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoCliente
+        fields = ["tipo_pedido", "cliente",]
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoClienteForm, self).__init__(*args, **kwargs)
+        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+
+
+
+class PedidoClienteDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoClienteDetalle
+        exclude = ['pedido'] #setea todos campos menos pedido
 

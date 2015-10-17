@@ -43,7 +43,6 @@
                             <tr>
                                 <th>Cuit/Cuil</th>
                                 <th>Razón Social</th>
-                                <th>Tipo de Cliente</th>
                                 <th>Ciudad</td>
                                 <th>Moroso</td>
                             </tr>
@@ -53,7 +52,6 @@
                                 <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
                                     <td>{{cliente.cuit_cuil}}</td>
                                     <td>{{cliente.razon_social}}</td>
-                                    <td>{{cliente.get_tipo_cliente_display}}</td>
                                     <td>{{cliente.ciudad.nombre}}</td>
                                     <td>{{cliente.es_moroso}}</td>
                                     <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>

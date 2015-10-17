@@ -536,3 +536,28 @@ def ciudadesBaja(request,ciudad_id =None):
     p.delete()
     return redirect('ciudades')
 
+
+
+#********************************************************#
+               #     PEDIDOS CLIENTES   #
+#********************************************************#
+
+
+def pedidosClientes(request,pedido_id=None):
+    if pedido_id is not None:
+        # consulta
+        pedidos = models.Receta.objects.get(pk=pedido_id)
+        productos = pedidos.productos.all()
+        return render(request, "pedidosCliente.html",{"pedidos_cliente": pedidos,"productos":productos})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.PedidoCliente)
+        mfilters = dict(filter(lambda v: v[0] in models.PedidoCliente.FILTROS, filters.items()))
+        pedidos = models.PedidoCliente.objects.filter(**mfilters)
+        clientes = models.Cliente.objects.all()
+        print "estoyyyyyyyyttttttyyyyyy",len(clientes)
+        return render(request, "pedidosCliente.html",
+                      {"pedidos": pedidos,
+                       "filtros": filters,
+                       "clientes":clientes})
+
