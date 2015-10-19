@@ -236,5 +236,10 @@ class PedidoProveedor(models.Model):
     #relacion con
     #https://jqueryui.com/datepicker/
 
+
     #detalle de pedido
+
+
+    #detalle de pedido
+    #auto_now_add = True
 
