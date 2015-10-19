@@ -1,56 +1,46 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block contenido %}
+
+
+
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción de la Receta</b></font></p></div>
-    <div class="panel-body">
-      <form class="form-horizontal">
+  <div class="panel-body">
+        <form role="form">
+                  <div class="form-group">
+                    <label for="nombre">Nombre</label>
+                    <input value="{{receta.nombre}}" type="text" class="form-control" id="nombre" name ="nombre" readonly>
+                  </div>
+                  <div class="form-group">
+                      <label for="producto_terminado">Producto Terminado</label>
+                    <input value="{{receta.producto_terminado}}" type="text" class="form-control" id="producto_terminado" readonly>
+                  </div>
+                  <div class="form-group">
+                     <label for="cantidad_producto" >Cantidad que produce</label>
+                    <input value="{{receta.cant_prod_terminado}}" type="text" class="form-control" id="cantidad_producto" readonly>
+                  </div>
+                 <div class="form-group">
+                   <label for="fecha_creacion">Fecha de creación</label>
+                    <input value="{{receta.fecha_creacion}}" type="date" class="form-control" id="fecha_creacion" readonly>
+                  </div>
+                 <div class="form-group">
+                      <label for="unidad_medida" >Unidad medida</label>
+                    <input value="{{receta.get_unidad_medida_display}}" type="date" class="form-control" id="unidad_medida" readonly>
+                  </div>
+                 <div class="form-group">
+                      <label for="unidad_medida" >Unidad medida</label>
+                    <input value="{{receta.get_unidad_medida_display}}" type="date" class="form-control" id="unidad_medida" readonly>
+                  </div>
 
-          <div class=" form-group">
-            <label for="nombre" class="col-sm-2 control-label">Nombre</label>
-            <div class="col-sm-10">
-              <input value = {{receta.nombre}} type="text" class="form-control" id="nombre" name = "nombre" readonly>
-            </div>
-          </div>
-
-          <div class="form-group ">
-            <label for="producto_terminado" class="col-sm-2  control-label">Producto Terminado</label>
-            <div class="col-sm-10">
-              <input value = {{receta.producto_terminado.nombre}} type="text" class="form-control" id="producto_terminado" readonly>
-
-            </div>
-          </div>
-
-           <div class="form-group">
-            <label for="cantidad_producto" class="col-sm-2 control-label">Cantidad que produce</label>
-            <div class="col-sm-10">
-              <input value = {{receta.cant_prod_terminado}} type="text" class="form-control" id ="cantidad_producto" name="cantidad_producto" readonly>
-            </div>
-          </div>
-
-          <div class="form-group ">
-            <label for="fecha_creacion" class="col-sm-2 control-label">Fecha de creación</label>
-            <div class="col-sm-10">
-              <input value ={{receta.fecha_creacion}} type="date" class="form-control" id="fecha_creacion" name="fecha_creacion" readonly>
-            </div>
-          </div>
-
-            <div class="form-group ">
-            <label for="unidad_medida" class="col-sm-2 control-label">Unidad medida</label>
-            <div class="col-sm-10">
-              <input value = {{receta.get_unidad_medida_display}} type="text" class="form-control" id="unidad_medida" id="unidad_medida" readonly>
-            </div>
-          </div>
-
-          <div class="form-group ">
-            <label for ="descripcion" class="col-sm-2 control-label">Descripción</label>
-              <div class="col-sm-10">
+             <div class="form-group">
+                  <label for ="descripcion">Descripción</label>
                  <textarea  type = "text" class=" form-control"  rows="6" id="descripcion" name="descripcion" readonly>{{receta.descripcion}} </textarea>
               </div>
-          </div>
-      </form>
-      <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos de la Receta</b></font></p></div>
+
+        </form>
+       <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos de la Receta</b></font></p></div>
       <div class="col-md-11 pull-right">
           <table class="table table-hover ">
             <thead>
@@ -74,7 +64,12 @@
 
         </div>
 
-    </div>
+
+
+
+  </div>
+
 </div>
 </div>
+
 {% endblock %}
