@@ -1,0 +1,34 @@
+def recetasModificar(request,receta_id):
+    receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
+    detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
+    detalles_form_factory = formset_factory(forms.RecetaDetalleForm)
+    insumos = models.Insumo.objects.all() #para detalles
+
+    if request.method=="POST":
+        receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
+        if receta_form.is_valid():
+            #messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
+            receta_instancia = receta_form.save(commit=False)
+            #DETALLES
+            det_formset = detalles_form_factory(request.POST,request.FILES,prefix='recetadetalle_set')
+            if det_formset.is_valid():
+                for det_form in det_formset:
+                    print "+"*20
+                    det_instancia = det_form.save(commit=False)
+                    print(det_instancia.id)
+                    det_instancia.receta=receta_instancia
+                    det_instancia.save()
+                receta_instancia.save()
+            return redirect('recetas')
+    else:
+        receta_form = forms.RecetaForm(instance= receta_instancia)
+
+
+    response_data = detalles_instancias
+        #si el form no es valido, le mando todo al html para que muestre los errores#
+    return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
+                                                   "detalles_receta":response_data,
+                                                   "insumos":insumos,
+                                                   "detalles_form_factory":detalles_form_factory(initial=list(detalles_instancias.values()), prefix='recetadetalle_set'),
+                                                   "receta_id":receta_id
+                                                   })

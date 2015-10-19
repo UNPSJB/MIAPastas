@@ -7,96 +7,13 @@
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Receta</b></font></p></div>
 
-
-
- <!--
-      <div class="panel-body">
-
-      <form class=" form-horizontal col-md-12">
-          <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Nombre</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputEmail3" readonly>
-            </div>
-          </div>
-
-          <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Producto Terminado</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputEmail4" readonly>
-            </div>
-          </div>
-           <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Cantidad que produce</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" >
-            </div>
-          </div>
-            <div class="form-group col-md-6">
-            <label for="inputEmail3" class="col-sm-2 control-label">Unidad medida</label>
-            <div class="col-sm-10">
-              <input type="text" class="form-control" id="inputEmail5" >
-            </div>
-          </div>
-          <div class="form-group col-md-12">
-            <label>Descripción</label>
-            <textarea class="form-control" rows="3" id="exampleInputName2"> </textarea>
-          </div>
-      </form>
-
-
-
-
-      <div class="row">
-          <div class="col-md-10">
-            <h2>Insumos</h2>
-          <table class="table table-hover">
-            <thead>
-            <tr>
-                <th>Codigo</th>
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Unidad Medida</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for insumo in insumos %}
-                <tr>
-              <td>{{insumo.codigo}}</td>
-              <td>{{insumo.nombre}}</td>
-              <td>{{insumo.cantidad}}</td>
-              <td>{{insumo.Umedida}}</td>
-
-          </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-
-          </div>
-          <div class="col-md-2">
-          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#ModalModificarInsumo"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
-              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-              </div>
-
-          </div>
-<hr/>
-      <a class="btn pull-right" href="recetas"><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></a>
-      <a class="btn pull-right" href="recetas" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-
-
-</div>
-</div>
--->
-
-
-
-
-              <form action="{% url 'recetaModificar' receta_id %}" method="post" class="form">
+              <form action="{% url 'recetaModificar' receta_id %}" method="post" class="form" onsubmit="return validarForm()">
                   {% csrf_token %}
                   {% bootstrap_form receta_form layout='horizontal' %}
                   {{ detalles_form_factory.management_form }}
+                 <!-- Este input es solo para poder leer los detalles de la receta desde js-->
+                  <input type="hidden" id="detalles_receta" name="detalles_receta" value="{{ detalles_receta }}">
+
                   <p>&nbsp;</p>
                   <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Modificar Detalles</b></font></p>
@@ -116,6 +33,7 @@
                        <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
                   </div>
 
+                      <div id="detalles_forms"></div>
 
                   <button id="add-detalle-receta" type="button" class="btn btn-primary">Agregar Detalle</button>
                   <table class="table table-hover" id="nueva" class="display">
@@ -144,23 +62,6 @@
 </div>
 </div>
 
-
-
-{% if receta_form.errors %}
-    {% for field in receta_form %}
-        {% for error in field.errors %}
-            <div class="alert alert-error">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in receta_form.non_field_errors %}
-        <div class="alert alert-error">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
-
 {% endblock %}
 {% block javascript %}
 
@@ -171,36 +72,70 @@ var tabla_detalle_tpl;
 var detalle_cantInsumo_imput_tpl;
 var detalle_insumo_imput_tpl;
 var detalles = [];
+var receta_pk = {{id}};
+
+
 
 tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
                     + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
                     +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
-                    +">Eliminar</button></td></tr>");
+                    +">Eliminar</button></td>" + "</tr>");
 
+
+
+detalle_delete_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"recetadetalle_set-<%= i%>-DELETE"
+                                    +" name="+"recetadetalle_set-<%= i%>-DELETE"
+                                    +" placeholder="+"pk"+" type="
+                                    +"hidden"+" value=<%=delete_form %>>");
 
 detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i %>-cantidad_insumo"
-                                    +" name="+"form-<%= i %>-cantidad_insumo"
+                                    +" id="+"recetadetalle_set-<%= i %>-cantidad_insumo"
+                                    +" name="+"recetadetalle_set-<%= i %>-cantidad_insumo"
                                     +" placeholder="+"Cantidad_insumo"
                                     +" type="+"hidden"+" value=<%=cantidad %>>");
 
 detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i%>-insumo"
-                                    +" name="+"form-<%= i%>-insumo"
+                                    +" id="+"recetadetalle_set-<%= i%>-insumo"
+                                    +" name="+"recetadetalle_set-<%= i%>-insumo"
                                     +" placeholder="+"insumo"+" type="
                                     +"hidden"+" value=<%=insumo %>>");
 
+
+detalle_pk_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"recetadetalle_set-<%= i%>-id"
+                                    +" name="+"recetadetalle_set-<%= i%>-id"
+                                    +" placeholder="+"pk"+" type="
+                                    +"hidden"+" value=<%=pk %>>");
+
+    detalle_receta_pk_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"recetadetalle_set-<%= i%>-receta"
+                                    +" name="+"recetadetalle_set-<%= i%>-receta"
+                                    +" placeholder="+"pk"+" type="
+                                    +"hidden"+" value=<%=receta_pk %>>");
+
+
+
+
+
             // saco insumo del arreglo detalles
  function eliminar(ins){
-        var isumo = _.where(detalles, {insumo:String(ins)});  // obtengo el insumo que quiero borrar, hay q borrarlo
-        detalles = _.filter(detalles,function(element){
-                    return element.insumo != String(ins);                      //filtro los insumos que no tengan el id a borrar.
-        });
+        var insumo = _.find(detalles, {insumo:ins});  // obtengo el insumo que quiero borrar, hay q borrarlo
+
+        if (insumo.delete_form == "off"){
+            insumo.delete_form="on";
+        }else{
+           detalles = _.filter(detalles,function(element){
+                    // filtro insumos validos
+                    return element.insumo != String(ins);
+            });
+        }
         armar_tabla(); //refresco la tabla
   }
 
+
 function modificar_detalle(ins){
-    console.log("en modificar papa");
+    console.log("en modificar ");
 }
 
 function armar_form(){
@@ -209,50 +144,95 @@ function armar_form(){
                 d.i=String(i);
                 html_form = html_form +  detalle_cantInsumo_input_tpl(d);
                 html_form = html_form +  detalle_insumo_input_tpl(d);
-                document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
+                html_form = html_form +  detalle_pk_input_tpl(d);
+                html_form = html_form +  detalle_receta_pk_input_tpl(d);
+                if (d.delete_form == "on"){
+                    html_form = html_form +  detalle_delete_input_tpl(d);
+                }
+
+                document.getElementById("id_recetadetalle_set-TOTAL_FORMS").value = _.size(detalles);
+
             });
             $('#detalles_forms').html(html_form);
+
 }
 
 function armar_tabla(){
     var html_tabla = "";
     $(detalles).each(function(i, d) {
-        html_tabla = html_tabla + tabla_detalle_tpl(d);
+        if (d.delete_form != "on"){
+            html_tabla = html_tabla + tabla_detalle_tpl(d);
+        }
+
     });
     $('#detalles').html(html_tabla);
 }
 
 
 function validarForm(){
-    if (_.size(detalles) == 0){
-         alert("Debe agregar al menos un detalle");
-        return false;
-    }else{
-        armar_form();
-        return true;
+
+    if (_.size(detalles) != 0){
+        var i = _.find(detalles, {delete_form:"off"});
+        if (i != undefined){
+            armar_form();
+            return true;
+        }
     }
+    alert("Receta debe tener al menos un detalle");
+    return false;
+
 }
 
 $(function() {
 
+var listado_detalles = [
+{% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": {{detalle.cantidad_insumo}}, "texto": "{{detalle.insumo}}" },{% endfor %}
+]
+
+
+$(listado_detalles).each(function(i, d) {
+    detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"off",texto: d.texto,pk:d.pk });
+    armar_tabla();
+ });
+document.getElementById("id_recetadetalle_set-INITIAL_FORMS").value = _.size(listado_detalles);
+
+
+
   $("#add-detalle-receta").click(function(){
-        var cantidad = $("#cantidadInsumo").val();
-        var insumo = $("#id_insumo").val();
+        var cantidad = Number($("#cantidadInsumo").val());
+        var insumo = Number($("#id_insumo").val());
         var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
-        var ins = _.find(detalles,{insumo:insumo});
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            if (ins == undefined){
-                detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
-                armar_tabla();
+            esFloat = /^[0-9]*(.[0-9]*)?$/;
+            if (!esFloat.test(cantidad) || (cantidad<0)){
+                alert("debe ingresar una cantidad valida");
             }else{
-                alert("Insumo ya cargado");
+                 var ins = _.find(detalles,{insumo:insumo});
+                 if (ins != undefined){
+                    if (ins.delete_form != "on"){
+                        alert("Insumo ya cargado");
+                    }else{
+                        detalles.push({cantidad: cantidad,
+                                        insumo: insumo,
+                                        i:"0",
+                                        texto:texto,
+                                        pk:"",
+                                        delete_form:"off",
+                                        receta_pk:receta_pk
+                                        });
+                            console.log(detalles);
+                        armar_tabla();
+                     }
+                }
             }
         }
+        console.log(detalles);
   });
 
 });
 </script>
+
 {% endblock %}
 

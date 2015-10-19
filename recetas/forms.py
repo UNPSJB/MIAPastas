@@ -23,9 +23,27 @@ class RecetaForm(forms.ModelForm):
         super(RecetaForm, self).__init__(*args, **kwargs)
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
 
+    def save(self, *args, **kwargs):
+        # Sobrecargar save devuelve el objeto apunto de ser guardado
+        obj_receta = super(RecetaForm, self).save(*args, **kwargs)
+        #detalles = models.RecetaDetalle.objects.filter(receta = obj_receta)
+        #if detalles is  None:
+        #    raise ValidationError("Debe existir al menos un detalle para la Receta.")
+        #else:
+        #    obj_receta.save()
+        return obj_receta
+
+    def clean(self):
+        print "CLEAN POSTA"
+        cleaned_data = super(RecetaForm, self).clean()
+        #valido que existe al menos un detalle
+        #detalles =models.RecetaDetalle.objects.filter(receta=self.instance)
+        #if len(detalles) == 0:
+        #    raise ValidationError("Debe existir al menos un detalle para la Receta.")
+        return cleaned_data
 
     def clean_producto_terminado(self):
-        print "CLEAN DE RECETA"
+        print "CLEAN DE RECETA_producto_terminado"
         producto_terminado = self.cleaned_data['producto_terminado']
         try:
             receta = get_object_or_404(models.Receta, producto_terminado=producto_terminado)
@@ -38,18 +56,13 @@ class RecetaForm(forms.ModelForm):
 
 
 
+
 class RecetaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.RecetaDetalle
         exclude = ['receta'] #setea todos campos menos receta
 
-    def clean_cantidad_insumo(self):
-        print "entre al clean de cantidad de insumo de detalles"
-        cantidad = self.clean_cantidad_insumo<0
-        if cantidad<0:
-            print "LANZO"
-            raise ValidationError("ya hay una receta para este producto.")
-        return cantidad
+
 
 
 
@@ -185,7 +198,7 @@ class ClienteForm(forms.ModelForm):
 class PedidoProveedorForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
-        fields = ["fecha_realizacion","fecha_probable_entrega","proveedor"]
+        fields = ["fecha_realizacion","fecha_probable_entrega","proveedor","fecha_de_entrega","estado_pedido"]
 
 class PedidoClienteForm(forms.ModelForm):
     class Meta:

@@ -26,7 +26,9 @@ class Insumo(models.Model):
         (2, "Litro"),
         (3, "Unidad"),
         (4, "Docena"),
-        (5, "Caja"),
+        (5, "Caja"),    
+        (6, "Cucharada")
+
     )
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
@@ -220,10 +222,19 @@ class PedidoOcacional(PedidoCliente):
 class PedidoProveedor(models.Model):
 
     FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
+    ESTADO = (
+        (1, "Pendiente"),
+        (2, "Recibido"),
+        (3, "Cancelado"),
+    )
     fecha_realizacion = models.DateField()
     fecha_probable_entrega = models.DateField()
+    fecha_de_entrega = models.DateField(blank=True,null=True)
     proveedor = models.ForeignKey(Proveedor)
+    estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
+
+    #detalle de pedido
 

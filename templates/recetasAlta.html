@@ -14,7 +14,7 @@
                 <form action="{% url 'recetasAlta' %}" method="post" class="form" onsubmit="return validarForm()">
                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
                      {% csrf_token %}
-                     {% bootstrap_form receta_form%}
+                     {% bootstrap_form receta_form layout='horizontal'%}
                       <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
                       </div>
@@ -32,7 +32,7 @@
 
                         <div class="form-group">
                              <label for="cantidadInsumo">Cantidad</label>
-                             <input type="number"  min="0" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                             <input type="text"  min="0" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
                         </div>
 
                      {{ detalles_form_factory.management_form }}
@@ -60,20 +60,6 @@
     </div>
 </div>
 
-{% if receta_form.errors %}
-    {% for field in receta_form %}
-        {% for error in field.errors %}
-            <div class="alert alert-error">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in receta_form.non_field_errors %}
-        <div class="alert alert-error">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
 
 {% endblock %}
 {% block javascript %}
@@ -95,31 +81,28 @@ tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
 detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
                                     +" id="+"id_form-<%= i %>-cantidad_insumo"
                                     +" name="+"form-<%= i %>-cantidad_insumo"
-                                    +" placeholder="+"Cantidad_insumo"
                                     +" type="+"hidden"+" value=<%=cantidad %>>");
 
 detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
                                     +" id="+"id_form-<%= i%>-insumo"
                                     +" name="+"form-<%= i%>-insumo"
-                                    +" placeholder="+"insumo"+" type="
-                                    +"hidden"+" value=<%=insumo %>>");
+                                    +" type="+"hidden"+" value=<%=insumo %>>");
 
 
 
         // saco insumo del arreglo detalles
  function eliminar(ins){
-        var isumo = _.where(detalles, {insumo:String(ins)});  // obtengo el insumo que quiero borrar, hay q borrarlo
         detalles = _.filter(detalles,function(element){
-                    return element.insumo != String(ins);                      //filtro los insumos que no tengan el id a borrar.
+                    return element.insumo != ins; //filtro los insumos que no tengan el id a borrar.
         });
-        armar_tabla(); //refresco la tabla
+        armar_tabla();
   }
 
 
 function armar_form(){
             var html_form = "";
             $(detalles).each(function(i, d) {
-                d.i=String(i);
+                d.i=i;
                 html_form = html_form +  detalle_cantInsumo_input_tpl(d);
                 html_form = html_form +  detalle_insumo_input_tpl(d);
                 document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
@@ -149,32 +132,31 @@ function validarForm(){
 
 $(function() {
 
-
-
-
-  {% if modal %}
-    $("#myModal").modal("show");
-  {% endif %}
-
   $("#add-detalle-receta").click(function(){
         var cantidad = $("#cantidadInsumo").val();
-        var patron = /^[0-9]*$/;
         var insumo = $("#id_insumo").val();
         var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
-        var ins = _.find(detalles,{insumo:insumo});
-            if ((cantidad == "") || (insumo == "")){
-                alert("Debe llenar todos los campos");
+        if ((cantidad == "") || (insumo == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            esFloat = /^[0-9]*(.[0-9]*)?$/;
+            if (!esFloat.test(cantidad) || (cantidad<0)){
+                alert("debe ingresar una cantidad valida");
             }else{
-                if (ins == undefined){
+                 var ins = _.find(detalles,{insumo:insumo});
+                 if (ins != undefined){
+                    alert("Insumo ya cargado");
+                 }else{
                     detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
                     armar_tabla();
-                }else{
-                    alert("Insumo ya cargado");
-                }
+                    console.log(detalles);
+                    det = detalles[0];
+                    console.log(det);
+                    d = det.cantidad;
+                    console.log(d);
+                 }
             }
-
-
-
+        }
   });
 
 });

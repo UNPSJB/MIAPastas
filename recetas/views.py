@@ -9,7 +9,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.contrib.messages import get_messages
-# Create your views here.
+import json as simplejson
+from django.core import serializers
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms.models import inlineformset_factory
+    # Create your views here.
 
 def get_order(get):
     if "o" in get:
@@ -164,12 +168,20 @@ def recetas(request,receta_id=None):
 def recetasModificar(request,receta_id):
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
-    detalles_form_factory = formset_factory(forms.RecetaDetalleForm)
     insumos = models.Insumo.objects.all() #para detalles
+
+    detalles_inlinefactory = inlineformset_factory(models.Receta,models.RecetaDetalle,fields=('cantidad_insumo','insumo','receta'))
+
     if request.method=="POST":
         receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
         if receta_form.is_valid():
-            receta_form.save()
+            receta_instancia = receta_form.save(commit=False)
+            #DETALLES
+            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
+            if detalles_formset.is_valid():
+                detalles_formset.save()
+                messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
+                receta_instancia.save()
             return redirect('recetas')
     else:
         receta_form = forms.RecetaForm(instance= receta_instancia)
@@ -178,7 +190,7 @@ def recetasModificar(request,receta_id):
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
                                                    "insumos":insumos,
-                                                   "detalles_form_factory":detalles_form_factory(),
+                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='recetadetalle_set'),
                                                    "receta_id":receta_id
                                                    })
 
@@ -200,6 +212,8 @@ def recetasAlta(request):
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.receta = receta_instancia
                     detalle_instancia.save()
+                messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido registrada correctamente.')
+
                 return redirect('recetas')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
     return render(request, "recetasAlta.html", {
@@ -209,11 +223,9 @@ def recetasAlta(request):
 
 
 def recetasBaja(request,receta_id):
-    print "estoy en bajaaa"
-    p = models.Receta.objects.get(pk=receta_id)
-    messages.success(request, 'La receta: ' + p.nombre + ', ha sido eliminado correctamente.')
-    p.delete()
-
+    receta = models.Receta.objects.get(pk=receta_id)
+    messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
+    receta.delete()
     return redirect('recetas')
 
 #********************************************************#
@@ -599,8 +611,7 @@ def pedidosProveedor(request,pedido_id=None):
     if pedido_id is not None:
         # consulta
         pedido_instancia = models.PedidoProveedor.objects.get(pk=pedido_id)
-        pedido_form = forms.PedidoProveedorForm(instance= pedido_instancia)
-        return render(request, "insumosConsulta.html",{"pedido":pedido_instancia})
+        return render(request, "pedidosProveedorConsulta.html",{"pedido":pedido_instancia})
     elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.PedidoProveedor)
@@ -609,3 +620,15 @@ def pedidosProveedor(request,pedido_id=None):
         return render(request, "pedidosProveedor.html",
                   {"pedidos": pedidos,
                    "filtros": filters})
+
+
+def pedidosProveedorAlta(request):
+    if request.method == "POST":
+        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST)
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_form.save()
+            return redirect('pedidosProveedor')
+    else:
+        pedido_proveedor_form = forms.PedidoProveedorForm()
+    return render(request, "pedidosProveedorAlta.html", {"pedido_proveedor_form":pedido_proveedor_form})
+

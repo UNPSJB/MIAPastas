@@ -60,7 +60,7 @@
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
               <a type="button" id="consulta-producto" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
               <a type="button" id="modificar-producto" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <a type="button" id="modal-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+              <a type="button" id="eliminar-producto" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
               <!-- AL PRECIONAR EL BOTON ELIMINAR SE DEBEN DAR DE BAJAS TODAS LAS RECETAS ASOCIADAS A ESE PRODUCTO TERMINADO-->
           </div>
           <p></p>
@@ -81,7 +81,7 @@
 {% endblock %}
 {% block javascript %}
 <script>
-    $(function() {
+        $(function() {
         var id;
         var tiene_receta;
         function obtenerId(event) {
@@ -95,75 +95,78 @@
             $(_renglon).addClass("active");
         }
 
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+
           function mostrar_error(){
             BootstrapDialog.show({
-                title: "Error de Consulta",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar un producto",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar un producto",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
             });
         }
 
 
-        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
-
-         function mostrarModal(){
-            if(id==undefined){
+        function eliminar(){
+            if(id==undefined)
+	        {
                 mostrar_error();
             }else{
-                  if(tiene_receta){
-                      BootstrapDialog.show({
-                            title: "Esta intentando eliminar",
-                            cssClass: 'error-dialog',
-                            message: "Existen receta que pertenecen al produto terminado que intenta eliminar. Si lo elimina, se eliminaran estas recetas. Desea continuar?.",
-                            type: BootstrapDialog.TYPE_DANGER,
-                            buttons: [{
-                                    label: 'Aceptar',
-                                    action: function(dialogRef){
-                                        dialogRef.close();
-                                        eliminar();}
-                                        },{
-                                    label: 'Cancelar',
-                                    action: function(dialogRef){
-                                        dialogRef.close();
-                                    }
-                                    }
-                            ]
-                        });
-                  }else{
-                        BootstrapDialog.show({
+                if(tiene_receta){
+                    console.log(id);
+                    BootstrapDialog.show({
+                        title: "Esta intentando eliminar",
+                        cssClass: 'error-dialog',
+                        message: "Existen receta que pertenecen al produto terminado que intenta eliminar. Si lo elimina, se eliminaran estas recetas. Desea continuar?.",
+                        type: BootstrapDialog.TYPE_DANGER,
+                        buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                window.open('/productosTerminados/baja/'+id+'',"_self");
+                                dialogRef.close();
+                            }},{
+                            label: 'Cancelar',
+                            action:function(dialogRef){
+                            dialogRef.close();
+                            }
+                        }]
+
+
+
+                    });
+
+                }
+                else{
+                    BootstrapDialog.show({
                             title: "Esta intentando eliminar",
                             cssClass: 'error-dialog',
                             message: "Esta seguro que quiere eliminar el producto terminado?",
                             type: BootstrapDialog.TYPE_DANGER,
                             buttons: [{
-                                    label: 'Aceptar',
-                                    action: function(dialogRef){
-                                        dialogRef.close();
-                                        eliminar();}
-                                        },{
-                                    label: 'Cancelar',
-                                    action: function(dialogRef){
-                                        dialogRef.close();
-                                    }
-                                    }
-                            ]
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                window.open('/productosTerminados/baja/'+id+'',"_self");
+                                dialogRef.close();
+                            }},{
+                            label: 'Cancelar',
+                            action:function(dialogRef){
+                            dialogRef.close();
+                            }
+                        }]
                         });
-                   }
+                }
             }
         }
 
 
 
-        function eliminar() {
-            window.open('/productosTerminados/baja/'+id+'',"_self")
-        }
 
         function modificar(){
             if(id==undefined){
@@ -183,7 +186,7 @@
 
         }
 
-        $("#modal-eliminar").click(mostrarModal);
+
         $("#modificar-producto").click(modificar);
         $("#eliminar-producto").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
         $("#consulta-producto").click(consultar);
