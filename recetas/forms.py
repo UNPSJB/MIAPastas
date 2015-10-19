@@ -185,5 +185,5 @@ class ClienteForm(forms.ModelForm):
 class PedidoProveedorForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
-        fields = ["fecha_realizacion","fecha_probable_entrega","proveedor"]
+        fields = ["fecha_realizacion","fecha_probable_entrega","proveedor","fecha_de_entrega","estado_pedido"]
 

@@ -181,9 +181,17 @@ class Cliente(models.Model):
 class PedidoProveedor(models.Model):
 
     FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
+    ESTADO = (
+        (1, "Pendiente"),
+        (2, "Recibido"),
+        (3, "Cancelado"),
+    )
     fecha_realizacion = models.DateField()
     fecha_probable_entrega = models.DateField()
+    fecha_de_entrega = models.DateField(blank=True,null=True)
     proveedor = models.ForeignKey(Proveedor)
+    estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
+    #detalle de pedido

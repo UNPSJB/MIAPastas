@@ -114,8 +114,9 @@ urlpatterns = [
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
-    url(r'^pedidosProveedor$',views.pedidosProveedor,name='pedidosProveedor'),
-
+    url(r'^pedidosProveedor$',recetasviews.pedidosProveedor,name='pedidosProveedor'),
+    url(r'^pedidosProveedor/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedor,name='pedidosProveedorConsulta'),
+    url(r'^pedidosProveedor/alta/$',recetasviews.pedidosProveedorAlta,name='pedidosProveedorAlta'),
                 # FIN SEGUNDA ENTREGA
     #url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),

@@ -546,8 +546,7 @@ def pedidosProveedor(request,pedido_id=None):
     if pedido_id is not None:
         # consulta
         pedido_instancia = models.PedidoProveedor.objects.get(pk=pedido_id)
-        pedido_form = forms.PedidoProveedorForm(instance= pedido_instancia)
-        return render(request, "insumosConsulta.html",{"pedido":pedido_instancia})
+        return render(request, "pedidosProveedorConsulta.html",{"pedido":pedido_instancia})
     elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.PedidoProveedor)
@@ -556,3 +555,14 @@ def pedidosProveedor(request,pedido_id=None):
         return render(request, "pedidosProveedor.html",
                   {"pedidos": pedidos,
                    "filtros": filters})
+
+
+def pedidosProveedorAlta(request):
+    if request.method == "POST":
+        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST)
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_form.save()
+            return redirect('pedidosProveedor')
+    else:
+        pedido_proveedor_form = forms.PedidoProveedorForm()
+    return render(request, "pedidosProveedorAlta.html", {"pedido_proveedor_form":pedido_proveedor_form})
