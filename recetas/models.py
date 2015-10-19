@@ -99,7 +99,7 @@ class RecetaDetalle(models.Model):
 
 class Proveedor(models.Model):
 
-    FILTROS = ['cuit__icontains','razon_social__icontains','ciudad__icontains']
+    FILTROS = ['cuit__icontains','razon_social__icontains','localidad__icontains']
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=100, unique=True)
@@ -124,6 +124,8 @@ class Zona(models.Model):
 
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
+    #el campo "activo" es para las bajas logicas
+    #activo = models.BooleanField(default=True);
 
     def __str__(self):
         return (self.nombre)
@@ -159,7 +161,7 @@ class Cliente(models.Model):
     )
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
-    nombre_dueno = models.CharField(max_length=100, unique=True)
+    nombre_dueno = models.CharField(max_length=100)
     tipo_cliente = models.PositiveSmallIntegerField(choices=TIPOCLIENTE)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
     direccion = models.CharField(max_length=100, unique=True)
@@ -170,3 +172,26 @@ class Cliente(models.Model):
 
     def __str__(self):
         return "%s (%d %s)" % (self.cuit_cuil, self.razon_social, self.get_tipo_cliente_display())
+
+
+
+#********************************************************#
+         #   P E D I D O S   A  P R O V E E D O R   #
+#********************************************************#
+class PedidoProveedor(models.Model):
+
+    FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
+    ESTADO = (
+        (1, "Pendiente"),
+        (2, "Recibido"),
+        (3, "Cancelado"),
+    )
+    fecha_realizacion = models.DateField()
+    fecha_probable_entrega = models.DateField()
+    fecha_de_entrega = models.DateField(blank=True,null=True)
+    proveedor = models.ForeignKey(Proveedor)
+    estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
+    #relacion con proveedor
+    #relacion con
+    #https://jqueryui.com/datepicker/
+    #detalle de pedido

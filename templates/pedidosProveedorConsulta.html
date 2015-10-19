@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<div class="container">
+        <div class="panel panel-default">
+                  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Pedido a Proveedor</b></font></p></div>
+                  <div class="panel-body">
+                          <!-- formulario -->
+                          <form role="form">
+
+                                      <div class="form-group">
+                                            <label for="fecha_realizacion">Fecha de Realizacion</label>
+                                            <input value="{{pedido.fecha_realizacion}}" type="text" class="form-control" id="fecha_realizacion" name ="fecha_realizacion" readonly>
+                                      </div>
+
+                                      <div class="form-group">
+                                            <label for="fecha_probable_entrega">Fecha Probable de Entrega</label>
+                                            <input value="{{pedido.fecha_probable_entrega}}" type="text" class="form-control" id="fecha_probable_entrega" readonly>
+                                      </div>
+
+                                     <div class="form-group">
+                                            <label for="fecha_de_entrega">Fecha de Entrega</label>
+                                            <input value="{{pedido.fecha_de_entrega}}" type="text" class="form-control" id="fecha_de_entrega" readonly>
+                                      </div>
+
+                                      <div class="form-group">
+                                            <label for="proveedor">Proveedor</label>
+                                            <input value="{{pedido.proveedor}}" type="text" class="form-control" id="proveedor" readonly>
+                                      </div>
+
+                                      <div class="form-group">
+                                            <label for="estado_pedido">Estado del Pedido</label>
+                                            <input value="{{pedido.get_estado_pedido_display}}" type="text" class="form-control" id="estado_pedido" readonly>
+                                      </div>
+
+                          </form>
+                          <a href = "{%url 'pedidosProveedor' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+                          <!-- fin formulario -->
+                  </div>
+        </div>
+</div>
+{% endblock %}

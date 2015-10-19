@@ -16,17 +16,15 @@
                      {% csrf_token %}
                     <!-- {% bootstrap_form proveedores_form %} -->
 
-
-                    <div class="col-md-6"><label class="col-md-3">Cuit:  </label><div class="col-md-9">{{proveedores_form.cuit}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Razon social  </label><div class="col-md-9">{{proveedores_form.razon_social}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Localidad  </label><div class="col-md-9">{{proveedores_form.localidad}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Nombre dueño  </label><div class="col-md-9">{{proveedores_form.nombre_dueno}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Direccion </label><div class="col-md-9">{{proveedores_form.direccion}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Email  </label><div class="col-md-9"> {{proveedores_form.email}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Numero Cuenta  </label><div class="col-md-9">{{proveedores_form.numero_cuenta}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Provincia</label><div class="col-md-9">{{proveedores_form.provincia}}</div></div>
-                    <div class="col-md-6"><label class="col-md-3">Telefono</label><div class="col-md-9">{{proveedores_form.telefono}}</div></div>
-
+                    {% bootstrap_field proveedores_form.cuit  %}
+                    {% bootstrap_field  proveedores_form.razon_social  %}
+                    {% bootstrap_field  proveedores_form.localidad  %}
+                    {% bootstrap_field  proveedores_form.nombre_dueno  %}
+                    {% bootstrap_field  proveedores_form.direccion  %}
+                    {% bootstrap_field  proveedores_form.email  %}
+                    {% bootstrap_field  proveedores_form.numero_cuenta  %}
+                    {% bootstrap_field  proveedores_form.provincia  %}
+                    {% bootstrap_field  proveedores_form.telefono  %}
 
 
 

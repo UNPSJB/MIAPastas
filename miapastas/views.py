@@ -1,9 +1,26 @@
 from django.shortcuts import render
 from django.contrib import messages
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
 
+from django.contrib.auth.models import User
+from django.core.urlresolvers import reverse
+from django.http.response import HttpResponseRedirect
+from django.shortcuts import render_to_response
+from django.template.context import RequestContext
+
+from forms import SignUpForm
+from django.contrib.auth.decorators import login_required
+
+
+
+@login_required()
 def index(request):
-    messages.success(request, 'Hola usuario.')
-    return render(request, "index.html", {})
+    return render_to_response('index.html', {'user': request.user}, context_instance=RequestContext(request))
+
+#def index(request):
+#   messages.success(request, 'Hola usuario.')
+#   return render(request, "index.html", {})
 
 
 def cacho(request):
@@ -31,10 +48,34 @@ def prueba3(request):
 
 
 def login(request):
-    return render(request, "login.html", {})
+    return render(request, "login.html", {},context_instance=RequestContext(request))
 
 
+def signup(request):
+    if request.method == 'POST':
+        form = SignUpForm(request.POST)
+        if form.is_valid():
 
+            username = form.cleaned_data["username"]
+            password = form.cleaned_data["password"]
+            email = form.cleaned_data["email"]
+            first_name = form.cleaned_data["first_name"]
+            last_name = form.cleaned_data["last_name"]
+
+            user = User.objects.create_user(username, email, password)
+            user.first_name = first_name
+            user.last_name = last_name
+
+            user.save()
+
+            return HttpResponseRedirect(reverse('login'))
+    else:
+        form = SignUpForm()
+
+    data = {
+        'form': form,
+    }
+    return render_to_response('signup.html', data, context_instance=RequestContext(request))
 
 
 def recetasConsulta(request):
@@ -193,8 +234,11 @@ def pedidosClienteAlta(request):
 def rendicionRepartoPedidos(request):
     return render(request, "rendicionRepartoPedidos.html", {})
 
-def pedidosProveedores(request):
-    return render(request, "pedidosProveedores.html", {})
+def pedidosProveedor(request):
+    return render(request, "pedidosProveedor.html", {})
+
+def pedidosProveedorAlta(request):
+    return render(request, "pedidosProveedorAlta.html", {})
 
 def proveedoresRecepcion(request):
     return render(request, "proveedoresRecepcion.html", {})

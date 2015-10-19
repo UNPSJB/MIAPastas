@@ -125,7 +125,15 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
 def insumosBaja(request,insumo_id):
     insumo = models.Insumo.objects.get(pk=insumo_id)
     # HAY Q HACER VALIDACIONES.
-    #insumos.delete()
+    if insumo.receta_set.exists():
+        messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
+            [ "%s" % r for r in insumo.receta_set.all()]
+        ))
+        insumo.delete()
+    else:
+        messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
+        insumo.delete()
+
     return redirect('insumos')
 
 
@@ -540,3 +548,33 @@ def ciudadesBaja(request,ciudad_id =None):
     p.delete()
     return redirect('ciudades')
 
+
+
+#********************************************************#
+         #    P E D I D O S   A   P R O V E E D O R   #
+#********************************************************#
+
+def pedidosProveedor(request,pedido_id=None):
+    if pedido_id is not None:
+        # consulta
+        pedido_instancia = models.PedidoProveedor.objects.get(pk=pedido_id)
+        return render(request, "pedidosProveedorConsulta.html",{"pedido":pedido_instancia})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.PedidoProveedor)
+        mfilters = dict(filter(lambda v: v[0] in models.PedidoProveedor.FILTROS, filters.items()))
+        pedidos = models.PedidoProveedor.objects.filter(**mfilters)
+        return render(request, "pedidosProveedor.html",
+                  {"pedidos": pedidos,
+                   "filtros": filters})
+
+
+def pedidosProveedorAlta(request):
+    if request.method == "POST":
+        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST)
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_form.save()
+            return redirect('pedidosProveedor')
+    else:
+        pedido_proveedor_form = forms.PedidoProveedorForm()
+    return render(request, "pedidosProveedorAlta.html", {"pedido_proveedor_form":pedido_proveedor_form})
