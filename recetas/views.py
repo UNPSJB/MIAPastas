@@ -156,6 +156,10 @@ def recetas(request,receta_id=None):
         filters = get_filtros(request.GET, models.Receta)
         mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
         recetas = models.Receta.objects.filter(**mfilters)
+
+        for receta in recetas:
+            insumos = receta.insumos.all()
+            print "soy recetaaaaaaaaaa ",insumos
         # filtrar recetas por productos
         productos_terminados= models.ProductoTerminado.objects.all()
         return render(request, "recetas/recetas.html",
@@ -571,7 +575,9 @@ def pedidosClientes(request,pedido_id=None):
         totales=dict()
         for pedido in pedidos:
             var=pedido.productos.all()
-            print "esssssss",len(var)
+            var2=pedido.pedidoclientedetalle_set.all()
+
+            print "esssssss",len(var),"el pedido es",pedido.pedidoclientedetalle_set.all()
             for producto in pedido.productos.all():
                 print "dentrooooo", producto.nombre
                 if producto in totales:
@@ -589,6 +595,32 @@ def pedidosClientes(request,pedido_id=None):
                        "clientes":clientes})
 
 
+
+def pedidosClientesAlta(request):
+    detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
+    detalles_form = None
+    pedidosClientes_form = None
+    productosTerminados = models.ProductoTerminado.objects.all()
+    if request.method == "POST":
+        pedidosClientes_form = forms. pedidosClientesForm(request.POST) #crea formulario de receta cno los datos del post
+        if  pedidosClientes_form.is_valid():
+            pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
+            detalles_form = detalles_form_class(request.POST, request.FILES)
+            if detalles_form.is_valid():
+                #detalles = detalles_form.save(commit=False)
+                pedido_instancia.save()
+                for detalle in detalles_form:
+                    detalle_instancia = detalle.save(commit=False)
+                    detalle_instancia.receta = pedido_instancia
+                    detalle_instancia.save()
+                messages.success(request, 'El pedido: ' + pedido_instancia.nombre + ', ha sido registrada correctamente.')
+
+                return redirect('pedidosCliente')
+        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
+    return render(request, "recetasAlta.html", {
+            "insumos":insumos,
+            "receta_form": receta_form or forms.RecetaForm(),
+            "detalles_form_factory": detalles_form or detalles_form_class()})
 
 
 

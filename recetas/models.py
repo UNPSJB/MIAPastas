@@ -26,7 +26,7 @@ class Insumo(models.Model):
         (2, "Litro"),
         (3, "Unidad"),
         (4, "Docena"),
-        (5, "Caja"),    
+        (5, "Caja"),
         (6, "Cucharada")
 
     )
