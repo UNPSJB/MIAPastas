@@ -546,20 +546,48 @@ def ciudadesBaja(request,ciudad_id =None):
 def pedidosClientes(request,pedido_id=None):
     if pedido_id is not None:
         # consulta
-        pedidos = models.Receta.objects.get(pk=pedido_id)
-        productos = pedidos.productos.all()
-        return render(request, "pedidosCliente.html",{"pedidos_cliente": pedidos,"productos":productos})
+        pedido = models.PedidoCliente.objects.get(pk=pedido_id)
+        productos = pedido.productos.all()
+        return render(request, "pedidosClienteConsulta.html",{"pedido": pedido,"productos":productos})
     elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.PedidoCliente)
         mfilters = dict(filter(lambda v: v[0] in models.PedidoCliente.FILTROS, filters.items()))
         pedidos = models.PedidoCliente.objects.filter(**mfilters)
         clientes = models.Cliente.objects.all()
-        print "estoyyyyyyyyttttttyyyyyy",len(clientes)
+
+        totales=dict()
+        for pedido in pedidos:
+            var=pedido.productos.all()
+            print "esssssss",len(var)
+            for producto in pedido.productos.all():
+                print "dentrooooo", producto.nombre
+                if producto in totales:
+                    totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                else:
+                    print "lpm ",producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+
+                    totales[producto]=0
+                    print producto.nombre,"  oolisssho ",totales[producto]
+
+
         return render(request, "pedidosCliente.html",
                       {"pedidos": pedidos,
                        "filtros": filters,
                        "clientes":clientes})
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

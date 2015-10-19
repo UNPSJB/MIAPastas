@@ -4,12 +4,7 @@
 {% block contenido %}
 
 
-  <script>
-  $(function() {
-    $( "#fecha-desde" ).datepicker();
-    $( "#fecha-hasta" ).datepicker();
-  });
-  </script>
+
 
 
 <!-- Este es el formulario de recetas -->
@@ -43,7 +38,7 @@
                 <p>&nbsp;</p>
 
 
-              <label for="producto_terminado">Tipo Pedido</label>
+              <label for="cliente">Cliente</label>
 
               <select class="form-control" id="cliente" name="cliente">
                               <option value="" selected="selected">---------</option>
@@ -51,6 +46,17 @@
                                      <option value="{{p.id}}">{{p.razon_social}}</option>
                                 {% endfor %}
               </select>
+
+              <label for="tipo_pedido">Tipo Pedido</label>
+
+              <select class="form-control" id="tipo_pedido" name="tipo_pedido">
+                                <option value="" selected="selected">---------</option>
+                                <option value="1">Fijo</option>
+                                <option value="2">Ocacional</option>
+                                <option value="3">De Cambio</option>
+
+              </select>
+
           </div>
 
 
@@ -74,7 +80,7 @@
             {% for pedido in pedidos %}
             <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
                 <td>{{pedido.tipo_pedido}}</td>
-                <td>{{pedido.fecha_creacion}}</td>
+                <td>{{pedido.cliente.razon_social}}</td>
                 <td>{{pedido.fecha_creacion}}</td>
 
           </tr>
@@ -85,9 +91,9 @@
           </div>
           <div class="col-md-2">
               <div class="btn-group btn-group-sm" role="group" aria-label="...">
-              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
-              <button type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModalModificar" data-backdrop="static"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
-              <button type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
+              <button id="consultar-pedido" type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
+              <button id="modificar-pedido" type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModalModificar" data-backdrop="static"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
+              <button id="modal-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
           </div>
               <p></p>
           <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Fijo</span></b></font></a>
@@ -344,4 +350,94 @@
 
     <!-- Este es el fin del formulario de recetas -->
 
+{% endblock %}
+{% block javascript %}
+<script>
+  $(function() {
+    $( "#fecha-desde" ).datepicker();
+    $( "#fecha-hasta" ).datepicker();
+
+
+    var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("danger");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+        function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar un pedido",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+        }
+
+         function mostrarModal(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+                BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar el pedido?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+            }
+        }
+
+        $("#modal-eliminar").click(mostrarModal);
+
+        function eliminar() {
+            window.open('/pedidosCliente/Baja/'+id+'',"_self")
+        }
+
+        function modificar(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+            window.open('/c/Modificar/'+id+'',"_self")
+        }}
+
+
+        function consultar(){
+            if(id==undefined){
+            mostrar_error();
+            }else{
+            window.open('/pedidosCliente/Consulta/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#modificar-pedido").click(modificar);
+        $("#consultar-pedido").click(consultar);
+
+  });
+  </script>
 {% endblock %}

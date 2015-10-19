@@ -166,7 +166,7 @@ class Cliente(models.Model):
 
 
     def __str__(self):
-        return "%s (%d %s)" % (self.cuit_cuil, self.razon_social, self.get_tipo_cliente_display())
+        return "%s (%s)" % (self.cuit_cuil, self.razon_social)
 
 
 
@@ -189,11 +189,11 @@ class PedidoCliente(models.Model):
     cliente = models.ForeignKey(Cliente)
 
     def __str__(self):
-        return "%s (%d %s)" % (self.cliente, self.get_tipo_pedido_display())
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
     cantidad_producto = models.PositiveIntegerField()
-    producto_terminado = models.ForeignKey(ProductoTerminado)
+    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
@@ -204,7 +204,7 @@ class DiasSemana(models.Model):
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField()
     fecha_cancelacion = models.DateField(blank=True)
-    dias = models.ForeignKey(DiasSemana)
+    dias = models.ForeignKey(DiasSemana,blank=True)  #quitar blank
 
 class PedidoCambio(PedidoCliente):
     fecha_entrega = models.DateField()

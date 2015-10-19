@@ -75,30 +75,6 @@
 
 
 
-<div id="myModalEliminar" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Eliminar Proveedor</h4>
-      </div>
-      <div class="modal-body">
-          <label for="">Confirma que decea borrar: </label>
-
-
-      </div>
-      <div class="modal-footer">
-          <a id="eliminar-proveedor"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-      </div>
-    </div>
-
-  </div>
-</div>
-
-
 
    <!-- Este es el fin del formulario de recetas -->
 {% endblock %}
@@ -137,7 +113,24 @@
             if(id==undefined){
                 mostrar_error();
             }else{
-            $("#myModalEliminar").modal("show");
+                BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta seguro que quiere eliminar el proveedor?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
             }
         }
 

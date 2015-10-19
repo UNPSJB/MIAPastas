@@ -135,6 +135,7 @@ urlpatterns = [
     url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
 
     url(r'^pedidosCliente$',recetasviews.pedidosClientes,name='pedidosCliente'),
+    url(r'^pedidosCliente/Consulta/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClientes,name='pedidoConsulta'),
 
 
 

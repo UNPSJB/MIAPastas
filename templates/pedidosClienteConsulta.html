@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block contenido %}
+
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Pedido de Cliente</b></font></p></div>
+    <div class="panel-body">
+      <form class="form-horizontal">
+
+          <div class=" form-group">
+            <label for="fecha_creacion" class="col-sm-2 control-label">Fecha de Creacion</label>
+            <div class="col-sm-10">
+              <input value = "{{pedido.fecha_creacion}}" type="text" class="form-control" id="fecha_creacion" name = "fecha_creacion" readonly>
+            </div>
+          </div>
+
+          <div class="form-group ">
+            <label for="producto_terminado" class="col-sm-2  control-label">Cuit/Cuil Cliente</label>
+            <div class="col-sm-10">
+              <input value = {{pedido.cliente}} type="text" class="form-control" id="producto_terminado" name="producto_terminado" readonly>
+            </div>
+          </div>
+          <div class="form-group ">
+            <label for="razon_social" class="col-sm-2  control-label">Razon Social Cliente</label>
+            <div class="col-sm-10">
+              <input value = {{pedido.cliente.razon_social}} type="text" class="form-control" id="razon_social" name="razon_social" readonly>
+            </div>
+          </div>
+
+           <div class="form-group">
+            <label for="diasSemana" class="col-sm-2 control-label">Dias de pedido</label>
+            <div class="col-sm-10">
+              <input value = {{pedido.diasSemana}} type="text" class="form-control" id ="diasSemana" name="diasSemana" readonly>
+            </div>
+          </div>
+
+
+            <div class="form-group ">
+            <label for="tipo_pedido" class="col-sm-2 control-label">Tipo de Pedido</label>
+            <div class="col-sm-10">
+              <input value = "{{pedido.get_tipo_pedido_display}}" type="text" class="form-control" id="tipo_pedido" readonly>
+            </div>
+          </div>
+
+
+      </form>
+      <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Productos del pedido</b></font></p></div>
+      <div class="col-md-11 pull-right">
+          <table class="table table-hover ">
+            <thead>
+            <tr>
+                <th>Nombre</th>
+                <th>Cantidad</th>
+                <th>Unidad Medida</th>
+            </tr>
+            </thead>
+              <tbody>
+              {% for producto in productos %}
+                <tr>
+                    <td>{{producto.nombre}}</td>
+                    <td>{{producto.pedidoclientedetalle_set.cantidad_producto}}</td>
+                    <!--  producto.pedidoclientedetalle_set.get(pedido_cliente=pedido).cantidad_producto -->
+                    <td>{{producto.get_unidad_medida_display}}</td>
+                </tr>
+              {% endfor %}
+             </tbody>
+          </table>
+            <a class="btn pull-right" href="{%url 'recetas'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+        </div>
+
+    </div>
+</div>
+</div>
+{% endblock %}
