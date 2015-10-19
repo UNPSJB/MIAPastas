@@ -27,6 +27,8 @@ class Insumo(models.Model):
         (3, "Unidad"),
         (4, "Docena"),
         (5, "Caja"),
+        (6, "Cucharada")
+
     )
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")

@@ -76,10 +76,7 @@
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             tiene_receta = $el.data()["recetas"] == "True";
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -168,7 +165,6 @@
             if(id==undefined){
                 mostrar_error();
             }else{
-<<<<<<< HEAD
 
                 if (tiene_receta== true){
                     alert("tiene detalles");
@@ -190,11 +186,8 @@
                                         dialogRef.close();
                                 }}]});
                     }
-=======
             window.open('/insumos/'+id+'',"_self")
->>>>>>> origin/master
             }
-
         }
 
 
