@@ -157,14 +157,9 @@ class Ciudad(models.Model):
 class Cliente(models.Model):
 
     FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
-    TIPOCLIENTE = (
-        (1, "Cliente Fijo"),
-        (2, "Cliente Ocasional"),
-    )
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
-    tipo_cliente = models.PositiveSmallIntegerField(choices=TIPOCLIENTE)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
     direccion = models.CharField(max_length=100, unique=True)
     telefono= models.PositiveIntegerField()
@@ -173,7 +168,51 @@ class Cliente(models.Model):
 
 
     def __str__(self):
-        return "%s (%d %s)" % (self.cuit_cuil, self.razon_social, self.get_tipo_cliente_display())
+        return "%s (%s)" % (self.cuit_cuil, self.razon_social)
+
+
+
+
+#************************************************************************#
+               #     P E D I D O S  D E  C L I E N T E S    #
+#************************************************************************#
+
+
+class PedidoCliente(models.Model):
+    FILTROS = ['fecha_creacion__icontains','fecha_desde__icontains','fecha_hasta__icontains' ] #,'tipo_pedido__' como hacer para filtrar
+    TIPOPEDIDO = (
+        (1, "Pedido Fijo"),
+        (2, "Pedido Ocasional"),
+        (3,"Pedido de Cambio")
+    )
+    fecha_creacion = models.DateField(auto_now_add = True)
+    tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
+    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
+    cliente = models.ForeignKey(Cliente)
+
+    def __str__(self):
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class PedidoClienteDetalle(models.Model):
+    cantidad_producto = models.PositiveIntegerField()
+    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+    pedido_cliente = models.ForeignKey(PedidoCliente)
+
+
+class DiasSemana(models.Model):
+    dia = models.CharField(unique=True,max_length=100)
+
+
+class PedidoFijo(PedidoCliente):
+    fecha_inicio = models.DateField()
+    fecha_cancelacion = models.DateField(blank=True)
+    dias = models.ForeignKey(DiasSemana,blank=True)  #quitar blank
+
+class PedidoCambio(PedidoCliente):
+    fecha_entrega = models.DateField()
+
+class PedidoOcacional(PedidoCliente):
+    fecha_entrega = models.DateField()
 
 
 
@@ -196,4 +235,11 @@ class PedidoProveedor(models.Model):
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
+
+
     #detalle de pedido
+
+
+    #detalle de pedido
+    #auto_now_add = True
+

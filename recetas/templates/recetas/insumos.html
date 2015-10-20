@@ -80,8 +80,8 @@
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
-            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
-            $(_renglon).addClass("active");
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
@@ -110,15 +110,10 @@
                       BootstrapDialog.show({
                             title: "Esta intentando eliminar",
                             cssClass: 'error-dialog',
-                            message: "Existen receta que pertenecen al produto terminado que intenta eliminar. Si lo elimina, se eliminaran estas recetas. Desea continuar?.",
+                            message: "Existen receta que pertenecen al producto terminado que intenta eliminar. Elimine primero la receta.",
                             type: BootstrapDialog.TYPE_DANGER,
                             buttons: [{
                                     label: 'Aceptar',
-                                    action: function(dialogRef){
-                                        dialogRef.close();
-                                        eliminar();}
-                                        },{
-                                    label: 'Cancelar',
                                     action: function(dialogRef){
                                         dialogRef.close();
                                     }

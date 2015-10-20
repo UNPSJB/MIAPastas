@@ -155,6 +155,10 @@ def recetas(request,receta_id=None):
         filters = get_filtros(request.GET, models.Receta)
         mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
         recetas = models.Receta.objects.filter(**mfilters)
+
+        for receta in recetas:
+            insumos = receta.insumos.all()
+            print "soy recetaaaaaaaaaa ",insumos
         # filtrar recetas por productos
         productos_terminados= models.ProductoTerminado.objects.all()
         return render(request, "recetas/recetas.html",
@@ -550,6 +554,87 @@ def ciudadesBaja(request,ciudad_id =None):
 
 
 #********************************************************#
+               #     PEDIDOS CLIENTES   #
+#********************************************************#
+
+
+def pedidosClientes(request,pedido_id=None):
+    if pedido_id is not None:
+        # consulta
+        pedido = models.PedidoCliente.objects.get(pk=pedido_id)
+        productos = pedido.productos.all()
+        return render(request, "pedidosClienteConsulta.html",{"pedido": pedido,"productos":productos})
+    elif request.method == 'GET':
+        # filtros
+        filters = get_filtros(request.GET, models.PedidoCliente)
+        mfilters = dict(filter(lambda v: v[0] in models.PedidoCliente.FILTROS, filters.items()))
+        pedidos = models.PedidoCliente.objects.filter(**mfilters)
+        clientes = models.Cliente.objects.all()
+
+        totales=dict()
+        for pedido in pedidos:
+            var=pedido.productos.all()
+            var2=pedido.pedidoclientedetalle_set.all()
+
+            print "esssssss",len(var),"el pedido es",pedido.pedidoclientedetalle_set.all()
+            for producto in pedido.productos.all():
+                print "dentrooooo", producto.nombre
+                if producto in totales:
+                    totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                else:
+                    print "lpm ",producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+
+                    totales[producto]=0
+                    print producto.nombre,"  oolisssho ",totales[producto]
+
+
+        return render(request, "pedidosCliente.html",
+                      {"pedidos": pedidos,
+                       "filtros": filters,
+                       "clientes":clientes})
+
+
+
+def pedidosClientesAlta(request):
+    detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
+    detalles_form = None
+    pedidosClientes_form = None
+    productosTerminados = models.ProductoTerminado.objects.all()
+    if request.method == "POST":
+        pedidosClientes_form = forms. pedidosClientesForm(request.POST) #crea formulario de receta cno los datos del post
+        if  pedidosClientes_form.is_valid():
+            pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
+            detalles_form = detalles_form_class(request.POST, request.FILES)
+            if detalles_form.is_valid():
+                #detalles = detalles_form.save(commit=False)
+                pedido_instancia.save()
+                for detalle in detalles_form:
+                    detalle_instancia = detalle.save(commit=False)
+                    detalle_instancia.receta = pedido_instancia
+                    detalle_instancia.save()
+                messages.success(request, 'El pedido: ' + pedido_instancia.nombre + ', ha sido registrada correctamente.')
+
+                return redirect('pedidosCliente')
+        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
+    return render(request, "recetasAlta.html", {
+            "insumos":insumos,
+            "receta_form": receta_form or forms.RecetaForm(),
+            "detalles_form_factory": detalles_form or detalles_form_class()})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#********************************************************#
          #    P E D I D O S   A   P R O V E E D O R   #
 #********************************************************#
 
@@ -577,3 +662,4 @@ def pedidosProveedorAlta(request):
     else:
         pedido_proveedor_form = forms.PedidoProveedorForm()
     return render(request, "pedidosProveedorAlta.html", {"pedido_proveedor_form":pedido_proveedor_form})
+

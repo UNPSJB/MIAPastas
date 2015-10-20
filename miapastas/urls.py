@@ -135,6 +135,8 @@ urlpatterns = [
     url(r'^proveedores/(?P<proveedor_id>[0-9]+)/$',recetasviews.proveedores,name='proveedoresID'),
     url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
 
+    url(r'^pedidosCliente$',recetasviews.pedidosClientes,name='pedidosCliente'),
+    url(r'^pedidosCliente/Consulta/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClientes,name='pedidoConsulta'),
 
 
 
@@ -159,7 +161,6 @@ urlpatterns = [
     url(r'^hojaDeRuta$',views.hojaDeRuta,name='hojaDeRuta'),
     url(r'^rendicionReparto$',views.rendicionReparto,name='rendicionReparto'),
     url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
-    url(r'^pedidosCliente$',views.pedidosCliente,name='pedidosCliente'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarStock',views.productosTerminadosActualizarStock,name='productosTerminadosActualizarStock'),
