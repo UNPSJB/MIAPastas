@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.core.validators import MinValueValidator
+from datetime import date
+
+
+
+
+TIPODIAS = (
+        (1, "lunes"),
+        (2, "martes"),
+        (3, "miercoles"),
+        (4,"jueves"),
+        (5,"viernes")
+      )
 
 # Create your models here.
 #********************************************************#
@@ -199,20 +211,39 @@ class PedidoClienteDetalle(models.Model):
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
-class DiasSemana(models.Model):
-    dia = models.CharField(unique=True,max_length=100)
-
 
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField()
     fecha_cancelacion = models.DateField(blank=True)
-    dias = models.ForeignKey(DiasSemana,blank=True)  #quitar blank
+    dias = models.CommaSeparatedIntegerField(max_length=32, choices=TIPODIAS)
+
+    def esParaHoy(self):
+        d = date.today()
+        if d.day in self.dias:
+            return True
+        else:
+            return False
 
 class PedidoCambio(PedidoCliente):
     fecha_entrega = models.DateField()
 
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+
+
 class PedidoOcacional(PedidoCliente):
     fecha_entrega = models.DateField()
+
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
 
 
 
@@ -242,4 +273,21 @@ class PedidoProveedor(models.Model):
 
     #detalle de pedido
     #auto_now_add = True
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

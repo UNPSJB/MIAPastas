@@ -596,7 +596,7 @@ def pedidosClientes(request,pedido_id=None):
 
 
 
-def pedidosClientesAlta(request):
+def pedidosClientesAlta(request, tipo_pedido=None):
     detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
     detalles_form = None
     pedidosClientes_form = None
@@ -617,10 +617,18 @@ def pedidosClientesAlta(request):
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-    return render(request, "recetasAlta.html", {
-            "insumos":insumos,
-            "receta_form": receta_form or forms.RecetaForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
+    if tipo_pedido == 1:
+        pedidosClientes_form = forms.PedidoClienteFijoForm()
+    elif tipo_pedido == 2:
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm()
+    elif:
+        pedidosClientes_form = forms.PedidoClienteCambioForm()
+
+    return render(request, "pedidosClienteAlta.html", {
+                "productosTerminados":productosTerminados,
+                "pedido_form":  pedidosClientes_form,
+                "detalles_form_factory": detalles_form or detalles_form_class()})
+
 
 
 

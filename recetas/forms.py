@@ -2,6 +2,8 @@ from django import forms
 from . import models
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.forms import CheckboxSelectMultiple, MultipleChoiceField
+
 
 class ChoferForm(forms.ModelForm):
     class Meta:
@@ -61,9 +63,6 @@ class RecetaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.RecetaDetalle
         exclude = ['receta'] #setea todos campos menos receta
-
-
-
 
 
 
@@ -200,15 +199,23 @@ class PedidoProveedorForm(forms.ModelForm):
         model = models.PedidoProveedor
         fields = ["fecha_realizacion","fecha_probable_entrega","proveedor","fecha_de_entrega","estado_pedido"]
 
-class PedidoClienteForm(forms.ModelForm):
+
+
+
+
+class PedidoClienteFijoForm(forms.ModelForm):
     class Meta:
         model = models.PedidoCliente
-        fields = ["tipo_pedido", "cliente",]
+        dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
+        exclude = ['productos']
 
     def __init__(self, *args, **kwargs):
-        super(PedidoClienteForm, self).__init__(*args, **kwargs)
-        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+        super(PedidoFijoForm, self).__init__(*args, **kwargs)
 
+    def clean_dias(self):
+        data = self.cleaned_data['dias']
+        cleaned_data = ",".join(data)
+        return cleaned_data
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):

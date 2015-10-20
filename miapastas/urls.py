@@ -137,6 +137,7 @@ urlpatterns = [
 
     url(r'^pedidosCliente$',recetasviews.pedidosClientes,name='pedidosCliente'),
     url(r'^pedidosCliente/Consulta/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClientes,name='pedidoConsulta'),
+    url(r'^pedidosCliente/Alta/(?P<tipo_pedido>[0-9]+)/$',views.pedidosClienteAlta,name='pedidosClienteAlta'),
 
 
 
@@ -165,7 +166,6 @@ urlpatterns = [
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarStock',views.productosTerminadosActualizarStock,name='productosTerminadosActualizarStock'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
-    url(r'^pedidosClienteAlta$',views.pedidosClienteAlta,name='pedidosClienteAlta'),
     url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
 
     url(r'^proveedoresRecepcion$',views.proveedoresRecepcion,name='proveedoresRecepcion'),

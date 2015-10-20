@@ -14,12 +14,12 @@
       <form role="form">
 
                    <div class="form-group">
-                        <label for="inputEmail3">Tipo de Pedido</label>
+                        <label>Tipo de Pedido</label>
 
                           <select class="form-control">
-                              <option>Pedido Fijo</option>
-                              <option>Pedido Ocasional</option>
-                              <option>Pedido de Cambio</option>
+                              <option class="tipo_pedido" id="1">Pedido Fijo</option>
+                              <option class="tipo_pedido" id="2">Pedido Ocasional</option>
+                              <option class="tipo_pedido" id="3">Pedido de Cambio</option>
                           </select>
 
                    </div>
@@ -133,6 +133,26 @@
     <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
 
 
+{% endblock %}
+{% block javascript %}
+<scrip>
+    var id;
+    $(function() {
+        $('.tipo_pedido').click(function{
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            alert("el id es "+id);
+            window.open('/pedidosCliente/Alta/'+id+'',"_self")
+
+    })
+
+    }
+
+
+
+
+
+</scrip>
 
 
 
