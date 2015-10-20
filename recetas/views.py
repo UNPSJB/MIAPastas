@@ -149,8 +149,7 @@ def recetas(request,receta_id=None):
     if receta_id is not None:
         # consulta
         receta = models.Receta.objects.get(pk=receta_id)
-        insumos = receta.insumos.all()
-        return render(request, "recetasConsulta.html",{"receta": receta,"insumos":insumos})
+        return render(request, "recetasConsulta.html",{"receta": receta})
     elif request.method == 'GET':
         # filtros
         filters = get_filtros(request.GET, models.Receta)

@@ -51,11 +51,11 @@
             </tr>
             </thead>
               <tbody>
-              {% for insumo in insumos %}
+              {% for d in receta.recetadetalle_set.all %}
                 <tr>
-                    <td>{{insumo.nombre}}</td>
-                    <td>{{insumo.recetadetalle_set.cantidad_insumo}}</td>
-                    <td>{{insumo.get_unidad_medida_display}}</td>
+                    <td>{{d.insumo.nombre}}</td>
+                    <td>{{d.cantidad_insumo}}</td>
+                    <td>{{d.insumo.get_unidad_medida_display}}</td>
                 </tr>
               {% endfor %}
              </tbody>

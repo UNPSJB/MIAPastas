@@ -65,6 +65,20 @@
 {% endblock %}
 {% block javascript %}
 
+<script id="detalleinsumo_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %>
+        <tr>
+            <td><%= d.texto %></td>
+            <td><%= d.cantidad %></td>
+            <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%= d.insumo%>)">Eliminar</button></td>
+        </tr>
+    <% } %>
+    <% })%>
+</script>
+
+
+
 
 <script>
 
@@ -75,11 +89,10 @@ var detalles = [];
 var receta_pk = {{id}};
 
 
+var tpl_tabla=_.template($("#detalleinsumo_tpl").html());
 
-tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
-                    + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
-                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
-                    +">Eliminar</button></td>" + "</tr>");
+
+
 
 
 
@@ -120,9 +133,8 @@ detalle_pk_input_tpl = $.tpl("<input class="+"form-control"
 
             // saco insumo del arreglo detalles
  function eliminar(ins){
-        var insumo = _.find(detalles, {insumo:ins});  // obtengo el insumo que quiero borrar, hay q borrarlo
-
-        if (insumo.delete_form == "off"){
+        var insumo = _.find(detalles, {insumo:ins});
+        if (insumo.pk != ""){
             insumo.delete_form="on";
         }else{
            detalles = _.filter(detalles,function(element){
@@ -141,14 +153,12 @@ function modificar_detalle(ins){
 function armar_form(){
             var html_form = "";
             $(detalles).each(function(i, d) {
-                d.i=String(i);
+                d.i=i;
                 html_form = html_form +  detalle_cantInsumo_input_tpl(d);
                 html_form = html_form +  detalle_insumo_input_tpl(d);
                 html_form = html_form +  detalle_pk_input_tpl(d);
                 html_form = html_form +  detalle_receta_pk_input_tpl(d);
-                if (d.delete_form == "on"){
-                    html_form = html_form +  detalle_delete_input_tpl(d);
-                }
+                html_form = html_form +  detalle_delete_input_tpl(d);
 
                 document.getElementById("id_recetadetalle_set-TOTAL_FORMS").value = _.size(detalles);
 
@@ -158,21 +168,15 @@ function armar_form(){
 }
 
 function armar_tabla(){
-    var html_tabla = "";
-    $(detalles).each(function(i, d) {
-        if (d.delete_form != "on"){
-            html_tabla = html_tabla + tabla_detalle_tpl(d);
-        }
 
-    });
+    var html_tabla = tpl_tabla({objects:detalles});
     $('#detalles').html(html_tabla);
 }
 
 
 function validarForm(){
-
     if (_.size(detalles) != 0){
-        var i = _.find(detalles, {delete_form:"off"});
+        var i = _.find(detalles, {delete_form:""}); // q delete no sea ON
         if (i != undefined){
             armar_form();
             return true;
@@ -191,7 +195,7 @@ var listado_detalles = [
 
 
 $(listado_detalles).each(function(i, d) {
-    detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"off",texto: d.texto,pk:d.pk });
+    detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
     armar_tabla();
  });
 document.getElementById("id_recetadetalle_set-INITIAL_FORMS").value = _.size(listado_detalles);
@@ -210,25 +214,23 @@ document.getElementById("id_recetadetalle_set-INITIAL_FORMS").value = _.size(lis
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
-                 if (ins != undefined){
-                    if (ins.delete_form != "on"){
-                        alert("Insumo ya cargado");
-                    }else{
+                 if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){
                         detalles.push({cantidad: cantidad,
                                         insumo: insumo,
                                         i:"0",
                                         texto:texto,
                                         pk:"",
-                                        delete_form:"off",
+                                        delete_form:"",
                                         receta_pk:receta_pk
                                         });
                             console.log(detalles);
                         armar_tabla();
-                     }
-                }
+                 }else{
+                    alert("Insumo ya cargado");
+                 }
+
             }
         }
-        console.log(detalles);
   });
 
 });
