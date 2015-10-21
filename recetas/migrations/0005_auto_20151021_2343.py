@@ -7,13 +7,14 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recetas', '0027_auto_20151018_2158'),
+        ('recetas', '0004_auto_20151021_2341'),
     ]
 
     operations = [
+
         migrations.AlterField(
-            model_name='pedidoproveedor',
-            name='fecha_realizacion',
-            field=models.DateTimeField(verbose_name=b'date published'),
+            model_name='lote',
+            name='nro_lote',
+            field=models.AutoField(primary_key=True, db_column='nro_lote'),
         ),
     ]

@@ -243,3 +243,17 @@ class PedidoProveedor(models.Model):
     #detalle de pedido
     #auto_now_add = True
 
+#********************************************************#
+         #   L O T E S    #
+#********************************************************#
+class Lote(models.Model):
+    FILTROS = ['producto_terminado']
+
+    nro_lote = models.AutoField(primary_key=True) # Field name made lowercase.
+    fecha_produccion = models.DateField()
+    fecha_vencimiento=models.DateField()
+    cantidad_producida = models.PositiveIntegerField()
+    stock_disponible= models.PositiveIntegerField()
+    stock_reservado= models.PositiveIntegerField(default=0)
+    producto_terminado=models.ForeignKey(ProductoTerminado)
+

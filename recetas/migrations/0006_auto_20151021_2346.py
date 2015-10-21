@@ -7,12 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recetas', '0024_auto_20151016_1554'),
+        ('recetas', '0005_auto_20151021_2343'),
     ]
 
     operations = [
-        migrations.RemoveField(
-            model_name='zona',
-            name='activo',
+        migrations.AlterField(
+            model_name='lote',
+            name='nro_lote',
+            field=models.AutoField(serialize=False, primary_key=True),
         ),
     ]

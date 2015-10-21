@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recetas', '0028_auto_20151018_2316'),
+        ('recetas', '0003_auto_20151021_2336'),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='pedidoproveedor',
-            name='fecha_realizacion',
-            field=models.DateField(),
+        migrations.RenameField(
+            model_name='lote',
+            old_name='id',
+            new_name='nro_lote',
         ),
     ]
