@@ -137,9 +137,8 @@ urlpatterns = [
 
     url(r'^pedidosCliente$',recetasviews.pedidosClientes,name='pedidosCliente'),
     url(r'^pedidosCliente/Consulta/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClientes,name='pedidoConsulta'),
-    url(r'^pedidosCliente/Alta/(?P<tipo_pedido>[0-9]+)/$',views.pedidosClienteAlta,name='pedidosClienteAlta'),
-
-
+    url(r'^pedidosCliente/Alta/(?P<tipo_pedido_id>[0-9]+)/$',recetasviews.pedidosClientesAlta,name='pedidosClientesAltaID'),
+    url(r'^pedidosCliente/Alta/$',recetasviews.pedidosClientesAlta,name='pedidosClientesAlta'),
 
 
 

@@ -2,8 +2,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from datetime import date
-
-
+from multiselectfield import MultiSelectField
 
 
 TIPODIAS = (
@@ -213,9 +212,10 @@ class PedidoClienteDetalle(models.Model):
 
 
 class PedidoFijo(PedidoCliente):
-    fecha_inicio = models.DateField()
+    fecha_inicio = models.DateField(default=date.today())
     fecha_cancelacion = models.DateField(blank=True)
-    dias = models.CommaSeparatedIntegerField(max_length=32, choices=TIPODIAS)
+    #dias = models.CommaSeparatedIntegerField(max_length=32) #, choices=TIPODIAS
+    dias = MultiSelectField(choices=TIPODIAS)
 
     def esParaHoy(self):
         d = date.today()

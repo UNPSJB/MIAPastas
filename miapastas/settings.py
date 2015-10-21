@@ -40,6 +40,7 @@ INSTALLED_APPS = (
     'bootstrap3',
     'recetas',
     'selectable',
+    'multiselectfield',     #para poder seleccionar varios choises
 )
 
 MIDDLEWARE_CLASSES = (
