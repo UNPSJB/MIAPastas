@@ -252,21 +252,21 @@ class PedidoOcacional(PedidoCliente):
 #********************************************************#
 class PedidoProveedor(models.Model):
 
-    FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
+    FILTROS = ['fecha_realizacion__gte','proveedor','estado_pedido']
     ESTADO = (
         (1, "Pendiente"),
         (2, "Recibido"),
         (3, "Cancelado"),
     )
     fecha_realizacion = models.DateField()
-    fecha_probable_entrega = models.DateField()
     fecha_de_entrega = models.DateField(blank=True,null=True)
     proveedor = models.ForeignKey(Proveedor)
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
+    insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
-
+    #fecha_realizacion__gte
 
     #detalle de pedido
 
@@ -275,19 +275,8 @@ class PedidoProveedor(models.Model):
     #auto_now_add = True
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+class DetallePedidoProveedor(models.Model):
+    cantidad_insumo = models.PositiveIntegerField()
+    insumo = models.ForeignKey(Insumo)
+    pedido_proveedor = models.ForeignKey(PedidoProveedor)
 

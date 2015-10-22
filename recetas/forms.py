@@ -199,7 +199,17 @@ class ClienteForm(forms.ModelForm):
 class PedidoProveedorForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
-        fields = ["fecha_realizacion","fecha_probable_entrega","proveedor","fecha_de_entrega","estado_pedido"]
+        fields = ["fecha_realizacion","proveedor"]
+
+
+class DetallePedidoProveedorForm(forms.ModelForm):
+    class Meta:
+        model = models.DetallePedidoProveedor
+        exclude = ['pedido_proveedor'] #setea todos campos menos pedido_proveedor
+
+
+
+
 
 ##########################################################
 ########################################################
