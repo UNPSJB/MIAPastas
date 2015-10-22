@@ -91,10 +91,10 @@ def choferesModificar(request,chofer_id =None):
         chofer_form = forms.ChoferForm(request.POST,instance= chofer_instancia)
         if chofer_form.is_valid():
             chofer_form.save()
-        return redirect('choferes')
+            return redirect('choferes')
     else:
         chofer_form = forms.ChoferForm(instance= chofer_instancia)
-        return render(request,"choferesModificar.html",{"chofer_form":chofer_form,"id":chofer_id})
+    return render(request,"choferesModificar.html",{"chofer_form":chofer_form,"id":chofer_id})
 
 
 @csrf_exempt
@@ -216,11 +216,13 @@ def recetasModificar(request,receta_id):
         receta_form = forms.RecetaForm(instance= receta_instancia)
 
         #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "recetadetalle_set"
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
                                                    "insumos":insumos,
                                                    "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='recetadetalle_set'),
-                                                   "receta_id":receta_id
+                                                   "receta_id":receta_id,
+                                                   "pref":pref
                                                    })
 
 
@@ -722,3 +724,37 @@ def pedidosProveedorAlta(request):
             "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorForm(),
             "detalles_form_factory": detalles_form or detalles_form_class()})
 
+#********************************************************#
+         #    L O T E S   #
+#********************************************************#
+def lotes(request,lote_id=None):
+    if lote_id is not None:
+        lote = models.Lote.objects.get(pk=lote_id)
+        # enviar a lotesConsulta
+    else:
+        # filtros
+        filters = get_filtros(request.GET, models.Lote)
+        mfilters = dict(filter(lambda v: v[0] in models.Lote.FILTROS, filters.items()))
+        lotes= models.Lote.objects.filter(**mfilters)
+
+    productos = models.ProductoTerminado.objects.all()
+    return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
+
+def lotesModificar(request,lote_id=None):
+    lotes = models.Lote.objects.all()
+    return render(request,"recetas/lotes.html",{"lotes":lotes})
+
+def lotesAlta(request):
+    if request.method == "POST":
+        lote_form = forms.LoteForm(request.POST)
+        if lote_form.is_valid:
+            lote = lote_form.save()
+            lote.stock = lote.cantidad_producida
+
+            return redirect("lotes")
+    else:
+        lote_form=forms.LoteForm()
+
+
+
+    return render(request,"lotesAlta.html",{"lote_form":lote_form})

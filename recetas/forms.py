@@ -5,12 +5,55 @@ from django.shortcuts import get_object_or_404
 from django.utils.text import capfirst
 from django.core import exceptions
 from django.forms import CheckboxSelectMultiple, MultipleChoiceField
+import re
+
+def cuit_valido(cuit):
+    cuit = str(cuit)
+    cuit = cuit.replace("-", "")
+    #cuit = cuit.replace(" ", "")
+   # cuit = cuit.replace(".", "")
+    print "cuit inicial " ,cuit
+    if len(cuit) != 11:
+        if len(cuit) == 10:
+            cuit = cuit[:2] + '0' + cuit[2:]
+            print "es 10 ",cuit
+        else:
+            return False
+    if not cuit.isdigit():
+        return False
+    base = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+    aux = 0
+    for i in xrange(10):
+        aux += int(cuit[i]) * base[i]
+    aux = 11 - (aux % 11)
+    if aux == 11:
+        aux = 0
+    elif aux == 10:
+        aux = 9
+    if int(cuit[10]) == aux:
+        return True
+    else:
+        return False
+
 
 
 class ChoferForm(forms.ModelForm):
     class Meta:
         model = models.Chofer
         fields = ["cuit", "nombre", "direccion", "telefono", "e_mail"]
+
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido papa")
+        return cuit
+
+
 
 
 class InsumoForm(forms.ModelForm):
@@ -357,3 +400,9 @@ class PedidoClienteDetalleForm(forms.ModelForm):
         model = models.PedidoClienteDetalle
         exclude = ['pedido'] #setea todos campos menos pedido
 
+
+class LoteForm(forms.ModelForm):
+    class Meta:
+        model = models.Lote
+        fields = ["fecha_produccion","fecha_vencimiento","cantidad_producida","stock_disponible","stock_reservado","producto_terminado"]
+    

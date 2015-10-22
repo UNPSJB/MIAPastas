@@ -280,3 +280,19 @@ class DetallePedidoProveedor(models.Model):
     insumo = models.ForeignKey(Insumo)
     pedido_proveedor = models.ForeignKey(PedidoProveedor)
 
+
+#********************************************************#
+         #   L O T E S   P R O D U C C I O N #
+#********************************************************#
+class Lote(models.Model):
+    FILTROS = ['producto_terminado']
+
+    nro_lote = models.AutoField(primary_key=True) # Field name made lowercase.
+    fecha_produccion = models.DateField()
+    fecha_vencimiento=models.DateField()
+    cantidad_producida = models.PositiveIntegerField()
+    stock_disponible= models.PositiveIntegerField()
+    stock_reservado= models.PositiveIntegerField(default=0)
+    producto_terminado=models.ForeignKey(ProductoTerminado)
+
+

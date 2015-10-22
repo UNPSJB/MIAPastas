@@ -65,13 +65,19 @@
 {% endblock %}
 {% block javascript %}
 
-<script id="detalleinsumo_tpl" type="text/html">
+<script id="detalle_tabla_tpl" type="text/html">
     <% $(objects).each(function(i, d){ %>
     <% if (d.delete_form != "on") { %>
-        <tr>
+        <tr class="form-row row1 has_original">
             <td><%= d.texto %></td>
-            <td><%= d.cantidad %></td>
+            <td class="field-cantidad_insumo">
+                <input class="vIntegerField" id="cantidad-<%=i%>" name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            $("#<%=i%>.value")
+            <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%= d.insumo%>,<%=i%>)">Modificar</button></td>
             <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%= d.insumo%>)">Eliminar</button></td>
+
+
         </tr>
     <% } %>
     <% })%>
@@ -79,60 +85,63 @@
 
 
 
+<script id="form_tpl" type="text/html">
+
+    <% $(objects).each(function(i, d){ %>
+
+        <% if (d.delete_form != undefined) { %>
+           <input class="form-control"
+           id="{{pref}}-<%= i%>-DELETE"
+           name="{{pref}}-<%= i%>-DELETE"
+           type="hidden"
+           value="<%=d.delete_form %>">
+        <% } %>
+
+        <input class="form-control"
+               id="{{pref}}-<%= i%>-insumo"
+               name="{{pref}}-<%= i%>-insumo"
+               type="hidden" value="<%=d.insumo %>">
+
+        <% if (d.cantidad != undefined) { %>
+            <input class="form-control"
+                    id="{{pref}}-<%= i %>-cantidad_insumo"
+                    name="{{pref}}-<%= i %>-cantidad_insumo"
+                    type="hidden" value="<%=d.cantidad %>">
+        <% } %>
+
+       <% if (d.pk!= undefined) { %>
+
+            <input class="form-control"
+                   id="{{pref}}-<%= i%>-id"
+                   name="{{pref}}-<%= i%>-id"
+                   type="hidden"
+                   value= "<%=d.pk %>">
+        <% } %>
+        <% if (d.receta_pk != undefined) { %>
+            <input class="form-control"
+                   id="{{pref}}-<%= i%>-receta"
+                   name="{{pref}}-<%= i%>-receta"
+                   type="hidden"
+                   value= "<%=d.receta_pk %>">
+        <% } %>
+    <% })%>
+    <%document.getElementById("id_"+"{{pref}}"+"-TOTAL_FORMS").value = _.size(detalles);%>
+</script>
+
+
+
 
 <script>
 
-var tabla_detalle_tpl;
-var detalle_cantInsumo_imput_tpl;
-var detalle_insumo_imput_tpl;
 var detalles = [];
 var receta_pk = {{id}};
+var pref = "{{pref}}";
+var esFloat = /^[0-9]*(.[0-9]*)?$/;
 
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
+var tpl_form = _.template($("#form_tpl").html());
 
-var tpl_tabla=_.template($("#detalleinsumo_tpl").html());
-
-
-
-
-
-
-detalle_delete_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"recetadetalle_set-<%= i%>-DELETE"
-                                    +" name="+"recetadetalle_set-<%= i%>-DELETE"
-                                    +" placeholder="+"pk"+" type="
-                                    +"hidden"+" value=<%=delete_form %>>");
-
-detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"recetadetalle_set-<%= i %>-cantidad_insumo"
-                                    +" name="+"recetadetalle_set-<%= i %>-cantidad_insumo"
-                                    +" placeholder="+"Cantidad_insumo"
-                                    +" type="+"hidden"+" value=<%=cantidad %>>");
-
-detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"recetadetalle_set-<%= i%>-insumo"
-                                    +" name="+"recetadetalle_set-<%= i%>-insumo"
-                                    +" placeholder="+"insumo"+" type="
-                                    +"hidden"+" value=<%=insumo %>>");
-
-
-detalle_pk_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"recetadetalle_set-<%= i%>-id"
-                                    +" name="+"recetadetalle_set-<%= i%>-id"
-                                    +" placeholder="+"pk"+" type="
-                                    +"hidden"+" value=<%=pk %>>");
-
-    detalle_receta_pk_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"recetadetalle_set-<%= i%>-receta"
-                                    +" name="+"recetadetalle_set-<%= i%>-receta"
-                                    +" placeholder="+"pk"+" type="
-                                    +"hidden"+" value=<%=receta_pk %>>");
-
-
-
-
-
-            // saco insumo del arreglo detalles
- function eliminar(ins){
+function eliminar(ins){
         var insumo = _.find(detalles, {insumo:ins});
         if (insumo.pk != ""){
             insumo.delete_form="on";
@@ -146,36 +155,46 @@ detalle_pk_input_tpl = $.tpl("<input class="+"form-control"
   }
 
 
-function modificar_detalle(ins){
-    console.log("en modificar ");
+function modificar(ins,i){
+    var nueva_cantidad = $("#nueva_cantidad-"+i).serializeArray()[0].value;
+    if (!esFloat.test(nueva_cantidad) || (nueva_cantidad<0)){
+        alert("debe ingresar una cantidad nueva valida");
+    }else{
+        var obj_insumo = _.find(detalles,{insumo:ins});
+        obj_insumo.cantidad = nueva_cantidad;
+        alert("cantidad modificada");
+    }
 }
 
 function armar_form(){
-            var html_form = "";
-            $(detalles).each(function(i, d) {
-                d.i=i;
-                html_form = html_form +  detalle_cantInsumo_input_tpl(d);
-                html_form = html_form +  detalle_insumo_input_tpl(d);
-                html_form = html_form +  detalle_pk_input_tpl(d);
-                html_form = html_form +  detalle_receta_pk_input_tpl(d);
-                html_form = html_form +  detalle_delete_input_tpl(d);
+    var html_form=""
+   // html_form = tpl_form({objects:detalles});
+    $(detalles).each(function(i, d){
+        html_form = html_form + armar_hidden(pref,d.insumo,"insumo",i);
+        html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_insumo",i);
+        html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
+        html_form = html_form + armar_hidden(pref,d.pk,"id",i);
+        html_form = html_form + armar_hidden(pref,d.receta_pk,"receta",i);
+     });
+    document.getElementById("id_"+"{{pref}}"+"-TOTAL_FORMS").value = _.size(detalles);
 
-                document.getElementById("id_recetadetalle_set-TOTAL_FORMS").value = _.size(detalles);
 
-            });
-            $('#detalles_forms').html(html_form);
-
+    $('#detalles_forms').html(html_form);
 }
 
 function armar_tabla(){
-
-    var html_tabla = tpl_tabla({objects:detalles});
+     var html_tabla="";
+    //html_tabla = tpl_tabla({objects:detalles});
+     $(detalles).each(function(i, d){
+        if (d.delete_form == undefined || d.delete_form !="on"){
+             html_tabla = html_tabla+ armar_modif_tabla(d.insumo,d.texto,d.cantidad,i);
+        }
+     });
     $('#detalles').html(html_tabla);
 }
 
-
 function validarForm(){
-    if (_.size(detalles) != 0){
+    if (_.size(detalles) > 0){
         var i = _.find(detalles, {delete_form:""}); // q delete no sea ON
         if (i != undefined){
             armar_form();
@@ -184,21 +203,21 @@ function validarForm(){
     }
     alert("Receta debe tener al menos un detalle");
     return false;
-
 }
 
+
 $(function() {
+                /* INICIAMOS DETALLES */
+    var listado_detalles = [
+    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": {{detalle.cantidad_insumo}}, "texto": "{{detalle.insumo}}" },{% endfor %}
+    ]
+    $(listado_detalles).each(function(i, d) {
+        detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
+     });
+             armar_tabla();
 
-var listado_detalles = [
-{% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": {{detalle.cantidad_insumo}}, "texto": "{{detalle.insumo}}" },{% endfor %}
-]
+    document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
 
-
-$(listado_detalles).each(function(i, d) {
-    detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
-    armar_tabla();
- });
-document.getElementById("id_recetadetalle_set-INITIAL_FORMS").value = _.size(listado_detalles);
 
 
 
@@ -209,26 +228,24 @@ document.getElementById("id_recetadetalle_set-INITIAL_FORMS").value = _.size(lis
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            esFloat = /^[0-9]*(.[0-9]*)?$/;
             if (!esFloat.test(cantidad) || (cantidad<0)){
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
                  if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){
-                        detalles.push({cantidad: cantidad,
+                        detalles.push({ cantidad: cantidad,
                                         insumo: insumo,
-                                        i:"0",
                                         texto:texto,
+                                        receta_pk:receta_pk,
                                         pk:"",
                                         delete_form:"",
-                                        receta_pk:receta_pk
+                                        i:"0",
                                         });
-                            console.log(detalles);
+                        console.log(detalles);
                         armar_tabla();
                  }else{
                     alert("Insumo ya cargado");
                  }
-
             }
         }
   });
