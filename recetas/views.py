@@ -13,19 +13,45 @@ import json as simplejson
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
+import re
+import datetime
+#from datetime import date, datetime
+#import time
+
     # Create your views here.
 
 def get_order(get):
     if "o" in get:
         return get["o"]
 
+
+fechareg = re.compile("^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$") #esta es una expresion regular par las fechas
+##permite fechas del siguiente tipo: dd/mm/aa or d/m/aa or dd/mm/aaaa etc....
+#permite fechas del siguiente tipo: dd-mm-aa or d-m-aa or dd-mm-aaaa etc....
+
 def get_filtros(get, modelo):
     mfilter = {}
     for filtro in modelo.FILTROS:
         attr = filtro.split("__")[0]
         if attr in get and get[attr]:
-            mfilter[filtro] = get[attr]
-            mfilter[attr] = get[attr]
+            texto = get[attr]
+            match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
+            if match is not None:
+                print(match)
+                print(texto)
+                print(match.groups()[2])
+                print(match.groups()[1])
+                print(match.groups()[0])
+                print(filtro)
+                ano = int(match.groups()[2])
+                mes = int(match.groups()[0])
+                dia = int(match.groups()[1])
+                print(ano,mes,dia)
+                fecha = datetime.date(ano,mes,dia)
+                mfilter[filtro] = datetime.date(ano,mes,dia)
+            else:
+                mfilter[filtro] = texto
+            mfilter[attr] = texto
     return mfilter
 
 #********************************************************#
@@ -518,7 +544,7 @@ def ciudades(request,ciudad_id=None):
         mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
         ciudades = models.Ciudad.objects.filter(**mfilters)
         zonas = models.Zona.objects.all()
-        return render(request, "recetas/ciudades.html",{"ciudades":ciudades,"zonas":zonas})
+        return render(request, "recetas/ciudades.html",{"filtros": filters,"ciudades":ciudades,"zonas":zonas})
 
 
 
@@ -649,18 +675,37 @@ def pedidosProveedor(request,pedido_id=None):
         filters = get_filtros(request.GET, models.PedidoProveedor)
         mfilters = dict(filter(lambda v: v[0] in models.PedidoProveedor.FILTROS, filters.items()))
         pedidos = models.PedidoProveedor.objects.filter(**mfilters)
+        proveedores = models.Proveedor.objects.all()
         return render(request, "pedidosProveedor.html",
-                  {"pedidos": pedidos,
+                  {"pedidos": pedidos,"proveedores":proveedores,
                    "filtros": filters})
 
 
+
+
 def pedidosProveedorAlta(request):
+    detalles_form_class = formset_factory(forms.DetallePedidoProveedorForm)
+    detalles_form = None
+    pedido_proveedor_form = None
+    insumos = models.Insumo.objects.all()
     if request.method == "POST":
-        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST)
+        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST) #crea formulario de pedido con los datos del post
         if pedido_proveedor_form.is_valid():
-            pedido_proveedor_form.save()
-            return redirect('pedidosProveedor')
-    else:
-        pedido_proveedor_form = forms.PedidoProveedorForm()
-    return render(request, "pedidosProveedorAlta.html", {"pedido_proveedor_form":pedido_proveedor_form})
+            pedido_proveedor_instancia = pedido_proveedor_form.save(commit = False) #commit false
+            detalles_form = detalles_form_class(request.POST, request.FILES)
+            if detalles_form.is_valid():
+                #detalles = detalles_form.save(commit=False)
+                pedido_proveedor_instancia.save()
+                for detalle in detalles_form:
+                    detalle_instancia = detalle.save(commit=False)
+                    detalle_instancia.receta = pedido_proveedor_instancia
+                    detalle_instancia.save()
+                messages.success(request, 'El Pedido ha sido registrada correctamente.')
+
+                return redirect('pedidosProveedor')
+        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
+    return render(request, "pedidosProveedorAlta.html", {
+            "insumos":insumos,
+            "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorForm(),
+            "detalles_form_factory": detalles_form or detalles_form_class()})
 
