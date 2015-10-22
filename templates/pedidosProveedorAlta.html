@@ -1,129 +1,165 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
-
+{% load bootstrap3 %}
 {% block contenido %}
 
+<!-- Este es el formulario de INSUMOS PAPA -->
 
-  <script>
-  $(function() {
-    $( "#fecha-pedido" ).datepicker();
-    $( "#fecha-probable" ).datepicker();
-  });
-  </script>
-
-
-<form action="">
 <div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedidos a Proveedores</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form role="form">
-                  <div class="form-group">
-                        <label for="inputEmail3">Proveedor</label>
-
-                          <select class="form-control">
-                              <option>Proveedor 1</option>
-                              <option>Proveedor 2</option>
-                              <option>Proveedor 3</option>
-                          </select>
-
-                   </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Pedido a Proveedor</b></font></p></div>
+            <div class="panel-body">
 
 
+                <form action="{% url 'pedidosProveedorAlta' %}" method="post" class="form" onsubmit="return validarForm()">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedido</b></font></p></div>
+                     {% csrf_token %}
+                     {% bootstrap_form pedido_proveedor_form layout='horizontal'%}
+                      &nbsp;
+                      <div class="panel-heading"><p class="text-center login-title">
+                          <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
+                      </div>
 
-                  <div class="form-group">
-                    <label for="fecha_pedido">Fecha del Pedido</label>
-                    <input type="text" class="form-control" id="fecha-pedido" required>
-                  </div>
-
-
-                  <div class="form-group">
-                    <label for="fecha_probable">Fecha Probable de Entrega</label>
-                    <input type="text" class="form-control" id="fecha-probable">
-                  </div>
-
+                      <div id="detalles_forms"></div>
 
 
-        </form>
+                    <label for="id_insumo">Insumo</label>
+                      <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for i in insumos %}
+                                 <option value="{{i.id}}">{{i}}</option>
+                            {% endfor %}
+                         </select>
 
+                        <div class="form-group">
+                             <label for="cantidadInsumo">Cantidad</label>
+                             <input type="text"  min="0" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                        </div>
 
-        <div class="col-md-10">
+                     {{ detalles_form_factory.management_form }}
 
-           <h2>Insumo Pedido</h2>
-           <div class="row col-md-4">
-              <select class="form-control">
-                  <option>Insumo 1</option>
-                  <option>Insumo 2</option>
-                  <option>Insumo 3</option>
-                  <option>Insumo 4</option>
-                  <option>Insumo 5</option>
-                </select>
-               <div class="form-group">
+                    <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
+                    <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>Insumo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
 
-                    <label for="inputEmail3" class=" control-label">Cantidad</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-                   <label for="inputEmail3" class=" control-label">Unidad de Medida</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" readonly>
-
+                    </table>
+                {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+                </form>
             </div>
-               </div>
-           <div class="col-md-2 pull-left"></div>
-                           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
-
-            </div>
-
-      <div class="row">
-          <div class="col-md-10">
-
-          <table class="table table-hover">
-            <thead>
-            <tr>
-
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Unidad Medida</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for productoTerminado in productoTerminados %}
-                <tr>
-
-              <td>{{productoTerminado.nombre}}</td>
-              <td>{{productoTerminado.cantidad}}</td>
-              <td>{{productoTerminado.Umedida}}</td>
-
-          </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-
-          </div>
-          <div class="col-md-2">
-          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-              </div>
-
-          </div>
-<hr/>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
-
-  </div>
-
+    </div>
 </div>
-</div>
-</form>
-
-    <!-- Este es el fin del formulario de recetas -->
-    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
 
 
+{% endblock %}
+{% block javascript %}
+
+
+<script>
+
+var tabla_detalle_tpl;
+var detalle_cantInsumo_imput_tpl;
+var detalle_insumo_imput_tpl;
+var detalles = [];
+
+tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
+                    + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
+                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
+                    +">Eliminar</button></td>" + "</tr>");
+
+
+detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"id_form-<%= i %>-cantidad_insumo"
+                                    +" name="+"form-<%= i %>-cantidad_insumo"
+                                    +" type="+"hidden"+" value=<%=cantidad %>>");
+
+detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"id_form-<%= i%>-insumo"
+                                    +" name="+"form-<%= i%>-insumo"
+                                    +" type="+"hidden"+" value=<%=insumo %>>");
 
 
 
+        // saco insumo del arreglo detalles
+ function eliminar(ins){
+        detalles = _.filter(detalles,function(element){
+                    return element.insumo != ins; //filtro los insumos que no tengan el id a borrar.
+        });
+        armar_tabla();
+  }
+
+
+function armar_form(){
+            var html_form = "";
+            $(detalles).each(function(i, d) {
+                d.i=i;
+                html_form = html_form +  detalle_cantInsumo_input_tpl(d);
+                html_form = html_form +  detalle_insumo_input_tpl(d);
+                document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
+            });
+            $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+    var html_tabla = "";
+    $(detalles).each(function(i, d) {
+        html_tabla = html_tabla + tabla_detalle_tpl(d);
+    });
+    $('#detalles').html(html_tabla);
+}
+
+
+function validarForm(){
+    if (_.size(detalles) == 0){
+         alert("Debe agregar al menos un detalle");
+        return false;
+    }else{
+        armar_form();
+        return true;
+    }
+
+}
+
+$(function() {
+
+  $("#add-detalle-receta").click(function(){
+        var cantidad = $("#cantidadInsumo").val();
+        var insumo = $("#id_insumo").val();
+        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        if ((cantidad == "") || (insumo == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            esFloat = /^[0-9]*(.[0-9]*)?$/;
+            if (!esFloat.test(cantidad) || (cantidad<0)){
+                alert("debe ingresar una cantidad valida");
+            }else{
+                 var ins = _.find(detalles,{insumo:insumo});
+                 if (ins != undefined){
+                    alert("Insumo ya cargado");
+                 }else{
+                    detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
+                    armar_tabla();
+                    console.log(detalles);
+                    det = detalles[0];
+                    console.log(det);
+                    d = det.cantidad;
+                    console.log(d);
+                 }
+            }
+        }
+  });
+
+});
+</script>
 {% endblock %}

@@ -12,21 +12,30 @@
            <form class="form-inline" method="get">
                   <!-- Filtro de Fecha de Realizacion del Pedido a Proveedor -->
                   <div class="form-group">
-                        <label for="fecha_realizacion">Fecha de Realizacion</label>
-                        <input type="text" class="form-control" value="{{filtros.fecha_realizacion}}" name="fecha_realizacion" id="fecha_realizacion">
-                  </div>
-                  <div><input class="datepicker" data-date-format="yyyy/mm/dd"></div>
-                  <!-- Filtro de Fecha Probable de Entrega del Pedido a Proveedor -->
-                  <div class="form-group">
-                        <label for="fecha_probable_entrega">Fecha Probable Entrega</label>
-                        <input type="text" class="form-control" value="{{filtros.fecha_probable_entrega}}" id="fecha_probable_entrega" name = "fecha_probable_entrega" >
+                        <label for="fecha_realizacion">Fecha de Realizacion (Mayor o igual)</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_realizacion}}" name="fecha_realizacion" id="fecha_realizacion">
                   </div>
                   <!-- Filtro de Proveedor del Pedido a Proveedor -->
                   <div class="form-group">
                         <label for="proveedor">Proveedor</label>
-                        <input type="text" class="form-control" value="{{filtros.proveedor}}" id="proveedor" name = "proveedor" >
+                        <select class="form-control" id="proveedor" name="proveedor" title="">
+                            <option value="" selected="selected">---------</option>
+                            {% for p in proveedores %}
+                                <option value="{{p.id}}">{{p}}</option>
+                            {% endfor %}
+                        </select>
                   </div>
-
+                  <!-- Filtro de Fecha Probable de Entrega del Pedido a Proveedor -->
+                  <div class="form-group">
+                        <label for="estado_pedido">Estado del Pedido</label>
+                        <select class="form-control" id="estado_pedido" name="estado_pedido" title="">
+                            <option value="" selected="selected">---------</option>
+                            <option value="{{1}}">Pendiente</option>
+                            <option value="{{2}}">Recibido</option>
+                            <option value="{{3}}">Cancelado</option>
+                            <!-- PREGUNTA: conviene meter el ESTADO en una clase a parte?? clase EstadoPedido?? -->
+                        </select>
+                  </div>
                   <label>
                   </label>
                   <button type="submit" class="btn btn-default">Filtrar</button>
