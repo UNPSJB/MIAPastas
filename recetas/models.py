@@ -244,7 +244,7 @@ class PedidoProveedor(models.Model):
     #auto_now_add = True
 
 #********************************************************#
-         #   L O T E S    #
+         #   L O T E S   P R O D U C C I O N #
 #********************************************************#
 class Lote(models.Model):
     FILTROS = ['producto_terminado']
