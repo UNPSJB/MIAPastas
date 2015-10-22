@@ -605,6 +605,7 @@ def pedidosClientesAlta(request, tipo_pedido_id=None):
         pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST) #crea formulario de receta cno los datos del post
         if  pedidosClientes_form.is_valid():
             print "Estoy en alta papa y soy valido"
+            dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
             pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
             if detalles_form.is_valid():

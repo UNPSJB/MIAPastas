@@ -213,7 +213,7 @@ class PedidoClienteDetalle(models.Model):
 
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField(default=date.today())
-    fecha_cancelacion = models.DateField(blank=True)
+    fecha_cancelacion = models.DateField(blank=True,null=True)
     #dias = models.CommaSeparatedIntegerField(max_length=32) #, choices=TIPODIAS
     dias = MultiSelectField(choices=TIPODIAS)
 

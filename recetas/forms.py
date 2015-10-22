@@ -201,7 +201,7 @@ class PedidoProveedorForm(forms.ModelForm):
         model = models.PedidoProveedor
         fields = ["fecha_realizacion","fecha_probable_entrega","proveedor","fecha_de_entrega","estado_pedido"]
 
-
+##########################################################
 ########################################################
 #prueba
 '''
@@ -239,7 +239,7 @@ class CommaSeparetedSelectInteger(forms.MultipleChoiceField):
 
 '''
 
-
+'''
 
 class MultiSelectFormField(forms.MultipleChoiceField):
     widget = forms.CheckboxSelectMultiple
@@ -317,11 +317,11 @@ class MultiSelectField(forms.ModelForm): #models.Field
 
 
 
-
+'''
 
 
 ###########################################################
-
+##########################################################
 
 
 
@@ -329,8 +329,8 @@ class MultiSelectField(forms.ModelForm): #models.Field
 class PedidoClienteFijoForm(forms.ModelForm):
     class Meta:
         model = models.PedidoFijo
-        #dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
-        dias = CommaSeparetedSelectInteger(choices=models.TIPODIAS,widget=forms.SelectMultiple)
+        dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
+        #dias = CommaSeparetedSelectInteger(choices=models.TIPODIAS,widget=forms.SelectMultiple)
         exclude = ['productos','fecha_cancelacion','tipo_pedido']
 
     def __init__(self, *args, **kwargs):

@@ -95,6 +95,13 @@
                             <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
                       </div>
 
+
+
+
+                        {{ form.as_p }}
+
+
+
                       <div id="detalles_forms"></div>
 
 
@@ -203,12 +210,12 @@ tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
 
 detalle_cantProducto_input_tpl = $.tpl("<input class="+"form-control"
                                     +" id="+"id_form-<%= i %>-cantidad_producto"
-                                    +" name="+"form-<%= i %>-cantidad_producto"
+                                    +" name="+"pedidoclientedetalle_set-<%= i %>-cantidad_producto"
                                     +" type="+"hidden"+" value=<%=cantidad %>>");
 
 detalle_producto_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i%>-producto"
-                                    +" name="+"form-<%= i%>-producto"
+                                    +" id="+"id_form-<%= i%>-producto_terminado"
+                                    +" name="+"pedidoclientedetalle_set-<%= i%>-producto_terminado"
                                     +" type="+"hidden"+" value=<%=producto %>>");
 
 
