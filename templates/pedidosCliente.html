@@ -122,7 +122,11 @@
             </thead>
               <tbody>
 
-          </tbody>
+              {% for clave, valor in totales.iteritems %}
+                    <td>totales.[clave]</td>
+                    <td>totales.valor</td>
+              {% endfor %}
+              </tbody>
           </table>
           </div>
               <hr>
@@ -146,55 +150,7 @@
           </div>
 
       </div>
-       <div>
 
-
-</div>
-
-    <!-- Modal -->
-            <div id="myModalModificar" class="modal fade"  role="dialog"> <!--
-            con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal
-            - Con col-md-offset-4 corremos 4 espacios a la derecha, pdemos usar col-md2 col-md-offset-4 para que quede 4 espacios en blanco primero-->
-              <div class="modal-dialog">
-
-
-
-    <div id="myModalTipo" class="modal fade"  role="dialog"> <!-- con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal -->
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 align="center" class="modal-title center">Seleccione tipo de pedido</h1>
-                  </div>
-                  <div class="modal-body">
-            <!--
-                <div class="form-group">
-                    <label>Tipo de Pedido</label>
-                         <select class="form-control tipo_pedido">
-                             <option class="tipo_pedido" data-id="1">Pedido Fijo</option>
-                             <option class="tipo_pedido" data-id="2">Pedido Ocasional</option>
-                             <option class="tipo_pedido" data-id="3">Pedido de Cambio</option>
-                         </select>
-            -->
-
-                </div>
-                     <button data-id="1" type="button" class="btn btn-default tipo_pedido" >Fijo</button>
-                     <button data-id="2" type="button" class="btn btn-default tipo_pedido" >Ocacional</button>
-                     <button data-id="3" type="button" class="btn btn-default tipo_pedido" >De Cambio</button>
-
-                  </div>
-                <div class="modal-footer">
-                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
-                       en el modelo, -->
-                    <button id="boton_aceptar" type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
-                  </div></div></div></div>
-
-
-</div>
 
     <!-- Este es el fin del formulario de recetas -->
 
@@ -281,7 +237,7 @@
             if(id==undefined){
                 mostrar_error();
             }else{
-            window.open('/c/Modificar/'+id+'',"_self")
+            window.open('/pedidosCliente/Modificar/'+id+'',"_self")
         }}
 
 

@@ -605,16 +605,20 @@ def pedidosClientes(request,pedido_id=None):
             var=pedido.productos.all()
             var2=pedido.pedidoclientedetalle_set.all()
             for producto in pedido.productos.all():
+                print "soy producto",producto
+                print producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto,"hhhhhhhhhhhhhh"
+
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 else:
                     totales[producto]=0
 
-
+        print "diccionario",totales
         return render(request, "pedidosCliente.html",
                       {"pedidos": pedidos,
                        "filtros": filters,
-                       "clientes":clientes})
+                       "clientes":clientes,
+                       "totales":totales})
 
 
 
@@ -650,7 +654,6 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-    print "soyyyyyyyyyyyyyy 2222"
     return render(request, "pedidosClienteAlta.html", {
                 "productosTerminados":productosTerminados,
                 "pedido_form":  pedidosClientes_form,
@@ -659,15 +662,46 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
 
 
+def pedidosClienteBaja(request,pedido_id):
+    pedido = models.PedidoCliente.objects.get(pk=pedido_id)
+    messages.success(request, 'El pedido: ' + pedido.get_tipo_pedido_display()+" de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    pedido.delete()     #hacer baja logica
+    return redirect('pedidosCliente')
 
 
-
-
-
-
-
-
-
+def pedidosClienteModificar(request,pedido_id):
+    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
+    print pedido_instancia.tipo_pedido
+    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
+    productos = models.ProductoTerminado.objects.all() #para detalles
+    detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+    if pedido_instancia.tipo_pedido == 1:
+        pedidosClientes_form = forms.PedidoClienteFijoForm(instance= pedido_instancia)
+    elif pedido_instancia.tipo_pedido == 2:
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm(instance= pedido_instancia)
+    else:
+        pedidosClientes_form = forms.PedidoClienteCambioForm(instance= pedido_instancia)
+    if request.method=="POST":
+        pedidosClientes_form = pedidosClientes_form(request.POST) #crea formulario de receta cono los datos del post
+        if pedidosClientes_form.is_valid():
+            pedido_instancia = pedidosClientes_form.save(commit=False)
+            #DETALLES
+            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
+            if detalles_formset.is_valid():
+                detalles_formset.save()
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
+                pedido_instancia.save()
+            return redirect('pedidosCliente')
+    print len(detalles_instancias),"fffffffffffff"
+    #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "pedidoclientedetalle_set"
+    return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
+                                                   "detalles_pedido":detalles_instancias,
+                                                   "producto":productos,
+                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
+                                                   "pedido_id":pedido_id,
+                                                   "pref":pref
+                                                   })
 
 
 
