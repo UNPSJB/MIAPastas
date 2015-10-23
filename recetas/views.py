@@ -624,17 +624,21 @@ def pedidosClientes(request,pedido_id=None):
 
 
 
-def pedidosClientesAlta(request):
+def pedidosClientesAlta(request, tipo_pedido_id=None):
     detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
     detalles_form = None
     pedidosClientes_form = None
     productosTerminados = models.ProductoTerminado.objects.all()
+
     if request.method == "POST":
-        pedidosClientes_form = forms. pedidosClientesForm(request.POST) #crea formulario de receta cno los datos del post
+        pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST) #crea formulario de receta cno los datos del post
         if  pedidosClientes_form.is_valid():
+            print "Estoy en alta papa y soy valido"
+            dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
             pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
             if detalles_form.is_valid():
+                print "soy detalle y soy valido"
                 #detalles = detalles_form.save(commit=False)
                 pedido_instancia.save()
                 for detalle in detalles_form:
@@ -645,10 +649,20 @@ def pedidosClientesAlta(request):
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-    return render(request, "recetasAlta.html", {
-            "insumos":insumos,
-            "receta_form": receta_form or forms.RecetaForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
+        print "Estoy en alta papa y NO soy valido"
+    print tipo_pedido_id
+    if tipo_pedido_id == "1":
+        pedidosClientes_form = forms.PedidoClienteFijoForm()
+    elif tipo_pedido_id == "2":
+        pedidosClientes_form = forms.PedidoClienteFijoForm()    #poner ocacional
+    elif tipo_pedido_id == "3":
+        pedidosClientes_form = forms.PedidoClienteFijoForm()
+
+    return render(request, "pedidosClienteAlta.html", {
+                "productosTerminados":productosTerminados,
+                "pedido_form":  pedidosClientes_form,
+                "detalles_form_factory": detalles_form or detalles_form_class()})
+
 
 
 

@@ -1,6 +1,17 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.core.validators import MinValueValidator
+from datetime import date
+from multiselectfield import MultiSelectField
+
+
+TIPODIAS = (
+        (1, "lunes"),
+        (2, "martes"),
+        (3, "miercoles"),
+        (4,"jueves"),
+        (5,"viernes")
+      )
 
 # Create your models here.
 #********************************************************#
@@ -199,20 +210,40 @@ class PedidoClienteDetalle(models.Model):
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
-class DiasSemana(models.Model):
-    dia = models.CharField(unique=True,max_length=100)
-
 
 class PedidoFijo(PedidoCliente):
-    fecha_inicio = models.DateField()
-    fecha_cancelacion = models.DateField(blank=True)
-    dias = models.ForeignKey(DiasSemana,blank=True)  #quitar blank
+    fecha_inicio = models.DateField(default=date.today())
+    fecha_cancelacion = models.DateField(blank=True,null=True)
+    #dias = models.CommaSeparatedIntegerField(max_length=32) #, choices=TIPODIAS
+    dias = MultiSelectField(choices=TIPODIAS)
+
+    def esParaHoy(self):
+        d = date.today()
+        if d.day in self.dias:
+            return True
+        else:
+            return False
 
 class PedidoCambio(PedidoCliente):
     fecha_entrega = models.DateField()
 
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+
+
 class PedidoOcacional(PedidoCliente):
     fecha_entrega = models.DateField()
+
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
 
 
 
@@ -243,10 +274,12 @@ class PedidoProveedor(models.Model):
     #detalle de pedido
     #auto_now_add = True
 
+
 class DetallePedidoProveedor(models.Model):
     cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     pedido_proveedor = models.ForeignKey(PedidoProveedor)
+
 
 #********************************************************#
          #   L O T E S   P R O D U C C I O N #
@@ -261,4 +294,5 @@ class Lote(models.Model):
     stock_disponible= models.PositiveIntegerField()
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
+
 
