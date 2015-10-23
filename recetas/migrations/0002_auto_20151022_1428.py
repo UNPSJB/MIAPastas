@@ -2,6 +2,8 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import multiselectfield.db.fields
+import datetime
 import django.core.validators
 
 
@@ -46,17 +48,16 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='DiasSemana',
+            name='DetallePedidoProveedor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('dia', models.CharField(unique=True, max_length=100)),
+                ('cantidad_insumo', models.PositiveIntegerField()),
             ],
         ),
         migrations.CreateModel(
             name='Lote',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('nro_lote', models.PositiveIntegerField()),
+                ('nro_lote', models.AutoField(serialize=False, primary_key=True)),
                 ('fecha_produccion', models.DateField()),
                 ('fecha_vencimiento', models.DateField()),
                 ('cantidad_producida', models.PositiveIntegerField()),
@@ -84,7 +85,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha_realizacion', models.DateField()),
-                ('fecha_probable_entrega', models.DateField()),
                 ('fecha_de_entrega', models.DateField(null=True, blank=True)),
                 ('estado_pedido', models.PositiveSmallIntegerField(default=b'1', choices=[(1, b'Pendiente'), (2, b'Recibido'), (3, b'Cancelado')])),
             ],
@@ -171,9 +171,9 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField()),
-                ('fecha_cancelacion', models.DateField(blank=True)),
-                ('dias', models.ForeignKey(to='recetas.DiasSemana', blank=True)),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 10, 22))),
+                ('fecha_cancelacion', models.DateField(null=True, blank=True)),
+                ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],
             bases=('recetas.pedidocliente',),
         ),
@@ -212,6 +212,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='pedidoproveedor',
+            name='insumos',
+            field=models.ManyToManyField(to='recetas.Insumo', through='recetas.DetallePedidoProveedor'),
+        ),
+        migrations.AddField(
+            model_name='pedidoproveedor',
             name='proveedor',
             field=models.ForeignKey(to='recetas.Proveedor'),
         ),
@@ -239,6 +244,16 @@ class Migration(migrations.Migration):
             model_name='lote',
             name='producto_terminado',
             field=models.ForeignKey(to='recetas.ProductoTerminado'),
+        ),
+        migrations.AddField(
+            model_name='detallepedidoproveedor',
+            name='insumo',
+            field=models.ForeignKey(to='recetas.Insumo'),
+        ),
+        migrations.AddField(
+            model_name='detallepedidoproveedor',
+            name='pedido_proveedor',
+            field=models.ForeignKey(to='recetas.PedidoProveedor'),
         ),
         migrations.AddField(
             model_name='ciudad',

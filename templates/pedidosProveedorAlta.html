@@ -15,19 +15,34 @@
                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedido</b></font></p></div>
                      {% csrf_token %}
                      {% bootstrap_form pedido_proveedor_form layout='horizontal'%}
+
+            <!--
+                      <label for="id_proveedor">Proveedor</label>
+                      <select class="form-control" id="id_proveedor" name="id_proveedor" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for p in pedido_proveedor_form.fields.proveedor.value  %}
+                                 <option value="{{p.id}}" > {{p}} </option>
+                            {% endfor %}
+                      </select>
+
+                    {{form.field_name.value}} works for me
+                    -->
+
                       &nbsp;
                       <div class="panel-heading"><p class="text-center login-title">
-                          <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
+                          <font face="tahoma" size="4" color="black"><b>Detalles</b></font>
                       </div>
 
                       <div id="detalles_forms"></div>
 
 
                     <label for="id_insumo">Insumo</label>
-                      <select class="form-control" id="id_insumo" name="id_insumo" title="">
-                          <option value="" selected="selected">---------</option>
+                        <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                          <option value="" selected="selected">---------</option><!--pedido_proveedor_form.proveedor.value.insumos.all -->
                              {% for i in insumos %}
+
                                  <option value="{{i.id}}">{{i}}</option>
+
                             {% endfor %}
                          </select>
 
@@ -38,7 +53,7 @@
 
                      {{ detalles_form_factory.management_form }}
 
-                    <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
+                    <button id="add-detalle-pedido" type="button" class="btn btn-primary">Add</button>
                     <table class="table table-hover" id="nueva" class="display">
                         <thead>
                             <tr style='cursor:pointer' class='desmarcado'>
@@ -66,30 +81,29 @@
 {% block javascript %}
 
 
+<script id="detalle_tabla_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %>
+        <tr class="form-row row1 has_original">
+            <td><%= d.texto %></td>
+            <td class="field-cantidad_insumo">
+                <input class="vIntegerField" id="cantidad-<%=i%>" name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            $("#<%=i%>.value")
+            <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%= d.insumo%>,<%=i%>)">Modificar</button></td>
+            <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%= d.insumo%>)">Eliminar</button></td>
+
+
+        </tr>
+    <% } %>
+    <% })%>
+</script>
 <script>
 
-var tabla_detalle_tpl;
-var detalle_cantInsumo_imput_tpl;
-var detalle_insumo_imput_tpl;
-var detalles = [];
+var tabla_detalle_tpl;//tpl es una funcion para concatenar a cadena, sirve para armar tabla de "insumo,cant" y mostrarla en html
+var detalles = [];//arreglo de objetos que guarda (id_insumo, cant, texto) el texto es para pasarlo a tabla_detalle_tpl
 
-tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
-                    + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
-                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
-                    +">Eliminar</button></td>" + "</tr>");
-
-
-detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i %>-cantidad_insumo"
-                                    +" name="+"form-<%= i %>-cantidad_insumo"
-                                    +" type="+"hidden"+" value=<%=cantidad %>>");
-
-detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i%>-insumo"
-                                    +" name="+"form-<%= i%>-insumo"
-                                    +" type="+"hidden"+" value=<%=insumo %>>");
-
-
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
 
         // saco insumo del arreglo detalles
  function eliminar(ins){
@@ -104,18 +118,17 @@ function armar_form(){
             var html_form = "";
             $(detalles).each(function(i, d) {
                 d.i=i;
-                html_form = html_form +  detalle_cantInsumo_input_tpl(d);
-                html_form = html_form +  detalle_insumo_input_tpl(d);
+                html_form = html_form +  armar_hidden("form",d.insumo,"insumo",i);
+                html_form = html_form +  armar_hidden("form",d.cantidad,"cantidad_insumo",i);
                 document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
             });
             $('#detalles_forms').html(html_form);
 }
 
 function armar_tabla(){
-    var html_tabla = "";
-    $(detalles).each(function(i, d) {
-        html_tabla = html_tabla + tabla_detalle_tpl(d);
-    });
+     var html_tabla="";
+     html_tabla = tpl_tabla({objects:detalles});
+
     $('#detalles').html(html_tabla);
 }
 
@@ -133,7 +146,7 @@ function validarForm(){
 
 $(function() {
 
-  $("#add-detalle-receta").click(function(){
+  $("#add-detalle-pedido").click(function(){
         var cantidad = $("#cantidadInsumo").val();
         var insumo = $("#id_insumo").val();
         var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
@@ -161,5 +174,20 @@ $(function() {
   });
 
 });
+
+
+id_proveedor = $("#id_proveedor").val();
+
+$("#id_proveedor").on("change", function() {
+fecha_realizacion = $("#id_fecha_realizacion").val();
+alert($("#id_fecha_realizacion").val())
+id_proveedor = $(this).val();
+
+
+console.log($(this).val());
+window.location="/pedidosProveedor/alta/?proveedor="+id_proveedor.toString()+"&"+"fecha="+fecha_realizacion;
+
+});
+
 </script>
 {% endblock %}

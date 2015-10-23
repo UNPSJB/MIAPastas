@@ -1,7 +1,6 @@
     /* FUNCIONES PROPIAS */
 
 function armar_hidden(prefix,valor,nombre,indice){
-  alert("EN ARMAR HIDDEN");
     console.log(nombre);
     console.log(valor);
 

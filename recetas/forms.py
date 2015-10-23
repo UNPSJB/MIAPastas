@@ -244,7 +244,6 @@ class PedidoProveedorForm(forms.ModelForm):
         model = models.PedidoProveedor
         fields = ["fecha_realizacion","proveedor"]
 
-
 class DetallePedidoProveedorForm(forms.ModelForm):
     class Meta:
         model = models.DetallePedidoProveedor
