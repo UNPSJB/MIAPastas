@@ -265,10 +265,11 @@ class PedidoClienteFijoForm(forms.ModelForm):
     class Meta:
         model = models.PedidoFijo
         dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
+        '''
         widgets = {
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'}),
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
-
+        '''
         exclude = ['productos', 'tipo_pedido']
 
     def __init__(self, *args, **kwargs):
@@ -292,8 +293,8 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
     class Meta:
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido']
-        widgets = {
-            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        #widgets = {
+        #    'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
@@ -310,8 +311,8 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
 class PedidoClienteCambioForm(forms.ModelForm):
     class Meta:
         model = models.PedidoCambio
-        widgets = {
-            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+     #   widgets = {
+     #       'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido']
 
 
