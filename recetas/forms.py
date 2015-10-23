@@ -251,139 +251,24 @@ class DetallePedidoProveedorForm(forms.ModelForm):
 
 
 
-
-
-##########################################################
-########################################################
-#prueba
-'''
-class CommaSeparetedSelectInteger(forms.MultipleChoiceField):
-    def to_python(self, value):
-        if not value:
-            return ''
-        elif not isinstance(value, (list, tuple)):
-            raise ValidationError(
-                self.error_messages['invalid_list'], code='invalid_list'
-            )
-        return ','.join([str(val) for val in value])
-
-    def validate(self, value):
-        """
-        Validates that the input is a string of integers separeted by comma.
-        """
-        if self.required and not value:
-            raise ValidationError(
-                self.error_messages['required'], code='required'
-            )
-
-        # Validate that each value in the value list is in self.choices.
-        for val in value.split(','):
-            if not self.valid_value(val):
-                raise ValidationError(
-                    self.error_messages['invalid_choice'],
-                    code='invalid_choice',
-                    params={'value': val},
-                )
-
-    def prepare_value(self, value):
-        """ Convert the string of comma separated integers in list"""
-        return value.split(',')
-
-'''
-
-'''
-
-class MultiSelectFormField(forms.MultipleChoiceField):
-    widget = forms.CheckboxSelectMultiple
-
-    def __init__(self, *args, **kwargs):
-        self.max_choices = kwargs.pop('max_choices', 0)
-        super(MultiSelectFormField, self).__init__(*args, **kwargs)
-
-    def clean(self, value):
-        if not value and self.required:
-            raise forms.ValidationError(self.error_messages['required'])
-        # if value and self.max_choices and len(value) > self.max_choices:
-        #     raise forms.ValidationError('You must select a maximum of %s choice%s.'
-        #             % (apnumber(self.max_choices), pluralize(self.max_choices)))
-        return value
-
-
-class MultiSelectField(forms.ModelForm): #models.Field
-    __metaclass__ = models.SubfieldBase
-
-    def get_internal_type(self):
-        return "CharField"
-
-    def get_choices_default(self):
-        return self.get_choices(include_blank=False)
-
-    def _get_FIELD_display(self, field):
-        value = getattr(self, field.attname)
-        choicedict = dict(field.choices)
-
-    def formfield(self, **kwargs):
-        # don't call super, as that overrides default widget if it has choices
-        defaults = {'required': not self.blank, 'label': capfirst(self.verbose_name),
-                    'help_text': self.help_text, 'choices':self.choices}
-        if self.has_default():
-            defaults['initial'] = self.get_default()
-        defaults.update(kwargs)
-        return MultiSelectFormField(**defaults)
-
-    def get_db_prep_value(self, value, connection, prepared=False):
-        if isinstance(value, basestring):
-            return value
-        elif isinstance(value, list):
-            return ",".join(value)
-
-    def to_python(self, value):
-        if value is not None:
-            return value if isinstance(value, list) else value.split(',')
-        return ''
-
-    def contribute_to_class(self, cls, name):
-        super(MultiSelectField, self).contribute_to_class(cls, name)
-        if self.choices:
-            func = lambda self, fieldname = name, choicedict = dict(self.choices):",".join([choicedict.get(value,value) for value in getattr(self,fieldname)])
-            setattr(cls, 'get_%s_display' % self.name, func)
-
-    def validate(self, value, model_instance):
-        arr_choices = self.get_choices_selected(self.get_choices_default())
-        for opt_select in value:
-            if (opt_select not in arr_choices):
-                raise exceptions.ValidationError(self.error_messages['invalid_choice'] % value)
-        return
-
-    def get_choices_selected(self, arr_choices=''):
-        if not arr_choices:
-            return False
-        list = []
-        for choice_selected in arr_choices:
-            list.append(choice_selected[0])
-        return list
-
-    def value_to_string(self, obj):
-        value = self._get_val_from_obj(obj)
-        return self.get_db_prep_value(value)
-
-
-
-'''
-
-
 ###########################################################
 ##########################################################
 
-
+class PedidoCliente(forms.ModelForm):
+    class Meta:
+        model = models.PedidoCliente
+        fields = ["tipo_pedido","cliente"]
 
 
 class PedidoClienteFijoForm(forms.ModelForm):
     class Meta:
         model = models.PedidoFijo
         dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
-        #dias = CommaSeparetedSelectInteger(choices=models.TIPODIAS,widget=forms.SelectMultiple)
-        exclude = ['productos','fecha_cancelacion','tipo_pedido']
+        widgets = {
+            'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'}),
+            'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
+
+        exclude = ['productos', 'tipo_pedido']
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
@@ -397,7 +282,47 @@ class PedidoClienteFijoForm(forms.ModelForm):
 class PedidoClienteDetalleForm(forms.ModelForm):
     class Meta:
         model = models.PedidoClienteDetalle
-        exclude = ['pedido'] #setea todos campos menos pedido
+        exclude = ['pedido_cliente'] #setea todos campos menos pedido
+
+
+
+
+class PedidoClienteOcacionalForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoOcacional
+        exclude = ['productos','tipo_pedido']
+        widgets = {
+            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+
+'''
+    def clean_fecha_entrega(self):
+        from datetime import datetime
+        fecha_entrega = datetime.strptime(fecha_entrega,"%d/%m/%Y")
+        return fecha_entrega
+'''
+
+
+
+class PedidoClienteCambioForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoCambio
+        widgets = {
+            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['productos','tipo_pedido']
+
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
+
+
+
+
+
+#############################################################################
+############################################################################
 
 
 class LoteForm(forms.ModelForm):

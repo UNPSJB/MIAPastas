@@ -191,7 +191,7 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__icontains','fecha_desde__icontains','fecha_hasta__icontains' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),
@@ -215,7 +215,6 @@ class PedidoClienteDetalle(models.Model):
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField(default=date.today())
     fecha_cancelacion = models.DateField(blank=True,null=True)
-    #dias = models.CommaSeparatedIntegerField(max_length=32) #, choices=TIPODIAS
     dias = MultiSelectField(choices=TIPODIAS)
 
     def esParaHoy(self):
