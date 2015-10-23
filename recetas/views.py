@@ -227,10 +227,12 @@ def recetasModificar(request,receta_id):
 
 
 def recetasAlta(request):
+    print "estoyyyyyyyyyyy"
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
     insumos = models.Insumo.objects.all()
+    print "estoyyyyyyyyyyy"
     if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
         if receta_form.is_valid():
@@ -599,22 +601,15 @@ def pedidosClientes(request,pedido_id=None):
         mfilters = dict(filter(lambda v: v[0] in models.PedidoCliente.FILTROS, filters.items()))
         pedidos = models.PedidoCliente.objects.filter(**mfilters)
         clientes = models.Cliente.objects.all()
-
         totales=dict()
         for pedido in pedidos:
             var=pedido.productos.all()
             var2=pedido.pedidoclientedetalle_set.all()
-
-            print "esssssss",len(var),"el pedido es",pedido.pedidoclientedetalle_set.all()
             for producto in pedido.productos.all():
-                print "dentrooooo", producto.nombre
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 else:
-                    print "lpm ",producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
-
                     totales[producto]=0
-                    print producto.nombre,"  oolisssho ",totales[producto]
 
 
         return render(request, "pedidosCliente.html",
@@ -624,44 +619,44 @@ def pedidosClientes(request,pedido_id=None):
 
 
 
-def pedidosClientesAlta(request, tipo_pedido_id=None):
+def pedidosClientesAlta(request, tipo_pedido_id):
     detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
     detalles_form = None
     pedidosClientes_form = None
     productosTerminados = models.ProductoTerminado.objects.all()
+    if tipo_pedido_id == "1":
+        pedidosClientes_form = forms.PedidoClienteFijoForm
+    elif tipo_pedido_id == "2":
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm
+
+    elif tipo_pedido_id == "3":
+        pedidosClientes_form = forms.PedidoClienteCambioForm
 
     if request.method == "POST":
-        pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST) #crea formulario de receta cno los datos del post
+        pedidosClientes_form = pedidosClientes_form(request.POST) #crea formulario de receta cono los datos del post
         if  pedidosClientes_form.is_valid():
-            print "Estoy en alta papa y soy valido"
-            dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
+            if tipo_pedido_id == "1":
+                dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
             pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
             if detalles_form.is_valid():
-                print "soy detalle y soy valido"
-                #detalles = detalles_form.save(commit=False)
+                pedido_instancia.tipo_pedido=tipo_pedido_id
+                print pedido_instancia
                 pedido_instancia.save()
                 for detalle in detalles_form:
                     detalle_instancia = detalle.save(commit=False)
-                    detalle_instancia.receta = pedido_instancia
+                    detalle_instancia.pedido_cliente = pedido_instancia
                     detalle_instancia.save()
-                messages.success(request, 'El pedido: ' + pedido_instancia.nombre + ', ha sido registrada correctamente.')
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-        print "Estoy en alta papa y NO soy valido"
-    print tipo_pedido_id
-    if tipo_pedido_id == "1":
-        pedidosClientes_form = forms.PedidoClienteFijoForm()
-    elif tipo_pedido_id == "2":
-        pedidosClientes_form = forms.PedidoClienteFijoForm()    #poner ocacional
-    elif tipo_pedido_id == "3":
-        pedidosClientes_form = forms.PedidoClienteFijoForm()
-
+    print "soyyyyyyyyyyyyyy 2222"
     return render(request, "pedidosClienteAlta.html", {
                 "productosTerminados":productosTerminados,
                 "pedido_form":  pedidosClientes_form,
-                "detalles_form_factory": detalles_form or detalles_form_class()})
+                "detalles_form_factory": detalles_form or detalles_form_class(),
+                "tipo_pedido": tipo_pedido_id})
 
 
 

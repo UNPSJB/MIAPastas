@@ -10,97 +10,31 @@
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Pedidos de Cliente</b></font></p></div>
   <div class="panel-body">
-      <!-- formulario
-      <form role="form">
-                   <div class="form-group">
-                        <label>Tipo de Pedido</label>
 
-                          <select class="form-control">
-                              <option class="tipo_pedido" id="1">Pedido Fijo</option>
-                              <option class="tipo_pedido" id="2">Pedido Ocasional</option>
-                              <option class="tipo_pedido" id="3">Pedido de Cambio</option>
-                          </select>
+      <form action="{% url 'pedidosClientesAlta' tipo_pedido %}" method="post" class="form" onsubmit="return validarForm()">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>
+                             {% if tipo_pedido == "1" %}
+                                Pedido Fijo
+                             {% else %}
+                                {% if tipo_pedido == "2" %}
+                                    Pedido Ocacional
+                                {% else %}
+                                    {% if tipo_pedido == "3" %}
+                                        Pedido de Cambio
+                                    {% endif %}
+                                {% endif %}
+                             {% endif %}
 
-                   </div>
-
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Fecha de Entrega</label>
-                    <input type="date" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-
-
-
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Fecha de Inicio</label>
-                    <input type="date" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-
-                    <label for="ejemplo_password_1">Dias de Semana</label>
-                    <div class="checkbox">
-
-                         <label>
-                            <input type="checkbox" name="vehicle" value="lunes">Lunes<br>
-                            <input type="checkbox" name="vehicle" value="Car">Martes<br>
-                             <input type="checkbox" name="vehicle" value="Car">Miercoles<br>
-                             <input type="checkbox" name="vehicle" value="Car">Jueves<br>
-                             <input type="checkbox" name="vehicle" value="Car">Viernes<br>
-                             <input type="checkbox" name="vehicle" value="Car">Sabado<br>
-                             <input type="checkbox" name="vehicle" value="Car">Domingo<br>
-
-                        </label>
-                    </div>
-
-
-
-
-
-
-
-
-        </form>
-        <div class="col-md-10">
-
-           <h2>Producto Terminado</h2>
-           <div class="row col-md-4">
-              <select class="form-control">
-                  <option>Producto Terminado 1</option>
-                  <option>Producto Terminado 2</option>
-                  <option>Producto Terminado 3</option>
-                  <option>Producto Terminado 4</option>
-                  <option>Producto Terminado 5</option>
-                </select>
-               <div class="form-group">
-
-                    <label for="inputEmail3" class=" control-label">Cantidad</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-                   <label for="inputEmail3" class=" control-label">Unidad de Medida</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-
-            </div>
-               </div>
-           <div class="col-md-2 pull-left"></div>
-                           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
-
-            </div>
--->
-
-
-      <form action="{% url 'pedidosClientesAlta' %}" method="post" class="form" onsubmit="return validarForm()">
-                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Receta</b></font></p></div>
+                             </b></font></p></div>
                      {% csrf_token %}
                      {% bootstrap_form pedido_form layout='horizontal'%}
+
                       <div class="panel-heading"><p class="text-center login-title">
+
                             <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
                       </div>
 
-
-
-
                         {{ form.as_p }}
-
-
 
                       <div id="detalles_forms"></div>
 
@@ -141,43 +75,6 @@
                 </form>
 
 
-
-
-    <!--
-      <div class="row">
-          <div class="col-md-10">
-
-          <table class="table table-hover">
-            <thead>
-            <tr>
-
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Unidad Medida</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for productoTerminado in productoTerminados %}
-                <tr>
-
-              <td>{{productoTerminado.nombre}}</td>
-              <td>{{productoTerminado.cantidad}}</td>
-              <td>{{productoTerminado.Umedida}}</td>
-
-          </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-
-          </div>
-          <div class="col-md-2">
-          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-              </div>
-
-          </div>
-          -->
 <hr/>
       <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
       <a href="{% url 'pedidosCliente' %}"></a><button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
@@ -210,13 +107,18 @@ tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
 
 detalle_cantProducto_input_tpl = $.tpl("<input class="+"form-control"
                                     +" id="+"id_form-<%= i %>-cantidad_producto"
-                                    +" name="+"pedidoclientedetalle_set-<%= i %>-cantidad_producto"
+                                    +" name="+"form-<%= i %>-cantidad_producto"
                                     +" type="+"hidden"+" value=<%=cantidad %>>");
 
 detalle_producto_input_tpl = $.tpl("<input class="+"form-control"
                                     +" id="+"id_form-<%= i%>-producto_terminado"
-                                    +" name="+"pedidoclientedetalle_set-<%= i%>-producto_terminado"
+                                    +" name="+"form-<%= i%>-producto_terminado"
                                     +" type="+"hidden"+" value=<%=producto %>>");
+
+tipo_pedido_input_tpl = $.tpl("<input class="+"form-control"
+                                    +" id="+"tipo_pedido"
+                                    +" name="+"tipo_pedido"
+                                    +" type="+"hidden"+" value=1>");
 
 
 
@@ -237,6 +139,7 @@ function armar_form(){
                 html_form = html_form +  detalle_producto_input_tpl(d);
                 document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
             });
+
             $('#detalles_forms').html(html_form);
 }
 
