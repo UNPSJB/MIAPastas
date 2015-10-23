@@ -18,6 +18,13 @@ bottom:0;}
 	border-color:black; 
 }
 
+.cantidades_tablas{
+    background-color: #8AC007;
+    border: 1px solid #0291DD;
+    font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
+    font-size: 11px;
+}
+
 .boton_menu{
 	float:left; 
 	background-color:#8AC007;

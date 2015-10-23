@@ -46,6 +46,13 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='DetallePedidoProveedor',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('cantidad_insumo', models.PositiveIntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
             name='DiasSemana',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -55,8 +62,7 @@ class Migration(migrations.Migration):
         migrations.CreateModel(
             name='Lote',
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('nro_lote', models.PositiveIntegerField()),
+                ('nro_lote', models.AutoField(serialize=False, primary_key=True)),
                 ('fecha_produccion', models.DateField()),
                 ('fecha_vencimiento', models.DateField()),
                 ('cantidad_producida', models.PositiveIntegerField()),
@@ -84,7 +90,6 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha_realizacion', models.DateField()),
-                ('fecha_probable_entrega', models.DateField()),
                 ('fecha_de_entrega', models.DateField(null=True, blank=True)),
                 ('estado_pedido', models.PositiveSmallIntegerField(default=b'1', choices=[(1, b'Pendiente'), (2, b'Recibido'), (3, b'Cancelado')])),
             ],
@@ -212,6 +217,11 @@ class Migration(migrations.Migration):
         ),
         migrations.AddField(
             model_name='pedidoproveedor',
+            name='insumos',
+            field=models.ManyToManyField(to='recetas.Insumo', through='recetas.DetallePedidoProveedor'),
+        ),
+        migrations.AddField(
+            model_name='pedidoproveedor',
             name='proveedor',
             field=models.ForeignKey(to='recetas.Proveedor'),
         ),
@@ -239,6 +249,16 @@ class Migration(migrations.Migration):
             model_name='lote',
             name='producto_terminado',
             field=models.ForeignKey(to='recetas.ProductoTerminado'),
+        ),
+        migrations.AddField(
+            model_name='detallepedidoproveedor',
+            name='insumo',
+            field=models.ForeignKey(to='recetas.Insumo'),
+        ),
+        migrations.AddField(
+            model_name='detallepedidoproveedor',
+            name='pedido_proveedor',
+            field=models.ForeignKey(to='recetas.PedidoProveedor'),
         ),
         migrations.AddField(
             model_name='ciudad',
