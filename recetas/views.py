@@ -252,7 +252,8 @@ def recetasAlta(request):
     return render(request, "recetasAlta.html", {
             "insumos":insumos,
             "receta_form": receta_form or forms.RecetaForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
+            "detalles_form_factory": detalles_form or detalles_form_class(),
+            "prefix":"form"})
 
 
 def recetasBaja(request,receta_id):
@@ -783,7 +784,4 @@ def lotesAlta(request):
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
-
-
-
     return render(request,"lotesAlta.html",{"lote_form":lote_form})

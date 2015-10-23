@@ -1,9 +1,7 @@
-o a# -*- coding: utf-8 -*-
+# -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
 from django.db import models, migrations
-import multiselectfield.db.fields
-import datetime
 import django.core.validators
 
 
@@ -52,6 +50,13 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad_insumo', models.PositiveIntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
+            name='DiasSemana',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('dia', models.CharField(unique=True, max_length=100)),
             ],
         ),
         migrations.CreateModel(
@@ -171,9 +176,9 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 10, 22))),
-                ('fecha_cancelacion', models.DateField(null=True, blank=True)),
-                ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
+                ('fecha_inicio', models.DateField()),
+                ('fecha_cancelacion', models.DateField(blank=True)),
+                ('dias', models.ForeignKey(to='recetas.DiasSemana', blank=True)),
             ],
             bases=('recetas.pedidocliente',),
         ),

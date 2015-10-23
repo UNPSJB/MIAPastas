@@ -1,7 +1,6 @@
     /* FUNCIONES PROPIAS */
 
 function armar_hidden(prefix,valor,nombre,indice){
-  alert("EN ARMAR HIDDEN");
     console.log(nombre);
     console.log(valor);
 
@@ -15,16 +14,42 @@ function armar_hidden(prefix,valor,nombre,indice){
 };
 
 
-function armar_modif_tabla(objeto,nombre,atributo,indice){
+function esFloatPositivo(num){
+console.log("en esfloatpositiovo");
+    var esFloat = /^[0-9]*(.[0-9]*)?$/;
+    if (esFloat.test(num) && (num>=0)){
+        return true}
+    return false
+}
 
-	return "<tr>"
-		+"<td>"+nombre+"</td>"
-		+"<td><input id="+"nueva_cantidad-"+indice+" name="+"nueva_cantidad-"+indice+" value="+atributo+"></td>"
-       + "<td><button type="+"button "+"data-id="+'"'+objeto+'"'
-        +" id="+"renglon-"+objeto+" class="+"btn-eliminar"+" onClick= "+"eliminar("+objeto+") >Eliminar</button></td>"
-       + "<td><button type="+"button "+"data-id="+'"'+objeto+'"'
-        +" id="+"renglon-"+objeto+" class="+"btn-eliminar"+" onClick= "+"modificar("+objeto+","+indice+") >Modificar</button></td></tr>"
-};
+function eliminar_objeto(arreglo,indice){
+        console.log("pk ",arreglo[indice].pk );
+        console.log("voy a borrar el insumo"+ arreglo[indice].texto);
+        if (arreglo[indice].pk == undefined || arreglo[indice].pk ==""){ //
+            arreglo.splice(indice,1);
+            console.log("sefue");
+          }else{
+            arreglo[indice].delete_form="on";
+            console.log("puse en on");
+        }
+        console.log("detalles despues ",arreglo);
+        return arreglo;
+}
+
+function cambio_cantidad(i){
+    document.getElementById("cantidad-"+i).style.background="red";
+
+        }
+function modificar_cantidad_arreglo(arreglo,nueva_cantidad,id_input,i){
+    if (!esFloatPositivo(nueva_cantidad)){
+        alert("debe ingresar una cantidad nueva valida");
+    }else{
+        arreglo[i].cantidad = nueva_cantidad;
+        id_input.style.background="white";
+    }
+    return arreglo
+
+}
 
 
 
