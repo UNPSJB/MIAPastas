@@ -178,8 +178,6 @@ class Cliente(models.Model):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
 
 
-
-
 #************************************************************************#
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
@@ -204,7 +202,6 @@ class PedidoClienteDetalle(models.Model):
     cantidad_producto = models.FloatField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
-
 
 
 class PedidoFijo(PedidoCliente):

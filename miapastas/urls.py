@@ -83,7 +83,6 @@ urlpatterns = [
 
 
 
-
     url(r'^zonas/$',recetasviews.zonas,name='zonas'),
     url(r'^zonas/alta/$',recetasviews.zonasAlta,name='zonasAlta'),
     url(r'^zonas/(?P<zona_id>[0-9]+)/$',recetasviews.zonas,name='zonaConsulta'),
@@ -122,8 +121,10 @@ urlpatterns = [
     url(r'^pedidosProveedor$',recetasviews.pedidosProveedor,name='pedidosProveedor'),
     url(r'^pedidosProveedor/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedor,name='pedidosProveedorConsulta'),
     url(r'^pedidosProveedor/alta/$',recetasviews.pedidosProveedorAlta,name='pedidosProveedorAlta'),
+
     url(r'^pedidosProveedor/modificar/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedorModificar,name='pedidosProveedorModificar'),
     url(r'^pedidosProveedor/baja/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedorBaja,name='pedidosProveedorBaja'),
+
                 # FIN SEGUNDA ENTREGA
     #url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),
@@ -143,8 +144,10 @@ urlpatterns = [
     url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
 
     url(r'^pedidosCliente$',recetasviews.pedidosClientes,name='pedidosCliente'),
-    url(r'^pedidosCliente/Consulta/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClientes,name='pedidoConsulta'),
+    url(r'^pedidosCliente/Consulta/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClientes,name='pedidoClienteConsulta'),
     url(r'^pedidosCliente/Alta/(?P<tipo_pedido_id>[0-9]+)/$',recetasviews.pedidosClientesAlta,name='pedidosClientesAlta'),
+    url(r'^pedidosCliente/Baja/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClienteBaja,name='pedidosClienteBaja'),
+    url(r'^pedidosCliente/Modificar/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosClienteModificar,name='pedidosClienteModificar'),
 
 
 
