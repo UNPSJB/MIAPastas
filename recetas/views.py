@@ -701,7 +701,7 @@ def pedidosClienteModificar(request,pedido_id):
             return redirect('pedidosCliente')
 
     #si el form no es valido, le mando todo al html para que muestre los errores#
-    pref = "form" #pedidoclientedetalle_set
+    pref = "pedidoclientedetalle_set" #pedidoclientedetalle_set
     return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
                                                    "detalles_pedido":detalles_instancias,
                                                    "productos":productos,
