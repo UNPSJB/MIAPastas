@@ -5,41 +5,52 @@
 {% load l10n %}
 <div class="container">
 <div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Receta</b></font></p></div>
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Cliente</b></font></p></div>
 
-              <form action="{% url 'recetaModificar' receta_id %}" method="post" class="form" onsubmit="return validarForm()">
+              <form action="{% url 'pedidosClienteModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
+                  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b></b></font></p>
+
                   {% csrf_token %}
-                  {% bootstrap_form receta_form layout='horizontal' %}
+
+                        {% if tipo_pedido = 1 %}
+                         {% bootstrap_field pedido_form.fecha_inicio  %}
+                        {% bootstrap_field pedido_form.dias  %}
+                        {% bootstrap_field pedido_form.fecha_cancelacion  %}
+                      {% else %}
+                         {% bootstrap_field pedido_form.fecha_entrega id="datepicker" %}
+                      {% endif %}
+
+
                   {{ detalles_form_factory.management_form }}
+
                  <!-- Este input es solo para poder leer los detalles de la receta desde js-->
-                  <input type="hidden" id="detalles_receta" name="detalles_receta" value="{{ detalles_receta }}">
+                  <input type="hidden" id="detalles_pedido" name="detalles_pedido" value="{{ detalles_pedido }}">
 
                   <p>&nbsp;</p>
                   <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Modificar Detalles</b></font></p>
                   </div>
 
-
-                  <label for="id_insumo">Insumo</label>
-                  <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                  <label for="id_producto">Producto</label>
+                  <select class="form-control" id="id_producto" name="id_producto" title="">
                        <option value="" selected="selected">---------</option>
-                             {% for i in insumos %}
+                             {% for i in productos %}
                                  <option value="{{i.id}}">{{i}}</option>
                             {% endfor %}
                   </select>
 
                   <div class="form-group">
-                       <label for="cantidadInsumo">Cantidad</label>
-                       <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                       <label for="cantidadProducto">Cantidad</label>
+                       <input type="text" class="form-control" name="cantidadProducto" id="cantidadProducto" placeholder="cantidad" >
                   </div>
 
                       <div id="detalles_forms"></div>
 
-                  <button id="add-detalle-receta" type="button" class="btn btn-primary">Agregar Detalle</button>
+                  <button id="add-detalle-pedido" type="button" class="btn btn-primary">Agregar Detalle</button>
                   <table class="table table-hover" id="nueva" class="display">
                         <thead>
                             <tr style='cursor:pointer' class='desmarcado'>
-                                <th>Insumo</th>
+                                <th>Producto</th>
                                 <th>Cantidad</th>
                             </tr>
                         </thead>
@@ -55,12 +66,12 @@
                         {% bootstrap_icon "star" %} Submit
                     </button>
                   {% endbuttons %}
-              </form>
-      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+              </div></form>
+            <a class="btn pull-right" href="javascript:history.back()" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
 
 </div>
-</div>
-</div>
+</div></div>
 
 {% endblock %}
 {% block javascript %}
@@ -84,13 +95,21 @@
 </script>
 
 
+
+
 <script>
 
 var detalles = [];
-var receta_pk = {{id}};
+var pedido_pk = {{id}};
 var pref = "{{pref}}";
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
 
+
+$(function() {
+        $( "#datepicker" ).datepicker({ dateFormat: 'dd mm yy',
+                                        inline: true
+        });
+    });
 
 function eliminar(indi){
         detalles = eliminar_objeto(detalles,indi);
@@ -110,22 +129,21 @@ function modificar(i){
 function armar_form(){
     var html_form=""
     $(detalles).each(function(i, d){
-        html_form = html_form + armar_hidden(pref,d.insumo,"insumo",i);
-        alert(d.cantidad);
-        html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_insumo",i);
+        html_form = html_form + armar_hidden(pref,d.producto,"producto_terminado",i);
+        html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_producto",i);
         html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
         html_form = html_form + armar_hidden(pref,d.pk,"id",i);
-        html_form = html_form + armar_hidden(pref,d.receta_pk,"receta",i);
+        html_form = html_form + armar_hidden(pref,d.pedido_pk,"pedido_cliente",i);
      });
     document.getElementById("id_"+pref+"-TOTAL_FORMS").value = _.size(detalles);
     $('#detalles_forms').html(html_form);
 }
 
-
 function armar_tabla(){
      var html_tabla=tpl_tabla({objects:detalles});;
      $('#detalles').html(html_tabla);
 }
+
 
 function validarForm(){
     if (_.size(detalles) > 0){
@@ -135,61 +153,53 @@ function validarForm(){
             return true;
         }
     }
-    alert("Receta debe tener al menos un detalle");
+    alert("El pedido debe tener al menos un detalle");
     return false;
 }
 
 
-
 $(function() {
                 /* INICIAMOS DETALLES */
-
-
     var listado_detalles = [
-    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo|unlocalize}}", "texto": "{{detalle.insumo}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": {{detalle.cantidad_producto|unlocalize}}, "texto": "{{detalle.producto_terminado}}" },{% endfor %}
     ]
     console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {
-        detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,delete_form:"",texto: d.texto,pk:d.pk });
+        detalles.push({pedido_pk:d.pedido_pk,cantidad:d.cantidad, producto: d.producto,delete_form:"",texto: d.texto,pk:d.pk });
      });
-         console.log("cantidad de detalle "+detalles[0].cantidad);
-
-    armar_tabla();
+     armar_tabla();
     document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
 
 
 
-  $("#add-detalle-receta").click(function(){
-        var cantidad = Number($("#cantidadInsumo").val());
-        var insumo = Number($("#id_insumo").val());
-        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
-        if ((cantidad == "") || (insumo == "")){
+
+  $("#add-detalle-pedido").click(function(){
+        var cantidad = Number($("#cantidadProducto").val());
+        var producto = Number($("#id_producto").val());
+        var texto = document.getElementById('id_producto').options[document.getElementById('id_producto').selectedIndex].text;
+        if ((cantidad == "") || (producto == "")){
             alert("Debe llenar todos los campos");
         }else{
             if (!esFloatPositivo(cantidad)){
-                 alert("debe ingresar una cantidad valida  00.00");
+                alert("debe ingresar una cantidad valida");
             }else{
-                 var ins = _.find(detalles,{insumo:insumo});
+                 var ins = _.find(detalles,{producto:producto});
                  if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){
                         detalles.push({ cantidad: cantidad,
-                                        insumo: insumo,
+                                        producto: producto,
                                         texto:texto,
-                                        receta_pk:receta_pk,
+                                        pedido_pk:pedido_pk,
                                         pk:"",
                                         delete_form:"",
                                         });
+                        console.log(detalles);
                         armar_tabla();
                  }else{
-                    alert("Insumo ya cargado");
+                    alert("Producto ya cargado");
                  }
             }
         }
   });
-
-    $(".cantidades_tablas").change(function(){
-        console.log("cambiar color del input");
-    });
-
 
 });
 </script>

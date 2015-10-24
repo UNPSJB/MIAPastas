@@ -176,18 +176,14 @@ def recetas(request,receta_id=None):
         # consulta
         receta = models.Receta.objects.get(pk=receta_id)
         return render(request, "recetasConsulta.html",{"receta": receta})
-    elif request.method == 'GET':
-        # filtros
-        filters = get_filtros(request.GET, models.Receta)
-        mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
-        recetas = models.Receta.objects.filter(**mfilters)
+    # filtros
+    filters = get_filtros(request.GET, models.Receta)
+    mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
+    recetas = models.Receta.objects.filter(**mfilters)
 
-        for receta in recetas:
-            insumos = receta.insumos.all()
-            print "soy recetaaaaaaaaaa ",insumos
         # filtrar recetas por productos
-        productos_terminados= models.ProductoTerminado.objects.all()
-        return render(request, "recetas/recetas.html",
+    productos_terminados= models.ProductoTerminado.objects.all()
+    return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
                        "filtros": filters,
                        "productos_terminados":productos_terminados})
@@ -198,7 +194,6 @@ def recetasModificar(request,receta_id):
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     insumos = models.Insumo.objects.all() #para detalles
-
     detalles_inlinefactory = inlineformset_factory(models.Receta,models.RecetaDetalle,fields=('cantidad_insumo','insumo','receta'))
 
     if request.method=="POST":
@@ -227,12 +222,10 @@ def recetasModificar(request,receta_id):
 
 
 def recetasAlta(request):
-    print "estoyyyyyyyyyyy"
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
     insumos = models.Insumo.objects.all()
-    print "estoyyyyyyyyyyy"
     if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
         if receta_form.is_valid():
@@ -462,7 +455,6 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def zonasBaja(request,zona_id =None):
-    print "estoy en bajaaa"
     p = models.Zona.objects.get(pk=zona_id)
     if p.ciudades.exists():
         messages.error(request, 'La zona: ' + p.nombre + ', no se puede eliminar porque tiene las siguientes ciudades asociadas: %s .' % ", ".join(
@@ -577,7 +569,6 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def ciudadesBaja(request,ciudad_id =None):
-    print "estoy en bajaaa"
     p = models.Ciudad.objects.get(pk=ciudad_id)
     p.delete()
     return redirect('ciudades')
@@ -610,12 +601,13 @@ def pedidosClientes(request,pedido_id=None):
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 else:
                     totales[producto]=0
-
-
+                    totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+        print "diccionario",totales
         return render(request, "pedidosCliente.html",
                       {"pedidos": pedidos,
                        "filtros": filters,
-                       "clientes":clientes})
+                       "clientes":clientes,
+                       "totales":totales})
 
 
 
@@ -651,7 +643,6 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-    print "soyyyyyyyyyyyyyy 2222"
     return render(request, "pedidosClienteAlta.html", {
                 "productosTerminados":productosTerminados,
                 "pedido_form":  pedidosClientes_form,
@@ -660,15 +651,65 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
 
 
+def pedidosClienteBaja(request,pedido_id):
+    pedido = models.PedidoCliente.objects.get(pk=pedido_id)
+    messages.success(request, 'El pedido: ' + pedido.get_tipo_pedido_display()+" de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    pedido.delete()     #hacer baja logica
+    return redirect('pedidosCliente')
 
 
+def pedidosClienteModificar(request,pedido_id):
+    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
 
 
+    if pedido_instancia.tipo_pedido == 1:
+        pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteFijoForm
 
+    elif pedido_instancia.tipo_pedido == 2:
+        pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm
+    else:
+        pedido_instancia = get_object_or_404(models.PedidoCambio, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteCambioForm
 
+    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
+    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
+    productos = models.ProductoTerminado.objects.all() #para detalles
 
+    if request.method=="POST":
+        if pedido_instancia.tipo_pedido == 1:
+            pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
+        elif pedido_instancia.tipo_pedido == 2:
+            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+        else:
+            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
 
+        if pedidosClientes_form.is_valid():
+            print "es valido el detalllllllllllllllle"
 
+            pedido_instancia = pedidosClientes_form.save(commit=False)
+            #DETALLES
+            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
+            if detalles_formset.is_valid():
+                detalles_formset.save()
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
+                pedido_instancia.save()
+            return redirect('pedidosCliente')
+
+    #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "form" #pedidoclientedetalle_set
+    return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
+                                                   "detalles_pedido":detalles_instancias,
+                                                   "productos":productos,
+                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
+                                                   "pedido_id":pedido_id,
+                                                   "pref":pref,
+                                                   "tipo_pedido":pedido_instancia.tipo_pedido
+                                                   })
 
 
 
@@ -797,8 +838,9 @@ def pedidosProveedorBaja(request,pedido_id =None):
 #********************************************************#
 def lotes(request,lote_id=None):
     if lote_id is not None:
+        #consulta
         lote = models.Lote.objects.get(pk=lote_id)
-        # enviar a lotesConsulta
+        return render(request,"lotesConsulta.html",{"lote":lote})
     else:
         # filtros
         filters = get_filtros(request.GET, models.Lote)
@@ -808,18 +850,40 @@ def lotes(request,lote_id=None):
     productos = models.ProductoTerminado.objects.all()
     return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
 
+
 def lotesModificar(request,lote_id=None):
-    lotes = models.Lote.objects.all()
-    return render(request,"recetas/lotes.html",{"lotes":lotes})
+    lote_instancia = models.Lote.objects.get(pk=lote_id)
+    lote_form = forms.LoteForm(instance=lote_instancia)
+    return render(request,"lotesModificar.html",{"lote_form":lote_form,"id":lote_id})
+
 
 def lotesAlta(request):
     if request.method == "POST":
         lote_form = forms.LoteForm(request.POST)
         if lote_form.is_valid:
-            lote = lote_form.save()
-            lote.stock = lote.cantidad_producida
-
+            lote = lote_form.save(commit = False)
+            lote.stock_disponible = lote.cantidad_producida #stock inicial
+            lote.save()
+            # actualizo stock del producto
+            lote.producto_terminado.stock =lote.producto_terminado.stock + lote.stock_disponible
+            lote.producto_terminado.save()
+            # disminuye stock de insumos
+            receta = lote.producto_terminado.receta_set.get()
+            cant_total = lote.cantidad_producida
+            detalles_receta = receta.recetadetalle_set.all()
+            for detalle_receta in  detalles_receta:
+                detalle_receta.insumo.stock =detalle_receta.insumo.stock - (detalle_receta.cantidad_insumo * cant_total)
+                detalle_receta.insumo.save()
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
     return render(request,"lotesAlta.html",{"lote_form":lote_form})
+
+def lotesBaja(request,lote_id):
+    l = models.Lote.objects.get(pk=lote_id)
+    l.producto_terminado.stock = l.producto_terminado.stock - l.stock_disponible
+    l.producto_terminado.save()
+    l.delete()
+    messages.success(request, 'Lote fue eliminado correctamente.')
+    return redirect ('lotes');
+

@@ -89,7 +89,7 @@
               <tbody>
               {% for d in pedido.pedidoclientedetalle_set.all %}
                 <tr>
-                    <td>{{d.producto_terminado.nombre}}</td>
+                    <td><a href="{% url 'productosTerminadosConsulta' d.producto_terminado.id %}">{{d.producto_terminado.nombre}}</a></td>
                     <td>{{d.cantidad_producto}}</td>
                     <!--  producto.pedidoclientedetalle_set.get(pedido_cliente=pedido).cantidad_producto -->
                     <td>{{d.producto_terminado.get_unidad_medida_display}}</td>
@@ -97,7 +97,7 @@
               {% endfor %}
              </tbody>
           </table>
-            <a class="btn pull-right" href="{%url 'recetas'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
         </div>
 

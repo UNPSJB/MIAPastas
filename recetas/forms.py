@@ -163,7 +163,7 @@ class ProveedorForm(forms.ModelForm):
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
         model = models.ProductoTerminado
-        fields = ["nombre","stock","unidad_medida","precio"]
+        fields = ["nombre","unidad_medida","precio"]
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -264,20 +264,21 @@ class PedidoClienteFijoForm(forms.ModelForm):
     class Meta:
         model = models.PedidoFijo
         dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
+        '''
         widgets = {
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'}),
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
-
+        '''
         exclude = ['productos', 'tipo_pedido']
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
-
+'''
     def clean_dias(self):
         data = self.cleaned_data['dias']
         cleaned_data = ",".join(data)
         return cleaned_data
-
+'''
 
 class PedidoClienteDetalleForm(forms.ModelForm):
     class Meta:
@@ -292,25 +293,27 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido']
         widgets = {
-            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+           'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
 
 '''
     def clean_fecha_entrega(self):
+        print "soyy fechhhhhhhhhhhhhhhhhhhhhhha"
+        fecha_entrega = self.cleaned_data['fecha_entrega']
         from datetime import datetime
         fecha_entrega = datetime.strptime(fecha_entrega,"%d/%m/%Y")
         return fecha_entrega
-'''
 
+'''
 
 
 class PedidoClienteCambioForm(forms.ModelForm):
     class Meta:
         model = models.PedidoCambio
-        widgets = {
-            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+     #   widgets = {
+     #       'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido']
 
 
@@ -328,5 +331,5 @@ class PedidoClienteCambioForm(forms.ModelForm):
 class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
-        fields = ["fecha_produccion","fecha_vencimiento","cantidad_producida","stock_disponible","stock_reservado","producto_terminado"]
+        fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
     

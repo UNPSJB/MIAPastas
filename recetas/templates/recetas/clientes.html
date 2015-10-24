@@ -36,7 +36,7 @@
                   </form>
 
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
                           <table class="table table-hover">
                             <thead>
@@ -52,9 +52,8 @@
                                 <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
                                     <td>{{cliente.cuit_cuil}}</td>
                                     <td>{{cliente.razon_social}}</td>
-                                    <td>{{cliente.ciudad.nombre}}</td>
+                                 <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
                                     <td>{{cliente.es_moroso}}</td>
-                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>

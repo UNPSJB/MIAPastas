@@ -67,7 +67,7 @@
             {% for insumo in insumos %}
                 <tr>
 
-              <td>{{insumo.nombre}}</td>
+                  <td><a href="{% url 'insumoConsulta' insumo.id %}">{{insumo.nombre}}</a></td>
               <td>{{insumo.get_unidad_medida_display}}</td>
 
 
@@ -82,7 +82,7 @@
           </div>
       <div>
 
-      <a href = "{% url 'proveedores' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
   </div>
 
