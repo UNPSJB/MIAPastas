@@ -660,8 +660,6 @@ def pedidosClienteBaja(request,pedido_id):
 
 def pedidosClienteModificar(request,pedido_id):
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
-
-
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
         detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
@@ -682,12 +680,14 @@ def pedidosClienteModificar(request,pedido_id):
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
+            print "entre a tipo de pedido fijo"
             pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
         elif pedido_instancia.tipo_pedido == 2:
             pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
         else:
             pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
 
+        print "pedido instancia", pedido_instancia
         if pedidosClientes_form.is_valid():
             print "es valido el detalllllllllllllllle"
 

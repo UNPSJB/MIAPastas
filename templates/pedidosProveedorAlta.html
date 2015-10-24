@@ -181,9 +181,9 @@ $(function() {
 id_proveedor = $("#id_proveedor").val();
 
 $("#id_proveedor").on("change", function() {
-fecha_realizacion = $("#id_fecha_realizacion").val();
+fecha_realizacion = $("#id_fecha_realizacion").val(); // aca obtengo el valor de la fecha de realizacion del form de DJango...
 alert($("#id_fecha_realizacion").val())
-id_proveedor = $(this).val();
+id_proveedor = $(this).val(); // aca obtengo el valor del id_proveedor del form de DJango...
 
 
 console.log($(this).val());

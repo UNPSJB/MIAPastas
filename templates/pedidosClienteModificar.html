@@ -161,15 +161,16 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": {{detalle.cantidad_producto|unlocalize}}, "texto": "{{detalle.producto_terminado}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": "{{detalle.cantidad_producto|unlocalize}}", "texto": "{{detalle.producto_terminado}}" },{% endfor %}
     ]
     console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {
         detalles.push({pedido_pk:d.pedido_pk,cantidad:d.cantidad, producto: d.producto,delete_form:"",texto: d.texto,pk:d.pk });
      });
      armar_tabla();
-    document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
 
+     console.log(detalles);
+    document.getElementById("id_"+pref+"-INITIAL_FORMS").value = _.size(detalles);
 
 
 
