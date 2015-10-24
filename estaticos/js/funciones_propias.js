@@ -16,7 +16,7 @@ function armar_hidden(prefix,valor,nombre,indice){
 
 function esFloatPositivo(num){
 console.log("en esfloatpositiovo");
-    var esFloat = /^[0-9]*(.[0-9]*)?$/;
+    var esFloat = /^[0-9]+(.[0-9]+)?$/;
     if (esFloat.test(num) && (num>=0)){
         return true}
     return false

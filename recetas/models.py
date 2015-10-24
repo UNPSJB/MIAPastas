@@ -101,7 +101,7 @@ class Receta(models.Model):
 
 
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.PositiveIntegerField()
+    cantidad_insumo = models.DecimalField(max_digits=5, decimal_places=2)
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
@@ -205,7 +205,7 @@ class PedidoCliente(models.Model):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.PositiveIntegerField()
+    cantidad_producto = models.DecimalField(max_digits=5, decimal_places=2)
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
 

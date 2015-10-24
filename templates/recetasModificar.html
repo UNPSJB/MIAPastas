@@ -142,7 +142,7 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": {{detalle.cantidad_insumo}}, "texto": "{{detalle.insumo}}" },{% endfor %}
+    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo}}", "texto": "{{detalle.insumo}}" },{% endfor %}
     ]
     $(listado_detalles).each(function(i, d) {
         detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,delete_form:"",texto: d.texto,pk:d.pk });
