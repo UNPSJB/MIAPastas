@@ -13,7 +13,7 @@ import json as simplejson
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
-import re
+import re #esto sirve para usar expresiones regulares
 import datetime
 #from datetime import date, datetime
 #import time
@@ -698,18 +698,90 @@ def pedidosProveedorAlta(request):
             if detalles_form.is_valid():
                 #detalles = detalles_form.save(commit=False)
                 pedido_proveedor_instancia.save()
+
                 for detalle in detalles_form:
                     detalle_instancia = detalle.save(commit=False)
-                    detalle_instancia.receta = pedido_proveedor_instancia
+                    detalle_instancia.pedido_proveedor = pedido_proveedor_instancia
                     detalle_instancia.save()
+
+
                 messages.success(request, 'El Pedido ha sido registrada correctamente.')
 
                 return redirect('pedidosProveedor')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-    return render(request, "pedidosProveedorAlta.html", {
-            "insumos":insumos,
-            "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
+            #por el get paso el id del proveedor
+    else:
+
+        pedido_proveedor_form = forms.PedidoProveedorForm() #crea formulario de pedido con los datos del post
+        insumos = models.Insumo.objects.all()
+        try:
+            id_proveedor = request.GET['proveedor']
+            id_fecha = request.GET['fecha']
+            proveedor = models.Proveedor.objects.get(pk=id_proveedor)
+            insumos = proveedor.insumos.all()
+            form = forms.PedidoProveedorForm(initial={'proveedor':id_proveedor,'fecha_realizacion':id_fecha})#esto esta copado, te iniciaiza los datos del form automatico de django con los valores que vos queres......
+
+            return render(request, "pedidosProveedorAlta.html", {
+                "insumos":insumos,
+                "idProveedor":id_proveedor,
+                "pedido_proveedor_form": form,
+                "detalles_form_factory": detalles_form or detalles_form_class()})
+        except:
+            return render(request, "pedidosProveedorAlta.html", {
+                "insumos":insumos,
+                "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorForm(),
+                "detalles_form_factory": detalles_form or detalles_form_class()})
+
+
+
+
+
+
+
+
+def pedidosProveedorModificar(request,pedido_id):
+    pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
+    detalles_instancias = models.DetallePedidoProveedor.objects.filter(pedido_proveedor = pedido_proveedor_instancia)
+    insumos = models.Insumo.objects.all() #para detalles
+
+    detalles_inlinefactory = inlineformset_factory(models.PedidoProveedor,models.DetallePedidoProveedor,fields=('cantidad_insumo','insumo','pedido_proveedor'))
+
+    if request.method=="POST":
+        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST,instance= pedido_proveedor_instancia)
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_instancia = pedido_proveedor_form.save(commit=False)
+            #DETALLES
+            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidodetalle_set',instance=pedido_proveedor_instancia)
+            if detalles_formset.is_valid():
+                print(detalles_formset)
+                detalles_formset.save()
+                messages.success(request, 'El Pedido ha sido modificado correctamente.')
+                pedido_proveedor_instancia.save()
+            return redirect('pedidosProveedor')
+    else:
+        pedido_proveedor_form = forms.PedidoProveedorForm(instance= pedido_proveedor_instancia)
+
+        #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "pedidodetalle_set"
+    return render(request,"pedidosProveedorModificar.html",{"pedido_proveedor_form":pedido_proveedor_form,"id":pedido_id,
+                                                   "detalles_pedido":detalles_instancias,
+                                                   "insumos":insumos,
+                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidodetalle_set'),
+                                                   "pedido_id":pedido_id,
+                                                   "pref":pref
+                                                   })
+
+
+
+
+@csrf_exempt
+def pedidosProveedorBaja(request,pedido_id =None):
+    print "estoy en bajaaa"
+    p = models.PedidoProveedor.objects.get(pk=pedido_id)
+    messages.success(request, 'El pedido realizado en la fecha: ' + p.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + p.proveedor.razon_social +', ha sido eliminado correctamente.')
+    p.delete()
+    return redirect('pedidosProveedor')
+
 
 #********************************************************#
          #    L O T E S   #
