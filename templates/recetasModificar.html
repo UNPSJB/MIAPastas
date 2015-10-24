@@ -2,7 +2,7 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
-
+{% load l10n %}
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Receta</b></font></p></div>
@@ -110,6 +110,7 @@ function armar_form(){
     var html_form=""
     $(detalles).each(function(i, d){
         html_form = html_form + armar_hidden(pref,d.insumo,"insumo",i);
+        alert(d.cantidad);
         html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_insumo",i);
         html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
         html_form = html_form + armar_hidden(pref,d.pk,"id",i);
@@ -141,12 +142,17 @@ function validarForm(){
 
 $(function() {
                 /* INICIAMOS DETALLES */
+
+
     var listado_detalles = [
-    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo}}", "texto": "{{detalle.insumo}}" },{% endfor %}
+    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo|unlocalize}}", "texto": "{{detalle.insumo}}" },{% endfor %}
     ]
+    console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {
         detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,delete_form:"",texto: d.texto,pk:d.pk });
      });
+         console.log("cantidad de detalle "+detalles[0].cantidad);
+
     armar_tabla();
     document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
 
@@ -160,7 +166,7 @@ $(function() {
             alert("Debe llenar todos los campos");
         }else{
             if (!esFloatPositivo(cantidad)){
-                 alert("debe ingresar una cantidad valida");
+                 alert("debe ingresar una cantidad valida  00.00");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
                  if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){

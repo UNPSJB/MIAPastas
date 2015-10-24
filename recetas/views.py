@@ -817,7 +817,23 @@ def lotesAlta(request):
             # actualizo stock del producto
             lote.producto_terminado.stock =lote.producto_terminado.stock + lote.stock_disponible
             lote.producto_terminado.save()
+            # disminuye stock de insumos
+            receta = lote.producto_terminado.receta_set.get()
+            cant_total = lote.cantidad_producida
+            detalles_receta = receta.recetadetalle_set.all()
+            for detalle_receta in  detalles_receta:
+                detalle_receta.insumo.stock =detalle_receta.insumo.stock - (detalle_receta.cantidad_insumo * cant_total)
+                detalle_receta.insumo.save()
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
     return render(request,"lotesAlta.html",{"lote_form":lote_form})
+
+def lotesBaja(request,lote_id):
+    l = models.Lote.objects.get(pk=lote_id)
+    l.producto_terminado.stock = l.producto_terminado.stock - l.stock_disponible
+    l.producto_terminado.save()
+    l.delete()
+    messages.success(request, 'Lote fue eliminado correctamente.')
+    return redirect ('lotes');
+

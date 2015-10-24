@@ -163,7 +163,7 @@ class ProveedorForm(forms.ModelForm):
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
         model = models.ProductoTerminado
-        fields = ["nombre","stock","unidad_medida","precio"]
+        fields = ["nombre","unidad_medida","precio"]
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
