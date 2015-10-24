@@ -682,8 +682,12 @@ def pedidosClienteModificar(request,pedido_id):
         pedidosClientes_form = forms.PedidoClienteOcacionalForm(instance= pedido_instancia)
     else:
         pedidosClientes_form = forms.PedidoClienteCambioForm(instance= pedido_instancia)
+    #print "PEDIDO CLIENTE ", pedidosClientes_form
     if request.method=="POST":
+
         pedidosClientes_form = pedidosClientes_form(request.POST) #crea formulario de receta cono los datos del post
+        if pedido_instancia.tipo_pedido == "1":
+                dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
         if pedidosClientes_form.is_valid():
             pedido_instancia = pedidosClientes_form.save(commit=False)
             #DETALLES
@@ -694,11 +698,12 @@ def pedidosClienteModificar(request,pedido_id):
                 pedido_instancia.save()
             return redirect('pedidosCliente')
     print len(detalles_instancias),"fffffffffffff"
+
     #si el form no es valido, le mando todo al html para que muestre los errores#
     pref = "pedidoclientedetalle_set"
     return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
                                                    "detalles_pedido":detalles_instancias,
-                                                   "producto":productos,
+                                                   "productos":productos,
                                                    "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
                                                    "pedido_id":pedido_id,
                                                    "pref":pref

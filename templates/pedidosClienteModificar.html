@@ -67,15 +67,15 @@
 <script id="detalle_tabla_tpl" type="text/html">
     <% $(objects).each(function(i, d){ %>
     <% if (d.delete_form != "on") { %>
+
         <tr class="form-row row1 has_original">
             <td><%= d.texto %></td>
-            <td class="field-cantidad_producto">
-                <input class="vIntegerField" id="cantidad-<%=i%>" name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            <td class="field-cantidad_insumo">
+                <input class="cantidades_tablas" id="cantidad-<%=i%>" onchange="cambio_cantidad(<%=i%>)"  name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
             </td>
-            $("#<%=i%>.value")
-            <td><button type="button"  data-id="<%= d.producto_terminado%>"  class="btn-modificar" onClick= "modificar(<%= d.producto_terminado%>,<%=i%>)">Modificar</button></td>
-            <td><button type="button"  data-id="<%= d.producto_terminado%>" id="renglon-<%= d.producto_terminado%>" class="btn-eliminar" onClick= "eliminar(<%= d.producto_terminado%>)">Eliminar</button></td>
+            <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%=i%>)">Modificar</button></td>
 
+            <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%=i%>)">Eliminar</button></td>
 
         </tr>
     <% } %>
@@ -90,62 +90,42 @@
 var detalles = [];
 var pedido_pk = {{id}};
 var pref = "{{pref}}";
-var esFloat = /^[0-9]*(.[0-9]*)?$/;
-
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
-var tpl_form = _.template($("#form_tpl").html());
 
-function eliminar(ins){
-        var producto = _.find(detalles, {producto:ins});
-        if (producto.pk != ""){
-            producto.delete_form="on";
-        }else{
-           detalles = _.filter(detalles,function(element){
-                    // filtro insumos validos
-                    return element.producto != String(ins);
-            });
-        }
+
+function eliminar(indi){
+        detalles = eliminar_objeto(detalles,indi);
         armar_tabla(); //refresco la tabla
-  }
+        }
 
 
-function modificar(ins,i){
-    var nueva_cantidad = $("#nueva_cantidad-"+i).serializeArray()[0].value;
-    if (!esFloat.test(nueva_cantidad) || (nueva_cantidad<0)){
-        alert("debe ingresar una cantidad nueva valida");
-    }else{
-        var obj_insumo = _.find(detalles,{producto:ins});
-        obj_producto.cantidad = nueva_cantidad;
-        alert("cantidad modificada");
-    }
+function modificar(i){
+    var nueva_cantidad = $("#cantidad-"+i).val();
+    id_input = document.getElementById("cantidad-"+i);
+    detalles = modificar_cantidad_arreglo(detalles,nueva_cantidad,id_input ,i);
+
+    //id_input = document.getElementById("cantidad-"+i).style.background="white";
 }
+
 
 function armar_form(){
     var html_form=""
-   // html_form = tpl_form({objects:detalles});
     $(detalles).each(function(i, d){
-        html_form = html_form + armar_hidden(pref,d.producto_terminado,"producto_terminado",i);
+        html_form = html_form + armar_hidden(pref,d.producto,"producto_terminado",i);
         html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_producto",i);
         html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
         html_form = html_form + armar_hidden(pref,d.pk,"id",i);
         html_form = html_form + armar_hidden(pref,d.pedido_pk,"pedido_cliente",i);
      });
-    document.getElementById("id_"+"{{pref}}"+"-TOTAL_FORMS").value = _.size(detalles);
-
-
+    document.getElementById("id_"+pref+"-TOTAL_FORMS").value = _.size(detalles);
     $('#detalles_forms').html(html_form);
 }
 
 function armar_tabla(){
-     var html_tabla="";
-    //html_tabla = tpl_tabla({objects:detalles});
-     $(detalles).each(function(i, d){
-        if (d.delete_form == undefined || d.delete_form !="on"){
-             html_tabla = html_tabla+ armar_modif_tabla(d.producto_terminado,d.texto,d.cantidad,i);
-        }
-     });
-    $('#detalles').html(html_tabla);
+     var html_tabla=tpl_tabla({objects:detalles});;
+     $('#detalles').html(html_tabla);
 }
+
 
 function validarForm(){
     if (_.size(detalles) > 0){
@@ -163,16 +143,15 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": {{detalle.cantidad_insumo}}, "texto": "{{detalle.insumo}}" }{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": {{detalle.cantidad_producto}}, "texto": "{{detalle.producto_terminado}}" },{% endfor %}
     ]
     $(listado_detalles).each(function(i, d) {
-        detalles.push({pedido_pk:d.pedido_cliente_pk,cantidad:d.cantidad, producto: d.producto_terminado,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
+        detalles.push({pedido_pk:d.pedido_pk,cantidad:d.cantidad, producto: d.producto,delete_form:"",texto: d.texto,pk:d.pk });
      });
-             armar_tabla();
-
+     armar_tabla();
     document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
 
-
+console.log("inicial");
 
 
   $("#add-detalle-pedido").click(function(){
@@ -182,7 +161,7 @@ $(function() {
         if ((cantidad == "") || (producto == "")){
             alert("Debe llenar todos los campos");
         }else{
-            if (!esFloat.test(cantidad) || (cantidad<0)){
+            if (!esFloatPositivo(cantidad)){
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{producto:producto});
@@ -193,12 +172,11 @@ $(function() {
                                         pedido_pk:pedido_pk,
                                         pk:"",
                                         delete_form:"",
-                                        i:"0",
                                         });
                         console.log(detalles);
                         armar_tabla();
                  }else{
-                    alert("Insumo ya cargado");
+                    alert("Producto ya cargado");
                  }
             }
         }
