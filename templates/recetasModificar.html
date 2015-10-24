@@ -110,7 +110,6 @@ function armar_form(){
     var html_form=""
     $(detalles).each(function(i, d){
         html_form = html_form + armar_hidden(pref,d.insumo,"insumo",i);
-        alert(d.cantidad);
         html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_insumo",i);
         html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
         html_form = html_form + armar_hidden(pref,d.pk,"id",i);
