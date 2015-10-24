@@ -56,6 +56,8 @@
                     </button>
                 {% endbuttons %}
                 </form>
+                      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
             </div>
     </div>
 </div>
@@ -143,9 +145,8 @@ $(function() {
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            esFloat = /^[0-9]*(.[0-9]*)?$/;
-            if (!esFloat.test(cantidad) || (cantidad<0)){
-                alert("debe ingresar una cantidad valida");
+            if (!esFloatPositivo(cantidad)){
+                 alert("debe ingresar una cantidad valida  00.00");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
                  if (ins != undefined){

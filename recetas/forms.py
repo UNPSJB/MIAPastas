@@ -163,7 +163,7 @@ class ProveedorForm(forms.ModelForm):
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
         model = models.ProductoTerminado
-        fields = ["nombre","stock","unidad_medida","precio"]
+        fields = ["nombre","unidad_medida","precio"]
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -243,7 +243,6 @@ class PedidoProveedorForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
         fields = ["fecha_realizacion","proveedor"]
-
 
 class DetallePedidoProveedorForm(forms.ModelForm):
     class Meta:
@@ -330,5 +329,5 @@ class PedidoClienteCambioForm(forms.ModelForm):
 class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
-        fields = ["fecha_produccion","fecha_vencimiento","cantidad_producida","stock_disponible","stock_reservado","producto_terminado"]
+        fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
     

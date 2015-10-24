@@ -26,7 +26,7 @@
                             <tbody>
                                 {% for c in ciudades %}
                                    <tr>
-                                      <td>{{c.nombre}}</td>
+                            <td><a href="{% url 'ciudadConsulta' c.id %}">{{c.nombre}}</a></td>
                                       <td>{{c.codigo_postal}}</td>
                                    </tr>
                                 {% endfor %}
@@ -37,7 +37,7 @@
               <hr/>
 
         </div>
-                                            <a href = "{%url 'zonas' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
 
     </div>

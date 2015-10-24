@@ -2,6 +2,7 @@
 from django.db import models
 from django.core.validators import MinValueValidator
 from datetime import date
+import datetime
 from multiselectfield import MultiSelectField
 
 
@@ -56,14 +57,11 @@ class Insumo(models.Model):
 
 class ProductoTerminado(models.Model):
     UNIDADES = {
-        (1, "Kg"),
-        (2, "Unidad"),
-        (3, "Bolson"),
-        (4, "Bolsines"),
+        (1, "Bolsines"),
     }
     FILTROS = ['nombre__icontains','stock__lte']
     nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
-    stock = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField(default = 0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
@@ -81,10 +79,8 @@ class ProductoTerminado(models.Model):
 
 class Receta(models.Model):
     UNIDADES = (
-        (1, "Kg"),
-        (2, "Unidad"),
-        (3, "Bolson"),
-        (4, "Bolsines"),
+
+        (1, "Bolsines"),
     )
     FILTROS = ['nombre__icontains','producto_terminado']
     fecha_creacion = models.DateField(auto_now_add = True)
@@ -101,7 +97,7 @@ class Receta(models.Model):
 
 
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.PositiveIntegerField()
+    cantidad_insumo = models.FloatField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
@@ -203,7 +199,7 @@ class PedidoCliente(models.Model):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.PositiveIntegerField()
+    cantidad_producto = models.FloatField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
@@ -272,7 +268,7 @@ class PedidoProveedor(models.Model):
 
 
 class DetallePedidoProveedor(models.Model):
-    cantidad_insumo = models.PositiveIntegerField()
+    cantidad_insumo = models.DecimalField(max_digits=5, decimal_places=2)
     insumo = models.ForeignKey(Insumo)
     pedido_proveedor = models.ForeignKey(PedidoProveedor)
 
