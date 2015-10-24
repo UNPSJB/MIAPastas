@@ -273,12 +273,12 @@ class PedidoClienteFijoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
-
+'''
     def clean_dias(self):
         data = self.cleaned_data['dias']
         cleaned_data = ",".join(data)
         return cleaned_data
-
+'''
 
 class PedidoClienteDetalleForm(forms.ModelForm):
     class Meta:
@@ -292,19 +292,21 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
     class Meta:
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido']
-        #widgets = {
-        #    'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        widgets = {
+           'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
 
 '''
     def clean_fecha_entrega(self):
+        print "soyy fechhhhhhhhhhhhhhhhhhhhhhha"
+        fecha_entrega = self.cleaned_data['fecha_entrega']
         from datetime import datetime
         fecha_entrega = datetime.strptime(fecha_entrega,"%d/%m/%Y")
         return fecha_entrega
-'''
 
+'''
 
 
 class PedidoClienteCambioForm(forms.ModelForm):

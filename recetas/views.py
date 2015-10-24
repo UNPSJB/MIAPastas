@@ -597,9 +597,6 @@ def pedidosClientes(request,pedido_id=None):
             var=pedido.productos.all()
             var2=pedido.pedidoclientedetalle_set.all()
             for producto in pedido.productos.all():
-                print "soy producto",producto
-                print producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto,"hhhhhhhhhhhhhh"
-
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 else:
@@ -663,23 +660,37 @@ def pedidosClienteBaja(request,pedido_id):
 
 def pedidosClienteModificar(request,pedido_id):
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
-    print pedido_instancia.tipo_pedido
-    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
-    productos = models.ProductoTerminado.objects.all() #para detalles
-    detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-    if pedido_instancia.tipo_pedido == 1:
-        pedidosClientes_form = forms.PedidoClienteFijoForm(instance= pedido_instancia)
-    elif pedido_instancia.tipo_pedido == 2:
-        pedidosClientes_form = forms.PedidoClienteOcacionalForm(instance= pedido_instancia)
-    else:
-        pedidosClientes_form = forms.PedidoClienteCambioForm(instance= pedido_instancia)
-    #print "PEDIDO CLIENTE ", pedidosClientes_form
-    if request.method=="POST":
 
-        pedidosClientes_form = pedidosClientes_form(request.POST) #crea formulario de receta cono los datos del post
-        if pedido_instancia.tipo_pedido == "1":
-                dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
+
+    if pedido_instancia.tipo_pedido == 1:
+        pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteFijoForm
+
+    elif pedido_instancia.tipo_pedido == 2:
+        pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm
+    else:
+        pedido_instancia = get_object_or_404(models.PedidoCambio, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteCambioForm
+
+    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
+    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
+    productos = models.ProductoTerminado.objects.all() #para detalles
+
+    if request.method=="POST":
+        if pedido_instancia.tipo_pedido == 1:
+            pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
+        elif pedido_instancia.tipo_pedido == 2:
+            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+        else:
+            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
+
         if pedidosClientes_form.is_valid():
+            print "es valido el detalllllllllllllllle"
+
             pedido_instancia = pedidosClientes_form.save(commit=False)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
@@ -688,16 +699,16 @@ def pedidosClienteModificar(request,pedido_id):
                 messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
                 pedido_instancia.save()
             return redirect('pedidosCliente')
-    print len(detalles_instancias),"fffffffffffff"
 
     #si el form no es valido, le mando todo al html para que muestre los errores#
-    pref = "pedidoclientedetalle_set"
+    pref = "form" #pedidoclientedetalle_set
     return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
                                                    "detalles_pedido":detalles_instancias,
                                                    "productos":productos,
                                                    "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
                                                    "pedido_id":pedido_id,
-                                                   "pref":pref
+                                                   "pref":pref,
+                                                   "tipo_pedido":pedido_instancia.tipo_pedido
                                                    })
 
 

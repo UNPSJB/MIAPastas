@@ -50,7 +50,7 @@ class Migration(migrations.Migration):
             name='DetallePedidoProveedor',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad_insumo', models.PositiveIntegerField()),
+                ('cantidad_insumo', models.DecimalField(max_digits=5, decimal_places=2)),
             ],
         ),
         migrations.CreateModel(
@@ -86,7 +86,7 @@ class Migration(migrations.Migration):
             name='PedidoClienteDetalle',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad_producto', models.PositiveIntegerField()),
+                ('cantidad_producto', models.FloatField()),
             ],
         ),
         migrations.CreateModel(
@@ -104,8 +104,8 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('nombre', models.CharField(help_text=b'El nombre del producto', unique=True, max_length=100)),
-                ('stock', models.PositiveIntegerField()),
-                ('unidad_medida', models.PositiveSmallIntegerField(choices=[(2, b'Unidad'), (3, b'Bolson'), (1, b'Kg'), (4, b'Bolsines')])),
+                ('stock', models.PositiveIntegerField(default=0)),
+                ('unidad_medida', models.PositiveSmallIntegerField(choices=[(1, b'Bolsines')])),
                 ('precio', models.DecimalField(max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
             ],
         ),
@@ -131,7 +131,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha_creacion', models.DateField(auto_now_add=True)),
                 ('nombre', models.CharField(help_text=b'El nombre de la receta', unique=True, max_length=100)),
-                ('unidad_medida', models.PositiveSmallIntegerField(choices=[(1, b'Kg'), (2, b'Unidad'), (3, b'Bolson'), (4, b'Bolsines')])),
+                ('unidad_medida', models.PositiveSmallIntegerField(choices=[(1, b'Bolsines')])),
                 ('descripcion', models.TextField()),
                 ('cant_prod_terminado', models.PositiveIntegerField()),
             ],
@@ -140,7 +140,7 @@ class Migration(migrations.Migration):
             name='RecetaDetalle',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad_insumo', models.PositiveIntegerField()),
+                ('cantidad_insumo', models.FloatField()),
                 ('insumo', models.ForeignKey(to='recetas.Insumo')),
                 ('receta', models.ForeignKey(to='recetas.Receta')),
             ],
@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 10, 23))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 10, 24))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],

@@ -2,15 +2,27 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
-
+{% load l10n %}
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Cliente</b></font></p></div>
 
               <form action="{% url 'pedidosClienteModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
+                  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b></b></font></p>
+
                   {% csrf_token %}
-                  {% bootstrap_form pedido_form layout='horizontal' %}
+
+                        {% if tipo_pedido = 1 %}
+                         {% bootstrap_field pedido_form.fecha_inicio  %}
+                        {% bootstrap_field pedido_form.dias  %}
+                        {% bootstrap_field pedido_form.fecha_cancelacion  %}
+                      {% else %}
+                         {% bootstrap_field pedido_form.fecha_entrega id="datepicker" %}
+                      {% endif %}
+
+
                   {{ detalles_form_factory.management_form }}
+
                  <!-- Este input es solo para poder leer los detalles de la receta desde js-->
                   <input type="hidden" id="detalles_pedido" name="detalles_pedido" value="{{ detalles_pedido }}">
 
@@ -54,12 +66,12 @@
                         {% bootstrap_icon "star" %} Submit
                     </button>
                   {% endbuttons %}
-              </form>
-            <a class="btn pull-right" href="{%url 'pedidosCliente'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+              </div></form>
+            <a class="btn pull-right" href="javascript:history.back()" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
 
 </div>
-</div>
-</div>
+</div></div>
 
 {% endblock %}
 {% block javascript %}
@@ -92,6 +104,12 @@ var pedido_pk = {{id}};
 var pref = "{{pref}}";
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
 
+
+$(function() {
+        $( "#datepicker" ).datepicker({ dateFormat: 'dd mm yy',
+                                        inline: true
+        });
+    });
 
 function eliminar(indi){
         detalles = eliminar_objeto(detalles,indi);
@@ -143,15 +161,16 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": {{detalle.cantidad_producto}}, "texto": "{{detalle.producto_terminado}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": {{detalle.cantidad_producto|unlocalize}}, "texto": "{{detalle.producto_terminado}}" },{% endfor %}
     ]
+    console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {
         detalles.push({pedido_pk:d.pedido_pk,cantidad:d.cantidad, producto: d.producto,delete_form:"",texto: d.texto,pk:d.pk });
      });
      armar_tabla();
     document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
 
-console.log("inicial");
+
 
 
   $("#add-detalle-pedido").click(function(){

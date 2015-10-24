@@ -14,26 +14,14 @@
   <div class="panel-body">
       <!-- formulario -->
 
-      <form class="form-inline">
+      <form class="form-inline" method="get">
+            <div class="form-group col-md-12">
+                        <label for="fecha_creacion">Fecha Creacion (Mayor o igual)</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_creacion}}" name="fecha_creacion" id="fecha_creacion">
+                  </div>
 
-
-          <div class="form-group">
-
-              <div class="form-group">
-                    <label for="fecha_creacion">Fecha Creacion</label>
-                    <input type="text" value="{{filtros.fecha_creacion}}" class="form-control datepicker" id="fecha_creacion" placeholder="fecha creacion" >
-              </div>
-              <div class="form-group">
-                    <label for="fecha_desde">Fecha Desde</label>
-                    <input type="text" value="{{filtros.fecha_desde}}" class="form-control datepicker" id="fecha_desde">
-              </div>
-              <div class="form-group">
-                    <label for="fecha_hasta">Fecha Hasta</label>
-                    <input type="text" value="{{filtros.fecha_hasta}}" class="form-control datepicker" id="fecha_hasta">
-              </div>
-                <p>&nbsp;</p>
-
-            <div class="col-md-3">
+            <p>&nbsp;</p>
+            <div class="col-md-2 form-group">
               <label for="cliente">Cliente</label>
 
               <select class="form-control" id="cliente" name="cliente">
@@ -43,7 +31,7 @@
                                 {% endfor %}
               </select>
                 </div>
-              <div class="col-md-6">
+              <div class="col-md-3 form-group">
               <label for="tipo_pedido">Tipo Pedido</label>
 
               <select class="form-control" id="tipo_pedido" name="tipo_pedido">
@@ -53,11 +41,11 @@
                                 <option value="3">De Cambio</option>
 
               </select>
-                </div>
-          <button type="submit" class="btn btn-default">Filtrar</button>
+
+
 
           </div>
-
+            <button type="submit" class="btn btn-default">Filtrar</button>
 
       </form>
 
@@ -78,7 +66,7 @@
             {% for pedido in pedidos %}
             <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
                 <td>{{pedido.get_tipo_pedido_display}}</td>
-                <td>{{pedido.cliente.razon_social}}</td>
+                <td><a href="{% url 'clienteConsulta' pedido.cliente.id %}">{{pedido.cliente.razon_social}}</a></td>
                 <td>{{pedido.fecha_creacion}}</td>
 
           </tr>

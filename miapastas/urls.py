@@ -83,7 +83,6 @@ urlpatterns = [
 
 
 
-
     url(r'^zonas/$',recetasviews.zonas,name='zonas'),
     url(r'^zonas/alta/$',recetasviews.zonasAlta,name='zonasAlta'),
     url(r'^zonas/(?P<zona_id>[0-9]+)/$',recetasviews.zonas,name='zonaConsulta'),
