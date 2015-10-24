@@ -329,5 +329,5 @@ class PedidoClienteCambioForm(forms.ModelForm):
 class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
-        fields = ["fecha_produccion","fecha_vencimiento","cantidad_producida","stock_disponible","stock_reservado","producto_terminado"]
+        fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
     

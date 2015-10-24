@@ -176,18 +176,14 @@ def recetas(request,receta_id=None):
         # consulta
         receta = models.Receta.objects.get(pk=receta_id)
         return render(request, "recetasConsulta.html",{"receta": receta})
-    elif request.method == 'GET':
-        # filtros
-        filters = get_filtros(request.GET, models.Receta)
-        mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
-        recetas = models.Receta.objects.filter(**mfilters)
+    # filtros
+    filters = get_filtros(request.GET, models.Receta)
+    mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
+    recetas = models.Receta.objects.filter(**mfilters)
 
-        for receta in recetas:
-            insumos = receta.insumos.all()
-            print "soy recetaaaaaaaaaa ",insumos
         # filtrar recetas por productos
-        productos_terminados= models.ProductoTerminado.objects.all()
-        return render(request, "recetas/recetas.html",
+    productos_terminados= models.ProductoTerminado.objects.all()
+    return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
                        "filtros": filters,
                        "productos_terminados":productos_terminados})
@@ -198,7 +194,6 @@ def recetasModificar(request,receta_id):
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     insumos = models.Insumo.objects.all() #para detalles
-
     detalles_inlinefactory = inlineformset_factory(models.Receta,models.RecetaDetalle,fields=('cantidad_insumo','insumo','receta'))
 
     if request.method=="POST":
@@ -227,12 +222,10 @@ def recetasModificar(request,receta_id):
 
 
 def recetasAlta(request):
-    print "estoyyyyyyyyyyy"
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
     insumos = models.Insumo.objects.all()
-    print "estoyyyyyyyyyyy"
     if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
         if receta_form.is_valid():
@@ -462,7 +455,6 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def zonasBaja(request,zona_id =None):
-    print "estoy en bajaaa"
     p = models.Zona.objects.get(pk=zona_id)
     if p.ciudades.exists():
         messages.error(request, 'La zona: ' + p.nombre + ', no se puede eliminar porque tiene las siguientes ciudades asociadas: %s .' % ", ".join(
@@ -577,7 +569,6 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def ciudadesBaja(request,ciudad_id =None):
-    print "estoy en bajaaa"
     p = models.Ciudad.objects.get(pk=ciudad_id)
     p.delete()
     return redirect('ciudades')
@@ -725,8 +716,9 @@ def pedidosProveedorAlta(request):
 #********************************************************#
 def lotes(request,lote_id=None):
     if lote_id is not None:
+        #consulta
         lote = models.Lote.objects.get(pk=lote_id)
-        # enviar a lotesConsulta
+        return render(request,"lotesConsulta.html",{"lote":lote})
     else:
         # filtros
         filters = get_filtros(request.GET, models.Lote)
@@ -736,17 +728,23 @@ def lotes(request,lote_id=None):
     productos = models.ProductoTerminado.objects.all()
     return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
 
+
 def lotesModificar(request,lote_id=None):
-    lotes = models.Lote.objects.all()
-    return render(request,"recetas/lotes.html",{"lotes":lotes})
+    lote_instancia = models.Lote.objects.get(pk=lote_id)
+    lote_form = forms.LoteForm(instance=lote_instancia)
+    return render(request,"lotesModificar.html",{"lote_form":lote_form,"id":lote_id})
+
 
 def lotesAlta(request):
     if request.method == "POST":
         lote_form = forms.LoteForm(request.POST)
         if lote_form.is_valid:
-            lote = lote_form.save()
-            lote.stock = lote.cantidad_producida
-
+            lote = lote_form.save(commit = False)
+            lote.stock_disponible = lote.cantidad_producida #stock inicial
+            lote.save()
+            # actualizo stock del producto
+            lote.producto_terminado.stock =lote.producto_terminado.stock + lote.stock_disponible
+            lote.producto_terminado.save()
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()

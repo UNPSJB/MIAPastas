@@ -23,13 +23,15 @@
 
           <p>&nbsp;</p>
       <div class="row">
-          <div class="col-md-10">
+          <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
           <table class="table table-hover">
             <thead>
             <tr>
+                <th>Lote</th>
+
                 <th>Producto</th>
                 <th>Vencimiento</th>
-                <th>Disponible</th>
+                <th>Stock Disponible</th>
 
 
             </tr>
@@ -37,8 +39,10 @@
               <tbody>
 
               {%for l in lotes%}
-              <tr class="renglon select-item" data-id="{{chofer.id}}" id="renglon-{{chofer.id}}">
-                    <td>{{l.producto_terminado}}</td>
+              <tr class="renglon select-item" data-id="{{l.nro_lote}}" id="renglon-{{l.nro_lote}}">
+                    <td> Lote-{{ l.nro_lote}}</td>
+
+                  <td><a href="{% url 'productosTerminadosConsulta' l.producto_terminado.id %}">{{l.producto_terminado}}</a></td>
                     <td>{{l.fecha_vencimiento}}</td>
                     <td>{{l.stock_disponible}}</td>
 
@@ -49,9 +53,9 @@
           </div>
   <div class="col-md-2">
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
-              <a type="button" id="chofer-consultar" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a type="button" id="chofer-modificar" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <a type="button" id="chofer-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+              <a type="button" id="lote-consultar" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a type="button" id="lote-modificar" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a type="button" id="lote-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
           </div>
           <p></p>
           <a class="btn" href = "{% url 'lotesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
@@ -63,5 +67,87 @@
 
 </div>
 </div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("active");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+
+
+        function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar un lote",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+        }
+
+
+        $("#lote-consultar").click(function(){
+              if(id==undefined){
+                    mostrar_error()
+              }else{
+                  window.open('/lotes/'+id+'',"_self")
+              }
+        });
+
+        $("#lote-modificar").click(function(){
+               if(id==undefined){
+                    mostrar_error()
+              }else{
+                 window.open('/lotes/modificar/'+id+'',"_self")
+              }
+        });
+
+        $("#lote-eliminar").click(function(){
+            if (id == undefined){
+                 mostrar_error()
+            }else{
+                BootstrapDialog.show({
+                    title: "Eliminar",
+                    cssClass: 'aviso-dialog',
+                    message: "¿Seguro que desea borrar?",
+                    type: BootstrapDialog.TYPE_WARNING,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                window.open('/lotes/baja/'+id+'',"_self");
+                                dialogRef.close();
+                            }},{
+                            label: 'Cancelar',
+                            action:function(dialogRef){
+                            dialogRef.close();
+                            }
+                        }]
+                     });
+            }
+        });
+
+
+
+    });
+</script>
 
 {% endblock %}

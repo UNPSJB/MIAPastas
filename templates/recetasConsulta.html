@@ -53,14 +53,14 @@
               <tbody>
               {% for d in receta.recetadetalle_set.all %}
                 <tr>
-                    <td>{{d.insumo.nombre}}</td>
+                    <td><a href="{% url 'insumoConsulta' d.insumo.id %}">{{d.insumo.nombre}}</a></td>
                     <td>{{d.cantidad_insumo}}</td>
                     <td>{{d.insumo.get_unidad_medida_display}}</td>
                 </tr>
               {% endfor %}
              </tbody>
           </table>
-            <a class="btn pull-right" href="{%url 'recetas'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
         </div>
 

@@ -56,7 +56,7 @@
                     </button>
                   {% endbuttons %}
               </form>
-            <a class="btn pull-right" href="{%url 'recetas'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
 </div>
 </div>
@@ -68,9 +68,6 @@
 <script id="detalle_tabla_tpl" type="text/html">
     <% $(objects).each(function(i, d){ %>
     <% if (d.delete_form != "on") { %>
-
-        <tr class="renglon select-item" data-id="{{proveedor.id}}" id="renglon-{{proveedor.id}}">
-
         <tr class="form-row row1 has_original">
             <td><%= d.texto %></td>
             <td class="field-cantidad_insumo">
