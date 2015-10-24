@@ -2,6 +2,7 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
+{% load l10n %}
 
 <div class="container">
 <div class="panel panel-default">
@@ -168,7 +169,7 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_proveedor.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": {{detalle.cantidad_insumo}}, "texto": "{{detalle.insumo}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_proveedor.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}},  "cantidad": "{{detalle.cantidad_insumo|unlocalize}}", "texto": "{{detalle.insumo}}" },{% endfor %}
     ]
     $(listado_detalles).each(function(i, d) {
         detalles.push({pedido_proveedor_pk:d.pedido_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
