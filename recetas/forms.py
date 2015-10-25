@@ -239,10 +239,30 @@ class ClienteForm(forms.ModelForm):
 
 
 
-class PedidoProveedorForm(forms.ModelForm):
+class PedidoProveedorAltaForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
-        fields = ["fecha_realizacion","proveedor"]
+        widgets = {
+            'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion']
+
+
+
+class PedidoProveedorModificarForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoProveedor
+        widgets = {
+            'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor']
+
+
+class PedidoProveedorRecepcionarForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoProveedor
+        widgets = {
+            'fecha_de_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['fecha_realizacion','insumos','proveedor']
+
 
 class DetallePedidoProveedorForm(forms.ModelForm):
     class Meta:

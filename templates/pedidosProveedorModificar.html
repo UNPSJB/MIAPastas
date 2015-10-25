@@ -6,8 +6,7 @@
 
 <div class="container">
 <div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Proveedor</b></font></p></div>
-
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Proveedor Realizado a "{{proveedor.razon_social}}"</b></font></p></div>
               <form action="{% url 'pedidosProveedorModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
                   {% csrf_token %}
                   {% bootstrap_form pedido_proveedor_form  %}
@@ -210,7 +209,14 @@ console.log("id_pedidssso " + detalles[0].pedido_proveedor_pk);//comprobandooooo
         }
   });
 
+
+
+
+
 });
+
+
+
 </script>
 
 {% endblock %}

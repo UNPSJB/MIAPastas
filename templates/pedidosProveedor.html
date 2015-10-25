@@ -25,6 +25,7 @@
                             {% endfor %}
                         </select>
                   </div>
+                  <p>&nbsp;</p>
                   <!-- Filtro de Fecha Probable de Entrega del Pedido a Proveedor -->
                   <div class="form-group">
                         <label for="estado_pedido">Estado del Pedido</label>
@@ -50,17 +51,23 @@
                         <tr>
                             <th>Numero de Pedido</th>
                             <th>Fecha de Realizacion</th>
-                            <th>Fecha de Entrega</th>
+                     <!--   <th>Fecha de Entrega</th> -->
                             <th>Proveedor</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for pedido in pedidos %}
-                        <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                        <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}" data-estado="{{pedido.get_estado_pedido_display}}">
                             <td>{{pedido.id}}</td>
                             <td>{{pedido.fecha_realizacion}}</td>
-                            <td>{{pedido.fecha_de_entrega}}</td>
+                       <!--     <td>
+                                {% if pedido.fecha_de_entrega = None %}
+                                       <p>No Entregado</p>
+                                {% else %}
+                                    {{pedido.fecha_de_entrega}}
+                                {% endif %}
+                            </td>-->
                             <td>{{pedido.proveedor}}</td>
                             <td>{{pedido.get_estado_pedido_display}}</td>
                         </tr>
@@ -74,6 +81,7 @@
                   <a type="button" id="consulta-pedido" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
                   <a type="button" id="modificar-pedido" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
                   <a type="button" id="eliminar-pedido" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+                  <a type="button" id="recepcionar-pedido" class="btn btn-success"><span class="glyphicon glyphicon-check" aria-hidden="true"> </span></a>
               </div>
               <a class="btn" href = "{% url 'pedidosProveedorAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
               <p></p>
@@ -92,11 +100,12 @@
 <script>
         $(function() {
         var id;
-
+        var estado;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-
+            estado = $el.data()["estado"]; //obtengo el estado del pedido donde hice click
+            console.log(estado)
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -112,7 +121,7 @@
                     title: "Error",
                     cssClass: 'error-dialog',
                     message: "Debe seleccionar un Pedido",
-                    type: BootstrapDialog.TYPE_DANGER,
+                    type: BootstrapDialog.TYPE_SUCCESS,
                     buttons: [{
                             label: 'Aceptar',
                             action: function(dialogRef){
@@ -120,8 +129,27 @@
                             }
                     }]
             });
+
+
         }
 
+
+        function mostrar_errorEstado(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Este Pedido ya ha sido recepcionado.",
+                    type: BootstrapDialog.TYPE_WARNING,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+
+
+        }
 
         function eliminar(){
             if(id==undefined)
@@ -169,10 +197,23 @@
 
         }
 
+        function recepcionar(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+                if(estado!="Pendiente"){
+                    mostrar_errorEstado();
+                }else{
+                    window.open('/pedidosProveedor/recepcionar/'+id+'',"_self")
+                }
+            }
+
+        }
 
         $("#modificar-pedido").click(modificar);
         $("#eliminar-pedido").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
         $("#consulta-pedido").click(consultar);
+        $("#recepcionar-pedido").click(recepcionar);
 
 
     });

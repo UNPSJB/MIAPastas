@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<!-- Este es el formulario de INSUMOS PAPA -->
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Recepcion de Pedido a Proveedor "{{proveedor.razon_social}}"</b></font></p></div>
+            <div class="panel-body">
+
+
+                <form action="{% url 'pedidosProveedorRecepcionar' pedido_id %}" method="post" class="form">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedido</b></font></p></div>
+                     {% csrf_token %}
+                     {% bootstrap_form pedido_proveedor_form layout='horizontal'%}
+
+            <!--
+                      <label for="id_proveedor">Proveedor</label>
+                      <select class="form-control" id="id_proveedor" name="id_proveedor" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for p in pedido_proveedor_form.fields.proveedor.value  %}
+                                 <option value="{{p.id}}" > {{p}} </option>
+                            {% endfor %}
+                      </select>
+
+                    {{form.field_name.value}} works for me
+                    -->
+
+
+                {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+                </form>
+                      <a href="{%url 'pedidosProveedor'%}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+            </div>
+    </div>
+</div>
+{% endblock %}

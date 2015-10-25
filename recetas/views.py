@@ -44,8 +44,8 @@ def get_filtros(get, modelo):
                 print(match.groups()[0])
                 print(filtro)
                 ano = int(match.groups()[2])
-                mes = int(match.groups()[0])
-                dia = int(match.groups()[1])
+                mes = int(match.groups()[1])
+                dia = int(match.groups()[0])
                 print(ano,mes,dia)
                 fecha = datetime.date(ano,mes,dia)
                 mfilter[filtro] = datetime.date(ano,mes,dia)
@@ -741,7 +741,7 @@ def pedidosProveedorAlta(request):
     pedido_proveedor_form = None
     insumos = models.Insumo.objects.all()
     if request.method == "POST":
-        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST) #crea formulario de pedido con los datos del post
+        pedido_proveedor_form = forms.PedidoProveedorAltaForm(request.POST) #crea formulario de pedido con los datos del post
         if pedido_proveedor_form.is_valid():
             pedido_proveedor_instancia = pedido_proveedor_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
@@ -762,14 +762,14 @@ def pedidosProveedorAlta(request):
             #por el get paso el id del proveedor
     else:
 
-        pedido_proveedor_form = forms.PedidoProveedorForm() #crea formulario de pedido con los datos del post
-        insumos = models.Insumo.objects.all()
+        pedido_proveedor_form = forms.PedidoProveedorAltaForm() #crea formulario de pedido con los datos del post
+        insumos = None
         try:
             id_proveedor = request.GET['proveedor']
             id_fecha = request.GET['fecha']
             proveedor = models.Proveedor.objects.get(pk=id_proveedor)
             insumos = proveedor.insumos.all()
-            form = forms.PedidoProveedorForm(initial={'proveedor':id_proveedor,'fecha_realizacion':id_fecha})#esto esta copado, te iniciaiza los datos del form automatico de django con los valores que vos queres......
+            form = forms.PedidoProveedorAltaForm(initial={'proveedor':id_proveedor,'fecha_realizacion':id_fecha})#esto esta copado, te iniciaiza los datos del form automatico de django con los valores que vos queres......
 
             return render(request, "pedidosProveedorAlta.html", {
                 "insumos":insumos,
@@ -779,7 +779,7 @@ def pedidosProveedorAlta(request):
         except:
             return render(request, "pedidosProveedorAlta.html", {
                 "insumos":insumos,
-                "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorForm(),
+                "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorAltaForm(),
                 "detalles_form_factory": detalles_form or detalles_form_class()})
 
 
@@ -792,12 +792,14 @@ def pedidosProveedorAlta(request):
 def pedidosProveedorModificar(request,pedido_id):
     pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
     detalles_instancias = models.DetallePedidoProveedor.objects.filter(pedido_proveedor = pedido_proveedor_instancia)
-    insumos = models.Insumo.objects.all() #para detalles
+
+    proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
+    insumos = proveedor.insumos.all()
 
     detalles_inlinefactory = inlineformset_factory(models.PedidoProveedor,models.DetallePedidoProveedor,fields=('cantidad_insumo','insumo','pedido_proveedor'))
 
     if request.method=="POST":
-        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST,instance= pedido_proveedor_instancia)
+        pedido_proveedor_form = forms.PedidoProveedorModificarForm(request.POST,instance= pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
             pedido_proveedor_instancia = pedido_proveedor_form.save(commit=False)
             #DETALLES
@@ -809,17 +811,35 @@ def pedidosProveedorModificar(request,pedido_id):
                 pedido_proveedor_instancia.save()
             return redirect('pedidosProveedor')
     else:
-        pedido_proveedor_form = forms.PedidoProveedorForm(instance= pedido_proveedor_instancia)
-
+         pedido_proveedor_form = forms.PedidoProveedorModificarForm(instance= pedido_proveedor_instancia)
+         proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
         #si el form no es valido, le mando todo al html para que muestre los errores#
     pref = "pedidodetalle_set"
     return render(request,"pedidosProveedorModificar.html",{"pedido_proveedor_form":pedido_proveedor_form,"id":pedido_id,
                                                    "detalles_pedido":detalles_instancias,
                                                    "insumos":insumos,
                                                    "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidodetalle_set'),
-                                                   "pedido_id":pedido_id,
+                                                   "pedido_id":pedido_id,"proveedor":proveedor,
                                                    "pref":pref
                                                    })
+
+
+def pedidosProveedorRecepcionar(request,pedido_id):
+    pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
+    pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(instance= pedido_proveedor_instancia)
+    proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
+    if request.method=="POST":
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_instancia.save()
+            messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
+            return redirect('pedidosProveedor')
+        else:
+            print("no es valido")
+
+
+    return render(request,"pedidosProveedorRecepcionar.html",{"pedido_proveedor_form":pedido_proveedor_form,"proveedor":proveedor,"pedido_id":pedido_id})
+
+
 
 
 
