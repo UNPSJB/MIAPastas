@@ -74,7 +74,6 @@
                 {% endbuttons %}
                 </form>
 
-
 <hr/>
       <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
       <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
@@ -84,37 +83,41 @@
 </div>
 </div>
 
-
-    <!-- Este es el fin del formulario de recetas -->
-    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
-
-
 {% endblock %}
 {% block javascript %}
+<script id="detalle_tabla_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %>
+
+
+        <tr class="form-row row1 has_original">
+            <td><%= d.texto %></td>
+            <td class="field-cantidad_producto">
+                <input class="cantidades_tablas" id="cantidad-<%=i%>" onchange="cambio_cantidad(<%=i%>)"  name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            <td><button type="button"  data-id="<%= d.producto%>"  class="btn-modificar" onClick= "modificar(<%=i%>)">Modificar</button></td>
+
+            <td><button type="button"  data-id="<%= d.producto%>" id="renglon-<%= d.producto%>" class="btn-eliminar" onClick= "eliminar(<%=i%>)">Eliminar</button></td>
+
+        </tr>
+    <% } %>
+    <% })%>
+</script>
 <script>
 
-var tabla_detalle_tpl;
-var detalle_cantProducto_imput_tpl;
-var detalle_producto_imput_tpl;
 var detalles = [];
-
-tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
-                    + "<td><button type="+ "button"+"value= "+"Eliminar "+"data-id="+"<%= producto%> "
-                    +" id="+"renglon-<%= producto%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= producto%>)"
-                    +">Eliminar</button></td>" + "</tr>");
-
-
-
-
-
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
         // saco producto del arreglo detalles
- function eliminar(ins){
-        detalles = _.filter(detalles,function(element){
-                    return element.producto != ins; //filtro los productos que no tengan el id a borrar.
-        });
-        armar_tabla();
-  }
+function eliminar(indi){
+        detalles = eliminar_objeto(detalles,indi);
+        armar_tabla(); //refresco la tabla
+        }
 
+function modificar(i){
+    var nueva_cantidad = $("#cantidad-"+i).val();
+    id_input = document.getElementById("cantidad-"+i);
+    detalles = modificar_cantidad_arreglo(detalles,nueva_cantidad,id_input,i);
+}
 
 function armar_form(){
             var html_form = "";
@@ -130,7 +133,7 @@ function armar_form(){
 function armar_tabla(){
     var html_tabla = "";
     $(detalles).each(function(i, d) {
-        html_tabla = html_tabla + tabla_detalle_tpl(d);
+        html_tabla = html_tabla + tpl_tabla({objects:d});
     });
     $('#detalles').html(html_tabla);
 }
@@ -156,8 +159,7 @@ $(function() {
         if ((cantidad == "") || (producto == "")){
             alert("Debe llenar todos los campos");
         }else{
-            esFloat = /^[0-9]*(.[0-9]*)?$/;
-            if (!esFloat.test(cantidad) || (cantidad<0)){
+            if (!esFloatPositivo(cantidad)){
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{producto:producto});
@@ -178,13 +180,5 @@ $(function() {
 
 });
 
-
-
-
-
-
 </script>
-
-
-
 {% endblock %}
