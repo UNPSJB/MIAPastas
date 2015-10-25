@@ -13,6 +13,17 @@ function armar_hidden(prefix,valor,nombre,indice){
   return probando;
 };
 
+function armar_input(valor,nombre){
+    var probando = "<input class="+'"'+"form-control"+'"'+
+           " id="+'"'+nombre+'"'
+	   +" name="+'"'+nombre+'"'
+           +" type="+'"'+"hidden"+'"'
+           + " value="+'"'+valor+'"'+">"
+           console.log(probando);
+  return probando;
+};
+
+
 
 function esFloatPositivo(num){
 console.log("en esfloatpositiovo");
