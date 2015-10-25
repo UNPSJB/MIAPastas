@@ -689,7 +689,7 @@ def pedidosClienteModificar(request,pedido_id):
 
         print "pedido instancia", pedido_instancia
         if pedidosClientes_form.is_valid():
-            print "es valido el detalllllllllllllllle"
+            print "es valido el pedido"
 
             pedido_instancia = pedidosClientes_form.save(commit=False)
             #DETALLES
