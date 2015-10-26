@@ -28,7 +28,7 @@
       </form>
           <p>&nbsp;</p>
       <div class="row"><!-- <div style="height:100px;overflow-y:scroll;;">-->
-          <div class="col-md-10">
+          <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
           <table class="table table-hover">
 
             <thead>
@@ -49,7 +49,6 @@
                                     <td>{{p.get_unidad_medida_display}}</td>
                                     <td>${{p.precio}}</td>
                                     <td>{{p.receta_set.all|join:", "}}</td>
-                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
           </tbody>

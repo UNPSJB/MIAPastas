@@ -36,7 +36,7 @@
                   </form>
 
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
                           <table class="table table-hover">
                             <thead>
@@ -52,9 +52,8 @@
                                 <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
                                     <td>{{cliente.cuit_cuil}}</td>
                                     <td>{{cliente.razon_social}}</td>
-                                    <td>{{cliente.ciudad.nombre}}</td>
+                                 <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
                                     <td>{{cliente.es_moroso}}</td>
-                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
@@ -77,27 +76,6 @@
 
 
 
-<div id="myModalEliminar" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- NICO ES GAY-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Eliminar Cliente</h4>
-      </div>
-      <div class="modal-body">
-          <label for="">Confirma que desea eliminar: </label>
-
-
-      </div>
-      <div class="modal-footer">
-          <a id="eliminar-cliente"><button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button></a>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-      </div>
-    </div>
-  </div>
-</div>
 
 
 
@@ -136,7 +114,23 @@
                 }]
             });
             }else{
-            $("#myModalEliminar").modal("show");
+                BootstrapDialog.show({
+                title: "Error al Intentar Eliminar",
+                cssClass: 'error-dialog',
+                message: "Seguro que quiere eliminar el cliente?",
+                type: BootstrapDialog.TYPE_DANGER,
+                buttons: [{
+                           label: 'Aceptar',
+                           action: function(dialogRef){
+                                 dialogRef.close();
+                                 eliminar();}
+                           },{
+                               label: 'Cancelar',
+                               action: function(dialogRef){
+                               dialogRef.close();
+                              }
+                          }]
+            });
             }
         }
 

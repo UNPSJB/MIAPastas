@@ -1,129 +1,195 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
-
+{% load bootstrap3 %}
 {% block contenido %}
 
+<!-- Este es el formulario de INSUMOS PAPA -->
 
-  <script>
-  $(function() {
-    $( "#fecha-pedido" ).datepicker();
-    $( "#fecha-probable" ).datepicker();
-  });
-  </script>
-
-
-<form action="">
 <div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedidos a Proveedores</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form role="form">
-                  <div class="form-group">
-                        <label for="inputEmail3">Proveedor</label>
-
-                          <select class="form-control">
-                              <option>Proveedor 1</option>
-                              <option>Proveedor 2</option>
-                              <option>Proveedor 3</option>
-                          </select>
-
-                   </div>
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Pedido a Proveedor</b></font></p></div>
+            <div class="panel-body">
 
 
+                <form action="{% url 'pedidosProveedorAlta' %}" method="post" class="form" onsubmit="return validarForm()">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedido</b></font></p></div>
+                     {% csrf_token %}
+                     {% bootstrap_form pedido_proveedor_form layout='horizontal'%}
 
-                  <div class="form-group">
-                    <label for="fecha_pedido">Fecha del Pedido</label>
-                    <input type="text" class="form-control" id="fecha-pedido" required>
-                  </div>
+            <!--
+                      <label for="id_proveedor">Proveedor</label>
+                      <select class="form-control" id="id_proveedor" name="id_proveedor" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for p in pedido_proveedor_form.fields.proveedor.value  %}
+                                 <option value="{{p.id}}" > {{p}} </option>
+                            {% endfor %}
+                      </select>
+
+                    {{form.field_name.value}} works for me
+                    -->
+
+                      &nbsp;
+                      <div class="panel-heading"><p class="text-center login-title">
+                          <font face="tahoma" size="4" color="black"><b>Detalles</b></font>
+                      </div>
+
+                      <div id="detalles_forms"></div>
 
 
-                  <div class="form-group">
-                    <label for="fecha_probable">Fecha Probable de Entrega</label>
-                    <input type="text" class="form-control" id="fecha-probable">
-                  </div>
+                    <label for="id_insumo">Insumo</label>
+                        <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                          <option value="" selected="selected">---------</option><!--pedido_proveedor_form.proveedor.value.insumos.all -->
+                             {% for i in insumos %}
 
+                                 <option value="{{i.id}}">{{i}}</option>
 
+                            {% endfor %}
+                         </select>
 
-        </form>
+                        <div class="form-group">
+                             <label for="cantidadInsumo">Cantidad</label>
+                             <input type="text"  min="0" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                        </div>
 
+                     {{ detalles_form_factory.management_form }}
 
-        <div class="col-md-10">
+                    <button id="add-detalle-pedido" type="button" class="btn btn-primary">Add</button>
+                    <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>Insumo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
 
-           <h2>Insumo Pedido</h2>
-           <div class="row col-md-4">
-              <select class="form-control">
-                  <option>Insumo 1</option>
-                  <option>Insumo 2</option>
-                  <option>Insumo 3</option>
-                  <option>Insumo 4</option>
-                  <option>Insumo 5</option>
-                </select>
-               <div class="form-group">
-
-                    <label for="inputEmail3" class=" control-label">Cantidad</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-                   <label for="inputEmail3" class=" control-label">Unidad de Medida</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" readonly>
+                    </table>
+                {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+                </form>
+                      <a href="{%url 'pedidosProveedor'%}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
             </div>
-               </div>
-           <div class="col-md-2 pull-left"></div>
-                           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
-
-            </div>
-
-      <div class="row">
-          <div class="col-md-10">
-
-          <table class="table table-hover">
-            <thead>
-            <tr>
-
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Unidad Medida</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for productoTerminado in productoTerminados %}
-                <tr>
-
-              <td>{{productoTerminado.nombre}}</td>
-              <td>{{productoTerminado.cantidad}}</td>
-              <td>{{productoTerminado.Umedida}}</td>
-
-          </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-
-          </div>
-          <div class="col-md-2">
-          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-              </div>
-
-          </div>
-<hr/>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
-
-  </div>
-
+    </div>
 </div>
-</div>
-</form>
-
-    <!-- Este es el fin del formulario de recetas -->
-    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
 
 
+{% endblock %}
+{% block javascript %}
 
 
+<script id="detalle_tabla_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %>
+        <tr class="form-row row1 has_original">
+            <td><%= d.texto %></td>
+            <td class="field-cantidad_insumo">
+                <input class="vIntegerField" id="cantidad-<%=i%>" name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            $("#<%=i%>.value")
+            <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%= d.insumo%>,<%=i%>)">Modificar</button></td>
+            <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%= d.insumo%>)">Eliminar</button></td>
 
+
+        </tr>
+    <% } %>
+    <% })%>
+</script>
+<script>
+
+var tabla_detalle_tpl;//tpl es una funcion para concatenar a cadena, sirve para armar tabla de "insumo,cant" y mostrarla en html
+var detalles = [];//arreglo de objetos que guarda (id_insumo, cant, texto) el texto es para pasarlo a tabla_detalle_tpl
+
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
+
+        // saco insumo del arreglo detalles
+ function eliminar(ins){
+        detalles = _.filter(detalles,function(element){
+                    return element.insumo != ins; //filtro los insumos que no tengan el id a borrar.
+        });
+        armar_tabla();
+  }
+
+
+function armar_form(){
+            var html_form = "";
+            $(detalles).each(function(i, d) {
+                d.i=i;
+                html_form = html_form +  armar_hidden("form",d.insumo,"insumo",i);
+                html_form = html_form +  armar_hidden("form",d.cantidad,"cantidad_insumo",i);
+                document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
+            });
+            $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+     var html_tabla="";
+     html_tabla = tpl_tabla({objects:detalles});
+
+    $('#detalles').html(html_tabla);
+}
+
+
+function validarForm(){
+    if (_.size(detalles) == 0){
+         alert("Debe agregar al menos un detalle");
+        return false;
+    }else{
+        armar_form();
+        return true;
+    }
+
+}
+
+$(function() {
+
+  $("#add-detalle-pedido").click(function(){
+        var cantidad = $("#cantidadInsumo").val();
+        var insumo = $("#id_insumo").val();
+        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        if ((cantidad == "") || (insumo == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            esFloat = /^[0-9]*(.[0-9]*)?$/;
+            if (!esFloat.test(cantidad) || (cantidad<0)){
+                alert("debe ingresar una cantidad valida");
+            }else{
+                 var ins = _.find(detalles,{insumo:insumo});
+                 if (ins != undefined){
+                    alert("Insumo ya cargado");
+                 }else{
+                    detalles.push({cantidad: cantidad, insumo: insumo,i:"0",texto:texto});
+                    armar_tabla();
+                    console.log(detalles);
+                    det = detalles[0];
+                    console.log(det);
+                    d = det.cantidad;
+                    console.log(d);
+                 }
+            }
+        }
+  });
+
+});
+
+
+id_proveedor = $("#id_proveedor").val();
+
+$("#id_proveedor").on("change", function() {
+fecha_realizacion = $("#id_fecha_realizacion").val(); // aca obtengo el valor de la fecha de realizacion del form de DJango...
+alert($("#id_fecha_realizacion").val())
+id_proveedor = $(this).val(); // aca obtengo el valor del id_proveedor del form de DJango...
+
+
+console.log($(this).val());
+window.location="/pedidosProveedor/alta/?proveedor="+id_proveedor.toString()+"&"+"fecha="+fecha_realizacion;
+
+});
+
+</script>
 {% endblock %}

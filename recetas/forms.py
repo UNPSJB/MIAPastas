@@ -2,11 +2,58 @@ from django import forms
 from . import models
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
+from django.utils.text import capfirst
+from django.core import exceptions
+from django.forms import CheckboxSelectMultiple, MultipleChoiceField
+import re
+
+def cuit_valido(cuit):
+    cuit = str(cuit)
+    cuit = cuit.replace("-", "")
+    #cuit = cuit.replace(" ", "")
+   # cuit = cuit.replace(".", "")
+    print "cuit inicial " ,cuit
+    if len(cuit) != 11:
+        if len(cuit) == 10:
+            cuit = cuit[:2] + '0' + cuit[2:]
+            print "es 10 ",cuit
+        else:
+            return False
+    if not cuit.isdigit():
+        return False
+    base = [5, 4, 3, 2, 7, 6, 5, 4, 3, 2]
+    aux = 0
+    for i in xrange(10):
+        aux += int(cuit[i]) * base[i]
+    aux = 11 - (aux % 11)
+    if aux == 11:
+        aux = 0
+    elif aux == 10:
+        aux = 9
+    if int(cuit[10]) == aux:
+        return True
+    else:
+        return False
+
+
 
 class ChoferForm(forms.ModelForm):
     class Meta:
         model = models.Chofer
         fields = ["cuit", "nombre", "direccion", "telefono", "e_mail"]
+
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido papa")
+        return cuit
+
+
 
 
 class InsumoForm(forms.ModelForm):
@@ -65,9 +112,6 @@ class RecetaDetalleForm(forms.ModelForm):
 
 
 
-
-
-
 class ProveedorForm(forms.ModelForm):
     class Meta:
         model = models.Proveedor
@@ -119,7 +163,7 @@ class ProveedorForm(forms.ModelForm):
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
         model = models.ProductoTerminado
-        fields = ["nombre","stock","unidad_medida","precio"]
+        fields = ["nombre","unidad_medida","precio"]
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -195,24 +239,100 @@ class ClienteForm(forms.ModelForm):
 
 
 
-class PedidoProveedorForm(forms.ModelForm):
+class PedidoProveedorAltaForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
-        fields = ["fecha_realizacion","fecha_probable_entrega","proveedor","fecha_de_entrega","estado_pedido"]
+        widgets = {
+            'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion']
 
-class PedidoClienteForm(forms.ModelForm):
+
+
+class PedidoProveedorModificarForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoProveedor
+        widgets = {
+            'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor']
+
+
+class PedidoProveedorRecepcionarForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoProveedor
+        widgets = {
+            'fecha_de_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['fecha_realizacion','insumos','proveedor']
+
+
+class DetallePedidoProveedorForm(forms.ModelForm):
+    class Meta:
+        model = models.DetallePedidoProveedor
+        exclude = ['pedido_proveedor'] #setea todos campos menos pedido_proveedor
+
+
+
+###########################################################
+##########################################################
+
+class PedidoCliente(forms.ModelForm):
     class Meta:
         model = models.PedidoCliente
-        fields = ["tipo_pedido", "cliente",]
+        fields = ["tipo_pedido","cliente"]
+
+
+class PedidoClienteFijoForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoFijo
+        dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
+        widgets = {
+            'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'}),
+            'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['productos', 'tipo_pedido']
 
     def __init__(self, *args, **kwargs):
-        super(PedidoClienteForm, self).__init__(*args, **kwargs)
-        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
-
+        super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):
     class Meta:
         model = models.PedidoClienteDetalle
-        exclude = ['pedido'] #setea todos campos menos pedido
+        exclude = ['pedido_cliente'] #setea todos campos menos pedido
 
+
+
+
+class PedidoClienteOcacionalForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoOcacional
+        exclude = ['productos','tipo_pedido']
+        widgets = {
+           'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+
+
+class PedidoClienteCambioForm(forms.ModelForm):
+    class Meta:
+        model = models.PedidoCambio
+     #   widgets = {
+     #       'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        exclude = ['productos','tipo_pedido']
+
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
+
+
+
+
+
+#############################################################################
+############################################################################
+
+
+class LoteForm(forms.ModelForm):
+    class Meta:
+        model = models.Lote
+        fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
+    

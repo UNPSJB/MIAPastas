@@ -12,21 +12,31 @@
            <form class="form-inline" method="get">
                   <!-- Filtro de Fecha de Realizacion del Pedido a Proveedor -->
                   <div class="form-group">
-                        <label for="fecha_realizacion">Fecha de Realizacion</label>
-                        <input type="text" class="form-control" value="{{filtros.fecha_realizacion}}" name="fecha_realizacion" id="fecha_realizacion">
-                  </div>
-                  <div><input class="datepicker" data-date-format="yyyy/mm/dd"></div>
-                  <!-- Filtro de Fecha Probable de Entrega del Pedido a Proveedor -->
-                  <div class="form-group">
-                        <label for="fecha_probable_entrega">Fecha Probable Entrega</label>
-                        <input type="text" class="form-control" value="{{filtros.fecha_probable_entrega}}" id="fecha_probable_entrega" name = "fecha_probable_entrega" >
+                        <label for="fecha_realizacion">Fecha de Realizacion (Mayor o igual)</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_realizacion}}" name="fecha_realizacion" id="fecha_realizacion">
                   </div>
                   <!-- Filtro de Proveedor del Pedido a Proveedor -->
                   <div class="form-group">
                         <label for="proveedor">Proveedor</label>
-                        <input type="text" class="form-control" value="{{filtros.proveedor}}" id="proveedor" name = "proveedor" >
+                        <select class="form-control" id="proveedor" name="proveedor" title="">
+                            <option value="" selected="selected">---------</option>
+                            {% for p in proveedores %}
+                                <option value="{{p.id}}">{{p}}</option>
+                            {% endfor %}
+                        </select>
                   </div>
-
+                  <p>&nbsp;</p>
+                  <!-- Filtro de Fecha Probable de Entrega del Pedido a Proveedor -->
+                  <div class="form-group">
+                        <label for="estado_pedido">Estado del Pedido</label>
+                        <select class="form-control" id="estado_pedido" name="estado_pedido" title="">
+                            <option value="" selected="selected">---------</option>
+                            <option value="{{1}}">Pendiente</option>
+                            <option value="{{2}}">Recibido</option>
+                            <option value="{{3}}">Cancelado</option>
+                            <!-- PREGUNTA: conviene meter el ESTADO en una clase a parte?? clase EstadoPedido?? -->
+                        </select>
+                  </div>
                   <label>
                   </label>
                   <button type="submit" class="btn btn-default">Filtrar</button>
@@ -41,17 +51,23 @@
                         <tr>
                             <th>Numero de Pedido</th>
                             <th>Fecha de Realizacion</th>
-                            <th>Fecha de Entrega</th>
+                     <!--   <th>Fecha de Entrega</th> -->
                             <th>Proveedor</th>
                             <th>Estado</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for pedido in pedidos %}
-                        <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                        <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}" data-estado="{{pedido.get_estado_pedido_display}}">
                             <td>{{pedido.id}}</td>
                             <td>{{pedido.fecha_realizacion}}</td>
-                            <td>{{pedido.fecha_de_entrega}}</td>
+                       <!--     <td>
+                                {% if pedido.fecha_de_entrega = None %}
+                                       <p>No Entregado</p>
+                                {% else %}
+                                    {{pedido.fecha_de_entrega}}
+                                {% endif %}
+                            </td>-->
                             <td>{{pedido.proveedor}}</td>
                             <td>{{pedido.get_estado_pedido_display}}</td>
                         </tr>
@@ -65,9 +81,10 @@
                   <a type="button" id="consulta-pedido" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
                   <a type="button" id="modificar-pedido" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
                   <a type="button" id="eliminar-pedido" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+                  <a type="button" id="recepcionar-pedido" class="btn btn-success"><span class="glyphicon glyphicon-check" aria-hidden="true"> </span></a>
               </div>
-              <p></p>
               <a class="btn" href = "{% url 'pedidosProveedorAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+              <p></p>
           </div>
       </div>
   </div>
@@ -83,11 +100,12 @@
 <script>
         $(function() {
         var id;
-
+        var estado;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-
+            estado = $el.data()["estado"]; //obtengo el estado del pedido donde hice click
+            console.log(estado)
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -103,7 +121,7 @@
                     title: "Error",
                     cssClass: 'error-dialog',
                     message: "Debe seleccionar un Pedido",
-                    type: BootstrapDialog.TYPE_DANGER,
+                    type: BootstrapDialog.TYPE_SUCCESS,
                     buttons: [{
                             label: 'Aceptar',
                             action: function(dialogRef){
@@ -111,8 +129,27 @@
                             }
                     }]
             });
+
+
         }
 
+
+        function mostrar_errorEstado(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Este Pedido ya ha sido recepcionado.",
+                    type: BootstrapDialog.TYPE_WARNING,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+
+
+        }
 
         function eliminar(){
             if(id==undefined)
@@ -160,10 +197,23 @@
 
         }
 
+        function recepcionar(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+                if(estado!="Pendiente"){
+                    mostrar_errorEstado();
+                }else{
+                    window.open('/pedidosProveedor/recepcionar/'+id+'',"_self")
+                }
+            }
+
+        }
 
         $("#modificar-pedido").click(modificar);
         $("#eliminar-pedido").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
         $("#consulta-pedido").click(consultar);
+        $("#recepcionar-pedido").click(recepcionar);
 
 
     });

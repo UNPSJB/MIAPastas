@@ -14,5 +14,13 @@ class RecetaDetalleInline(admin.TabularInline):
 class RecetaAdmin(admin.ModelAdmin):
     inlines = [ RecetaDetalleInline ]
 
+class PedidoClienteDetalleInline(admin.TabularInline):
+    model = models.PedidoClienteDetalle
+
+class PedidoFijoAdmin(admin.ModelAdmin):
+    inlines = [ PedidoClienteDetalleInline ]
+
+
 admin.site.register(models.Insumo, InsumoAdmin)
 admin.site.register(models.Receta, RecetaAdmin)
+admin.site.register(models.PedidoFijo, PedidoFijoAdmin)

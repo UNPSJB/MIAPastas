@@ -7,20 +7,20 @@
 
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Insumo</b></font></p></div>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Registrar Produccion</b></font></p></div>
             <div class="panel-body">
-                <form action="{% url 'insumosAlta' %}" method="post" class="form">
+                <form action="{% url 'lotesAlta' %}" method="post" class="form">
                     {% csrf_token %}
-                    {% bootstrap_form insumo_form layout='horizontal' %}
+                    {% bootstrap_form lote_form layout='horizontal' %}
                     <p>&nbsp;</p>
                     {% buttons %}
                         <button type="submit" class="btn btn-primary">
                             {% bootstrap_icon "star" %} Agregar
                         </button>
                     {% endbuttons %}
-                </form>
-                      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+                    <a href = "{%url 'lotes' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
+                </form>
             </div>
     </div>
 </div>

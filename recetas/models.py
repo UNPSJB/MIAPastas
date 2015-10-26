@@ -1,6 +1,18 @@
 # -*- coding: utf-8 -*-
 from django.db import models
 from django.core.validators import MinValueValidator
+from datetime import date
+import datetime
+from multiselectfield import MultiSelectField
+
+
+TIPODIAS = (
+        (1, "lunes"),
+        (2, "martes"),
+        (3, "miercoles"),
+        (4,"jueves"),
+        (5,"viernes")
+      )
 
 # Create your models here.
 #********************************************************#
@@ -45,14 +57,11 @@ class Insumo(models.Model):
 
 class ProductoTerminado(models.Model):
     UNIDADES = {
-        (1, "Kg"),
-        (2, "Unidad"),
-        (3, "Bolson"),
-        (4, "Bolsines"),
+        (1, "Bolsines"),
     }
     FILTROS = ['nombre__icontains','stock__lte']
     nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
-    stock = models.PositiveIntegerField()
+    stock = models.PositiveIntegerField(default = 0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
@@ -70,10 +79,8 @@ class ProductoTerminado(models.Model):
 
 class Receta(models.Model):
     UNIDADES = (
-        (1, "Kg"),
-        (2, "Unidad"),
-        (3, "Bolson"),
-        (4, "Bolsines"),
+
+        (1, "Bolsines"),
     )
     FILTROS = ['nombre__icontains','producto_terminado']
     fecha_creacion = models.DateField(auto_now_add = True)
@@ -90,7 +97,7 @@ class Receta(models.Model):
 
 
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.PositiveIntegerField()
+    cantidad_insumo = models.FloatField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
@@ -171,15 +178,13 @@ class Cliente(models.Model):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
 
 
-
-
 #************************************************************************#
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__icontains','fecha_desde__icontains','fecha_hasta__icontains' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),
@@ -194,25 +199,43 @@ class PedidoCliente(models.Model):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.PositiveIntegerField()
+    cantidad_producto = models.FloatField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
-class DiasSemana(models.Model):
-    dia = models.CharField(unique=True,max_length=100)
-
-
 class PedidoFijo(PedidoCliente):
-    fecha_inicio = models.DateField()
-    fecha_cancelacion = models.DateField(blank=True)
-    dias = models.ForeignKey(DiasSemana,blank=True)  #quitar blank
+    fecha_inicio = models.DateField(default=date.today())
+    fecha_cancelacion = models.DateField(blank=True,null=True)
+    dias = MultiSelectField(choices=TIPODIAS)
+
+    def esParaHoy(self):
+        d = date.today()
+        if d.day in self.dias:
+            return True
+        else:
+            return False
 
 class PedidoCambio(PedidoCliente):
     fecha_entrega = models.DateField()
 
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+
+
 class PedidoOcacional(PedidoCliente):
     fecha_entrega = models.DateField()
+
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
 
 
 
@@ -221,25 +244,48 @@ class PedidoOcacional(PedidoCliente):
 #********************************************************#
 class PedidoProveedor(models.Model):
 
-    FILTROS = ['fecha_realizacion__icontains','fecha_probable_entrega__icontains','proveedor']
+    FILTROS = ['fecha_realizacion__gte','proveedor','estado_pedido']
     ESTADO = (
         (1, "Pendiente"),
         (2, "Recibido"),
         (3, "Cancelado"),
     )
     fecha_realizacion = models.DateField()
-    fecha_probable_entrega = models.DateField()
     fecha_de_entrega = models.DateField(blank=True,null=True)
     proveedor = models.ForeignKey(Proveedor)
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
+    insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
+    descripcion = models.TextField()
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
-
+    #fecha_realizacion__gte
 
     #detalle de pedido
 
 
     #detalle de pedido
     #auto_now_add = True
+
+
+class DetallePedidoProveedor(models.Model):
+    cantidad_insumo = models.DecimalField(max_digits=5, decimal_places=2)
+    insumo = models.ForeignKey(Insumo)
+    pedido_proveedor = models.ForeignKey(PedidoProveedor)
+
+
+#********************************************************#
+         #   L O T E S   P R O D U C C I O N #
+#********************************************************#
+class Lote(models.Model):
+    FILTROS = ['producto_terminado']
+
+    nro_lote = models.AutoField(primary_key=True) # Field name made lowercase.
+    fecha_produccion = models.DateField()
+    fecha_vencimiento=models.DateField()
+    cantidad_producida = models.PositiveIntegerField()
+    stock_disponible= models.PositiveIntegerField()
+    stock_reservado= models.PositiveIntegerField(default=0)
+    producto_terminado=models.ForeignKey(ProductoTerminado)
+
 

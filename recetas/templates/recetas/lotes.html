@@ -1,31 +1,23 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load bootstrap3 %}
-
 {% block contenido %}
-<!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Choferes</b></font></p></div>
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Lotes</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
       <form method="get" class="form-inline col-md-12">
 
           <div class="form-group">
-            <label for="cuit">Cuit</label>
-            <input type="text" class="form-control"  value="{{filtros.cuit}}" id="cuit" placeholder="cuit">
-          </div>
-          <div class="form-group">
-            <label for="nombre">Nombre</label>
-            <input type="text" class="form-control"  value="{{filtros.nombre}}" id="nombre" placeholder="nombre">
-          </div>
-
-
-
-          <label>
-
-          </label>
-
+                        <label for="producto">Producto</label>
+                        <select class="form-control" id="producto" name="producto" >
+                            <option value="" selected="selected">---------</option>
+                            {% for prod in productos %}
+                                <option value="{{prod.id}}">{{prod}}</option>
+                            {% endfor %}
+                      </select>
+                    </div>
           <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
 
@@ -35,22 +27,25 @@
           <table class="table table-hover">
             <thead>
             <tr>
-                <th>Cuit</th>
-                <th>Nombre</th>
-                <th>Direccion</th>
-                <th>Telefono</th>
-                <th>e-mail</th>
+                <th>Lote</th>
+
+                <th>Producto</th>
+                <th>Vencimiento</th>
+                <th>Stock Disponible</th>
+
+
             </tr>
             </thead>
               <tbody>
 
-              {%for chofer in choferes%}
-              <tr class="renglon select-item" data-id="{{chofer.id}}" id="renglon-{{chofer.id}}">
-                    <td>{{chofer.cuit}}</td>
-                    <td>{{chofer.nombre}}</td>
-                    <td>{{chofer.direccion}}</td>
-                    <td>{{chofer.telefono}}</td>
-                    <td>{{chofer.e_mail}}</td>
+              {%for l in lotes%}
+              <tr class="renglon select-item" data-id="{{l.nro_lote}}" id="renglon-{{l.nro_lote}}">
+                    <td> Lote-{{ l.nro_lote}}</td>
+
+                  <td><a href="{% url 'productosTerminadosConsulta' l.producto_terminado.id %}">{{l.producto_terminado}}</a></td>
+                    <td>{{l.fecha_vencimiento}}</td>
+                    <td>{{l.stock_disponible}}</td>
+
               </tr>
               {%endfor%}
           </tbody>
@@ -58,12 +53,12 @@
           </div>
   <div class="col-md-2">
           <div class="btn-group btn-group-sm" role="group" aria-label="...">
-              <a type="button" id="chofer-consultar" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
-              <a type="button" id="chofer-modificar" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
-              <a type="button" id="chofer-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
+              <a type="button" id="lote-consultar" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+              <a type="button" id="lote-modificar" class="btn btn-warning"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></a>
+              <a type="button" id="lote-eliminar" class="btn btn-danger"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></a>
           </div>
           <p></p>
-          <a class="btn" href = "{% url 'choferesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+          <a class="btn" href = "{% url 'lotesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
       </div>
           </div>
       <hr/>
@@ -72,9 +67,6 @@
 
 </div>
 </div>
-
-
-
 
 {% endblock %}
 
@@ -86,11 +78,11 @@
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-            $el.addClass("danger");
+            $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
-            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
-            $(_renglon).addClass("danger");
+            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("active");
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
@@ -101,7 +93,7 @@
             BootstrapDialog.show({
                     title: "Error",
                     cssClass: 'error-dialog',
-                    message: "Debe seleccionar un chofer",
+                    message: "Debe seleccionar un lote",
                     type: BootstrapDialog.TYPE_DANGER,
                     buttons: [{
                             label: 'Aceptar',
@@ -113,35 +105,35 @@
         }
 
 
-        $("#chofer-consultar").click(function(){
+        $("#lote-consultar").click(function(){
               if(id==undefined){
                     mostrar_error()
               }else{
-                  window.open('/choferes/'+id+'',"_self")
+                  window.open('/lotes/'+id+'',"_self")
               }
         });
 
-        $("#chofer-modificar").click(function(){
+        $("#lote-modificar").click(function(){
                if(id==undefined){
                     mostrar_error()
               }else{
-                 window.open('/choferes/modificar/'+id+'',"_self")
+                 window.open('/lotes/modificar/'+id+'',"_self")
               }
         });
 
-        $("#chofer-eliminar").click(function(){
+        $("#lote-eliminar").click(function(){
             if (id == undefined){
                  mostrar_error()
             }else{
                 BootstrapDialog.show({
                     title: "Eliminar",
                     cssClass: 'aviso-dialog',
-                    message: "Seguro que desea borrar",
+                    message: "¿Seguro que desea borrar?",
                     type: BootstrapDialog.TYPE_WARNING,
                     buttons: [{
                             label: 'Aceptar',
                             action: function(dialogRef){
-                                window.open('/choferes/baja/'+id+'',"_self");
+                                window.open('/lotes/baja/'+id+'',"_self");
                                 dialogRef.close();
                             }},{
                             label: 'Cancelar',
@@ -157,5 +149,5 @@
 
     });
 </script>
-</div>
+
 {% endblock %}

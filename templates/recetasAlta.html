@@ -56,6 +56,8 @@
                     </button>
                 {% endbuttons %}
                 </form>
+                      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
             </div>
     </div>
 </div>
@@ -64,57 +66,54 @@
 {% endblock %}
 {% block javascript %}
 
+<script id="detalle_tabla_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %>
+
+        <tr class="renglon select-item" data-id="{{proveedor.id}}" id="renglon-{{proveedor.id}}">
+
+        <tr class="form-row row1 has_original">
+            <td><%= d.texto %></td>
+            <td class="field-cantidad_insumo">
+                <input class="cantidades_tablas" id="cantidad-<%=i%>" onchange="cambio_cantidad(<%=i%>)"  name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%=i%>)">Modificar</button></td>
+
+            <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%=i%>)">Eliminar</button></td>
+
+        </tr>
+    <% } %>
+    <% })%>
+</script>
 
 <script>
 
-var tabla_detalle_tpl;
-var detalle_cantInsumo_imput_tpl;
-var detalle_insumo_imput_tpl;
+
 var detalles = [];
-
-tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"+"<td><%= cantidad %></td>"
-                    + "<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
-                    +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
-                    +">Eliminar</button></td>" + "</tr>");
-
-
-detalle_cantInsumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i %>-cantidad_insumo"
-                                    +" name="+"form-<%= i %>-cantidad_insumo"
-                                    +" type="+"hidden"+" value=<%=cantidad %>>");
-
-detalle_insumo_input_tpl = $.tpl("<input class="+"form-control"
-                                    +" id="+"id_form-<%= i%>-insumo"
-                                    +" name="+"form-<%= i%>-insumo"
-                                    +" type="+"hidden"+" value=<%=insumo %>>");
-
+prefix = "{{prefix}}"
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
 
 
         // saco insumo del arreglo detalles
- function eliminar(ins){
-        detalles = _.filter(detalles,function(element){
-                    return element.insumo != ins; //filtro los insumos que no tengan el id a borrar.
-        });
-        armar_tabla();
-  }
+function eliminar(indi){
+        detalles = eliminar_objeto(detalles,indi);
+        armar_tabla(); //refresco la tabla
+        }
 
 
 function armar_form(){
-            var html_form = "";
-            $(detalles).each(function(i, d) {
-                d.i=i;
-                html_form = html_form +  detalle_cantInsumo_input_tpl(d);
-                html_form = html_form +  detalle_insumo_input_tpl(d);
-                document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
-            });
-            $('#detalles_forms').html(html_form);
+    var html_form="";
+    $(detalles).each(function(i, d){
+        html_form = html_form + armar_hidden(prefix,d.insumo,"insumo",i);
+        html_form = html_form + armar_hidden(prefix,d.cantidad,"cantidad_insumo",i);
+     });
+    document.getElementById("id_"+prefix+"-TOTAL_FORMS").value = _.size(detalles);
+    $('#detalles_forms').html(html_form);
 }
 
+
 function armar_tabla(){
-    var html_tabla = "";
-    $(detalles).each(function(i, d) {
-        html_tabla = html_tabla + tabla_detalle_tpl(d);
-    });
+    var html_tabla = tpl_tabla({objects:detalles});
     $('#detalles').html(html_tabla);
 }
 
@@ -130,6 +129,13 @@ function validarForm(){
 
 }
 
+function modificar(i){
+console.log("voy a modificar en la pos "+i);
+    var nueva_cantidad = $("#cantidad-"+i).val();
+    id_input = document.getElementById("cantidad-"+i);
+    detalles = modificar_cantidad_arreglo(detalles,nueva_cantidad,id_input,i);
+}
+
 $(function() {
 
   $("#add-detalle-receta").click(function(){
@@ -139,9 +145,8 @@ $(function() {
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            esFloat = /^[0-9]*(.[0-9]*)?$/;
-            if (!esFloat.test(cantidad) || (cantidad<0)){
-                alert("debe ingresar una cantidad valida");
+            if (!esFloatPositivo(cantidad)){
+                 alert("debe ingresar una cantidad valida  00.00");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
                  if (ins != undefined){

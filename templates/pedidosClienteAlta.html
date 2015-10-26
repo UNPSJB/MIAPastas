@@ -1,139 +1,184 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
+{% load bootstrap3 %}
 
 {% block contenido %}
 
 
-<form action="">
+
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Pedidos de Cliente</b></font></p></div>
   <div class="panel-body">
-      <!-- formulario -->
-      <form role="form">
 
-                   <div class="form-group">
-                        <label for="inputEmail3">Tipo de Pedido</label>
+      <form action="{% url 'pedidosClientesAlta' tipo_pedido %}" method="post" class="form" onsubmit="return validarForm()">
+                         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>
+                             {% if tipo_pedido == "1" %}
+                                Pedido Fijo
+                             {% else %}
+                                {% if tipo_pedido == "2" %}
+                                    Pedido Ocacional
+                                {% else %}
+                                    {% if tipo_pedido == "3" %}
+                                        Pedido de Cambio
+                                    {% endif %}
+                                {% endif %}
+                             {% endif %}
 
-                          <select class="form-control">
-                              <option>Pedido Fijo</option>
-                              <option>Pedido Ocasional</option>
-                              <option>Pedido de Cambio</option>
-                          </select>
+                             </b></font></p></div>
+                     {% csrf_token %}
+                     {% bootstrap_form pedido_form layout='horizontal'%}
 
-                   </div>
+                      <div class="panel-heading"><p class="text-center login-title">
 
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Fecha de Entrega</label>
-                    <input type="date" class="form-control" id="ejemplo_password_1" required>
-                  </div>
+                            <font face="tahoma" size="4" color="black"><b>Detalles</b></font></p>
+                      </div>
 
+                        {{ form.as_p }}
 
-
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Fecha de Inicio</label>
-                    <input type="date" class="form-control" id="ejemplo_password_1" required>
-                  </div>
-
-                    <label for="ejemplo_password_1">Dias de Semana</label>
-                    <div class="checkbox">
-
-                         <label>
-                            <input type="checkbox" name="vehicle" value="lunes">Lunes<br>
-                            <input type="checkbox" name="vehicle" value="Car">Martes<br>
-                             <input type="checkbox" name="vehicle" value="Car">Miercoles<br>
-                             <input type="checkbox" name="vehicle" value="Car">Jueves<br>
-                             <input type="checkbox" name="vehicle" value="Car">Viernes<br>
-                             <input type="checkbox" name="vehicle" value="Car">Sabado<br>
-                             <input type="checkbox" name="vehicle" value="Car">Domingo<br>
-
-                        </label>
-                    </div>
+                      <div id="detalles_forms"></div>
 
 
+                    <label for="id_producto">Productos</label>
+                      <select class="form-control" id="id_producto" name="id_producto" title="">
+                          <option value="" selected="selected">---------</option>
+                             {% for i in productosTerminados%}
+                                 <option value="{{i.id}}">{{i}}</option>
+                            {% endfor %}
+                         </select>
 
+                        <div class="form-group">
+                             <label for="cantidadProducto">Cantidad</label>
+                             <input type="text"  min="0" class="form-control" name="cantidadProducto" id="cantidadProducto" placeholder="cantidad" >
+                        </div>
 
+                     {{ detalles_form_factory.management_form }}
 
+                    <button id="add-detalle-receta" type="button" class="btn btn-primary">Add</button>
+                    <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>producto</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
 
+                    </table>
+                {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                {% endbuttons %}
+                </form>
 
-
-        </form>
-        <div class="col-md-10">
-
-           <h2>Producto Terminado</h2>
-           <div class="row col-md-4">
-              <select class="form-control">
-                  <option>Producto Terminado 1</option>
-                  <option>Producto Terminado 2</option>
-                  <option>Producto Terminado 3</option>
-                  <option>Producto Terminado 4</option>
-                  <option>Producto Terminado 5</option>
-                </select>
-               <div class="form-group">
-
-                    <label for="inputEmail3" class=" control-label">Cantidad</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-                   <label for="inputEmail3" class=" control-label">Unidad de Medida</label>
-
-                    <input type="text" class="form-control" id="inputEmail5" required>
-
-            </div>
-               </div>
-           <div class="col-md-2 pull-left"></div>
-                           <button class="btn" ><font face="tahoma" size="2" color="green"><b><span href="recetasAlta" class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></button>
-
-            </div>
-
-      <div class="row">
-          <div class="col-md-10">
-
-          <table class="table table-hover">
-            <thead>
-            <tr>
-
-                <th>Nombre</th>
-                <th>Cantidad</th>
-                <th>Unidad Medida</th>
-            </tr>
-            </thead>
-              <tbody>
-            {% for productoTerminado in productoTerminados %}
-                <tr>
-
-              <td>{{productoTerminado.nombre}}</td>
-              <td>{{productoTerminado.cantidad}}</td>
-              <td>{{productoTerminado.Umedida}}</td>
-
-          </tr>
-            {% endfor %}
-          </tbody>
-          </table>
-
-          </div>
-          <div class="col-md-2">
-          <div class="btn-group btn-group-sm pull-right" role="group" aria-label="...">
-              <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
-              </div>
-
-          </div>
 <hr/>
       <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-ok" aria-hidden="true"> Guardar </span></b></font></button>
-      <button class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></button>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
   </div>
 
 </div>
 </div>
-</form>
 
-    <!-- Este es el fin del formulario de recetas -->
-    <!-- Nota: Cuando guardamos el cliente, se pone automaticamente como moroso y el saldo se pone en cero -->
+{% endblock %}
+{% block javascript %}
+<script id="detalle_tabla_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %>
 
 
+        <tr class="form-row row1 has_original">
+            <td><%= d.texto %></td>
+            <td class="field-cantidad_producto">
+                <input class="cantidades_tablas" id="cantidad-<%=i%>" onchange="cambio_cantidad(<%=i%>)"  name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            <td><button type="button"  data-id="<%= d.producto%>"  class="btn-modificar" onClick= "modificar(<%=i%>)">Modificar</button></td>
+
+            <td><button type="button"  data-id="<%= d.producto%>" id="renglon-<%= d.producto%>" class="btn-eliminar" onClick= "eliminar(<%=i%>)">Eliminar</button></td>
+
+        </tr>
+    <% } %>
+    <% })%>
+</script>
+<script>
+
+var detalles = [];
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
+        // saco producto del arreglo detalles
+function eliminar(indi){
+        detalles = eliminar_objeto(detalles,indi);
+        armar_tabla(); //refresco la tabla
+        }
+
+function modificar(i){
+    var nueva_cantidad = $("#cantidad-"+i).val();
+    id_input = document.getElementById("cantidad-"+i);
+    detalles = modificar_cantidad_arreglo(detalles,nueva_cantidad,id_input,i);
+}
+
+function armar_form(){
+            var html_form = "";
+            $(detalles).each(function(i, d) {
+                html_form = html_form + armar_hidden("form",d.cantidad,"cantidad_producto",i);
+                html_form = html_form + armar_hidden("form",d.producto,"producto_terminado",i);
+            });
+            document.getElementById("id_form-TOTAL_FORMS").value = _.size(detalles);
+
+            $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+    var html_tabla = "";
+    $(detalles).each(function(i, d) {
+        html_tabla = html_tabla + tpl_tabla({objects:d});
+    });
+    $('#detalles').html(html_tabla);
+}
 
 
+function validarForm(){
+    if (_.size(detalles) == 0){
+         alert("Debe agregar al menos un detalle");
+        return false;
+    }else{
+        armar_form();
+        return true;
+    }
 
+}
+
+$(function() {
+
+  $("#add-detalle-receta").click(function(){
+        var cantidad = $("#cantidadProducto").val();
+        var producto = $("#id_producto").val();
+        var texto = document.getElementById('id_producto').options[document.getElementById('id_producto').selectedIndex].text;
+        if ((cantidad == "") || (producto == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            if (!esFloatPositivo(cantidad)){
+                alert("debe ingresar una cantidad valida");
+            }else{
+                 var ins = _.find(detalles,{producto:producto});
+                 if (ins != undefined){
+                    alert("Producto ya cargado");
+                 }else{
+                    detalles.push({cantidad: cantidad, producto: producto,i:"0",texto:texto});
+                    armar_tabla();
+                    console.log(detalles);
+                    det = detalles[0];
+                    console.log(det);
+                    d = det.cantidad;
+                    console.log(d);
+                 }
+            }
+        }
+  });
+
+});
+
+</script>
 {% endblock %}

@@ -14,15 +14,9 @@
                                             <label for="fecha_realizacion">Fecha de Realizacion</label>
                                             <input value="{{pedido.fecha_realizacion}}" type="text" class="form-control" id="fecha_realizacion" name ="fecha_realizacion" readonly>
                                       </div>
-
                                       <div class="form-group">
-                                            <label for="fecha_probable_entrega">Fecha Probable de Entrega</label>
-                                            <input value="{{pedido.fecha_probable_entrega}}" type="text" class="form-control" id="fecha_probable_entrega" readonly>
-                                      </div>
-
-                                     <div class="form-group">
                                             <label for="fecha_de_entrega">Fecha de Entrega</label>
-                                            <input value="{{pedido.fecha_de_entrega}}" type="text" class="form-control" id="fecha_de_entrega" readonly>
+                                            <input value="{% if pedido.fecha_de_entrega = None %}No Entregado{% else %}{{pedido.fecha_de_entrega}}{% endif %}" type="text" class="form-control" id="fecha_de_entrega" readonly>
                                       </div>
 
                                       <div class="form-group">
@@ -36,8 +30,28 @@
                                       </div>
 
                           </form>
-                          <a href = "{%url 'pedidosProveedor' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
                           <!-- fin formulario -->
+                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos del Pedido</b></font></p></div>
+                          <div class="col-md-11 pull-right">
+                              <table class="table table-hover ">
+                                    <thead>
+                                    <tr>
+                                        <th>Nombre</th>
+                                        <th>Cantidad</th>
+                                    </tr>
+                                    </thead>
+                                      <tbody>
+                                      {% for d in pedido.detallepedidoproveedor_set.all %}
+                                        <tr>
+                                            <td>{{d.insumo.nombre}}</td>
+                                            <td>{{d.cantidad_insumo}}</td>
+                                        </tr>
+                                      {% endfor %}
+                                     </tbody>
+                                  </table>
+                                    <a class="btn pull-right" href="{%url 'pedidosProveedor'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+                          </div>
                   </div>
         </div>
 </div>

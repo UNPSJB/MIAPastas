@@ -14,30 +14,14 @@
   <div class="panel-body">
       <!-- formulario -->
 
-      <form class="form-inline">
+      <form class="form-inline" method="get">
+            <div class="form-group col-md-12">
+                        <label for="fecha_creacion">Fecha Creacion (Mayor o igual)</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_creacion}}" name="fecha_creacion" id="fecha_creacion">
+                  </div>
 
-
-          <div class="form-group">
-
-              <div class="form-group">
-                    <label for="cuil">Fecha Creacion</label>
-                    <input type="text" value="{{filtros.fecha_creacion}}" class="form-control" id="fecha_creacion" placeholder="fecha creacion" >
-              </div>
-              <div class="form-group">
-                    <label for="razon_social">Razon social</label>
-                    <input type="text" value="{{filtros.razon_social}}" class="form-control" id="razon_social" placeholder="huevo" >
-              </div>
-              <div class="form-group">
-                    <label for="fecha_desde">Fecha Desde</label>
-                    <input type="text" value="{{filtros.fecha_desde}}" class="form-control" id="fecha_desde">
-              </div>
-              <div class="form-group">
-                    <label for="fecha_hasta">Fecha Hasta</label>
-                    <input type="text" value="{{filtros.fecha_hasta}}" class="form-control" id="fecha_hasta">
-              </div>
-                <p>&nbsp;</p>
-
-
+            <p>&nbsp;</p>
+            <div class="col-md-2 form-group">
               <label for="cliente">Cliente</label>
 
               <select class="form-control" id="cliente" name="cliente">
@@ -46,7 +30,8 @@
                                      <option value="{{p.id}}">{{p.razon_social}}</option>
                                 {% endfor %}
               </select>
-
+                </div>
+              <div class="col-md-3 form-group">
               <label for="tipo_pedido">Tipo Pedido</label>
 
               <select class="form-control" id="tipo_pedido" name="tipo_pedido">
@@ -57,10 +42,11 @@
 
               </select>
 
+
+
           </div>
+            <button type="submit" class="btn btn-default">Filtrar</button>
 
-
-          <button type="submit" class="btn btn-default">Filtrar</button>
       </form>
 
           <p>&nbsp;</p>
@@ -79,8 +65,8 @@
               <tbody>
             {% for pedido in pedidos %}
             <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
-                <td>{{pedido.tipo_pedido}}</td>
-                <td>{{pedido.cliente.razon_social}}</td>
+                <td>{{pedido.get_tipo_pedido_display}}</td>
+                <td><a href="{% url 'clienteConsulta' pedido.cliente.id %}">{{pedido.cliente.razon_social}}</a></td>
                 <td>{{pedido.fecha_creacion}}</td>
 
           </tr>
@@ -89,19 +75,26 @@
           </table>
 
           </div>
-          <div class="col-md-2">
+          <div class="col-md-6">
+              <div class="col-md-4">
               <div class="btn-group btn-group-sm" role="group" aria-label="...">
               <button id="consultar-pedido" type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
               <button id="modificar-pedido" type="button" class="btn btn-warning" data-toggle="modal" data-target="#myModalModificar" data-backdrop="static"><span class="glyphicon glyphicon-wrench" aria-hidden="true"> </span></button>
               <button id="modal-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
-          </div>
+                </div>
+                  </div>
+              </div>
+              <div class="col-md-3" style="pull-right;">
               <p></p>
-          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Fijo</span></b></font></a>
-          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Ocacional</span></b></font></a>
-          <a class="btn" href="pedidosClienteAlta"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Pedido Cambio</span></b></font></a>
+              <a href="{% url 'pedidosClientesAlta' 1 %}" ><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido Fijo</span></b></font></button></a>
+
+              <a href="{% url 'pedidosClientesAlta' 2 %}"><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido Ocacional </span></b></font></button></a>
+
+              <a href="{% url 'pedidosClientesAlta' 3 %}"><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido de Cambio</span></b></font></button></a>
 
           </div>
-          <div class="col-md-4">
+          <div class="col-md-6"></div>
+          <div class="col-md-6">
 
               <div>
 
@@ -117,7 +110,11 @@
             </thead>
               <tbody>
 
-          </tbody>
+              {% for clave, valor in totales.iteritems %}
+                    <td>totales.[clave]</td>
+                    <td>valor</td>
+              {% endfor %}
+              </tbody>
           </table>
           </div>
               <hr>
@@ -141,212 +138,7 @@
           </div>
 
       </div>
-       <div>
 
-
-</div>
-
-    <!-- Modal -->
-            <div id="myModalModificar" class="modal fade"  role="dialog"> <!--
-            con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal
-            - Con col-md-offset-4 corremos 4 espacios a la derecha, pdemos usar col-md2 col-md-offset-4 para que quede 4 espacios en blanco primero-->
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 align="center" class="modal-title center">Modificar Pedido</h1>
-                  </div>
-                  <div class="modal-body">
-
-
-                    <form class="form-horizontal col-md-12">
-
-                        <h4>Datos del Pedido</h4>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">N°Pedido</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Tipo de Pedido</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Cuil/Cuit</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Razon Social</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
-                          </div></div>
-                        <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Fecha de creacion</label>
-                              <div class=" col-md-5">
-                            <input type="date" class="form-control" id="exampleInputName2"  readonly>
-                          </div></div>
-
-                        <!-- DEPENDIENDO DE QUE TIPO DE PEDIDO ES(CAMBIO, FIJO, OCACIONAL) SE DEBEN MOSTRAR CAMPOS, COMO SE HACE???-->
-                      </form>
-
-                      <table class="table table-hover table table-condensed">
-                        <thead>
-                        <h4>Productos del pedido</h4>
-                        <tr>
-                            <th>Nombre Producto</th>
-                            <th>Cantidad</th>
-                            <th>Unidad Medida</th>
-
-                        </tr>
-                        </thead>
-                          <tbody>
-
-                            <tr>
-                          <td>nombre</td>
-                          <td>12</td>
-                                <td>Kg</td>
-                                <td>
-                                    <button type="button" class="btn btn-danger btn-xs"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span></button>
-                                    <button type="button" class="btn btn-success btn-xs" data-toggle="modal" data-target="#myModalCantidad"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span></button>
-
-                                </td>
-                      </tr>
-
-                      </tbody>
-                      </table>
-
-                  </div>
-                  <div class="modal-footer">
-                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
-                       en el modelo, -->
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-
-
-    <!-- Modal -->
-            <div id="myModalCantidad" class="modal fade"  role="dialog"> <!-- con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal -->
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 align="center" class="modal-title center">Ingrese nuevos datos al pedido</h1>
-                  </div>
-                  <div class="modal-body">
-
-                    <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Cantidad</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="Nueva Cantidad" >
-                          </div></div>
-
-                      <!-- Aca debe ir modificar los dias de la semana si es de tipo fijo , como????-->
-                      <br>
-                  </div>
-                  <div class="modal-footer">
-                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
-                       en el modelo, -->
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
-                  </div>
-                </div>
-
-              </div>
-            </div>
-
-
-
-     <!-- Modal -->
-            <div id="myModal" class="modal fade"  role="dialog"> <!-- con data-backdrop="static" hace q no se cierre al hacer click afuera del cuadrado del modal -->
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 align="center" class="modal-title center">Detalles del Pedido</h1>
-                  </div>
-                  <div class="modal-body">
-
-
-                    <form class="form-horizontal col-md-12">
-
-                        <h4>Datos del Pedido</h4>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">N°Pedido</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Tipo de Pedido</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Cuil/Cuit</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Razon Social</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" readonly >
-                          </div></div>
-                        <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Fecha de creacion</label>
-                              <div class=" col-md-5">
-                            <input type="date" class="form-control" id="exampleInputName2"  readonly>
-                          </div></div>
-
-                        <!-- DEPENDIENDO DE QUE TIPO DE PEDIDO ES(CAMBIO, FIJO, OCACIONAL) SE DEBEN MOSTRAR CAMPOS, COMO SE HACE???-->
-                      </form>
-
-                      <table class="table table-hover">
-                        <thead>
-                        <h4>Productos del pedido</h4>
-                        <tr>
-                            <th>Nombre Producto</th>
-                            <th>Cantidad</th>
-                            <th>Unidad Medida</th>
-
-                        </tr>
-                        </thead>
-                          <tbody>
-                        {% for pedido in pedidos %}
-                            <tr>
-                          <td>{{pedido.tipo_pedido}}</td>
-                          <td>{{pedido.fecha_crecion}}</td>
-                      </tr>
-                        {% endfor %}
-                      </tbody>
-                      </table>
-
-                  </div>
-                  <div class="modal-footer">
-                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
-                       en el modelo, -->
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
-                  </div>
-                </div>
-
-              </div>
-            </div>
-</div>
 
     <!-- Este es el fin del formulario de recetas -->
 
@@ -354,9 +146,21 @@
 {% block javascript %}
 <script>
   $(function() {
-    $( "#fecha-desde" ).datepicker();
-    $( "#fecha-hasta" ).datepicker();
+    $( "#fecha-desde").datepicker();
+    $( "#fecha-hasta").datepicker();
 
+    var id_tipo;
+    function obtenerTipo(event) {
+            var $el = $(this);
+            id_tipo = $el.data()["id"];
+         }
+
+    $(".tipo_pedido").click(obtenerTipo);
+
+    $("#boton_aceptar").click(function(){
+        window.open('/pedidosCliente/Alta/'+id_tipo+'',"_self")
+
+    })
 
     var id;
         function obtenerId(event) {
@@ -421,7 +225,7 @@
             if(id==undefined){
                 mostrar_error();
             }else{
-            window.open('/c/Modificar/'+id+'',"_self")
+            window.open('/pedidosCliente/Modificar/'+id+'',"_self")
         }}
 
 

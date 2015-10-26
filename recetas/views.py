@@ -13,25 +13,54 @@ import json as simplejson
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
+import re #esto sirve para usar expresiones regulares
+import datetime
+#from datetime import date, datetime
+#import time
+
     # Create your views here.
 
 def get_order(get):
     if "o" in get:
         return get["o"]
 
+
+fechareg = re.compile("^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$") #esta es una expresion regular par las fechas
+##permite fechas del siguiente tipo: dd/mm/aa or d/m/aa or dd/mm/aaaa etc....
+#permite fechas del siguiente tipo: dd-mm-aa or d-m-aa or dd-mm-aaaa etc....
+
 def get_filtros(get, modelo):
     mfilter = {}
     for filtro in modelo.FILTROS:
         attr = filtro.split("__")[0]
         if attr in get and get[attr]:
-            mfilter[filtro] = get[attr]
-            mfilter[attr] = get[attr]
+            texto = get[attr]
+            match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
+            if match is not None:
+                print(match)
+                print(texto)
+                print(match.groups()[2])
+                print(match.groups()[1])
+                print(match.groups()[0])
+                print(filtro)
+                ano = int(match.groups()[2])
+                mes = int(match.groups()[1])
+                dia = int(match.groups()[0])
+                print(ano,mes,dia)
+                fecha = datetime.date(ano,mes,dia)
+                mfilter[filtro] = datetime.date(ano,mes,dia)
+            else:
+                mfilter[filtro] = texto
+            mfilter[attr] = texto
     return mfilter
 
 #********************************************************#
                #     C H O F E R E S    #
 #********************************************************#
 def choferes(request,chofer_id=None):
+    """
+        Permite buscar choferes con caracteristicas espesificas dentro de un grupo de choferes y obtener la informacion detallada de un chofer
+    """
     if chofer_id is not None:
         # consulta
         chofer = models.Chofer.objects.get(pk=chofer_id)
@@ -47,6 +76,11 @@ def choferes(request,chofer_id=None):
 
 
 def choferesAlta(request):
+    """
+        Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
+        precondicion: El chofer a dar de alta no debe existir
+        postcondicion: El chofer ha sido dado de alta
+    """
     if request.method == "POST":
         chofer_form = forms.ChoferForm(request.POST)
         if chofer_form.is_valid():
@@ -60,19 +94,29 @@ def choferesAlta(request):
 
 
 def choferesModificar(request,chofer_id =None):
+    """
+        Recibe una peticion de modificar datos de un chofer. Modifica los datos correspondientes del chofer
+        precondicion: El chofer a modificar debe existir
+        postcondicion: El chofer ha sido modificado
+    """
     chofer_instancia = get_object_or_404(models.Chofer, pk=chofer_id)
     if request.method=="POST":
         chofer_form = forms.ChoferForm(request.POST,instance= chofer_instancia)
         if chofer_form.is_valid():
             chofer_form.save()
-        return redirect('choferes')
+            return redirect('choferes')
     else:
         chofer_form = forms.ChoferForm(instance= chofer_instancia)
-        return render(request,"choferesModificar.html",{"chofer_form":chofer_form,"id":chofer_id})
+    return render(request,"choferesModificar.html",{"chofer_form":chofer_form,"id":chofer_id})
 
 
 @csrf_exempt
 def choferesBaja(request,chofer_id=None):
+    """
+        Recibe una peticion de dar de baja un chofer. Da de baja el chofer espedificado.
+        precondicion: El chofer a dar de baja debe existir
+        postcondicion: El chofer ha sido dado de baja
+    """
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
     chofer.delete()
@@ -84,6 +128,10 @@ def choferesBaja(request,chofer_id=None):
 #********************************************************#
 
 def insumos(request,insumo_id=None):
+    """
+        Permite buscar insumos con caracteristicas espesificas dentro de un grupo de insumos y obtener la informacion detallada de un insumo particular
+    """
+
     if insumo_id is not None:
         # consulta
         insumo_instancia = models.Insumo.objects.get(pk=insumo_id)
@@ -100,6 +148,12 @@ def insumos(request,insumo_id=None):
 
 
 def insumosAlta(request):
+    """
+        Recibe una peticion de dar de alta un insumo. Da de alta el insumo
+        precondicion: El insumo a dar de alta no debe existir
+        postcondicion: El insumo ha sido dado de alta
+    """
+
     if request.method == "POST":
         insumo_form = forms.InsumoForm(request.POST)
         if insumo_form.is_valid():
@@ -111,6 +165,12 @@ def insumosAlta(request):
 
 
 def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
+    """
+        Recibe una peticion de modificar datos de un insumo. Modifica los datos correspondientes del insumo
+        precondicion: El insumo a modificar debe existir
+        postcondicion: El insumo ha sido modificado
+    """
+
     insumo_instancia = get_object_or_404(models.Insumo, pk=insumo_id)
     if request.method=="POST":
         insumo_form = forms.InsumoForm(request.POST,instance= insumo_instancia)
@@ -123,6 +183,12 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
 
 
 def insumosBaja(request,insumo_id):
+    """
+        Recibe una peticion de dar de baja un insumo. Da de baja el insumo espedificado. Si posee recetas asociadas, tambien las elimina
+        precondicion: El insumo a dar de baja debe existir
+        postcondicion: El insumo ha sido dado de baja junto a culquier receta asociada al mismo
+    """
+
     insumo = models.Insumo.objects.get(pk=insumo_id)
     # HAY Q HACER VALIDACIONES.
     if insumo.receta_set.exists():
@@ -146,22 +212,21 @@ def insumosBaja(request,insumo_id):
 #********************************************************#
 
 def recetas(request,receta_id=None):
+    """
+        Permite buscar recetas con caracteristicas espesificas dentro de un grupo de recetas y obtener la informacion detallada de una receta particular
+    """
     if receta_id is not None:
         # consulta
         receta = models.Receta.objects.get(pk=receta_id)
         return render(request, "recetasConsulta.html",{"receta": receta})
-    elif request.method == 'GET':
-        # filtros
-        filters = get_filtros(request.GET, models.Receta)
-        mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
-        recetas = models.Receta.objects.filter(**mfilters)
+    # filtros
+    filters = get_filtros(request.GET, models.Receta)
+    mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
+    recetas = models.Receta.objects.filter(**mfilters)
 
-        for receta in recetas:
-            insumos = receta.insumos.all()
-            print "soy recetaaaaaaaaaa ",insumos
         # filtrar recetas por productos
-        productos_terminados= models.ProductoTerminado.objects.all()
-        return render(request, "recetas/recetas.html",
+    productos_terminados= models.ProductoTerminado.objects.all()
+    return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
                        "filtros": filters,
                        "productos_terminados":productos_terminados})
@@ -169,10 +234,14 @@ def recetas(request,receta_id=None):
 
 
 def recetasModificar(request,receta_id):
+    """
+        Recibe una peticion de modificar datos de una receta. Modifica los datos correspondientes de la receta
+        precondicion: La receta a modificar debe existir
+        postcondicion: La receta ha sido modificada
+    """
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     insumos = models.Insumo.objects.all() #para detalles
-
     detalles_inlinefactory = inlineformset_factory(models.Receta,models.RecetaDetalle,fields=('cantidad_insumo','insumo','receta'))
 
     if request.method=="POST":
@@ -190,15 +259,22 @@ def recetasModificar(request,receta_id):
         receta_form = forms.RecetaForm(instance= receta_instancia)
 
         #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "recetadetalle_set"
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
                                                    "insumos":insumos,
                                                    "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='recetadetalle_set'),
-                                                   "receta_id":receta_id
+                                                   "receta_id":receta_id,
+                                                   "pref":pref
                                                    })
 
 
 def recetasAlta(request):
+    """
+       Recibe una peticion de dar de alta una receta. Verifica que la nueva receta sea valida y de serlo la da de alta
+       precondicion: La receta a dar de alta no debe existir
+       postcondicion: La receta ha sido dada de alta
+    """
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
@@ -222,10 +298,16 @@ def recetasAlta(request):
     return render(request, "recetasAlta.html", {
             "insumos":insumos,
             "receta_form": receta_form or forms.RecetaForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
+            "detalles_form_factory": detalles_form or detalles_form_class(),
+            "prefix":"form"})
 
 
 def recetasBaja(request,receta_id):
+    """
+        Recibe una peticion de dar de baja una receta. Da de baja la receta espedificada.
+        precondicion: La receta a dar de baja debe existir
+        postcondicion: La receta ha sido dada de baja
+    """
     receta = models.Receta.objects.get(pk=receta_id)
     messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
     receta.delete()
@@ -391,6 +473,9 @@ def productosTerminadosBaja(request, producto_id=None):
 #********************************************************#
 
 def zonas(request,zona_id=None):
+    """
+        Permite buscar zonas con caracteristicas espesificas dentro de un grupo de zonas y obtener informacion detallada de una zona particular
+    """
     if zona_id is not None:
         # consulta
         zona = models.Zona.objects.get(pk=zona_id)
@@ -407,6 +492,11 @@ def zonas(request,zona_id=None):
 
 
 def zonasAlta(request):
+    """
+        Recibe una peticion de dar de alta una zona. Verifica que la nueva zona sea valida y de serlo la da de alta
+        precondicion: La zona a dar de alta no debe existir
+        postcondicion: La zona ha sido dada de alta
+    """
     if request.method == "POST":
         zona_form = forms.ZonaForm(request.POST)
         if zona_form.is_valid():
@@ -418,6 +508,11 @@ def zonasAlta(request):
 
 
 def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
+    """
+        Recibe una peticion de modificar datos de una zona. Modifica los datos correspondientes de la zona
+        precondicion: La zona a modificar debe existir
+        postcondicion: La zona ha sido modificada
+    """
     zona_instancia = get_object_or_404(models.Zona, pk=zona_id)
     if request.method=="POST":
         zona_form = forms.ZonaForm(request.POST,instance= zona_instancia)
@@ -431,7 +526,11 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def zonasBaja(request,zona_id =None):
-    print "estoy en bajaaa"
+    """
+        Recibe una peticion de dar de baja una zona. Si la zona posee ciudades asociadas muestra un mensaje de error. Si no las posee da de baja la zona espedificada.
+        precondicion: La zona a dar de baja debe existir y no debe poseer ciudades asociadas
+        postcondicion: La zona ha sido dada de baja
+    """
     p = models.Zona.objects.get(pk=zona_id)
     if p.ciudades.exists():
         messages.error(request, 'La zona: ' + p.nombre + ', no se puede eliminar porque tiene las siguientes ciudades asociadas: %s .' % ", ".join(
@@ -507,6 +606,9 @@ def clientesBaja(request,cliente_id =None):
                #     C I U D A D E S   #
 #********************************************************#
 def ciudades(request,ciudad_id=None):
+    """
+        Permite buscar ciudades con caracteristicas espesificas dentro de un grupo de ciudades y obtener informacion detallada de una ciudad particular
+    """
     if ciudad_id is not None:
         # consulta
         ciudad = models.Ciudad.objects.get(pk=ciudad_id)
@@ -517,11 +619,16 @@ def ciudades(request,ciudad_id=None):
         mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
         ciudades = models.Ciudad.objects.filter(**mfilters)
         zonas = models.Zona.objects.all()
-        return render(request, "recetas/ciudades.html",{"ciudades":ciudades,"zonas":zonas})
+        return render(request, "recetas/ciudades.html",{"filtros": filters,"ciudades":ciudades,"zonas":zonas})
 
 
 
 def ciudadesAlta(request):
+    """
+        Recibe una peticion de dar de alta una ciudad. Verifica que la nueva ciudad sea valida y de serlo la da de alta
+        precondicion: La ciudad a dar de alta no debe existir
+        postcondicion: La ciudad ha sido dada de alta
+    """
     if request.method == "POST":
         ciudad_form = forms.CiudadForm(request.POST)
         if ciudad_form.is_valid():
@@ -533,6 +640,11 @@ def ciudadesAlta(request):
 
 
 def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
+    """
+        Recibe una peticion de modificar datos de una ciudad. Modifica los datos correspondientes de la ciudad
+        precondicion: La ciudad a modificar debe existir
+        postcondicion: La ciudad ha sido modificada
+    """
     ciudad_instancia = get_object_or_404(models.Ciudad, pk=ciudad_id)
     if request.method=="POST":
         ciudad_form = forms.CiudadForm(request.POST,instance= ciudad_instancia)
@@ -546,7 +658,11 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def ciudadesBaja(request,ciudad_id =None):
-    print "estoy en bajaaa"
+    """
+        Recibe una peticion de dar de baja una ciudad.Da de baja la ciudad espedificada.
+        precondicion: La ciudad a dar de baja debe existir
+        postcondicion: La ciudad ha sido dada de baja
+    """
     p = models.Ciudad.objects.get(pk=ciudad_id)
     p.delete()
     return redirect('ciudades')
@@ -570,67 +686,124 @@ def pedidosClientes(request,pedido_id=None):
         mfilters = dict(filter(lambda v: v[0] in models.PedidoCliente.FILTROS, filters.items()))
         pedidos = models.PedidoCliente.objects.filter(**mfilters)
         clientes = models.Cliente.objects.all()
-
         totales=dict()
         for pedido in pedidos:
             var=pedido.productos.all()
             var2=pedido.pedidoclientedetalle_set.all()
-
-            print "esssssss",len(var),"el pedido es",pedido.pedidoclientedetalle_set.all()
             for producto in pedido.productos.all():
-                print "dentrooooo", producto.nombre
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 else:
-                    print "lpm ",producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
-
                     totales[producto]=0
-                    print producto.nombre,"  oolisssho ",totales[producto]
-
-
+                    totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+        print "diccionario",totales
         return render(request, "pedidosCliente.html",
                       {"pedidos": pedidos,
                        "filtros": filters,
-                       "clientes":clientes})
+                       "clientes":clientes,
+                       "totales":totales})
 
 
 
-def pedidosClientesAlta(request):
+def pedidosClientesAlta(request, tipo_pedido_id):
     detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
     detalles_form = None
     pedidosClientes_form = None
     productosTerminados = models.ProductoTerminado.objects.all()
+    if tipo_pedido_id == "1":
+        pedidosClientes_form = forms.PedidoClienteFijoForm
+    elif tipo_pedido_id == "2":
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm
+
+    elif tipo_pedido_id == "3":
+        pedidosClientes_form = forms.PedidoClienteCambioForm
+
     if request.method == "POST":
-        pedidosClientes_form = forms. pedidosClientesForm(request.POST) #crea formulario de receta cno los datos del post
+        pedidosClientes_form = pedidosClientes_form(request.POST) #crea formulario de receta cono los datos del post
         if  pedidosClientes_form.is_valid():
+            if tipo_pedido_id == "1":
+                dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
             pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
             if detalles_form.is_valid():
-                #detalles = detalles_form.save(commit=False)
+                pedido_instancia.tipo_pedido=tipo_pedido_id
+                print pedido_instancia
                 pedido_instancia.save()
                 for detalle in detalles_form:
                     detalle_instancia = detalle.save(commit=False)
-                    detalle_instancia.receta = pedido_instancia
+                    detalle_instancia.pedido_cliente = pedido_instancia
                     detalle_instancia.save()
-                messages.success(request, 'El pedido: ' + pedido_instancia.nombre + ', ha sido registrada correctamente.')
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
-    return render(request, "recetasAlta.html", {
-            "insumos":insumos,
-            "receta_form": receta_form or forms.RecetaForm(),
-            "detalles_form_factory": detalles_form or detalles_form_class()})
+    return render(request, "pedidosClienteAlta.html", {
+                "productosTerminados":productosTerminados,
+                "pedido_form":  pedidosClientes_form,
+                "detalles_form_factory": detalles_form or detalles_form_class(),
+                "tipo_pedido": tipo_pedido_id})
 
 
 
+def pedidosClienteBaja(request,pedido_id):
+    pedido = models.PedidoCliente.objects.get(pk=pedido_id)
+    messages.success(request, 'El pedido: ' + pedido.get_tipo_pedido_display()+" de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    pedido.delete()     #hacer baja logica
+    return redirect('pedidosCliente')
 
 
+def pedidosClienteModificar(request,pedido_id):
+    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
+    if pedido_instancia.tipo_pedido == 1:
+        pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteFijoForm
 
+    elif pedido_instancia.tipo_pedido == 2:
+        pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteOcacionalForm
+    else:
+        pedido_instancia = get_object_or_404(models.PedidoCambio, pk=pedido_id)
+        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+        pedidosClientes_form = forms.PedidoClienteCambioForm
 
+    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
+    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
+    productos = models.ProductoTerminado.objects.all() #para detalles
 
+    if request.method=="POST":
+        if pedido_instancia.tipo_pedido == 1:
+            print "entre a tipo de pedido fijo"
+            pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
+        elif pedido_instancia.tipo_pedido == 2:
+            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+        else:
+            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
 
+        print "pedido instancia", pedido_instancia
+        if pedidosClientes_form.is_valid():
+            print "es valido el pedido"
 
+            pedido_instancia = pedidosClientes_form.save(commit=False)
+            #DETALLES
+            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
+            if detalles_formset.is_valid():
+                detalles_formset.save()
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
+                pedido_instancia.save()
+            return redirect('pedidosCliente')
 
+    #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "pedidoclientedetalle_set" #pedidoclientedetalle_set
+    return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
+                                                   "detalles_pedido":detalles_instancias,
+                                                   "productos":productos,
+                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
+                                                   "pedido_id":pedido_id,
+                                                   "pref":pref,
+                                                   "tipo_pedido":pedido_instancia.tipo_pedido
+                                                   })
 
 
 
@@ -648,18 +821,186 @@ def pedidosProveedor(request,pedido_id=None):
         filters = get_filtros(request.GET, models.PedidoProveedor)
         mfilters = dict(filter(lambda v: v[0] in models.PedidoProveedor.FILTROS, filters.items()))
         pedidos = models.PedidoProveedor.objects.filter(**mfilters)
+        proveedores = models.Proveedor.objects.all()
         return render(request, "pedidosProveedor.html",
-                  {"pedidos": pedidos,
+                  {"pedidos": pedidos,"proveedores":proveedores,
                    "filtros": filters})
 
 
+
+
 def pedidosProveedorAlta(request):
+    detalles_form_class = formset_factory(forms.DetallePedidoProveedorForm)
+    detalles_form = None
+    pedido_proveedor_form = None
+    insumos = models.Insumo.objects.all()
     if request.method == "POST":
-        pedido_proveedor_form = forms.PedidoProveedorForm(request.POST)
+        pedido_proveedor_form = forms.PedidoProveedorAltaForm(request.POST) #crea formulario de pedido con los datos del post
         if pedido_proveedor_form.is_valid():
-            pedido_proveedor_form.save()
+            pedido_proveedor_instancia = pedido_proveedor_form.save(commit = False) #commit false
+            detalles_form = detalles_form_class(request.POST, request.FILES)
+            if detalles_form.is_valid():
+                #detalles = detalles_form.save(commit=False)
+                pedido_proveedor_instancia.save()
+
+                for detalle in detalles_form:
+                    detalle_instancia = detalle.save(commit=False)
+                    detalle_instancia.pedido_proveedor = pedido_proveedor_instancia
+                    detalle_instancia.save()
+
+
+                messages.success(request, 'El Pedido ha sido registrada correctamente.')
+
+                return redirect('pedidosProveedor')
+        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
+            #por el get paso el id del proveedor
+    else:
+
+        pedido_proveedor_form = forms.PedidoProveedorAltaForm() #crea formulario de pedido con los datos del post
+        insumos = None
+        try:
+            id_proveedor = request.GET['proveedor']
+            id_fecha = request.GET['fecha']
+            proveedor = models.Proveedor.objects.get(pk=id_proveedor)
+            insumos = proveedor.insumos.all()
+            form = forms.PedidoProveedorAltaForm(initial={'proveedor':id_proveedor,'fecha_realizacion':id_fecha})#esto esta copado, te iniciaiza los datos del form automatico de django con los valores que vos queres......
+
+            return render(request, "pedidosProveedorAlta.html", {
+                "insumos":insumos,
+                "idProveedor":id_proveedor,
+                "pedido_proveedor_form": form,
+                "detalles_form_factory": detalles_form or detalles_form_class()})
+        except:
+            return render(request, "pedidosProveedorAlta.html", {
+                "insumos":insumos,
+                "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorAltaForm(),
+                "detalles_form_factory": detalles_form or detalles_form_class()})
+
+
+
+
+
+
+
+
+def pedidosProveedorModificar(request,pedido_id):
+    pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
+    detalles_instancias = models.DetallePedidoProveedor.objects.filter(pedido_proveedor = pedido_proveedor_instancia)
+
+    proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
+    insumos = proveedor.insumos.all()
+
+    detalles_inlinefactory = inlineformset_factory(models.PedidoProveedor,models.DetallePedidoProveedor,fields=('cantidad_insumo','insumo','pedido_proveedor'))
+
+    if request.method=="POST":
+        pedido_proveedor_form = forms.PedidoProveedorModificarForm(request.POST,instance= pedido_proveedor_instancia)
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_instancia = pedido_proveedor_form.save(commit=False)
+            #DETALLES
+            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidodetalle_set',instance=pedido_proveedor_instancia)
+            if detalles_formset.is_valid():
+                print(detalles_formset)
+                detalles_formset.save()
+                messages.success(request, 'El Pedido ha sido modificado correctamente.')
+                pedido_proveedor_instancia.save()
             return redirect('pedidosProveedor')
     else:
-        pedido_proveedor_form = forms.PedidoProveedorForm()
-    return render(request, "pedidosProveedorAlta.html", {"pedido_proveedor_form":pedido_proveedor_form})
+         pedido_proveedor_form = forms.PedidoProveedorModificarForm(instance= pedido_proveedor_instancia)
+         proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
+        #si el form no es valido, le mando todo al html para que muestre los errores#
+    pref = "pedidodetalle_set"
+    return render(request,"pedidosProveedorModificar.html",{"pedido_proveedor_form":pedido_proveedor_form,"id":pedido_id,
+                                                   "detalles_pedido":detalles_instancias,
+                                                   "insumos":insumos,
+                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidodetalle_set'),
+                                                   "pedido_id":pedido_id,"proveedor":proveedor,
+                                                   "pref":pref
+                                                   })
+
+
+def pedidosProveedorRecepcionar(request,pedido_id):
+    pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
+    proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
+    if request.method == "POST":
+        pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
+        if pedido_proveedor_form.is_valid():
+            pedido_proveedor_instancia.save()
+            messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
+            return redirect('pedidosProveedor')
+    else:
+        pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(instance=pedido_proveedor_instancia)
+
+    return render(request,"pedidosProveedorRecepcionar.html",{
+        "pedido_proveedor_form":pedido_proveedor_form,
+        "proveedor":proveedor,
+        "pedido_id":pedido_id})
+
+#la idea es que en proveedorRepecionar se recpcione y actualice el stock
+#poner un boton de cancelar, para cancelar el pedio
+
+
+
+
+@csrf_exempt
+def pedidosProveedorBaja(request,pedido_id =None):
+    print "estoy en bajaaa"
+    p = models.PedidoProveedor.objects.get(pk=pedido_id)
+    messages.success(request, 'El pedido realizado en la fecha: ' + p.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + p.proveedor.razon_social +', ha sido eliminado correctamente.')
+    p.delete()
+    return redirect('pedidosProveedor')
+
+
+#********************************************************#
+         #    L O T E S   #
+#********************************************************#
+def lotes(request,lote_id=None):
+    if lote_id is not None:
+        #consulta
+        lote = models.Lote.objects.get(pk=lote_id)
+        return render(request,"lotesConsulta.html",{"lote":lote})
+    else:
+        # filtros
+        filters = get_filtros(request.GET, models.Lote)
+        mfilters = dict(filter(lambda v: v[0] in models.Lote.FILTROS, filters.items()))
+        lotes= models.Lote.objects.filter(**mfilters)
+
+    productos = models.ProductoTerminado.objects.all()
+    return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
+
+
+def lotesModificar(request,lote_id=None):
+    lote_instancia = models.Lote.objects.get(pk=lote_id)
+    lote_form = forms.LoteForm(instance=lote_instancia)
+    return render(request,"lotesModificar.html",{"lote_form":lote_form,"id":lote_id})
+
+
+def lotesAlta(request):
+    if request.method == "POST":
+        lote_form = forms.LoteForm(request.POST)
+        if lote_form.is_valid:
+            lote = lote_form.save(commit = False)
+            lote.stock_disponible = lote.cantidad_producida #stock inicial
+            lote.save()
+            # actualizo stock del producto
+            lote.producto_terminado.stock =lote.producto_terminado.stock + lote.stock_disponible
+            lote.producto_terminado.save()
+            # disminuye stock de insumos
+            receta = lote.producto_terminado.receta_set.get()
+            cant_total = lote.cantidad_producida
+            detalles_receta = receta.recetadetalle_set.all()
+            for detalle_receta in  detalles_receta:
+                detalle_receta.insumo.stock =detalle_receta.insumo.stock - (detalle_receta.cantidad_insumo * cant_total)
+                detalle_receta.insumo.save()
+            return redirect("lotes")
+    else:
+        lote_form=forms.LoteForm()
+    return render(request,"lotesAlta.html",{"lote_form":lote_form})
+
+def lotesBaja(request,lote_id):
+    l = models.Lote.objects.get(pk=lote_id)
+    l.producto_terminado.stock = l.producto_terminado.stock - l.stock_disponible
+    l.producto_terminado.save()
+    l.delete()
+    messages.success(request, 'Lote fue eliminado correctamente.')
+    return redirect ('lotes');
 

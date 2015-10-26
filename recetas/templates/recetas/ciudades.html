@@ -40,7 +40,7 @@
 
             <div class="row">
 
-                <div class="col-md-10">
+                <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
 
                           <table class="table table-hover">
@@ -57,8 +57,7 @@
                                 <tr class="renglon select-item" data-id="{{ciudad.id}}" data-clientes="{{ciudad.cliente_set.exists}}" id="renglon-{{ciudad.id}}">
                                     <td>{{ciudad.nombre}}</td>
                                     <td>{{ciudad.codigo_postal}}</td>
-                                    <td>{{ciudad.zona}}</td>
-                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
+                                    <td><a href="{% url 'zonaConsulta' ciudad.zona.id %}">{{ciudad.zona}}</a></td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
@@ -87,30 +86,35 @@ var tiene_clientes;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-            $el.addClass("active");
+            $el.addClass("danger");
             tiene_clientes = $el.data()["clientes"] == "True";
             var _renglon = "";
             _renglon= "#renglon-"+id;
-            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
-            $(_renglon).addClass("active");
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
+ function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar una ciudad",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+        }
+
+
          function mostrarModal(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error al Intentar Eliminar",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar una Ciudad",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
-            });
+                mostrar_error();
             }else{
                   if(tiene_clientes){
                       BootstrapDialog.show({
@@ -156,18 +160,7 @@ var tiene_clientes;
 
         function modificar(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error de Modificar",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar una Ciudad",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
-            });
+                mostrar_error();
             }else{
             window.open('/ciudades/modificar/'+id+'',"_self")
         }}
@@ -175,18 +168,7 @@ var tiene_clientes;
 
         function consultar(){
             if(id==undefined){
-                BootstrapDialog.show({
-                title: "Error de Consulta",
-                cssClass: 'error-dialog',
-                message: "Debe seleccionar una Ciudad",
-                type: BootstrapDialog.TYPE_DANGER,
-                buttons: [{
-                        label: 'Aceptar',
-                        action: function(dialogRef){
-                            dialogRef.close();
-                        }
-                }]
-            });
+               mostrar_error();
             }else{
             window.open('/ciudades/'+id+'',"_self")
             }

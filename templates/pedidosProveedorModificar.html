@@ -1,0 +1,222 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+{% load l10n %}
+
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Proveedor Realizado a "{{proveedor.razon_social}}"</b></font></p></div>
+              <form action="{% url 'pedidosProveedorModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
+                  {% csrf_token %}
+                  {% bootstrap_form pedido_proveedor_form  %}
+                  {{ detalles_form_factory.management_form }}
+                 <!-- Este input es solo para poder leer los detalles de la receta desde js-->
+                  <input type="hidden" id="detalles_pedido" name="detalles_pedido" value="{{ detalles_pedido }}">
+
+                  <p>&nbsp;</p>
+                  <div class="panel-heading"><p class="text-center login-title">
+                            <font face="tahoma" size="4" color="black"><b>Modificar Detalles</b></font></p>
+                  </div>
+
+
+                  <label for="id_insumo">Insumo</label>
+                  <select class="form-control" id="id_insumo" name="id_insumo" title="">
+                       <option value="" selected="selected">---------</option>
+                             {% for i in insumos %}
+                                 <option value="{{i.id}}">{{i}}</option>
+                             {% endfor %}
+                  </select>
+
+                  <div class="form-group">
+                       <label for="cantidadInsumo">Cantidad</label>
+                       <input type="text" class="form-control" name="cantidadInsumo" id="cantidadInsumo" placeholder="cantidad" >
+                  </div>
+
+                      <div id="detalles_forms"></div>
+
+
+                  <button id="add-detalle-pedido" type="button" class="btn btn-primary">Agregar Detalle</button>
+                  <!--cuando apreto este boton, voy a la funcion add-detalle-pedido() de javascript que esta abajo del todo-->
+
+                  <table class="table table-hover" id="nueva" class="display">
+                        <thead>
+                            <tr style='cursor:pointer' class='desmarcado'>
+                                <th>Insumo</th>
+                                <th>Cantidad</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <table class="table table-hover" id="detalles" class="display"></table>
+                        </tbody>
+                    </table>
+
+                  {% buttons %}
+
+
+                    <button id = "btn-submit" type="submit" class="btn btn-primary"><!--al presionar el boton, autmaticamente toma todos los valores de los inputs y los pasa por el post-->
+                        {% bootstrap_icon "star" %} Submit
+                    </button>
+                  {% endbuttons %}
+              </form>
+            <a class="btn pull-right" href="{%url 'pedidosProveedor'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+</div>
+</div>
+</div>
+
+{% endblock %}
+{% block javascript %}
+
+<!-- Este escript es para mostrar la tabla de insumos-->
+<script id="detalle_tabla_tpl" type="text/html">
+    <% $(objects).each(function(i, d){ %>
+    <% if (d.delete_form != "on") { %> <!--si mi insumo no fue eliminado,  lo muestro-->
+        <tr class="form-row row1 has_original">
+            <td><%= d.texto %></td> <!--muestro el nombre del insumo-->
+            <td class="field-cantidad_insumo"> <!--muestro un input para meter la cantidad-->
+                <input class="vIntegerField" id="cantidad-<%=i%>" name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+            </td>
+            $("#<%=i%>.value")
+            <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%= d.insumo%>,<%=i%>)">Modificar</button></td>
+            <td><button type="button"  data-id="<%= d.insumo%>" id="renglon-<%= d.insumo%>" class="btn-eliminar" onClick= "eliminar(<%= d.insumo%>)">Eliminar</button></td>
+            <!--tengo dos botones: uno para modificar y otro para eliminar una fila-->
+
+        </tr>
+    <% } %>
+    <% })%>
+</script>
+
+
+
+
+
+
+
+
+<script>
+
+var detalles = [];
+var pedido_proveedor_pk = {{pedido_id}};
+var pref = "{{pref}}";
+var esFloat = /^[0-9]*(.[0-9]*)?$/;
+
+var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
+
+
+function eliminar(ins){
+        var insumo = _.find(detalles, {insumo:ins});
+        if (insumo.pk != ""){
+            insumo.delete_form="on";
+        }else{
+           detalles = _.filter(detalles,function(element){
+                    // filtro insumos validos
+                    return element.insumo != String(ins);
+            });
+        }
+        armar_tabla(); //refresco la tabla
+  }
+
+
+function modificar(ins,i){
+    var nueva_cantidad = $("#cantidad-"+i).serializeArray()[0].value;
+    if (!esFloat.test(nueva_cantidad) || (nueva_cantidad<0)){
+        alert("debe ingresar una cantidad nueva valida");
+    }else{
+        var obj_insumo = _.find(detalles,{insumo:ins});
+        obj_insumo.cantidad = nueva_cantidad;
+        alert("cantidad modificada");
+    }
+}
+
+function armar_form(){
+    var html_form=""
+    $(detalles).each(function(i, d){
+        html_form = html_form + armar_hidden(pref,d.insumo,"insumo",i);
+        html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_insumo",i);
+        html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
+        html_form = html_form + armar_hidden(pref,d.pk,"id",i);
+        html_form = html_form + armar_hidden(pref,d.pedido_proveedor_pk,"pedido_proveedor",i);
+     });
+    document.getElementById("id_"+"{{pref}}"+"-TOTAL_FORMS").value = _.size(detalles);
+
+
+    $('#detalles_forms').html(html_form);
+}
+
+function armar_tabla(){
+     var html_tabla="";
+     html_tabla = tpl_tabla({objects:detalles});//esto hace magia: me geenera automaticamente la tabla con los atributo de detalles, que es el detalle del pedido: "insumo" y "cantidad"
+
+    $('#detalles').html(html_tabla);
+}
+
+//esta funcion validarForm() se usa cuando apreto finalmente el boton "SUBMIT", y verifica que mi pedido tenga al menos un detalle.
+function validarForm(){
+    if (_.size(detalles) > 0){
+        var i = _.find(detalles, {delete_form:""}); // q delete no sea ON
+        if (i != undefined){
+            armar_form();
+            return true;
+        }
+    }
+    alert("El Pedido debe tener al menos un detalle");
+    return false;
+}
+
+
+$(function() {
+                /* INICIAMOS DETALLES */
+    var listado_detalles = [
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_proveedor.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}},  "cantidad": "{{detalle.cantidad_insumo|unlocalize}}", "texto": "{{detalle.insumo}}" },{% endfor %}
+    ]
+    $(listado_detalles).each(function(i, d) {
+        detalles.push({pedido_proveedor_pk:d.pedido_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
+     });
+             armar_tabla();
+
+    document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
+
+
+console.log("id_pedidssso " + detalles[0].pedido_proveedor_pk);//comprobandoooooo
+
+  $("#add-detalle-pedido").click(function(){
+        var cantidad = Number($("#cantidadInsumo").val());
+        var insumo = Number($("#id_insumo").val());
+        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        if ((cantidad == "") || (insumo == "")){
+            alert("Debe llenar todos los campos");
+        }else{
+            if (!esFloat.test(cantidad) || (cantidad<0)){
+                alert("debe ingresar una cantidad valida");
+            }else{
+                 var ins = _.find(detalles,{insumo:insumo});
+                 if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){
+                        detalles.push({ cantidad: cantidad,
+                                        insumo: insumo,
+                                        texto:texto,
+                                        pedido_proveedor_pk:pedido_proveedor_pk,
+                                        pk:"",
+                                        delete_form:"",
+                                        i:"0",
+                                        });
+                        console.log(detalles);
+                        armar_tabla();
+                 }else{
+                    alert("Insumo ya cargado");
+                 }
+            }
+        }
+  });
+
+
+
+
+
+});
+
+
+
+</script>
+
+{% endblock %}

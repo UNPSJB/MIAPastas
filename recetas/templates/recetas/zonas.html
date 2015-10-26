@@ -15,7 +15,7 @@
                     <button type="submit" class="btn btn-default">Filtrar</button>
                 </form>
             <div class="row">
-                <div class="col-md-10">
+                <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
                           <table class="table table-hover">
 
@@ -31,7 +31,6 @@
                                  <tr class="renglon select-item" data-id="{{z.id}}" id="renglon-{{z.id}}" data-ciudades="{{z.ciudades.exists}}">
                                     <td>{{z.nombre}}</td>
                                     <td>{{z.ciudades.all|join:", "}}</td>
-                                    <td> <a type="button" class="btn btn-ok" ><span class="glyphicon glyphicon-ok" aria-hidden="true">    </span></a></td>
                                 </tr>
                                 {% endfor %}
                         </tbody>
@@ -91,11 +90,11 @@
             tiene_ciudad = $el.data()["ciudades"] == "True";
             una_col_recetas = $el.data();//esto no va
             console.log(una_col_recetas);//esto tampoco va...es para ver su funciona tiene_ciudad en la consola
-            $el.addClass("active");
+            $el.addClass("danger");
             var _renglon = "";
             _renglon= "#renglon-"+id;
-            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
-            $(_renglon).addClass("active");
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
