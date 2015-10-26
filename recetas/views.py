@@ -58,6 +58,9 @@ def get_filtros(get, modelo):
                #     C H O F E R E S    #
 #********************************************************#
 def choferes(request,chofer_id=None):
+    """
+        Permite buscar choferes con caracteristicas espesificas dentro de un grupo de choferes y obtener la informacion detallada de un chofer
+    """
     if chofer_id is not None:
         # consulta
         chofer = models.Chofer.objects.get(pk=chofer_id)
@@ -73,6 +76,11 @@ def choferes(request,chofer_id=None):
 
 
 def choferesAlta(request):
+    """
+        Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
+        precondicion: El chofer a dar de alta no debe existir
+        postcondicion: El chofer ha sido dado de alta
+    """
     if request.method == "POST":
         chofer_form = forms.ChoferForm(request.POST)
         if chofer_form.is_valid():
@@ -86,6 +94,11 @@ def choferesAlta(request):
 
 
 def choferesModificar(request,chofer_id =None):
+    """
+        Recibe una peticion de modificar datos de un chofer. Modifica los datos correspondientes del chofer
+        precondicion: El chofer a modificar debe existir
+        postcondicion: El chofer ha sido modificado
+    """
     chofer_instancia = get_object_or_404(models.Chofer, pk=chofer_id)
     if request.method=="POST":
         chofer_form = forms.ChoferForm(request.POST,instance= chofer_instancia)
@@ -99,6 +112,11 @@ def choferesModificar(request,chofer_id =None):
 
 @csrf_exempt
 def choferesBaja(request,chofer_id=None):
+    """
+        Recibe una peticion de dar de baja un chofer. Da de baja el chofer espedificado.
+        precondicion: El chofer a dar de baja debe existir
+        postcondicion: El chofer ha sido dado de baja
+    """
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
     chofer.delete()
@@ -110,6 +128,10 @@ def choferesBaja(request,chofer_id=None):
 #********************************************************#
 
 def insumos(request,insumo_id=None):
+    """
+        Permite buscar insumos con caracteristicas espesificas dentro de un grupo de insumos y obtener la informacion detallada de un insumo particular
+    """
+
     if insumo_id is not None:
         # consulta
         insumo_instancia = models.Insumo.objects.get(pk=insumo_id)
@@ -126,6 +148,12 @@ def insumos(request,insumo_id=None):
 
 
 def insumosAlta(request):
+    """
+        Recibe una peticion de dar de alta un insumo. Da de alta el insumo
+        precondicion: El insumo a dar de alta no debe existir
+        postcondicion: El insumo ha sido dado de alta
+    """
+
     if request.method == "POST":
         insumo_form = forms.InsumoForm(request.POST)
         if insumo_form.is_valid():
@@ -137,6 +165,12 @@ def insumosAlta(request):
 
 
 def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
+    """
+        Recibe una peticion de modificar datos de un insumo. Modifica los datos correspondientes del insumo
+        precondicion: El insumo a modificar debe existir
+        postcondicion: El insumo ha sido modificado
+    """
+
     insumo_instancia = get_object_or_404(models.Insumo, pk=insumo_id)
     if request.method=="POST":
         insumo_form = forms.InsumoForm(request.POST,instance= insumo_instancia)
@@ -149,6 +183,12 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
 
 
 def insumosBaja(request,insumo_id):
+    """
+        Recibe una peticion de dar de baja un insumo. Da de baja el insumo espedificado. Si posee recetas asociadas, tambien las elimina
+        precondicion: El insumo a dar de baja debe existir
+        postcondicion: El insumo ha sido dado de baja junto a culquier receta asociada al mismo
+    """
+
     insumo = models.Insumo.objects.get(pk=insumo_id)
     # HAY Q HACER VALIDACIONES.
     if insumo.receta_set.exists():
@@ -172,6 +212,9 @@ def insumosBaja(request,insumo_id):
 #********************************************************#
 
 def recetas(request,receta_id=None):
+    """
+        Permite buscar recetas con caracteristicas espesificas dentro de un grupo de recetas y obtener la informacion detallada de una receta particular
+    """
     if receta_id is not None:
         # consulta
         receta = models.Receta.objects.get(pk=receta_id)
@@ -191,6 +234,11 @@ def recetas(request,receta_id=None):
 
 
 def recetasModificar(request,receta_id):
+    """
+        Recibe una peticion de modificar datos de una receta. Modifica los datos correspondientes de la receta
+        precondicion: La receta a modificar debe existir
+        postcondicion: La receta ha sido modificada
+    """
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     insumos = models.Insumo.objects.all() #para detalles
@@ -222,6 +270,11 @@ def recetasModificar(request,receta_id):
 
 
 def recetasAlta(request):
+    """
+       Recibe una peticion de dar de alta una receta. Verifica que la nueva receta sea valida y de serlo la da de alta
+       precondicion: La receta a dar de alta no debe existir
+       postcondicion: La receta ha sido dada de alta
+    """
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
@@ -250,6 +303,11 @@ def recetasAlta(request):
 
 
 def recetasBaja(request,receta_id):
+    """
+        Recibe una peticion de dar de baja una receta. Da de baja la receta espedificada.
+        precondicion: La receta a dar de baja debe existir
+        postcondicion: La receta ha sido dada de baja
+    """
     receta = models.Receta.objects.get(pk=receta_id)
     messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
     receta.delete()
@@ -415,6 +473,9 @@ def productosTerminadosBaja(request, producto_id=None):
 #********************************************************#
 
 def zonas(request,zona_id=None):
+    """
+        Permite buscar zonas con caracteristicas espesificas dentro de un grupo de zonas y obtener informacion detallada de una zona particular
+    """
     if zona_id is not None:
         # consulta
         zona = models.Zona.objects.get(pk=zona_id)
@@ -431,6 +492,11 @@ def zonas(request,zona_id=None):
 
 
 def zonasAlta(request):
+    """
+        Recibe una peticion de dar de alta una zona. Verifica que la nueva zona sea valida y de serlo la da de alta
+        precondicion: La zona a dar de alta no debe existir
+        postcondicion: La zona ha sido dada de alta
+    """
     if request.method == "POST":
         zona_form = forms.ZonaForm(request.POST)
         if zona_form.is_valid():
@@ -442,6 +508,11 @@ def zonasAlta(request):
 
 
 def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
+    """
+        Recibe una peticion de modificar datos de una zona. Modifica los datos correspondientes de la zona
+        precondicion: La zona a modificar debe existir
+        postcondicion: La zona ha sido modificada
+    """
     zona_instancia = get_object_or_404(models.Zona, pk=zona_id)
     if request.method=="POST":
         zona_form = forms.ZonaForm(request.POST,instance= zona_instancia)
@@ -455,6 +526,11 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def zonasBaja(request,zona_id =None):
+    """
+        Recibe una peticion de dar de baja una zona. Si la zona posee ciudades asociadas muestra un mensaje de error. Si no las posee da de baja la zona espedificada.
+        precondicion: La zona a dar de baja debe existir y no debe poseer ciudades asociadas
+        postcondicion: La zona ha sido dada de baja
+    """
     p = models.Zona.objects.get(pk=zona_id)
     if p.ciudades.exists():
         messages.error(request, 'La zona: ' + p.nombre + ', no se puede eliminar porque tiene las siguientes ciudades asociadas: %s .' % ", ".join(
@@ -530,6 +606,9 @@ def clientesBaja(request,cliente_id =None):
                #     C I U D A D E S   #
 #********************************************************#
 def ciudades(request,ciudad_id=None):
+    """
+        Permite buscar ciudades con caracteristicas espesificas dentro de un grupo de ciudades y obtener informacion detallada de una ciudad particular
+    """
     if ciudad_id is not None:
         # consulta
         ciudad = models.Ciudad.objects.get(pk=ciudad_id)
@@ -545,6 +624,11 @@ def ciudades(request,ciudad_id=None):
 
 
 def ciudadesAlta(request):
+    """
+        Recibe una peticion de dar de alta una ciudad. Verifica que la nueva ciudad sea valida y de serlo la da de alta
+        precondicion: La ciudad a dar de alta no debe existir
+        postcondicion: La ciudad ha sido dada de alta
+    """
     if request.method == "POST":
         ciudad_form = forms.CiudadForm(request.POST)
         if ciudad_form.is_valid():
@@ -556,6 +640,11 @@ def ciudadesAlta(request):
 
 
 def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
+    """
+        Recibe una peticion de modificar datos de una ciudad. Modifica los datos correspondientes de la ciudad
+        precondicion: La ciudad a modificar debe existir
+        postcondicion: La ciudad ha sido modificada
+    """
     ciudad_instancia = get_object_or_404(models.Ciudad, pk=ciudad_id)
     if request.method=="POST":
         ciudad_form = forms.CiudadForm(request.POST,instance= ciudad_instancia)
@@ -569,6 +658,11 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
 
 @csrf_exempt
 def ciudadesBaja(request,ciudad_id =None):
+    """
+        Recibe una peticion de dar de baja una ciudad.Da de baja la ciudad espedificada.
+        precondicion: La ciudad a dar de baja debe existir
+        postcondicion: La ciudad ha sido dada de baja
+    """
     p = models.Ciudad.objects.get(pk=ciudad_id)
     p.delete()
     return redirect('ciudades')
