@@ -826,20 +826,23 @@ def pedidosProveedorModificar(request,pedido_id):
 
 def pedidosProveedorRecepcionar(request,pedido_id):
     pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
-    pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(instance= pedido_proveedor_instancia)
     proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
-    if request.method=="POST":
+    if request.method == "POST":
+        pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
             pedido_proveedor_instancia.save()
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
-        else:
-            print("no es valido")
+    else:
+        pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(instance=pedido_proveedor_instancia)
 
+    return render(request,"pedidosProveedorRecepcionar.html",{
+        "pedido_proveedor_form":pedido_proveedor_form,
+        "proveedor":proveedor,
+        "pedido_id":pedido_id})
 
-    return render(request,"pedidosProveedorRecepcionar.html",{"pedido_proveedor_form":pedido_proveedor_form,"proveedor":proveedor,"pedido_id":pedido_id})
-
-
+#la idea es que en proveedorRepecionar se recpcione y actualice el stock
+#poner un boton de cancelar, para cancelar el pedio
 
 
 
