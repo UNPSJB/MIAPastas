@@ -291,7 +291,7 @@ class PedidoClienteDetalleForm(forms.ModelForm):
 class PedidoClienteOcacionalForm(forms.ModelForm):
     class Meta:
         model = models.PedidoOcacional
-        exclude = ['productos','tipo_pedido']
+        exclude = ['productos']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
 

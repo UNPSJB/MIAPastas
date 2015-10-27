@@ -86,11 +86,11 @@
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-            $el.addClass("active");
+            $el.addClass("danger");
             var _renglon = "";
             _renglon= "#renglon-"+id;
-            $(".select-item").removeClass("active");        //quito la clase active, para q se deseleccionen
-            $(_renglon).addClass("active");
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"

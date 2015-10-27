@@ -3824,7 +3824,7 @@ function Datepicker() {
 	this._currentClass = "ui-datepicker-current-day"; // The name of the current day marker class
 	this._dayOverClass = "ui-datepicker-days-cell-over"; // The name of the day hover marker class
 	this.regional = []; // Available regional settings, indexed by language code
-	this.regional[""] = { // Default regional settings
+		this.regional[""] = { // Default regional settings
 		closeText: "Done", // Display text for close link
 		prevText: "Prev", // Display text for previous month link
 		nextText: "Next", // Display text for next month link
@@ -3842,6 +3842,7 @@ function Datepicker() {
 		showMonthAfterYear: false, // True if the year select precedes month, false for month then year
 		yearSuffix: "" // Additional text to append to the year in the month headers
 	};
+
 	this._defaults = { // Global defaults for all the date picker instances
 		showOn: "focus", // "focus" for popup on focus,
 			// "button" for trigger button, or "both" for either
@@ -3896,6 +3897,33 @@ function Datepicker() {
 	this.regional.en = $.extend( true, {}, this.regional[ "" ]);
 	this.regional[ "en-US" ] = $.extend( true, {}, this.regional.en );
 	this.dpDiv = datepicker_bindHover($("<div id='" + this._mainDivId + "' class='ui-datepicker ui-widget ui-widget-content ui-helper-clearfix ui-corner-all'></div>"));
+
+
+
+	$(function($){
+    $.datepicker.regional['es'] = {
+        closeText: 'Cerrar',
+        prevText: '<Ant',
+        nextText: 'Sig>',
+        currentText: 'Hoy',
+        monthNames: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
+        monthNamesShort: ['Ene','Feb','Mar','Abr', 'May','Jun','Jul','Ago','Sep', 'Oct','Nov','Dic'],
+        dayNames: ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'],
+        dayNamesShort: ['Dom','Lun','Mar','Mié','Juv','Vie','Sáb'],
+        dayNamesMin: ['Do','Lu','Ma','Mi','Ju','Vi','Sá'],
+        weekHeader: 'Sm',
+        dateFormat: 'dd/mm/yy',
+        firstDay: 1,
+        isRTL: false,
+        showMonthAfterYear: false,
+        yearSuffix: ''
+    };
+    $.datepicker.setDefaults($.datepicker.regional['es']);
+});
+
+
+
+
 }
 
 $.extend(Datepicker.prototype, {

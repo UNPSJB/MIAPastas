@@ -254,6 +254,7 @@ class PedidoProveedor(models.Model):
     proveedor = models.ForeignKey(Proveedor)
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
+    descripcion = models.TextField()
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
