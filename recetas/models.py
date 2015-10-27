@@ -185,29 +185,26 @@ class Cliente(models.Model):
 
 class PedidoCliente(models.Model):
     FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
-    TIPOPEDIDO = (
-        (1, "Pedido Fijo"),
-        (2, "Pedido Ocasional"),
-        (3,"Pedido de Cambio")
-    )
     fecha_creacion = models.DateField(auto_now_add = True)
-    tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
+    TIPOS = {}
+
 
     def __str__(self):
-        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+        return "%s " % (self.cliente)
 
 class PedidoClienteDetalle(models.Model):
     cantidad_producto = models.FloatField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
-
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField(default=date.today())
     fecha_cancelacion = models.DateField(blank=True,null=True)
     dias = MultiSelectField(choices=TIPODIAS)
+    NOMBRE = "Pedido Fijo"
+    TIPO = 1
 
     def esParaHoy(self):
         d = date.today()
@@ -215,27 +212,29 @@ class PedidoFijo(PedidoCliente):
             return True
         else:
             return False
+PedidoCliente.TIPOS[PedidoFijo.TIPO] = PedidoFijo
 
 class PedidoCambio(PedidoCliente):
     fecha_entrega = models.DateField()
-
+    TIPO = 3
     def esParaHoy(self):
         d = date.today()
         if d in self.fecha_entrega:
             return True
         else:
             return False
-
+PedidoCliente.TIPOS[PedidoCambio.TIPO] = PedidoCambio
 
 class PedidoOcacional(PedidoCliente):
     fecha_entrega = models.DateField()
-
+    TIPO = 2
     def esParaHoy(self):
         d = date.today()
         if d in self.fecha_entrega:
             return True
         else:
             return False
+PedidoCliente.TIPOS[PedidoOcacional.TIPO] = PedidoOcacional
 
 
 

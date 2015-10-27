@@ -639,7 +639,7 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.pedido_cliente = pedido_instancia
                     detalle_instancia.save()
-                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
+               # messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
@@ -653,26 +653,19 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
 def pedidosClienteBaja(request,pedido_id):
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
-    messages.success(request, 'El pedido: ' + pedido.get_tipo_pedido_display()+" de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    #messages.success(request, 'El pedido: de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
     pedido.delete()     #hacer baja logica
     return redirect('pedidosCliente')
 
 
-def pedidosClienteModificar(request,pedido_id):
-    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
-    if pedido_instancia.tipo_pedido == 1:
-        pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
-        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-        pedidosClientes_form = forms.PedidoClienteFijoForm
+def pedidosClienteModificar(request, pedido_id):
 
-    elif pedido_instancia.tipo_pedido == 2:
-        pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
-        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-        pedidosClientes_form = forms.PedidoClienteOcacionalForm
-    else:
-        pedido_instancia = get_object_or_404(models.PedidoCambio, pk=pedido_id)
-        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-        pedidosClientes_form = forms.PedidoClienteCambioForm
+    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
+    pedido_class = models.PedidoCliente.TIPOS[pedido_instancia.TIPO]
+    pedido_instancia = get_object_or_404(pedido_class, pk=pedido_id)
+    detalles_inlinefactory = inlineformset_factory(pedido_class, models.PedidoClienteDetalle, fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+    # aca hay que hacer o mismo que hicmos para modelos peropara form.
+    pedidosClientes_form = forms.PedidoClienteFijoForm
 
     detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
     pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)

@@ -257,7 +257,7 @@ class DetallePedidoProveedorForm(forms.ModelForm):
 class PedidoCliente(forms.ModelForm):
     class Meta:
         model = models.PedidoCliente
-        fields = ["tipo_pedido","cliente"]
+        fields = ["cliente"]
 
 
 class PedidoClienteFijoForm(forms.ModelForm):
@@ -269,7 +269,7 @@ class PedidoClienteFijoForm(forms.ModelForm):
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'}),
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
         '''
-        exclude = ['productos', 'tipo_pedido']
+        exclude = ['productos']
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
