@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #
-# miaPasas documentation build configuration file, created by
+# miaPastas documentation build configuration file, created by
 # sphinx-quickstart on Mon Oct 26 20:38:15 2015.
 #
 # This file is execfile()d with the current directory set to its
@@ -14,8 +14,13 @@
 
 import sys
 import os
+import sphinx_rtd_theme
 import shlex
 
+html_theme = "sphinx_rtd_theme"
+
+
+html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
@@ -42,13 +47,13 @@ templates_path = ['_templates']
 source_suffix = '.rst'
 
 # The encoding of source files.
-#source_encoding = 'utf-8-sig'
+source_encoding = 'UTF-8'
 
 # The master toctree document.
 master_doc = 'index'
 
 # General information about the project.
-project = u'miaPasas'
+project = u'miaPastas'
 copyright = u'2015, James Lecuna Gomez Parra'
 author = u'James Lecuna Gomez Parra'
 
@@ -110,7 +115,7 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
 
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
@@ -202,7 +207,7 @@ html_static_path = ['_static']
 #html_search_scorer = 'scorer.js'
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'miaPasasdoc'
+htmlhelp_basename = 'miaPastasdoc'
 
 # -- Options for LaTeX output ---------------------------------------------
 
@@ -224,7 +229,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-  (master_doc, 'miaPasas.tex', u'miaPasas Documentation',
+  (master_doc, 'miaPastas.tex', u'miaPastas Documentation',
    u'James Lecuna Gomez Parra', 'manual'),
 ]
 
@@ -254,7 +259,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'miapasas', u'miaPasas Documentation',
+    (master_doc, 'miapastas', u'miaPastas Documentation',
      [author], 1)
 ]
 
@@ -268,8 +273,8 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-  (master_doc, 'miaPasas', u'miaPasas Documentation',
-   author, 'miaPasas', 'One line description of project.',
+  (master_doc, 'miaPastas', u'miaPastas Documentation',
+   author, 'miaPastas', 'One line description of project.',
    'Miscellaneous'),
 ]
 
@@ -354,3 +359,4 @@ epub_exclude_files = ['search.html']
 
 # If false, no index is generated.
 #epub_use_index = True
+
