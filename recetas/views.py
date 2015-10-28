@@ -33,16 +33,11 @@ def get_filtros(get, modelo):
     mfilter = {}
     for filtro in modelo.FILTROS:
         attr = filtro.split("__")[0]
+        field = modelo._meta.get_field(attr)
         if attr in get and get[attr]:
             texto = get[attr]
             match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
             if match is not None:
-                print(match)
-                print(texto)
-                print(match.groups()[2])
-                print(match.groups()[1])
-                print(match.groups()[0])
-                print(filtro)
                 ano = int(match.groups()[2])
                 mes = int(match.groups()[1])
                 dia = int(match.groups()[0])
@@ -52,6 +47,11 @@ def get_filtros(get, modelo):
             else:
                 mfilter[filtro] = texto
             mfilter[attr] = texto
+        elif attr in get and field.get_internal_type() == "BooleanField":
+            # Es un valor booleano
+            mfilter[attr] = ""
+            mfilter[filtro] = True
+    print(mfilter)
     return mfilter
 
 #********************************************************#
@@ -794,6 +794,7 @@ def pedidosClienteModificar(request, pedido_id):
             pedido_instancia = pedidosClientes_form.save(commit=False)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
+            print detalles_formset.is_valid()
             if detalles_formset.is_valid():
                 detalles_formset.save()
                 messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
@@ -883,11 +884,6 @@ def pedidosProveedorAlta(request):
                 "insumos":insumos,
                 "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorAltaForm(),
                 "detalles_form_factory": detalles_form or detalles_form_class()})
-
-
-
-
-
 
 
 

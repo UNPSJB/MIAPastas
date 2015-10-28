@@ -163,7 +163,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
@@ -341,5 +341,14 @@ class Lote(models.Model):
     stock_disponible= models.PositiveIntegerField()
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
+
+#********************************************************#
+         #    HOJA DE RUTA   #
+#********************************************************#
+
+
+class hojaDeRuta(models.Model):
+    fecha_creacion = models.DateField(auto_now_add = True)
+    chofer = models.ForeignKey(Chofer)
 
 
