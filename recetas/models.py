@@ -182,7 +182,7 @@ class Cliente(models.Model):
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
 
-
+'''
 class PedidoCliente(models.Model):
     FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
     fecha_creacion = models.DateField(auto_now_add = True)
@@ -236,7 +236,62 @@ class PedidoOcacional(PedidoCliente):
             return False
 PedidoCliente.TIPOS[PedidoOcacional.TIPO] = PedidoOcacional
 
+'''
 
+
+class PedidoCliente(models.Model):
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
+    TIPOPEDIDO = (
+        (1, "Pedido Fijo"),
+        (2, "Pedido Ocasional"),
+        (3,"Pedido de Cambio")
+    )
+    fecha_creacion = models.DateField(auto_now_add = True)
+    tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
+    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
+    cliente = models.ForeignKey(Cliente)
+
+    def __str__(self):
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class PedidoClienteDetalle(models.Model):
+    cantidad_producto = models.FloatField()
+    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+    pedido_cliente = models.ForeignKey(PedidoCliente)
+
+
+class PedidoFijo(PedidoCliente):
+    fecha_inicio = models.DateField(default=date.today())
+    fecha_cancelacion = models.DateField(blank=True,null=True)
+    dias = MultiSelectField(choices=TIPODIAS)
+
+    def esParaHoy(self):
+        d = date.today()
+        if d.day in self.dias:
+            return True
+        else:
+            return False
+
+class PedidoCambio(PedidoCliente):
+    fecha_entrega = models.DateField()
+
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+
+
+class PedidoOcacional(PedidoCliente):
+    fecha_entrega = models.DateField()
+
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
 
 #********************************************************#
          #   P E D I D O S   A  P R O V E E D O R   #
