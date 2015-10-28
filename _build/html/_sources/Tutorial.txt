@@ -1,4 +1,8 @@
 Tutorial Mia Pastas
 ===================
-Alta Cliente
-Alta Proveedor
+.. toctree::
+   :maxdepth: 1
+   
+   Cliente
+   Proveedor
+   Recetas
