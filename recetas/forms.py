@@ -6,6 +6,7 @@ from django.utils.text import capfirst
 from django.core import exceptions
 from django.forms import CheckboxSelectMultiple, MultipleChoiceField
 import re
+import datetime
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -340,6 +341,19 @@ class LoteForm(forms.ModelForm):
         widgets = {
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
            'fecha_vencimiento': forms.DateInput(attrs={'class': 'datepicker'}),
-
         }
+
+    def clean_fecha_vencimiento(self):
+        print "cleanb fecha vencimiento"
+        fecha = self.cleaned_data['fecha_vencimiento']
+        if fecha <= datetime.date.today():
+            raise ValidationError("Fecha de vencimiento debe ser mayor a la actual")
+        return fecha
+
+    def clean_fecha_produccion(self):
+        print "clean en fecha de produccion"
+        fecha = self.cleaned_data['fecha_produccion']
+        if fecha >= datetime.date.today():
+            raise ValidationError("No se puede registrar una produccion para una fecha adelantada")
+        return fecha
 

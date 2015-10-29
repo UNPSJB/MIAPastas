@@ -29,6 +29,18 @@ class Chofer (models.Model):
 #********************************************************#
                #     I N S U M O     #
 #********************************************************#
+def stock_litros_kg(cant):
+    cant= cant * 1000
+    return cant
+
+def stock_unidad(cant):
+    return cant
+
+def stock_docena(cant):
+    cant = cant * 12
+    return cant
+
+
 
 class Insumo(models.Model):
 
@@ -38,14 +50,13 @@ class Insumo(models.Model):
         (2, "Litro"),
         (3, "Unidad"),
         (4, "Docena"),
-        (5, "Caja"),
-        (6, "Cucharada")
-
     )
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
     stock = models.PositiveIntegerField(blank= True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
+
+
 
     def __str__(self):
         return "%s (%s)" % (self.nombre, self.get_unidad_medida_display())
