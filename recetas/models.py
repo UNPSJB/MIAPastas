@@ -29,6 +29,18 @@ class Chofer (models.Model):
 #********************************************************#
                #     I N S U M O     #
 #********************************************************#
+def stock_litros_kg(cant):
+    cant= cant * 1000
+    return cant
+
+def stock_unidad(cant):
+    return cant
+
+def stock_docena(cant):
+    cant = cant * 12
+    return cant
+
+
 
 class Insumo(models.Model):
 
@@ -38,14 +50,13 @@ class Insumo(models.Model):
         (2, "Litro"),
         (3, "Unidad"),
         (4, "Docena"),
-        (5, "Caja"),
-        (6, "Cucharada")
-
     )
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
     stock = models.PositiveIntegerField(blank= True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
+
+
 
     def __str__(self):
         return "%s (%s)" % (self.nombre, self.get_unidad_medida_display())
@@ -163,7 +174,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
@@ -181,6 +192,62 @@ class Cliente(models.Model):
 #************************************************************************#
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
+
+'''
+class PedidoCliente(models.Model):
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
+    fecha_creacion = models.DateField(auto_now_add = True)
+    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
+    cliente = models.ForeignKey(Cliente)
+    TIPOS = {}
+
+
+    def __str__(self):
+        return "%s " % (self.cliente)
+
+class PedidoClienteDetalle(models.Model):
+    cantidad_producto = models.FloatField()
+    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+    pedido_cliente = models.ForeignKey(PedidoCliente)
+
+class PedidoFijo(PedidoCliente):
+    fecha_inicio = models.DateField(default=date.today())
+    fecha_cancelacion = models.DateField(blank=True,null=True)
+    dias = MultiSelectField(choices=TIPODIAS)
+    NOMBRE = "Pedido Fijo"
+    TIPO = 1
+
+    def esParaHoy(self):
+        d = date.today()
+        if d.day in self.dias:
+            return True
+        else:
+            return False
+PedidoCliente.TIPOS[PedidoFijo.TIPO] = PedidoFijo
+
+class PedidoCambio(PedidoCliente):
+    fecha_entrega = models.DateField()
+    TIPO = 3
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+PedidoCliente.TIPOS[PedidoCambio.TIPO] = PedidoCambio
+
+class PedidoOcacional(PedidoCliente):
+    fecha_entrega = models.DateField()
+    TIPO = 2
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+PedidoCliente.TIPOS[PedidoOcacional.TIPO] = PedidoOcacional
+
+'''
 
 
 class PedidoCliente(models.Model):
@@ -237,8 +304,6 @@ class PedidoOcacional(PedidoCliente):
         else:
             return False
 
-
-
 #********************************************************#
          #   P E D I D O S   A  P R O V E E D O R   #
 #********************************************************#
@@ -290,4 +355,45 @@ class Lote(models.Model):
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
 
+#********************************************************#
+         #    HOJA DE RUTA   #
+#********************************************************#
 
+'''
+class HojaDeRuta(models.Model):
+    fecha_creacion = models.DateField(auto_now_add = True)
+    chofer = models.ForeignKey(Chofer)
+    lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle")
+
+
+class LotesExtraDetalle(models.Model):
+    cantidad = models.FloatField()
+    lote = models.ForeignKey(Lote)
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+
+
+
+#********************************************************#
+         #    ENTREGA PEDIDO   #
+#********************************************************#
+
+
+class EntregaPedido(models.Model):
+    fecha_entrega = models.DateField(auto_now_add = True)
+    pedido = models.ForeignKey(PedidoCliente)
+    lotes = models.ManyToManyField(Lote, through="EntregaPedidoDetalle")
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+    #falta recibo, factura
+    def __str__(self):
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class EntregaPedidoDetalle(models.Model):
+    cantidad_entregada = models.FloatField()    #poner integer
+    cantidad_enviada = models.FloatField()
+    precio = models.FloatField()
+    detalle_pedido = models.ForeignKey(PedidoClienteDetalle)    #porque
+    lote = models.ManyToManyField(Lote)
+    entrega_pedido = models.ForeignKey(EntregaPedido)
+
+
+'''

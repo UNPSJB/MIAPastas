@@ -33,16 +33,11 @@ def get_filtros(get, modelo):
     mfilter = {}
     for filtro in modelo.FILTROS:
         attr = filtro.split("__")[0]
+        field = modelo._meta.get_field(attr)
         if attr in get and get[attr]:
             texto = get[attr]
             match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
             if match is not None:
-                print(match)
-                print(texto)
-                print(match.groups()[2])
-                print(match.groups()[1])
-                print(match.groups()[0])
-                print(filtro)
                 ano = int(match.groups()[2])
                 mes = int(match.groups()[1])
                 dia = int(match.groups()[0])
@@ -52,6 +47,11 @@ def get_filtros(get, modelo):
             else:
                 mfilter[filtro] = texto
             mfilter[attr] = texto
+        elif attr in get and field.get_internal_type() == "BooleanField":
+            # Es un valor booleano
+            mfilter[attr] = ""
+            mfilter[filtro] = True
+    print(mfilter)
     return mfilter
 
 #********************************************************#
@@ -688,8 +688,6 @@ def pedidosClientes(request,pedido_id=None):
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
-            var=pedido.productos.all()
-            var2=pedido.pedidoclientedetalle_set.all()
             for producto in pedido.productos.all():
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
@@ -733,7 +731,7 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.pedido_cliente = pedido_instancia
                     detalle_instancia.save()
-                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
+               # messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
@@ -747,12 +745,25 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
 def pedidosClienteBaja(request,pedido_id):
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
-    messages.success(request, 'El pedido: ' + pedido.get_tipo_pedido_display()+" de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    #messages.success(request, 'El pedido: de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
     pedido.delete()     #hacer baja logica
     return redirect('pedidosCliente')
 
 
-def pedidosClienteModificar(request,pedido_id):
+def pedidosClienteModificar(request, pedido_id):
+    '''
+    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
+    pedido_class = models.PedidoCliente.TIPOS[pedido_instancia.TIPO]
+    pedido_instancia = get_object_or_404(pedido_class, pk=pedido_id)
+    detalles_inlinefactory = inlineformset_factory(pedido_class, models.PedidoClienteDetalle, fields=('cantidad_producto','producto_terminado','pedido_cliente'))
+    # aca hay que hacer o mismo que hicmos para modelos peropara form.
+    pedidosClientes_form = forms.PedidoClienteFijoForm
+
+    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
+    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
+    productos = models.ProductoTerminado.objects.all() #para detalles
+    '''
+
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
@@ -774,20 +785,16 @@ def pedidosClienteModificar(request,pedido_id):
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
-            print "entre a tipo de pedido fijo"
             pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
         elif pedido_instancia.tipo_pedido == 2:
             pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
         else:
             pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
-
-        print "pedido instancia", pedido_instancia
         if pedidosClientes_form.is_valid():
-            print "es valido el pedido"
-
             pedido_instancia = pedidosClientes_form.save(commit=False)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
+            print detalles_formset.is_valid()
             if detalles_formset.is_valid():
                 detalles_formset.save()
                 messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
@@ -802,7 +809,9 @@ def pedidosClienteModificar(request,pedido_id):
                                                    "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
                                                    "pedido_id":pedido_id,
                                                    "pref":pref,
-                                                   "tipo_pedido":pedido_instancia.tipo_pedido
+                                                   "tipo_pedido":pedido_instancia.tipo_pedido,
+                                                    "id_cliente":pedido_instancia.cliente.id
+
                                                    })
 
 
@@ -875,11 +884,6 @@ def pedidosProveedorAlta(request):
                 "insumos":insumos,
                 "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorAltaForm(),
                 "detalles_form_factory": detalles_form or detalles_form_class()})
-
-
-
-
-
 
 
 
@@ -987,20 +991,23 @@ def lotesModificar(request,lote_id=None):
 def lotesAlta(request):
     if request.method == "POST":
         lote_form = forms.LoteForm(request.POST)
-        if lote_form.is_valid:
+        if lote_form.is_valid():
             lote = lote_form.save(commit = False)
             lote.stock_disponible = lote.cantidad_producida #stock inicial
             lote.save()
             # actualizo stock del producto
-            lote.producto_terminado.stock =lote.producto_terminado.stock + lote.stock_disponible
+            lote.producto_terminado.stock = lote.producto_terminado.stock + lote.stock_disponible
             lote.producto_terminado.save()
             # disminuye stock de insumos
-            receta = lote.producto_terminado.receta_set.get()
-            cant_total = lote.cantidad_producida
-            detalles_receta = receta.recetadetalle_set.all()
-            for detalle_receta in  detalles_receta:
-                detalle_receta.insumo.stock =detalle_receta.insumo.stock - (detalle_receta.cantidad_insumo * cant_total)
-                detalle_receta.insumo.save()
+            try:
+                receta = lote.producto_terminado.receta_set.get()
+                cant__producida= lote.cantidad_producida
+                detalles_receta = receta.recetadetalle_set.all()
+                for detalle_receta in  detalles_receta:
+                    detalle_receta.insumo.stock = detalle_receta.insumo.stock - ((detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado)
+                    detalle_receta.insumo.save()
+            except:
+                messages.success(request, 'No se actualizo stock de insumos ya que no hay receta asociada al Producto')
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
@@ -1012,5 +1019,5 @@ def lotesBaja(request,lote_id):
     l.producto_terminado.save()
     l.delete()
     messages.success(request, 'Lote fue eliminado correctamente.')
-    return redirect ('lotes');
+    return redirect ('lotes')
 

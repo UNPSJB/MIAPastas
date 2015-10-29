@@ -96,6 +96,7 @@ class Migration(migrations.Migration):
                 ('fecha_realizacion', models.DateField()),
                 ('fecha_de_entrega', models.DateField(null=True, blank=True)),
                 ('estado_pedido', models.PositiveSmallIntegerField(default=b'1', choices=[(1, b'Pendiente'), (2, b'Recibido'), (3, b'Cancelado')])),
+                ('descripcion', models.TextField()),
                 ('insumos', models.ManyToManyField(to='recetas.Insumo', through='recetas.DetallePedidoProveedor')),
             ],
         ),
@@ -164,7 +165,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 10, 24))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 10, 28))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],

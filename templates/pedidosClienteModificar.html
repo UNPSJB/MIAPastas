@@ -63,7 +63,7 @@
 
 
                     <button id = "btn-submit" type="submit" class="btn btn-primary">
-                        {% bootstrap_icon "star" %} Submit
+                        {% bootstrap_icon "star" %} Aceptar
                     </button>
                   {% endbuttons %}
               </div></form>
@@ -102,6 +102,7 @@
 var detalles = [];
 var pedido_pk = {{id}};
 var pref = "{{pref}}";
+var id_cliente = {{id_cliente}}
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
 
 
@@ -135,9 +136,8 @@ function armar_form(){
         html_form = html_form + armar_hidden(pref,d.pk,"id",i);
         html_form = html_form + armar_hidden(pref,d.pedido_pk,"pedido_cliente",i);
      });
-      // ARREGLAR, estos dos inputs no van, pero si no no funca el modificar D:
-                 html_form = html_form + armar_input(1,"tipo_pedido");
-                 html_form = html_form + armar_input(1,"cliente");
+                 html_form = html_form + armar_input(id_cliente,"tipo_pedido");
+                 html_form = html_form + armar_input(id_cliente,"cliente");
     document.getElementById("id_"+pref+"-TOTAL_FORMS").value = _.size(detalles);
     $('#detalles_forms').html(html_form);
 }

@@ -6,6 +6,7 @@ from django.utils.text import capfirst
 from django.core import exceptions
 from django.forms import CheckboxSelectMultiple, MultipleChoiceField
 import re
+import datetime
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -239,6 +240,7 @@ class ClienteForm(forms.ModelForm):
 
 
 
+
 class PedidoProveedorAltaForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
@@ -315,13 +317,14 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
 class PedidoClienteCambioForm(forms.ModelForm):
     class Meta:
         model = models.PedidoCambio
-     #   widgets = {
-     #       'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+        widgets = {
+           'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido']
 
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
+
 
 
 
@@ -335,4 +338,44 @@ class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
         fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
-    
+        widgets = {
+           'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
+           'fecha_vencimiento': forms.DateInput(attrs={'class': 'datepicker'}),
+        }
+
+    def clean_fecha_vencimiento(self):
+        print "cleanb fecha vencimiento"
+        fecha = self.cleaned_data['fecha_vencimiento']
+        if fecha <= datetime.date.today():
+            raise ValidationError("Fecha de vencimiento debe ser mayor a la actual")
+        return fecha
+
+    def clean_fecha_produccion(self):
+        print "clean en fecha de produccion"
+        fecha = self.cleaned_data['fecha_produccion']
+        if fecha >= datetime.date.today():
+            raise ValidationError("No se puede registrar una produccion para una fecha adelantada")
+        return fecha
+
+
+#############################################################################
+############################################################################
+
+
+'''
+class HojaDeRutaForm(forms.ModelForm):
+    class Meta:
+        model = models.HojaDeRuta
+        fields = ["chofer"]
+
+class LotesExtraDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.LotesExtraDetalle
+        exclude = ['hoja_de_ruta']
+
+'''
+
+
+
+
+
