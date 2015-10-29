@@ -256,6 +256,8 @@ class PedidoProveedor(models.Model):
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
     descripcion = models.TextField()
+    #agregar fecha de cancelacion
+
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
