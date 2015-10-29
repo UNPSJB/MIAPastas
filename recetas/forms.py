@@ -343,3 +343,38 @@ class LoteForm(forms.ModelForm):
 
         }
 
+#############################################################################
+############################################################################
+
+
+'''
+class HojaDeRutaForm(forms.ModelForm):
+    class Meta:
+        model = models.HojaDeRuta
+        fields = ["chofer"]
+
+class LotesExtraDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.LotesExtraDetalle
+        exclude = ['hoja_de_ruta']
+
+'''
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -346,9 +346,41 @@ class Lote(models.Model):
          #    HOJA DE RUTA   #
 #********************************************************#
 
-
-class hojaDeRuta(models.Model):
+'''
+class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
+    lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle")
 
 
+class LotesExtraDetalle(models.Model):
+    cantidad = models.FloatField()
+    lote = models.ForeignKey(Lote)
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+
+
+
+#********************************************************#
+         #    ENTREGA PEDIDO   #
+#********************************************************#
+
+
+class EntregaPedido(models.Model):
+    fecha_entrega = models.DateField(auto_now_add = True)
+    pedido = models.ForeignKey(PedidoCliente)
+    lotes = models.ManyToManyField(Lote, through="EntregaPedidoDetalle")
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+    #falta recibo, factura
+    def __str__(self):
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class EntregaPedidoDetalle(models.Model):
+    cantidad_entregada = models.FloatField()    #poner integer
+    cantidad_enviada = models.FloatField()
+    precio = models.FloatField()
+    detalle_pedido = models.ForeignKey(PedidoClienteDetalle)    #porque
+    lote = models.ManyToManyField(Lote)
+    entrega_pedido = models.ForeignKey(EntregaPedido)
+
+
+'''
