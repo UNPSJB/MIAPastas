@@ -975,14 +975,18 @@ def lotesAlta(request):
             lote.stock_disponible = lote.cantidad_producida #stock inicial
             lote.save()
             # actualizo stock del producto
-            lote.producto_terminado.stock =lote.producto_terminado.stock + lote.stock_disponible
+            lote.producto_terminado.stock = lote.producto_terminado.stock + lote.stock_disponible
             lote.producto_terminado.save()
             # disminuye stock de insumos
-            receta = lote.producto_terminado.receta_set.get()
-            cant_total = lote.cantidad_producida
+            try:
+                receta = lote.producto_terminado.receta_set.get()
+            except:
+                messages.success(request, 'NO hay receta asociada al producto')
+
+            cant__producida= lote.cantidad_producida
             detalles_receta = receta.recetadetalle_set.all()
             for detalle_receta in  detalles_receta:
-                detalle_receta.insumo.stock =detalle_receta.insumo.stock - (detalle_receta.cantidad_insumo * cant_total)
+                detalle_receta.insumo.stock = detalle_receta.insumo.stock - ((detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado)
                 detalle_receta.insumo.save()
             return redirect("lotes")
     else:
