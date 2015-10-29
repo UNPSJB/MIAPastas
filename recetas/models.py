@@ -267,7 +267,7 @@ class PedidoCliente(models.Model):
 
 class PedidoClienteDetalle(models.Model):
     cantidad_producto = models.FloatField()
-    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+    producto_terminado = models.ForeignKey(ProductoTerminado)
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
