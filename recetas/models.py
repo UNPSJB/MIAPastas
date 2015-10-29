@@ -309,7 +309,11 @@ class PedidoOcacional(PedidoCliente):
 #********************************************************#
 class PedidoProveedor(models.Model):
 
-    FILTROS = ['fecha_realizacion__gte','proveedor','estado_pedido']
+    FILTROS = ['fecha_desde','fecha_hasta','proveedor','estado_pedido']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha_realizacion__gte',
+        'fecha_hasta': 'fecha_realizacion__lte'
+    }
     ESTADO = (
         (1, "Pendiente"),
         (2, "Recibido"),
@@ -321,7 +325,9 @@ class PedidoProveedor(models.Model):
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
     descripcion = models.TextField()
-    #agregar fecha de cancelacion
+    #fecha_desde =  models.DateField()
+    #fecha_hasta =  models.DateField()
+    #fecha_cancelacion =  models.DateField()
 
     #relacion con proveedor
     #relacion con
