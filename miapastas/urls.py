@@ -176,7 +176,6 @@ urlpatterns = [
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
     url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
 
-    url(r'^proveedoresRecepcion$',views.proveedoresRecepcion,name='proveedoresRecepcion'),
 
 
     url(r'^$', login, {'template_name': 'login.html', }, name="login"),

@@ -111,19 +111,19 @@
               <tbody>
 
               {% for clave, valor in totales.iteritems %}
-                    <td>totales.[clave]</td>
-                    <td>valor</td>
+              <tr>
+                    <td>{{clave}}</td>
+                    <td>{{valor}}</td>
+                    </tr>
               {% endfor %}
+
               </tbody>
           </table>
           </div>
               <hr>
               <row>
 
-                  <div class="form-group col-md-6">
-            <label for="exampleInputName2">Total bolsones</label>
-            <input type="text" class="form-control" id="exampleInputName2" readonly="">
-          </div>
+
                   </row>
 
 
