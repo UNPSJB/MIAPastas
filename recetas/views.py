@@ -954,6 +954,16 @@ def pedidosProveedorBaja(request,pedido_id =None):
     return redirect('pedidosProveedor')
 
 
+
+def pedidosProveedorCancelar(request,pedido_id =None):
+    print "estoy en cancelar pedido..."
+    p = models.PedidoProveedor.objects.get(pk=pedido_id)
+    p.estado_pedido = 3
+    p.save()
+    print(p.estado_pedido)
+    messages.success(request, 'El pedido realizado en la fecha: ' + p.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + p.proveedor.razon_social +', ha sido cancelado correctamente.')
+    return redirect('pedidosProveedor')
+
 #********************************************************#
          #    L O T E S   #
 #********************************************************#
