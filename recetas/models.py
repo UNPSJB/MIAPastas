@@ -315,6 +315,9 @@ class PedidoCliente(models.Model):
     def esParaHoy(self):
         pass
 
+    def esParaHoy(self):
+        pass
+    
     def __str__(self):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 

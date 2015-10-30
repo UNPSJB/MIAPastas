@@ -134,7 +134,7 @@ urlpatterns = [
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
 
-
+     url(r'^hojaDeRuta$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
 
 
 
