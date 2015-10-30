@@ -155,8 +155,7 @@ $(function() {
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            esFloat = /^[0-9]*(.[0-9]*)?$/;
-            if (!esFloat.test(cantidad) || (cantidad<0)){
+            if (!esEnteroPositivo(cantidad)){
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});

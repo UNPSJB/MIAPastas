@@ -26,12 +26,20 @@ function armar_input(valor,nombre){
 
 
 function esFloatPositivo(num){
-console.log("en esfloatpositiovo");
     var esFloat = /^[0-9]+(.[0-9]+)?$/;
-    if (esFloat.test(num) && (num>=0)){
+    if (esFloat.test(num) && (num>0)){
         return true}
     return false
 }
+
+function esEnteroPositivo(num){
+    var isInt = /^[0-9]+$/;
+    if (isInt.test(num) && (num>0)){
+        return true}
+    return false
+
+}
+
 
 function eliminar_objeto(arreglo,indice){
         console.log("pk ",arreglo[indice].pk );
@@ -52,8 +60,8 @@ function cambio_cantidad(i){
 
         }
 function modificar_cantidad_arreglo(arreglo,nueva_cantidad,id_input,i){
-    if (!esFloatPositivo(nueva_cantidad)){
-        alert("debe ingresar una cantidad nueva valida");
+    if (!esEnteroPositivo(nueva_cantidad)){
+        alert("la cantidad debe ser un entero positivo");
     }else{
         arreglo[i].cantidad = nueva_cantidad;
         id_input.style.background="white";

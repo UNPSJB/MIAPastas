@@ -43,6 +43,8 @@
                             <tr style='cursor:pointer' class='desmarcado'>
                                 <th>Insumo</th>
                                 <th>Cantidad</th>
+                                <th></th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
@@ -145,8 +147,8 @@ $(function() {
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            if (!esFloatPositivo(cantidad)){
-                 alert("debe ingresar una cantidad valida  00.00");
+            if (!esEnteroPositivo(cantidad)){
+                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
                  if (ins != undefined){
