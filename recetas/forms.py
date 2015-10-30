@@ -55,12 +55,31 @@ class ChoferForm(forms.ModelForm):
         return cuit
 
 
+class ModificarStockInsumoForm(forms.Form):
+    insumo = forms.ModelChoiceField(queryset=models.Insumo.objects.all(), empty_label="(----)")
+    cantidad = forms.IntegerField()
+    unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
+    def save(self):
+        insumo = self.cleaned_data["insumo"]
+        cantidad = self.cleaned_data["cantidad"]
+        unidad_medida = self.cleaned_data["unidad_medida"]
+        print "cantidad: ",cantidad
+        print "unidad_medida: ",unidad_medida
+        insumo.modificar_stock(cantidad,int(unidad_medida))
+        insumo.save()
 
 
 class InsumoForm(forms.ModelForm):
     class Meta:
         model = models.Insumo
-        fields = ["nombre", "descripcion", "stock", "unidad_medida"]
+        fields = ["nombre", "descripcion","unidad_medida"]
+    unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES_BASICAS)
+
+    def __init__(self, *args, **kwargs):
+        super(InsumoForm, self).__init__(*args, **kwargs)
+        self.fields['nombre'].label = "Nombre ( * )"
+        self.fields['descripcion'].label = "Dscripcion ( * )"
+        self.fields['unidad_medida'].label = "Unidad de Medida ( * )"
 
 class RecetaForm(forms.ModelForm):
     class Meta:
@@ -397,7 +416,7 @@ class LoteForm(forms.ModelForm):
     def clean_fecha_produccion(self):
         print "clean en fecha de produccion"
         fecha = self.cleaned_data['fecha_produccion']
-        if fecha >= datetime.date.today():
+        if fecha > datetime.date.today():
             raise ValidationError("No se puede registrar una produccion para una fecha adelantada")
         return fecha
 

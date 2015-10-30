@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
-{% load l10n %}
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Receta</b></font></p></div>
@@ -145,7 +144,7 @@ $(function() {
 
 
     var listado_detalles = [
-    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo|unlocalize}}", "texto": "{{detalle.insumo}}" },{% endfor %}
+    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo}}", "texto": "{{detalle.insumo}}" },{% endfor %}
     ]
     console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {
@@ -165,8 +164,8 @@ $(function() {
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            if (!esFloatPositivo(cantidad)){
-                 alert("debe ingresar una cantidad valida  00.00");
+            if (!esEnteroPositivo(cantidad)){
+                 alert("debe ingresar una cantidad valida ");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});
                  if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){

@@ -12,8 +12,12 @@
            <form class="form-inline" method="get">
                   <!-- Filtro de Fecha de Realizacion del Pedido a Proveedor -->
                   <div class="form-group">
-                        <label for="fecha_realizacion">Fecha de Realizacion (Mayor o igual)</label>
-                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_realizacion}}" name="fecha_realizacion" id="fecha_realizacion">
+                        <label for="fecha_desde">Fecha Desde</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
+                  </div>
+                  <div class="form-group">
+                        <label for="fecha_hasta">Fecha Hasta</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
                   </div>
                   <!-- Filtro de Proveedor del Pedido a Proveedor -->
                   <div class="form-group">
