@@ -1040,9 +1040,10 @@ def lotesBaja(request,lote_id):
 def hojaDeRuta(request):
 
         pedidos_clientes = models.PedidoCliente.objects.all()
+        pedidos_clientes_enviar = []
         for pedido in pedidos_clientes:
             if not pedido.esParaHoy():
-               pedidos_clientes.remove(pedido)
+               pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
-        return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes,"choferes":choferes})
+        return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes_enviar,"choferes":choferes})
 
