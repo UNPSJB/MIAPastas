@@ -9,12 +9,13 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.contrib.messages import get_messages
-import json as simplejson
+import json
 from django.core import serializers
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
 import re #esto sirve para usar expresiones regulares
 import datetime
+
 #from datetime import date, datetime
 #import time
 
@@ -201,6 +202,19 @@ def insumosBaja(request,insumo_id):
         insumo.delete()
 
     return redirect('insumos')
+
+def insumosModificarStock(request):
+    if request.method == 'POST':
+        insumo_form = forms.ModificarStockInsumoForm(request.POST)
+        if insumo_form.is_valid():
+            print "formulario valido"
+            insumo_form.save()
+            return redirect('insumos')
+    else:
+        insumo_form = forms.ModificarStockInsumoForm()
+    tuplas_json = json.dumps(models.Insumo.TUPLAS)
+    return render(request,"modificarStockInsumo.html",{"insumo_form":insumo_form,"tuplas_json":tuplas_json})
+
 
 
 
@@ -990,7 +1004,7 @@ def lotesAlta(request):
             lote.stock_disponible = lote.cantidad_producida #stock inicial
             lote.save()
             # actualizo stock del producto
-            lote.producto_terminado.stock = lote.producto_terminado.stock + lote.stock_disponible
+            lote.producto_terminado.stock +=  lote.stock_disponible
             lote.producto_terminado.save()
             # disminuye stock de insumos
             try:
@@ -998,7 +1012,10 @@ def lotesAlta(request):
                 cant__producida= lote.cantidad_producida
                 detalles_receta = receta.recetadetalle_set.all()
                 for detalle_receta in  detalles_receta:
-                    detalle_receta.insumo.stock = detalle_receta.insumo.stock - ((detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado)
+                    cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
+                    detalle_receta.insumo.decrementar(cant_decrementar)
+                    if detalle_receta.insumo.stock < 0:
+                        messages.error(request, 'El insumo %s quedo con stock %d '%(detalle_receta.insumo,detalle_receta.insumo.stock))
                     detalle_receta.insumo.save()
             except:
                 messages.success(request, 'No se actualizo stock de insumos ya que no hay receta asociada al Producto')

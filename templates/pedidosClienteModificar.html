@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
-{% load l10n %}
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Cliente</b></font></p></div>
@@ -164,7 +163,7 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": "{{detalle.cantidad_producto|unlocalize}}", "texto": "{{detalle.producto_terminado}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": "{{detalle.cantidad_producto}}", "texto": "{{detalle.producto_terminado}}" },{% endfor %}
     ]
     console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {

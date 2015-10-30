@@ -82,6 +82,8 @@ urlpatterns = [
     url(r'^insumos/baja/(?P<insumo_id>[0-9]+)/$',recetasviews.insumosBaja,name='insumosBaja'),
 
 
+    url(r'^insumos/modificarStock/$',recetasviews.insumosModificarStock,name='ModificarStockInsumos'),
+
 
     url(r'^zonas/$',recetasviews.zonas,name='zonas'),
     url(r'^zonas/alta/$',recetasviews.zonasAlta,name='zonasAlta'),

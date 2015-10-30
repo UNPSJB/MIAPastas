@@ -2,7 +2,6 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
-{% load l10n %}
 
 <div class="container">
 <div class="panel panel-default">
@@ -99,7 +98,6 @@
 var detalles = [];
 var pedido_proveedor_pk = {{pedido_id}};
 var pref = "{{pref}}";
-var esFloat = /^[0-9]*(.[0-9]*)?$/;
 
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
 
@@ -120,7 +118,7 @@ function eliminar(ins){
 
 function modificar(ins,i){
     var nueva_cantidad = $("#cantidad-"+i).serializeArray()[0].value;
-    if (!esFloat.test(nueva_cantidad) || (nueva_cantidad<0)){
+    if (!esEnteroPositivo(nueva_cantidad)){
         alert("debe ingresar una cantidad nueva valida");
     }else{
         var obj_insumo = _.find(detalles,{insumo:ins});
@@ -128,6 +126,8 @@ function modificar(ins,i){
         alert("cantidad modificada");
     }
 }
+
+
 
 function armar_form(){
     var html_form=""
@@ -168,7 +168,7 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_proveedor.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}},  "cantidad": "{{detalle.cantidad_insumo|unlocalize}}", "texto": "{{detalle.insumo}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_proveedor.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}},  "cantidad": "{{detalle.cantidad_insumo}}", "texto": "{{detalle.insumo}}" },{% endfor %}
     ]
     $(listado_detalles).each(function(i, d) {
         detalles.push({pedido_proveedor_pk:d.pedido_pk,cantidad:d.cantidad, insumo: d.insumo,i:"0",delete_form:"",texto: d.texto,pk:d.pk });
@@ -187,7 +187,7 @@ console.log("id_pedidssso " + detalles[0].pedido_proveedor_pk);//comprobandooooo
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
-            if (!esFloat.test(cantidad) || (cantidad<0)){
+            if (!esEnteroPositivo(cantidad)){
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{insumo:insumo});

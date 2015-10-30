@@ -43,20 +43,71 @@ def stock_docena(cant):
 
 
 class Insumo(models.Model):
-
     FILTROS = ['nombre__icontains', 'stock__lte']
-    UNIDADES = (
-        (1, "Kg"),
-        (2, "Litro"),
-        (3, "Unidad"),
-        (4, "Docena"),
+
+
+
+    NONE = 0
+    GRAMO = 1
+    CM3 = 2
+    UNIDAD = 3
+    KG = 4
+    LITRO = 5
+    DOCENA = 6
+    MAPLE = 7
+    TUPLAS = [(GRAMO,KG),
+              (CM3,LITRO),
+              (UNIDAD,DOCENA,MAPLE)]
+
+    UNIDADES_BASICAS = (
+        (GRAMO, "g"),
+        (CM3, "cm3"),
+        (UNIDAD, "unidad")
     )
+
+    UNIDADES_DERIVADAS = (
+        (KG, "kg"),
+        (LITRO, "litro"),
+        (DOCENA, "docena"),
+        (MAPLE, "maple")
+    )
+
+    UNIDADES = UNIDADES_BASICAS + UNIDADES_DERIVADAS
+
+    CONVERT = {
+        NONE: lambda cantidad: cantidad,
+        GRAMO: lambda cantidad: cantidad,
+        CM3: lambda cantidad: cantidad,
+        UNIDAD: lambda cantidad: cantidad,
+        KG: lambda cantidad: cantidad * 1000,
+        LITRO: lambda cantidad: cantidad * 1000,
+        DOCENA: lambda cantidad: cantidad * 12,
+        MAPLE: lambda cantidad: cantidad * 30
+    }
+
+    FORMAT = {
+        GRAMO: lambda cantidad: "%s.%s kg" % (cantidad // 1000, cantidad % 1000),
+        CM3: lambda cantidad: "%s.%s litros" % (cantidad // 1000, cantidad % 1000),
+        UNIDAD: lambda cantidad: "%s docenas y %s unidades" % (cantidad // 12, cantidad % 12)
+    }
+
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
-    stock = models.PositiveIntegerField(blank= True, null=True, default=0)
-    unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
+    stock = models.IntegerField(blank=True, null=True, default=0)
+    unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
 
+    # Control de stock
+    def incrementar(self, cantidad, unidad=NONE):
+        self.stock += self.CONVERT[unidad](cantidad)
 
+    def decrementar(self, cantidad, unidad=NONE):
+        print "voy a decrementar del insumo ",self.nombre, "la cantidad: ",cantidad, "unidad medida: ",unidad
+        self.stock -= self.CONVERT[unidad](cantidad)
+
+    modificar_stock = incrementar
+
+    def get_stock_humano(self):
+        return self.FORMAT[self.unidad_medida](self.stock)
 
     def __str__(self):
         return "%s (%s)" % (self.nombre, self.get_unidad_medida_display())
@@ -108,7 +159,7 @@ class Receta(models.Model):
 
 
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.FloatField()
+    cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
@@ -266,7 +317,7 @@ class PedidoCliente(models.Model):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.FloatField()
+    cantidad_producto = models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
@@ -334,7 +385,7 @@ class PedidoProveedor(models.Model):
 
 
 class DetallePedidoProveedor(models.Model):
-    cantidad_insumo = models.DecimalField(max_digits=5, decimal_places=2)
+    cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     pedido_proveedor = models.ForeignKey(PedidoProveedor)
 
