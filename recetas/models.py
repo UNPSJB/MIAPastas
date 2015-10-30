@@ -312,6 +312,8 @@ class PedidoCliente(models.Model):
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
+    def esParaHoy(self):
+        pass
 
     def __str__(self):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
