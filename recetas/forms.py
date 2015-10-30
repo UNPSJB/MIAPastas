@@ -302,13 +302,36 @@ class PedidoCliente(forms.ModelForm):
 
 
 class PedidoClienteFijoForm(forms.ModelForm):
+
     class Meta:
         model = models.PedidoFijo
         dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
+        fields = ['cliente','fecha_inicio','fecha_cancelacion','dias']
         widgets = {
-            'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'}),
-            'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['productos', 'tipo_pedido']
+            'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'}),
+
+            'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}
+
+        #exclude = ['productos', 'tipo_pedido']
+
+    def clean_fecha_cancelacion(self):
+        fecha = self.cleaned_data['fecha_cancelacion']
+        fecha_ini =self.cleaned_data['fecha_inicio']
+        if fecha <= fecha_ini:
+            print fecha_ini," ggggggggggggg"
+            raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
+        return fecha
+
+    def clean_fecha_inicio(self):
+        print "f inicio"
+        fecha = self.cleaned_data['fecha_inicio']
+        if fecha < datetime.date.today():
+            raise ValidationError("Fecha nada")
+        return fecha
+
+
+
+
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
@@ -321,13 +344,18 @@ class PedidoClienteDetalleForm(forms.ModelForm):
 
 
 
-
 class PedidoClienteOcacionalForm(forms.ModelForm):
     class Meta:
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+
+    def clean_fecha_entrega(self):
+        fecha = self.cleaned_data['fecha_entrega']
+        if fecha < datetime.date.today():
+            raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
+        return fecha
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
@@ -340,6 +368,11 @@ class PedidoClienteCambioForm(forms.ModelForm):
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido']
 
+    def clean_fecha_entrega(self):
+        fecha = self.cleaned_data['fecha_entrega']
+        if fecha < datetime.date.today():
+            raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
+        return fecha
 
     def __init__(self, *args, **kwargs):
         super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
@@ -375,4 +408,26 @@ class LoteForm(forms.ModelForm):
         if fecha > datetime.date.today():
             raise ValidationError("No se puede registrar una produccion para una fecha adelantada")
         return fecha
+
+
+#############################################################################
+############################################################################
+
+
+'''
+class HojaDeRutaForm(forms.ModelForm):
+    class Meta:
+        model = models.HojaDeRuta
+        fields = ["chofer"]
+
+class LotesExtraDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.LotesExtraDetalle
+        exclude = ['hoja_de_ruta']
+
+'''
+
+
+
+
 

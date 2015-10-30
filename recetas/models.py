@@ -225,7 +225,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
@@ -319,6 +319,7 @@ class PedidoCliente(models.Model):
 class PedidoClienteDetalle(models.Model):
     cantidad_producto = models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
@@ -360,7 +361,11 @@ class PedidoOcacional(PedidoCliente):
 #********************************************************#
 class PedidoProveedor(models.Model):
 
-    FILTROS = ['fecha_realizacion__gte','proveedor','estado_pedido']
+    FILTROS = ['fecha_desde','fecha_hasta','proveedor','estado_pedido']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha_realizacion__gte',
+        'fecha_hasta': 'fecha_realizacion__lte'
+    }
     ESTADO = (
         (1, "Pendiente"),
         (2, "Recibido"),
@@ -372,6 +377,10 @@ class PedidoProveedor(models.Model):
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
     descripcion = models.TextField()
+    #fecha_desde =  models.DateField()
+    #fecha_hasta =  models.DateField()
+    #fecha_cancelacion =  models.DateField()
+
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
@@ -404,4 +413,45 @@ class Lote(models.Model):
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
 
+#********************************************************#
+         #    HOJA DE RUTA   #
+#********************************************************#
 
+'''
+class HojaDeRuta(models.Model):
+    fecha_creacion = models.DateField(auto_now_add = True)
+    chofer = models.ForeignKey(Chofer)
+    lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle")
+
+
+class LotesExtraDetalle(models.Model):
+    cantidad = models.FloatField()
+    lote = models.ForeignKey(Lote)
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+
+
+
+#********************************************************#
+         #    ENTREGA PEDIDO   #
+#********************************************************#
+
+
+class EntregaPedido(models.Model):
+    fecha_entrega = models.DateField(auto_now_add = True)
+    pedido = models.ForeignKey(PedidoCliente)
+    lotes = models.ManyToManyField(Lote, through="EntregaPedidoDetalle")
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+    #falta recibo, factura
+    def __str__(self):
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class EntregaPedidoDetalle(models.Model):
+    cantidad_entregada = models.FloatField()    #poner integer
+    cantidad_enviada = models.FloatField()
+    precio = models.FloatField()
+    detalle_pedido = models.ForeignKey(PedidoClienteDetalle)    #porque
+    lote = models.ManyToManyField(Lote)
+    entrega_pedido = models.ForeignKey(EntregaPedido)
+
+
+'''

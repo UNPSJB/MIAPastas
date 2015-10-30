@@ -31,29 +31,36 @@ fechareg = re.compile("^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$") #esta es una expr
 #permite fechas del siguiente tipo: dd-mm-aa or d-m-aa or dd-mm-aaaa etc....
 
 def get_filtros(get, modelo):
-    mfilter = {}
+    filtros = {}
+    filtros_modelo = {}
     for filtro in modelo.FILTROS:
         attr = filtro.split("__")[0]
+        field = None
+        try:
+            field = modelo._meta.get_field(attr)
+        except:
+            pass
         if attr in get and get[attr]:
             texto = get[attr]
             match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
             if match is not None:
-                print(match)
-                print(texto)
-                print(match.groups()[2])
-                print(match.groups()[1])
-                print(match.groups()[0])
-                print(filtro)
                 ano = int(match.groups()[2])
                 mes = int(match.groups()[1])
                 dia = int(match.groups()[0])
-                print(ano,mes,dia)
                 fecha = datetime.date(ano,mes,dia)
-                mfilter[filtro] = datetime.date(ano,mes,dia)
+                value = datetime.date(ano,mes,dia)
             else:
-                mfilter[filtro] = texto
-            mfilter[attr] = texto
-    return mfilter
+                value = texto
+            if hasattr(modelo, "FILTROS_MAPPER") and filtro in modelo.FILTROS_MAPPER:
+                filtro = modelo.FILTROS_MAPPER[filtro]
+            filtros[attr] = texto
+            filtros_modelo[filtro] = value
+        elif attr in get and field is not None and field.get_internal_type() == "BooleanField":
+            # Es un valor booleano
+            filtros[attr] = ""
+            filtros_modelo[filtro] = True
+    print(filtros, filtros_modelo)
+    return filtros, filtros_modelo
 
 #********************************************************#
                #     C H O F E R E S    #
@@ -68,8 +75,7 @@ def choferes(request,chofer_id=None):
         return render(request, "choferesConsulta.html",{"chofer": chofer})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.Chofer)
-        mfilters = dict(filter(lambda v: v[0] in models.Chofer.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
         return render(request, "recetas/choferes.html",
                   {"choferes": choferes,
@@ -140,8 +146,7 @@ def insumos(request,insumo_id=None):
         return render(request, "insumosConsulta.html",{"insumo":insumo_instancia})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.Insumo)
-        mfilters = dict(filter(lambda v: v[0] in models.Insumo.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.Insumo)
         insumos = models.Insumo.objects.filter(**mfilters)
         return render(request, "recetas/insumos.html",
                   {"insumos": insumos,
@@ -234,8 +239,7 @@ def recetas(request,receta_id=None):
         receta = models.Receta.objects.get(pk=receta_id)
         return render(request, "recetasConsulta.html",{"receta": receta})
     # filtros
-    filters = get_filtros(request.GET, models.Receta)
-    mfilters = dict(filter(lambda v: v[0] in models.Receta.FILTROS, filters.items()))
+    filters, mfilters = get_filtros(request.GET, models.Receta)
     recetas = models.Receta.objects.filter(**mfilters)
 
         # filtrar recetas por productos
@@ -337,8 +341,7 @@ def proveedores(request,proveedor_id=None):
         p = models.Proveedor.objects.get(pk=proveedor_id)
         i = p.insumos.all()
         return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
-    filters = get_filtros(request.GET, models.Proveedor)
-    mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
+    filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
@@ -369,8 +372,7 @@ def proveedoresBaja(request,proveedor_id =None):
     return redirect('proveedores')
     proveedores = models.Proveedor.objects.all  ()
     proveedores_form = forms.ProveedorForm()
-    filters = get_filtros(request.GET, models.Proveedor)
-    mfilters = dict(filter(lambda v: v[0] in models.Proveedor.FILTROS, filters.items()))
+    filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
     return redirect('proveedores')
 
@@ -402,8 +404,7 @@ def productosTerminados(request,producto_id=None):
         return render(request, "productosTerminadosConsulta.html",{"producto": producto})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.ProductoTerminado)
-        mfilters = dict(filter(lambda v: v[0] in models.ProductoTerminado.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.ProductoTerminado)
         productos = models.ProductoTerminado.objects.filter(**mfilters)
         return render(request, "recetas/productosTerminados.html",
                   {"productos": productos,
@@ -497,8 +498,7 @@ def zonas(request,zona_id=None):
         return render(request, "zonasConsulta.html",{"zona": zona,"ciudades":ciudades})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.Zona)
-        mfilters = dict(filter(lambda v: v[0] in models.Zona.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.Zona)
         zonas = models.Zona.objects.filter(**mfilters)
         return render(request, "recetas/zonas.html",
                   {"zonas": zonas,
@@ -572,8 +572,7 @@ def clientes(request,cliente_id=None):
         return render(request, "clientesConsulta.html",{"cliente": cliente_instancia})
     elif request.method == "GET":
         #filtros
-        filters = get_filtros(request.GET, models.Cliente)
-        mfilters = dict(filter(lambda v: v[0] in models.Cliente.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.Cliente)
         clientes = models.Cliente.objects.filter(**mfilters)
         clientes_form = forms.ClienteForm()
         ciudades= models.Ciudad.objects.all()
@@ -629,8 +628,7 @@ def ciudades(request,ciudad_id=None):
         return render(request, "ciudadesConsulta.html",{"ciudad": ciudad})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.Ciudad)
-        mfilters = dict(filter(lambda v: v[0] in models.Ciudad.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.Ciudad)
         ciudades = models.Ciudad.objects.filter(**mfilters)
         zonas = models.Zona.objects.all()
         return render(request, "recetas/ciudades.html",{"filtros": filters,"ciudades":ciudades,"zonas":zonas})
@@ -696,8 +694,7 @@ def pedidosClientes(request,pedido_id=None):
         return render(request, "pedidosClienteConsulta.html",{"pedido": pedido,"productos":productos})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.PedidoCliente)
-        mfilters = dict(filter(lambda v: v[0] in models.PedidoCliente.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
         pedidos = models.PedidoCliente.objects.filter(**mfilters)
         clientes = models.Cliente.objects.all()
         totales=dict()
@@ -808,6 +805,7 @@ def pedidosClienteModificar(request, pedido_id):
             pedido_instancia = pedidosClientes_form.save(commit=False)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
+            print detalles_formset.is_valid()
             if detalles_formset.is_valid():
                 detalles_formset.save()
                 messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
@@ -840,8 +838,7 @@ def pedidosProveedor(request,pedido_id=None):
         return render(request, "pedidosProveedorConsulta.html",{"pedido":pedido_instancia})
     elif request.method == 'GET':
         # filtros
-        filters = get_filtros(request.GET, models.PedidoProveedor)
-        mfilters = dict(filter(lambda v: v[0] in models.PedidoProveedor.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.PedidoProveedor)
         pedidos = models.PedidoProveedor.objects.filter(**mfilters)
         proveedores = models.Proveedor.objects.all()
         return render(request, "pedidosProveedor.html",
@@ -897,11 +894,6 @@ def pedidosProveedorAlta(request):
                 "insumos":insumos,
                 "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorAltaForm(),
                 "detalles_form_factory": detalles_form or detalles_form_class()})
-
-
-
-
-
 
 
 
@@ -972,6 +964,16 @@ def pedidosProveedorBaja(request,pedido_id =None):
     return redirect('pedidosProveedor')
 
 
+
+def pedidosProveedorCancelar(request,pedido_id =None):
+    print "estoy en cancelar pedido..."
+    p = models.PedidoProveedor.objects.get(pk=pedido_id)
+    p.estado_pedido = 3
+    p.save()
+    print(p.estado_pedido)
+    messages.success(request, 'El pedido realizado en la fecha: ' + p.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + p.proveedor.razon_social +', ha sido cancelado correctamente.')
+    return redirect('pedidosProveedor')
+
 #********************************************************#
          #    L O T E S   #
 #********************************************************#
@@ -982,8 +984,7 @@ def lotes(request,lote_id=None):
         return render(request,"lotesConsulta.html",{"lote":lote})
     else:
         # filtros
-        filters = get_filtros(request.GET, models.Lote)
-        mfilters = dict(filter(lambda v: v[0] in models.Lote.FILTROS, filters.items()))
+        filters, mfilters = get_filtros(request.GET, models.Lote)
         lotes= models.Lote.objects.filter(**mfilters)
 
     productos = models.ProductoTerminado.objects.all()
