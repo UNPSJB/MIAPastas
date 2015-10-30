@@ -290,11 +290,24 @@ class PedidoClienteFijoForm(forms.ModelForm):
         fields = ['cliente','fecha_inicio','fecha_cancelacion','dias']
         widgets = {
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'}),
-
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}
-
         #exclude = ['productos', 'tipo_pedido']
 
+    def __init__(self, *args, **kwargs):
+        super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
+
+    def clean(self):
+            super(PedidoClienteFijoForm, self).clean()
+            print("soy cleannnnn",self.cleaned_data)
+
+            if self.cleaned_data["fecha_inicio"] < datetime.date.today():
+                raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
+            elif self.cleaned_data["fecha_cancelacion"] < self.cleaned_data["fecha_inicio"]:
+                raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
+
+
+
+'''
     def clean_fecha_cancelacion(self):
         fecha = self.cleaned_data['fecha_cancelacion']
         fecha_ini =self.cleaned_data['fecha_inicio']
@@ -309,13 +322,11 @@ class PedidoClienteFijoForm(forms.ModelForm):
         if fecha < datetime.date.today():
             raise ValidationError("Fecha nada")
         return fecha
+'''
 
 
 
 
-
-    def __init__(self, *args, **kwargs):
-        super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):
