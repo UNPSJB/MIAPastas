@@ -23,9 +23,10 @@
           <div class="form-group">
                         <label for="inputEmail3">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
                           <select class="form-control">
-                              <option>Chofer 1</option>
-                              <option>Chofer 2</option>
-                              <option>Chofer 3</option>
+                              <option>--------</option>
+                              {% for chofer in choferes %}
+                              <option>{{chofer.nombre}}</option>
+                              {% endfor %}
                           </select>
 
                    </div>
@@ -33,38 +34,34 @@
           <p>&nbsp;</p>
       <div class="row">
           <div class="col-md-6">
-          <table class="table table-hover">
-            <thead>
-            <h1>Pedidos para el día</h1>
-            <tr>
-                <th>N° Pedido</th>
-                <th>Razon Social</th>
-                <th>Ciudad</th>
-                <th>Zona</th>
+          <table class="table table-hover" id="datatables" class="display">
+                <thead>
+                    <h1>Pedidos para el día</h1>
+                    <tr>
+                        <th>N° Pedido</th>
+                        <th>Razon Social</th>
+                        <th>Ciudad</th>
+                        <th>Zona</th>
+                    </tr>
+                </thead>
 
-            </tr>
-            </thead>
-              <tbody>
+                <tbody>
 
-                <tr>
-
-                    <td>manola</td>
-                    <td>pocha</td>
-                    <td>lola</td>
-                    <td>asdsa</td>
-                    <td><!-- Trigger the modal with a button -->
-              <button type="button" class=" glyphicon glyphicon-zoom-in pull-left" data-toggle="modal" data-target="#myModal"></button>
-</td>
-          </tr>
-
-          </tbody>
+                    <tr class="renglon select-item" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                        <td>manola</td>
+                        <td>pocha</td>
+                        <td>lola</td>
+                        <td>asdsa</td>
+                        <td><button type="button" class=" glyphicon glyphicon-zoom-in pull-left" data-toggle="modal" data-target="#myModal"></button></td><!-- Trigger the modal with a button -->
+                    </tr>
+                </tbody>
           </table>
           </div>
+
           <div class="col-md-1">
               <div class="btn background-position:top center" role="group" aria-label="..." >
               <button type="button" class="btn btn-success pull-right"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
               <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"> </span></button>
-
           </div>
           <p></p>
           </div>
@@ -186,7 +183,7 @@
                         </thead>
                           <tbody>
                         {% for receta in recetas %}
-                            <tr>
+                            <tr >
                           <td>{{receta.nombre}}</td>
                           <td>{{receta.descripcion}}</td>
                       </tr>
@@ -267,7 +264,8 @@
 
 </div>
 </div>
-
+</div>
+</div>
     <!-- Este es el fin del formulario de recetas -->
 
 {% endblock %}

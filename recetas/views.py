@@ -1016,3 +1016,16 @@ def lotesBaja(request,lote_id):
     messages.success(request, 'Lote fue eliminado correctamente.')
     return redirect ('lotes')
 
+
+#********************************************************#
+         #    H O J A   D E  R U T A    #
+#********************************************************#
+def hojaDeRuta(request):
+
+        pedidos_clientes = models.PedidoCliente.objects.all()
+        for pedido in pedidos_clientes:
+            if not pedido.esParaHoy():
+               pedidos_clientes.remove(pedido)
+        choferes = models.Chofer.objects.all()
+        return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes,"choferes":choferes})
+
