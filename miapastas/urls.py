@@ -83,6 +83,7 @@ urlpatterns = [
 
 
     url(r'^insumos/modificarStock/$',recetasviews.insumosModificarStock,name='ModificarStockInsumos'),
+    url(r'^datosInsumo/(?P<insumo_id>[0-9]+)/$',recetasviews.datosInsumo,name='datosInsumo'),
 
 
     url(r'^zonas/$',recetasviews.zonas,name='zonas'),

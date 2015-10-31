@@ -15,6 +15,8 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
 import re #esto sirve para usar expresiones regulares
 import datetime
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
 
 #from datetime import date, datetime
 #import time
@@ -207,6 +209,16 @@ def insumosBaja(request,insumo_id):
         insumo.delete()
 
     return redirect('insumos')
+
+def datosInsumo(request,insumo_id= None):
+
+    insumo= models.Insumo.objects.get( pk= insumo_id)
+
+    data = serializers.serialize('json', [insumo,])
+    print "en datois del insumooooooo", data
+    return HttpResponse(data, content_type='json')
+
+
 
 def insumosModificarStock(request):
     if request.method == 'POST':

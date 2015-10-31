@@ -7,7 +7,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar stock insumo</b></font></p></div>
             <div class="panel-body">
-                <form action="{% url 'ModificarStockInsumos' %}" method="post" class="form" onsubit = "return validar()">
+                <form action="{% url 'ModificarStockInsumos' %}" method="post" class="form" onsubmit = "return validar()">
                     {% csrf_token %}
                     {% bootstrap_form insumo_form layout='horizontal' %}
                     <p>&nbsp;</p>
@@ -30,20 +30,32 @@
 
 <script>
 var unidad;
+var insumo_posta;
+var probando=[];
 
 tuplas = {{tuplas_json}};
 
 function validar(){
     console.log("en validar");
-    tupla = tuplas[unidad + 1];
-    console.log(tupla);
-    /* necesito saber la unidad de medida del insumo seleccionado*/
+    return true;
+
 }
 
 $("#id_insumo").on("change", function() {
     var insumo = $("#id_insumo").val();
-    //window.location="/insumos/modificar_stock/"+insumo+"/";
 
+    console.log("en ajax");
+    $.ajax({
+        type: 'get',
+        dataType: 'html',
+        url: '/datosInsumo/'+document.getElementById('id_insumo').value,
+        success: function(json){
+                lista = JSON.parse(json);
+                console.log(lista[0].fields);
+                insumo_posta=  lista[0].fields;
+                console.log("INSUMO RESIBIDO: "+ insumo_posta.nombre);
+            }
+    });
 });
 
 
