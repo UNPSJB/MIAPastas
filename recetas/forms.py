@@ -317,16 +317,13 @@ class PedidoClienteFijoForm(forms.ModelForm):
 
     def clean(self):
             super(PedidoClienteFijoForm, self).clean()
-            print("soy cleannnnn",self.cleaned_data)
             if self.cleaned_data["fecha_inicio"] < datetime.date.today():
-                print("en el if")
                 raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
-                print "Fecha de inicio debe ser mayor o igual a la fecha actual"
             elif (self.cleaned_data["fecha_cancelacion"] !=None) and (self.cleaned_data["fecha_cancelacion"] < self.cleaned_data["fecha_inicio"]):
-                print("en el elif")
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
-                print "Fecha de cancelacion debe ser mayor a la de inicio"
             print("saliendo del clean")
+
+
 
 
 
@@ -350,8 +347,11 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
+        print fecha.weekday(),"fechaaaaaa"
         if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
+        elif fecha.weekday() == 5 or fecha.weekday() == 6:
+            raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
@@ -369,6 +369,8 @@ class PedidoClienteCambioForm(forms.ModelForm):
         fecha = self.cleaned_data['fecha_entrega']
         if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
+        elif fecha.weekday() == 5 or fecha.weekday() == 6:
+            raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):

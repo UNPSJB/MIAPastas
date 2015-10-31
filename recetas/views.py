@@ -223,6 +223,7 @@ def datosInsumo(request,insumo_id= None):
 
 
 
+
 def insumosModificarStock(request):
     if request.method == 'POST':
         insumo_form = forms.ModificarStockInsumoForm(request.POST)
@@ -1075,3 +1076,18 @@ def hojaDeRuta(request):
         choferes = models.Chofer.objects.all()
         return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes_enviar,"choferes":choferes})
 
+
+
+def generarTotales(request):
+    print "soy viewwwwwww"
+    pedidos = json.loads(request.raw_post_data)
+    print pedidos, "soy listtaaaaaaaaaaaaa"
+
+
+
+    return HttpResponse('Success')
+    '''
+    data = serializers.serialize('json', [insumo,])
+    print "en datois del insumooooooo", data
+    return HttpResponse(data, content_type='json')
+'''

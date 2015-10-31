@@ -254,7 +254,6 @@
                   <div class="modal-footer">
                       <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-
                   </div>
                 </div>
 
@@ -309,6 +308,7 @@ var pedidosAsignados=[];
             _renglon= "#renglon_asignado-"+id_asignado;
             $(".select-item-asignados").removeClass("danger");        //quito la clase active, para q se deseleccionen
             $(_renglon).addClass("danger");
+
         }
 
        });
@@ -330,6 +330,8 @@ var pedidosAsignados=[];
 
             $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados" data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
             $el=null;
+
+            generarTotales();   //actualizo tabla de totales
        }
 
        function quitarHojaDeRuta(){
@@ -350,9 +352,28 @@ var pedidosAsignados=[];
                 )
            }
            )
-                alert(pedidosAsignados);
+               //
 
        }
+       //tuplas = {{tuplas_json}};
+
+
+        function generarTotales(){
+            generarHoja();
+
+            var jsonText = JSON.stringify(pedidosAsignados);
+            $.ajax({
+                url: '/hojaDeRuta/generarTotales',
+                type: 'POST',
+                data: jsonText,
+                traditional: true,
+                dataType: "html",
+                success: function(result){
+            }
+            });
+
+
+        }
 
 
 </script>
