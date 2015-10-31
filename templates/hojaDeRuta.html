@@ -54,7 +54,7 @@
                         <td>{{pedido.cliente.razon_social}}</td>
                         <td>{{pedido.cliente.ciudad.nombre}}</td>
                         <td>{{pedido.cliente.ciudad.zona.nombre}}</td>
-                        <td><button type="button" class=" glyphicon glyphicon-zoom-in pull-left" data-toggle="modal" data-target="#myModal"></button></td><!-- Trigger the modal with a button -->
+                        <td><a href="{% url 'pedidoClienteConsulta' pedido.id %}"><button type="button" class=" glyphicon glyphicon-zoom-in pull-left"></button></a></td><!-- Trigger the modal with a button -->
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -137,7 +137,7 @@
       </div>
        <div>
             <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
-          <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
+          <button type="button" onclick="generarHoja()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
           <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
 
 
@@ -274,12 +274,16 @@
 {% block javascript %}
 <script>
 var id;
+var id_asignado;
 var $el;
+var $el_asignado;
 var pedidosAsignados=[];
         $(function() {
 
         var estado;
         function obtenerId(event) {
+            $(".select-item-asignados").removeClass("danger");
+            id_asignado=undefined;
             $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
          // estado = $el.data()["estado"]; //obtengo el estado del pedido donde hice click
@@ -295,14 +299,14 @@ var pedidosAsignados=[];
         $(".asignados").on("click",".select-item-asignados",obtenerId_asignado);    //on() permite manejar eventos de elementos que se crean dinamicamente en el futuro,
 
 
-
-
        function obtenerId_asignado(event) {
-            $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
-            id = $el.data()["id"];
-            $el.addClass("danger");
+            $(".select-item").removeClass("danger");
+            id=undefined;
+            $el_asignado = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id_asignado = $el_asignado.data()["id"];
+            $el_asignado.addClass("danger");
             var _renglon = "";
-            _renglon= "#renglon_asignado-"+id;
+            _renglon= "#renglon_asignado-"+id_asignado;
             $(".select-item-asignados").removeClass("danger");        //quito la clase active, para q se deseleccionen
             $(_renglon).addClass("danger");
         }
@@ -310,13 +314,12 @@ var pedidosAsignados=[];
        });
 
 
-
-
        function agregarHojaDeRuta(){
             var nro_pedido;
             var razon_social;
             var cont = 0;
             $el.hide(); // en vez de hide se puede usar remove(), para que se muestre es con show()
+
             $el.find('td').each (function() {
               if(cont==0)
                 nro_pedido = $(this).html();//me muestra el codigo html del objeto al que esta asignado
@@ -330,7 +333,24 @@ var pedidosAsignados=[];
        }
 
        function quitarHojaDeRuta(){
-
+            $el_asignado.remove();
+            id_show= $el_asignado.data()["id"]; //manejan los mismos id
+            $el_asignado=null;
+            $("#renglon-"+id_show).show();
+       }
+       function generarHoja(){
+           $('#cuerpoPedidosAsignados').find('tr').each(function(){
+                var cont = 0;
+                $(this).find('td').each(function(){
+                    if (cont == 0){
+                        pedidosAsignados.push($(this).html());  //agrego los id de los pedidos que se deben agregar a la hoja de ruta
+                    }
+                    cont=1;
+                }
+                )
+           }
+           )
+                alert(pedidosAsignados);
 
        }
 
