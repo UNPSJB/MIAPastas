@@ -312,7 +312,13 @@ class PedidoCliente(models.Model):
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
+    def esParaHoy(self):
+        pass
 
+    def esParaHoy(self):
+        print "soy padreeeeee"
+
+    
     def __str__(self):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
@@ -329,8 +335,10 @@ class PedidoFijo(PedidoCliente):
     dias = MultiSelectField(choices=TIPODIAS)
 
     def esParaHoy(self):
-        d = date.today()
-        if d.day in self.dias:
+        num_dia = date.today().weekday()
+        if self.dias == None:
+            return False
+        if str(num_dia + 1) in self.dias:
             return True
         else:
             return False
@@ -340,7 +348,7 @@ class PedidoCambio(PedidoCliente):
 
     def esParaHoy(self):
         d = date.today()
-        if d in self.fecha_entrega:
+        if d == self.fecha_entrega:
             return True
         else:
             return False
@@ -351,7 +359,7 @@ class PedidoOcacional(PedidoCliente):
 
     def esParaHoy(self):
         d = date.today()
-        if d in self.fecha_entrega:
+        if d == self.fecha_entrega:
             return True
         else:
             return False

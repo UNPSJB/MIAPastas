@@ -15,8 +15,11 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
 import re #esto sirve para usar expresiones regulares
 import datetime
+
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
+from itertools import chain
+
 
 #from datetime import date, datetime
 #import time
@@ -1044,4 +1047,31 @@ def lotesBaja(request,lote_id):
     l.delete()
     messages.success(request, 'Lote fue eliminado correctamente.')
     return redirect ('lotes')
+
+
+#********************************************************#
+         #    H O J A   D E  R U T A    #
+#********************************************************#
+def hojaDeRuta(request):
+
+        pedidos_clientes = []
+        pedidos_fijos = models.PedidoFijo.objects.all()
+        pedidos_ocacionales = models.PedidoOcacional.objects.all()
+        pedidos_cambio = models.PedidoCambio.objects.all()
+        '''
+        pedidos_clientes=pedidos_clientes + pedidos_fijos
+        pedidos_clientes=pedidos_clientes + pedidos_cambio
+        pedidos_clientes=pedidos_clientes + pedidos_ocacionales
+'''
+
+
+        pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
+
+        pedidos_clientes_enviar = []
+        for pedido in pedidos_clientes:
+            #print pedido.__class__
+            if pedido.esParaHoy():
+               pedidos_clientes_enviar.append(pedido)
+        choferes = models.Chofer.objects.all()
+        return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes_enviar,"choferes":choferes})
 

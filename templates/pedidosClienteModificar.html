@@ -9,6 +9,10 @@
               <form action="{% url 'pedidosClienteModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
                   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b></b></font></p>
 
+                      {% if pedido_form.errors %}
+                    <h3><font color="red">Error: Verifique los datos</font></h3>
+            {% endif %}
+
                   {% csrf_token %}
 
                         {% if tipo_pedido = 1 %}
