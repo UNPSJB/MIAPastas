@@ -79,7 +79,7 @@
                             <th>Razon Social</th>
                         </tr>
                     </thead>
-                    <tbody id="cuerpoPedidosAsignados">
+                    <tbody id="cuerpoPedidosAsignados" class="asignados">
 
 
 
@@ -98,7 +98,7 @@
           <div class="col-md-5">
               <div>
                     <!-- Trigger the modal with a button -->
-              <button type="button" class=" glyphicon glyphicon-shopping-cart pull-right btn btn-info" data-toggle="modal" data-target="#ModalProductosExtra"> Agregar extras</button>
+              <button type="button" class=" glyphicon glyphicon-shopping-cart pull-right btn btn-info hola" data-toggle="modal" data-target="#ModalProductosExtra"> Agregar extras</button>
 
 
               <table class="table table-hover">
@@ -282,8 +282,8 @@ var pedidosAsignados=[];
         function obtenerId(event) {
             $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-            estado = $el.data()["estado"]; //obtengo el estado del pedido donde hice click
-            console.log(estado)
+         // estado = $el.data()["estado"]; //obtengo el estado del pedido donde hice click
+         // console.log(estado)
             $el.addClass("danger");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -292,23 +292,20 @@ var pedidosAsignados=[];
         }
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+        $(".asignados").on("click",".select-item-asignados",obtenerId_asignado);    //on() permite manejar eventos de elementos que se crean dinamicamente en el futuro,
 
-       });
+
 
 
        function obtenerId_asignado(event) {
             $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
-            estado = $el.data()["estado"]; //obtengo el estado del pedido donde hice click
-            console.log(estado)
             $el.addClass("danger");
             var _renglon = "";
             _renglon= "#renglon_asignado-"+id;
-            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(".select-item-asignados").removeClass("danger");        //quito la clase active, para q se deseleccionen
             $(_renglon).addClass("danger");
         }
-
-        $(".select-item").click(obtenerId_asignado);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
        });
 
@@ -328,7 +325,7 @@ var pedidosAsignados=[];
               cont=cont+1;
             });
 
-            $('#tablaPedidosAsignados').append('<tr class="renglon select-item" data-id="+nro_pedido+" id="renglon_asignado-"+nro_pedido+""><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
+            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados" data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
             $el=null;
        }
 
