@@ -214,13 +214,21 @@ def insumosBaja(request,insumo_id):
 
     return redirect('insumos')
 
+
+
 def datosInsumo(request,insumo_id= None):
-
     insumo= models.Insumo.objects.get( pk= insumo_id)
+    insumo_data = serializers.serialize('json', [insumo,])
 
-    data = serializers.serialize('json', [insumo,])
-    print "en datois del insumooooooo", data
-    return HttpResponse(data, content_type='json')
+    t = request.GET['b']
+    b = request.GET['t']
+    pedidos_list = re.findall("\d+",request.GET['pedidos'])
+    for i in range(0,len(pedidos_list)):
+        #los paso a INT para buscarlos despues
+        pedidos_list[i]= int(pedidos_list[i])
+        print "pedido entero: ",pedidos_list[i]
+
+    return HttpResponse(insumo_data, content_type='json')
 
 
 

@@ -392,12 +392,14 @@ class LoteForm(forms.ModelForm):
            'fecha_vencimiento': forms.DateInput(attrs={'class': 'datepicker'}),
         }
 
+
     def clean_fecha_vencimiento(self):
         print "cleanb fecha vencimiento"
         fecha = self.cleaned_data['fecha_vencimiento']
         if fecha <= datetime.date.today():
             raise ValidationError("Fecha de vencimiento debe ser mayor a la actual")
         return fecha
+
 
     def clean_fecha_produccion(self):
         print "clean en fecha de produccion"
