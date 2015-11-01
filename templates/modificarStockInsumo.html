@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar stock insumo</b></font></p></div>
+            <div class="panel-body">
+                <form action="{% url 'ModificarStockInsumos' %}" method="post" class="form" onsubmit = "return validar()">
+                    {% csrf_token %}
+                    {% bootstrap_form insumo_form layout='horizontal' %}
+                    <p>&nbsp;</p>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">
+                            {% bootstrap_icon "star" %} Agregar
+                        </button>
+                    {% endbuttons %}
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+                </form>
+            </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+var unidad;
+var insumo_posta;
+var probando=[];
+
+tuplas = {{tuplas_json}};
+
+function validar(){
+    console.log("en validar");
+    return true;
+
+}
+
+$("#id_insumo").on("change", function() {
+    var insumo = $("#id_insumo").val();
+
+    console.log("en ajax");
+    $.ajax({
+        type: 'get',
+        dataType: 'html',
+        url: '/datosInsumo/'+document.getElementById('id_insumo').value,
+        success: function(json){
+                lista = JSON.parse(json);
+                console.log(lista[0].fields);
+                insumo_posta=  lista[0].fields;
+                console.log("INSUMO RESIBIDO: "+ insumo_posta.nombre);
+            }
+    });
+});
+
+
+
+</script>
+
+{% endblock %}

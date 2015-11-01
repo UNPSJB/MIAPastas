@@ -29,23 +29,85 @@ class Chofer (models.Model):
 #********************************************************#
                #     I N S U M O     #
 #********************************************************#
+def stock_litros_kg(cant):
+    cant= cant * 1000
+    return cant
+
+def stock_unidad(cant):
+    return cant
+
+def stock_docena(cant):
+    cant = cant * 12
+    return cant
+
+
 
 class Insumo(models.Model):
-
     FILTROS = ['nombre__icontains', 'stock__lte']
-    UNIDADES = (
-        (1, "Kg"),
-        (2, "Litro"),
-        (3, "Unidad"),
-        (4, "Docena"),
-        (5, "Caja"),
-        (6, "Cucharada")
 
+
+
+    NONE = 0
+    GRAMO = 1
+    CM3 = 2
+    UNIDAD = 3
+    KG = 4
+    LITRO = 5
+    DOCENA = 6
+    MAPLE = 7
+    TUPLAS = [(GRAMO,KG),
+              (CM3,LITRO),
+              (UNIDAD,DOCENA,MAPLE)]
+
+    UNIDADES_BASICAS = (
+        (GRAMO, "g"),
+        (CM3, "cm3"),
+        (UNIDAD, "unidad")
     )
+
+    UNIDADES_DERIVADAS = (
+        (KG, "kg"),
+        (LITRO, "litro"),
+        (DOCENA, "docena"),
+        (MAPLE, "maple")
+    )
+
+    UNIDADES = UNIDADES_BASICAS + UNIDADES_DERIVADAS
+
+    CONVERT = {
+        NONE: lambda cantidad: cantidad,
+        GRAMO: lambda cantidad: cantidad,
+        CM3: lambda cantidad: cantidad,
+        UNIDAD: lambda cantidad: cantidad,
+        KG: lambda cantidad: cantidad * 1000,
+        LITRO: lambda cantidad: cantidad * 1000,
+        DOCENA: lambda cantidad: cantidad * 12,
+        MAPLE: lambda cantidad: cantidad * 30
+    }
+
+    FORMAT = {
+        GRAMO: lambda cantidad: "%s.%s kg" % (cantidad // 1000, cantidad % 1000),
+        CM3: lambda cantidad: "%s.%s litros" % (cantidad // 1000, cantidad % 1000),
+        UNIDAD: lambda cantidad: "%s docenas y %s unidades" % (cantidad // 12, cantidad % 12)
+    }
+
     nombre = models.CharField(max_length=100, unique=True, help_text="El nombre del insumo")
     descripcion = models.TextField("Descripcón")
-    stock = models.PositiveIntegerField(blank= True, null=True, default=0)
-    unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
+    stock = models.IntegerField(blank=True, null=True, default=0)
+    unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
+
+    # Control de stock
+    def incrementar(self, cantidad, unidad=NONE):
+        self.stock += self.CONVERT[unidad](cantidad)
+
+    def decrementar(self, cantidad, unidad=NONE):
+        print "voy a decrementar del insumo ",self.nombre, "la cantidad: ",cantidad, "unidad medida: ",unidad
+        self.stock -= self.CONVERT[unidad](cantidad)
+
+    modificar_stock = incrementar
+
+    def get_stock_humano(self):
+        return self.FORMAT[self.unidad_medida](self.stock)
 
     def __str__(self):
         return "%s (%s)" % (self.nombre, self.get_unidad_medida_display())
@@ -97,7 +159,7 @@ class Receta(models.Model):
 
 
 class RecetaDetalle(models.Model):
-    cantidad_insumo = models.FloatField()
+    cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     receta = models.ForeignKey(Receta)
 
@@ -163,7 +225,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso_icontains']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
@@ -250,13 +312,20 @@ class PedidoCliente(models.Model):
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
+    def esParaHoy(self):
+        pass
 
+    def esParaHoy(self):
+        print "soy padreeeeee"
+
+    
     def __str__(self):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.FloatField()
+    cantidad_producto = models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 
@@ -266,8 +335,10 @@ class PedidoFijo(PedidoCliente):
     dias = MultiSelectField(choices=TIPODIAS)
 
     def esParaHoy(self):
-        d = date.today()
-        if d.day in self.dias:
+        num_dia = date.today().weekday()
+        if self.dias == None:
+            return False
+        if str(num_dia + 1) in self.dias:
             return True
         else:
             return False
@@ -277,7 +348,7 @@ class PedidoCambio(PedidoCliente):
 
     def esParaHoy(self):
         d = date.today()
-        if d in self.fecha_entrega:
+        if d == self.fecha_entrega:
             return True
         else:
             return False
@@ -288,7 +359,7 @@ class PedidoOcacional(PedidoCliente):
 
     def esParaHoy(self):
         d = date.today()
-        if d in self.fecha_entrega:
+        if d == self.fecha_entrega:
             return True
         else:
             return False
@@ -298,7 +369,11 @@ class PedidoOcacional(PedidoCliente):
 #********************************************************#
 class PedidoProveedor(models.Model):
 
-    FILTROS = ['fecha_realizacion__gte','proveedor','estado_pedido']
+    FILTROS = ['fecha_desde','fecha_hasta','proveedor','estado_pedido']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha_realizacion__gte',
+        'fecha_hasta': 'fecha_realizacion__lte'
+    }
     ESTADO = (
         (1, "Pendiente"),
         (2, "Recibido"),
@@ -310,6 +385,10 @@ class PedidoProveedor(models.Model):
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
     descripcion = models.TextField()
+    #fecha_desde =  models.DateField()
+    #fecha_hasta =  models.DateField()
+    #fecha_cancelacion =  models.DateField()
+
     #relacion con proveedor
     #relacion con
     #https://jqueryui.com/datepicker/
@@ -323,7 +402,7 @@ class PedidoProveedor(models.Model):
 
 
 class DetallePedidoProveedor(models.Model):
-    cantidad_insumo = models.DecimalField(max_digits=5, decimal_places=2)
+    cantidad_insumo = models.PositiveIntegerField()
     insumo = models.ForeignKey(Insumo)
     pedido_proveedor = models.ForeignKey(PedidoProveedor)
 
@@ -342,4 +421,45 @@ class Lote(models.Model):
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
 
+#********************************************************#
+         #    HOJA DE RUTA   #
+#********************************************************#
 
+'''
+class HojaDeRuta(models.Model):
+    fecha_creacion = models.DateField(auto_now_add = True)
+    chofer = models.ForeignKey(Chofer)
+    lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle")
+
+
+class LotesExtraDetalle(models.Model):
+    cantidad = models.FloatField()
+    lote = models.ForeignKey(Lote)
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+
+
+
+#********************************************************#
+         #    ENTREGA PEDIDO   #
+#********************************************************#
+
+
+class EntregaPedido(models.Model):
+    fecha_entrega = models.DateField(auto_now_add = True)
+    pedido = models.ForeignKey(PedidoCliente)
+    lotes = models.ManyToManyField(Lote, through="EntregaPedidoDetalle")
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+    #falta recibo, factura
+    def __str__(self):
+        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
+
+class EntregaPedidoDetalle(models.Model):
+    cantidad_entregada = models.FloatField()    #poner integer
+    cantidad_enviada = models.FloatField()
+    precio = models.FloatField()
+    detalle_pedido = models.ForeignKey(PedidoClienteDetalle)    #porque
+    lote = models.ManyToManyField(Lote)
+    entrega_pedido = models.ForeignKey(EntregaPedido)
+
+
+'''

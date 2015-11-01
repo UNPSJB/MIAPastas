@@ -82,6 +82,9 @@ urlpatterns = [
     url(r'^insumos/baja/(?P<insumo_id>[0-9]+)/$',recetasviews.insumosBaja,name='insumosBaja'),
 
 
+    url(r'^insumos/modificarStock/$',recetasviews.insumosModificarStock,name='ModificarStockInsumos'),
+    url(r'^datosInsumo/(?P<insumo_id>[0-9]+)/$',recetasviews.datosInsumo,name='datosInsumo'),
+
 
     url(r'^zonas/$',recetasviews.zonas,name='zonas'),
     url(r'^zonas/alta/$',recetasviews.zonasAlta,name='zonasAlta'),
@@ -125,13 +128,14 @@ urlpatterns = [
     url(r'^pedidosProveedor/modificar/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedorModificar,name='pedidosProveedorModificar'),
     url(r'^pedidosProveedor/baja/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedorBaja,name='pedidosProveedorBaja'),
     url(r'^pedidosProveedor/recepcionar/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedorRecepcionar,name='pedidosProveedorRecepcionar'),
+    url(r'^pedidosProveedor/cancelar/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedorCancelar,name='pedidosProveedorCancelar'),
                 # FIN SEGUNDA ENTREGA
     #url(r'^ciudades/add$',recetasviews.ciudades,name='ciudadesAlta'),
     #url(r'^clientes$',recetasviews.clientes,name='clientes'),
     #url(r'^clientes/add$',recetasviews.clientes,name='clientesAlta'),
 
 
-
+     url(r'^hojaDeRuta$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
 
 
 

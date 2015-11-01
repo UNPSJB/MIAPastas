@@ -2,13 +2,16 @@
 {% load staticfiles %}
 {% load bootstrap3 %}
 {% block contenido %}
-{% load l10n %}
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Pedido Cliente</b></font></p></div>
 
               <form action="{% url 'pedidosClienteModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
                   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b></b></font></p>
+
+                      {% if pedido_form.errors %}
+                    <h3><font color="red">Error: Verifique los datos</font></h3>
+            {% endif %}
 
                   {% csrf_token %}
 
@@ -63,7 +66,7 @@
 
 
                     <button id = "btn-submit" type="submit" class="btn btn-primary">
-                        {% bootstrap_icon "star" %} Submit
+                        {% bootstrap_icon "star" %} Aceptar
                     </button>
                   {% endbuttons %}
               </div></form>
@@ -164,7 +167,7 @@ function validarForm(){
 $(function() {
                 /* INICIAMOS DETALLES */
     var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": "{{detalle.cantidad_producto|unlocalize}}", "texto": "{{detalle.producto_terminado}}" },{% endfor %}
+    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": "{{detalle.cantidad_producto}}", "texto": "{{detalle.producto_terminado}}" },{% endfor %}
     ]
     console.log("cantidad de listado "+listado_detalles[0].cantidad);
     $(listado_detalles).each(function(i, d) {

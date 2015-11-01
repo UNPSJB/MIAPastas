@@ -12,8 +12,12 @@
            <form class="form-inline" method="get">
                   <!-- Filtro de Fecha de Realizacion del Pedido a Proveedor -->
                   <div class="form-group">
-                        <label for="fecha_realizacion">Fecha de Realizacion (Mayor o igual)</label>
-                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_realizacion}}" name="fecha_realizacion" id="fecha_realizacion">
+                        <label for="fecha_desde">Fecha Desde</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
+                  </div>
+                  <div class="form-group">
+                        <label for="fecha_hasta">Fecha Hasta</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
                   </div>
                   <!-- Filtro de Proveedor del Pedido a Proveedor -->
                   <div class="form-group">
@@ -84,6 +88,7 @@
                   <a type="button" id="recepcionar-pedido" class="btn btn-success"><span class="glyphicon glyphicon-check" aria-hidden="true"> </span></a>
               </div>
               <a class="btn" href = "{% url 'pedidosProveedorAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>
+              <a class="btn" id="cancelar-pedido"><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-remove" aria-hidden="true"> Cancelar </span></b></font></a>
               <p></p>
           </div>
       </div>
@@ -151,11 +156,30 @@
 
         }
 
+
+        function mostrar_errorEstadoCancelar(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Este Pedido no se puede cancelar porque ya ha sido cancelado/recepcionado.",
+                    type: BootstrapDialog.TYPE_WARNING,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+
+
+        }
+
         function eliminar(){
             if(id==undefined)
 	        {
                 mostrar_error();
             }else{
+                //duda: depende de algo eliminar??
                 BootstrapDialog.show({
                     title: "Eliminar",
                     cssClass: 'aviso-dialog',
@@ -175,6 +199,7 @@
                      });
             }
         }
+
 
 
 
@@ -210,11 +235,42 @@
 
         }
 
+        function cancelar(){
+            if(id==undefined){
+                mostrar_error();
+            }else{
+                if(estado!="Pendiente"){
+                    mostrar_errorEstadoCancelar();
+                }else{
+
+                    BootstrapDialog.show({
+                    title: "Eliminar",
+                    cssClass: 'aviso-dialog',
+                    message: "Seguro que desea Cancelar el pedido?",
+                    type: BootstrapDialog.TYPE_WARNING,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                 window.open('/pedidosProveedor/cancelar/'+id+'',"_self")
+                                dialogRef.close();
+                            }},{
+                            label: 'Cancelar',
+                            action:function(dialogRef){
+                            dialogRef.close();
+                            }
+                        }]
+                     });
+                }
+            }
+
+        }
+
+
         $("#modificar-pedido").click(modificar);
         $("#eliminar-pedido").click(eliminar);       //con # indico que el elemento con id "eliminar-producto", al hacer clic ejecuto eliminar()
         $("#consulta-pedido").click(consultar);
         $("#recepcionar-pedido").click(recepcionar);
-
+        $("#cancelar-pedido").click(cancelar);
 
     });
 </script>

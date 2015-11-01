@@ -159,7 +159,7 @@ $(function() {
         if ((cantidad == "") || (producto == "")){
             alert("Debe llenar todos los campos");
         }else{
-            if (!esFloatPositivo(cantidad)){
+            if (!esEnteroPositivo(cantidad)){
                 alert("debe ingresar una cantidad valida");
             }else{
                  var ins = _.find(detalles,{producto:producto});

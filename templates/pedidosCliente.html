@@ -18,10 +18,10 @@
             <div class="form-group col-md-12">
                         <label for="fecha_creacion">Fecha Creacion (Mayor o igual)</label>
                         <input type="text" class="form-control datepicker" value="{{filtros.fecha_creacion}}" name="fecha_creacion" id="fecha_creacion">
-                  </div>
+
 
             <p>&nbsp;</p>
-            <div class="col-md-2 form-group">
+            <div class="col-md-3 form-group">
               <label for="cliente">Cliente</label>
 
               <select class="form-control" id="cliente" name="cliente">
@@ -46,13 +46,13 @@
 
           </div>
             <button type="submit" class="btn btn-default">Filtrar</button>
-
+        </div>
       </form>
 
           <p>&nbsp;</p>
       <hr>
       <div class="row">
-          <div class="col-md-6">
+          <div class="col-md-7" style="overflow-y:scroll; max-height:350px;">
 
           <table class="table table-hover" id="datatables" class="display">
             <thead>
@@ -75,7 +75,7 @@
           </table>
 
           </div>
-          <div class="col-md-6">
+          <div class="col-md-5">
               <div class="col-md-4">
               <div class="btn-group btn-group-sm" role="group" aria-label="...">
               <button id="consultar-pedido" type="button" class="btn btn-info" data-toggle="modal" data-target="#myModal"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></button>
@@ -93,8 +93,8 @@
               <a href="{% url 'pedidosClientesAlta' 3 %}"><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido de Cambio</span></b></font></button></a>
 
           </div>
-          <div class="col-md-6"></div>
-          <div class="col-md-6">
+
+          <div class="col-md-5">
 
               <div>
 
