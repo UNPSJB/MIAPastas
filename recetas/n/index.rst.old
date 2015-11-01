@@ -1,0 +1,29 @@
+.. recetas documentation master file, created by
+   sphinx-quickstart on Sun Nov 01 09:56:24 2015.
+   You can adapt this file completely to your liking, but it should at least
+   contain the root `toctree` directive.
+
+Mia Pastas documentacion
+====================================
+Esta es la introducción al proyecto
+
+Requerimientos:
+
+EL proyecto depende de...
+
+Contents:
+
+.. toctree::
+   :maxdepth: 2   
+
+   Tutorial
+   Proyecto
+   Codigo
+Indices and tables
+==================
+
+* :ref:`genindex`
+* :ref:`modindex`
+* :ref:`search`
+
+

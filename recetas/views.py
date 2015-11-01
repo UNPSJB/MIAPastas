@@ -77,10 +77,11 @@ def choferes(request,chofer_id=None):
 
 def choferesAlta(request):
     """
-        Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
+    Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
         precondicion: El chofer a dar de alta no debe existir
         postcondicion: El chofer ha sido dado de alta
-    """
+        """
+
     if request.method == "POST":
         chofer_form = forms.ChoferForm(request.POST)
         if chofer_form.is_valid():
