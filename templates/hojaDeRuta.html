@@ -15,7 +15,7 @@
 
           {% csrf_token %}
                     {% bootstrap_form hojaDeRuta_form layout='horizontal' %}
-            {{ detalles_form.management_form }}
+
 
           <div class="form-group">
             <label for="exampleInputName2">N° de Hoja de Ruta</label>
@@ -372,6 +372,28 @@ var pedidosAsignados=[];
                 data: {'tasks[]': pedidosAsignados},
 
             });
+
+
+
+        var myJsonString = JSON.stringify(pedidosAsignados);
+        console.log("json a enviar: "+myJsonString);
+        $.ajax({
+            type: 'get',
+            data : {
+                 't': 'titleeeee',<h></h>
+                 'b': 'bodyyyyyyy',
+                 'pedidos': myJsonString
+             },
+            dataType: 'html',
+            url: 'hojaDeRuta/generarTotales'+document.getElementById('id_insumo').value,        //nico: como se hace para q el value sea siempre el id del insumo??
+            success: function(json){
+                    lista = JSON.parse(json);
+                    console.log(lista[0].fields);
+                    insumo_posta=  lista[0].fields;
+                    console.log("INSUMO RESIBIDO: "+ insumo_posta.nombre);
+                }
+        });
+
 
 
         }

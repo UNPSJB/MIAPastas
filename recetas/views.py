@@ -1080,7 +1080,7 @@ def hojaDeRuta(request):
         pedidos_fijos = models.PedidoFijo.objects.all()
         pedidos_ocacionales = models.PedidoOcacional.objects.all()
         pedidos_cambio = models.PedidoCambio.objects.all()
-        detalles_form = formset_factory(forms.LotesExtraDetalleForm())
+        #detalles_form = formset_factory(forms.LotesExtraDetalleForm())
         hojaDeRuta_form = forms.HojaDeRutaForm()
         pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
         pedidos_clientes_enviar = []
@@ -1090,7 +1090,7 @@ def hojaDeRuta(request):
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
-        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,"detalles_form":detalles_form,"pedidos":pedidos_clientes_enviar,"choferes":choferes,"productos":productos})
+        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,"pedidos":pedidos_clientes_enviar,"choferes":choferes,"productos":productos})
 
 
 
