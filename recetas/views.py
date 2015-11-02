@@ -1059,28 +1059,24 @@ def hojaDeRuta(request):
         pedidos_fijos = models.PedidoFijo.objects.all()
         pedidos_ocacionales = models.PedidoOcacional.objects.all()
         pedidos_cambio = models.PedidoCambio.objects.all()
-        '''
-        pedidos_clientes=pedidos_clientes + pedidos_fijos
-        pedidos_clientes=pedidos_clientes + pedidos_cambio
-        pedidos_clientes=pedidos_clientes + pedidos_ocacionales
-'''
-
-
+        detalles_form = formset_factory(forms.LotesExtraDetalleForm())
+        hojaDeRuta_form = forms.HojaDeRutaForm()
         pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
-
         pedidos_clientes_enviar = []
         for pedido in pedidos_clientes:
             #print pedido.__class__
             if pedido.esParaHoy():
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
-        return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes_enviar,"choferes":choferes})
+        productos = models.ProductoTerminado.objects.all()
+        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,"detalles_form":detalles_form,"pedidos":pedidos_clientes_enviar,"choferes":choferes,"productos":productos})
 
 
 
 def generarTotales(request):
     print "soy viewwwwwww"
-    pedidos = json.loads(request.raw_post_data)
+    pedidos=request.POST.getlist('tasks[]')
+    #pedidos = json.loads(request.raw_post_data)
     print pedidos, "soy listtaaaaaaaaaaaaa"
 
 

@@ -26,6 +26,10 @@ class Chofer (models.Model):
     telefono=models.PositiveIntegerField()
     e_mail=models.CharField(max_length=100)
 
+    def __str__(self):
+        return "%s" % (self.nombre)
+
+
 #********************************************************#
                #     I N S U M O     #
 #********************************************************#
@@ -425,7 +429,7 @@ class Lote(models.Model):
          #    HOJA DE RUTA   #
 #********************************************************#
 
-'''
+
 class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
@@ -438,7 +442,7 @@ class LotesExtraDetalle(models.Model):
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
 
-
+'''
 #********************************************************#
          #    ENTREGA PEDIDO   #
 #********************************************************#

@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
+{% load bootstrap3 %}
 {% block contenido %}
 
 
@@ -12,6 +12,11 @@
   <div class="panel-body">
       <!-- formulario -->
       <form class="form-inline">
+
+          {% csrf_token %}
+                    {% bootstrap_form hojaDeRuta_form layout='horizontal' %}
+            {{ detalles_form.management_form }}
+
           <div class="form-group">
             <label for="exampleInputName2">N° de Hoja de Ruta</label>
             <input type="text" class="form-control" id="exampleInputName2" placeholder="N° hoja de ruta" readonly>
@@ -217,9 +222,10 @@
                         <label for="inputEmail3">Producto Terminado</label>
 
                           <select class="form-control">
-                              <option>Producto 1</option>
-                              <option>producto 2</option>
-                              <option>producto 3</option>
+                              <option>--------</option>
+                              {% for producto in productos %}
+                              <option>{{producto.nombre}}</option>
+                                {% endfor %}
                           </select>
 
                    </div>
@@ -360,16 +366,11 @@ var pedidosAsignados=[];
 
         function generarTotales(){
             generarHoja();
-
-            var jsonText = JSON.stringify(pedidosAsignados);
             $.ajax({
-                url: '/hojaDeRuta/generarTotales',
-                type: 'POST',
-                data: jsonText,
-                traditional: true,
-                dataType: "html",
-                success: function(result){
-            }
+                type: "POST",
+                url: 'hojaDeRuta/generarTotales',
+                data: {'tasks[]': pedidosAsignados},
+
             });
 
 

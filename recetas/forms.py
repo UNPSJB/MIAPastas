@@ -413,7 +413,7 @@ class LoteForm(forms.ModelForm):
 ############################################################################
 
 
-'''
+
 class HojaDeRutaForm(forms.ModelForm):
     class Meta:
         model = models.HojaDeRuta
@@ -424,7 +424,7 @@ class LotesExtraDetalleForm(forms.ModelForm):
         model = models.LotesExtraDetalle
         exclude = ['hoja_de_ruta']
 
-'''
+
 
 
 
