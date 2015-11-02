@@ -32,6 +32,8 @@
 var unidad;
 var insumo_posta;
 var probando=[];
+var pedidos = [1,2,3,45,5,6];
+
 
 tuplas = {{tuplas_json}};
 
@@ -43,10 +45,20 @@ function validar(){
 
 $("#id_insumo").on("change", function() {
     var insumo = $("#id_insumo").val();
+
     alert(document.getElementById('id_insumo').value);
+
     console.log("en ajax");
+    console.log("pedidos: "+pedidos);
+    var myJsonString = JSON.stringify(pedidos);
+    console.log("json a enviar: "+myJsonString);
     $.ajax({
         type: 'get',
+        data : {
+             't': 'titleeeee',
+             'b': 'bodyyyyyyy',
+             'pedidos': myJsonString
+         },
         dataType: 'html',
         url: '/datosInsumo/'+document.getElementById('id_insumo').value,        //nico: como se hace para q el value sea siempre el id del insumo??
         success: function(json){
@@ -56,6 +68,7 @@ $("#id_insumo").on("change", function() {
                 console.log("INSUMO RESIBIDO: "+ insumo_posta.nombre);
             }
     });
+    console.log("FIN AJAX");
 });
 
 

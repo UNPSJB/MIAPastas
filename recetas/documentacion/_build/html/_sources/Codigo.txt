@@ -1,0 +1,4 @@
+Codigo
+========
+.. currentmodule:: views
+   :members:

@@ -208,7 +208,12 @@
             if(id==undefined){
                 mostrar_error();
             }else{
-            window.open('/pedidosProveedor/modificar/'+id+'',"_self")
+
+                if(estado!="Pendiente"){
+                    mostrar_errorEstado();
+                }else{
+                    window.open('/pedidosProveedor/modificar/'+id+'',"_self")
+                }
         }}
 
 

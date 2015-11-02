@@ -265,7 +265,7 @@ class PedidoProveedorAltaForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion']
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','fecha_cancelacion']
 
 
 
@@ -274,7 +274,7 @@ class PedidoProveedorModificarForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor']
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor','fecha_cancelacion']
 
 
 class PedidoProveedorRecepcionarForm(forms.ModelForm):
@@ -282,7 +282,8 @@ class PedidoProveedorRecepcionarForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_de_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_realizacion','insumos','proveedor']
+        exclude = ['fecha_realizacion','insumos','proveedor','fecha_cancelacion','estado_pedido']
+
 
 
 class DetallePedidoProveedorForm(forms.ModelForm):
@@ -394,12 +395,14 @@ class LoteForm(forms.ModelForm):
            'fecha_vencimiento': forms.DateInput(attrs={'class': 'datepicker'}),
         }
 
+
     def clean_fecha_vencimiento(self):
         print "cleanb fecha vencimiento"
         fecha = self.cleaned_data['fecha_vencimiento']
         if fecha <= datetime.date.today():
             raise ValidationError("Fecha de vencimiento debe ser mayor a la actual")
         return fecha
+
 
     def clean_fecha_produccion(self):
         print "clean en fecha de produccion"

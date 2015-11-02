@@ -29,6 +29,20 @@
                                             <input value="{{pedido.get_estado_pedido_display}}" type="text" class="form-control" id="estado_pedido" readonly>
                                       </div>
 
+                                      {% if pedido.estado_pedido = 3 %}
+                                      <div class="form-group">
+                                            <label for="fecha_cancelacion">Fecha de Cancelacion</label>
+                                            <input value="{{pedido.fecha_cancelacion}}" type="text" class="form-control" id="fecha_cancelacion" readonly>
+                                      </div>
+                                      {% endif %}
+
+                                      {% if pedido.estado_pedido = 2 %}
+                                      <div class="form-group">
+                                            <label for="descripcion">Descripcion</label>
+                                            <input value="{% if pedido.descripcion = None %}Sin Descripcion{% else %}{{pedido.descripcion}}{% endif %}" type="text" class="form-control" id="descripcion" readonly>
+                                      </div>
+                                      {% endif %}
+
                           </form>
                           <!-- fin formulario -->
                           <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos del Pedido</b></font></p></div>
