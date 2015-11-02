@@ -15,7 +15,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
 import re #esto sirve para usar expresiones regulares
 import datetime
-
+from datetime import date
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from itertools import chain
@@ -962,6 +962,15 @@ def pedidosProveedorRecepcionar(request,pedido_id):
     if request.method == "POST":
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
+            #pedido_proveedor_instancia.fecha_de_entrega = date.today()
+            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
+                messages.error(request, 'Problema de Fechas')
+                return render(request,"pedidosProveedorRecepcionar.html",{
+                "pedido_proveedor_form":pedido_proveedor_form,
+                "proveedor":proveedor,
+                "pedido_id":pedido_id,
+                "pedido":pedido_proveedor_instancia })
+            pedido_proveedor_instancia.estado_pedido = 2
             pedido_proveedor_instancia.save()
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
@@ -971,7 +980,8 @@ def pedidosProveedorRecepcionar(request,pedido_id):
     return render(request,"pedidosProveedorRecepcionar.html",{
         "pedido_proveedor_form":pedido_proveedor_form,
         "proveedor":proveedor,
-        "pedido_id":pedido_id})
+        "pedido_id":pedido_id,
+        "pedido":pedido_proveedor_instancia })
 
 #la idea es que en proveedorRepecionar se recpcione y actualice el stock
 #poner un boton de cancelar, para cancelar el pedio
@@ -993,8 +1003,10 @@ def pedidosProveedorCancelar(request,pedido_id =None):
     print "estoy en cancelar pedido..."
     p = models.PedidoProveedor.objects.get(pk=pedido_id)
     p.estado_pedido = 3
+    p.fecha_cancelacion = date.today()
     p.save()
     print(p.estado_pedido)
+    print(p.fecha_cancelacion)
     messages.success(request, 'El pedido realizado en la fecha: ' + p.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + p.proveedor.razon_social +', ha sido cancelado correctamente.')
     return redirect('pedidosProveedor')
 

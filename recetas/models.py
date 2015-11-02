@@ -384,10 +384,8 @@ class PedidoProveedor(models.Model):
     proveedor = models.ForeignKey(Proveedor)
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
-    descripcion = models.TextField()
-    #fecha_desde =  models.DateField()
-    #fecha_hasta =  models.DateField()
-    #fecha_cancelacion =  models.DateField()
+    descripcion = models.TextField(null=True)
+    fecha_cancelacion =  models.DateField(blank=True,null=True)
 
     #relacion con proveedor
     #relacion con

@@ -265,7 +265,7 @@ class PedidoProveedorAltaForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion']
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','fecha_cancelacion']
 
 
 
@@ -274,7 +274,7 @@ class PedidoProveedorModificarForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor']
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor','fecha_cancelacion']
 
 
 class PedidoProveedorRecepcionarForm(forms.ModelForm):
@@ -282,7 +282,8 @@ class PedidoProveedorRecepcionarForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_de_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_realizacion','insumos','proveedor']
+        exclude = ['fecha_realizacion','insumos','proveedor','fecha_cancelacion','estado_pedido']
+
 
 
 class DetallePedidoProveedorForm(forms.ModelForm):
