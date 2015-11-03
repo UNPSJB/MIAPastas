@@ -15,7 +15,7 @@ from django.core.serializers.json import DjangoJSONEncoder
 from django.forms.models import inlineformset_factory
 import re #esto sirve para usar expresiones regulares
 import datetime
-
+from datetime import date
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from itertools import chain
@@ -89,10 +89,11 @@ def choferes(request,chofer_id=None):
 
 def choferesAlta(request):
     """
-        Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
+    Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
         precondicion: El chofer a dar de alta no debe existir
         postcondicion: El chofer ha sido dado de alta
-    """
+        """
+
     if request.method == "POST":
         chofer_form = forms.ChoferForm(request.POST)
         if chofer_form.is_valid():
@@ -228,6 +229,7 @@ def datosInsumo(request,insumo_id= None):
         print "pedido entero: ",pedidos_list[i]
 
     return HttpResponse(insumo_data, content_type='json')
+
 
 
 
@@ -966,6 +968,15 @@ def pedidosProveedorRecepcionar(request,pedido_id):
     if request.method == "POST":
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
+            #pedido_proveedor_instancia.fecha_de_entrega = date.today()
+            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
+                messages.error(request, 'Problema de Fechas')
+                return render(request,"pedidosProveedorRecepcionar.html",{
+                "pedido_proveedor_form":pedido_proveedor_form,
+                "proveedor":proveedor,
+                "pedido_id":pedido_id,
+                "pedido":pedido_proveedor_instancia })
+            pedido_proveedor_instancia.estado_pedido = 2
             pedido_proveedor_instancia.save()
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
@@ -975,7 +986,8 @@ def pedidosProveedorRecepcionar(request,pedido_id):
     return render(request,"pedidosProveedorRecepcionar.html",{
         "pedido_proveedor_form":pedido_proveedor_form,
         "proveedor":proveedor,
-        "pedido_id":pedido_id})
+        "pedido_id":pedido_id,
+        "pedido":pedido_proveedor_instancia })
 
 #la idea es que en proveedorRepecionar se recpcione y actualice el stock
 #poner un boton de cancelar, para cancelar el pedio
@@ -997,8 +1009,10 @@ def pedidosProveedorCancelar(request,pedido_id =None):
     print "estoy en cancelar pedido..."
     p = models.PedidoProveedor.objects.get(pk=pedido_id)
     p.estado_pedido = 3
+    p.fecha_cancelacion = date.today()
     p.save()
     print(p.estado_pedido)
+    print(p.fecha_cancelacion)
     messages.success(request, 'El pedido realizado en la fecha: ' + p.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + p.proveedor.razon_social +', ha sido cancelado correctamente.')
     return redirect('pedidosProveedor')
 
@@ -1081,20 +1095,35 @@ def hojaDeRuta(request):
         pedidos_fijos = models.PedidoFijo.objects.all()
         pedidos_ocacionales = models.PedidoOcacional.objects.all()
         pedidos_cambio = models.PedidoCambio.objects.all()
-        '''
-        pedidos_clientes=pedidos_clientes + pedidos_fijos
-        pedidos_clientes=pedidos_clientes + pedidos_cambio
-        pedidos_clientes=pedidos_clientes + pedidos_ocacionales
-'''
-
-
+        #detalles_form = formset_factory(forms.LotesExtraDetalleForm())
+        hojaDeRuta_form = forms.HojaDeRutaForm()
         pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
-
         pedidos_clientes_enviar = []
         for pedido in pedidos_clientes:
             #print pedido.__class__
             if pedido.esParaHoy():
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
-        return render(request, "hojaDeRuta.html",{"pedidos":pedidos_clientes_enviar,"choferes":choferes})
+        productos = models.ProductoTerminado.objects.all()
+        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,"pedidos":pedidos_clientes_enviar,"choferes":choferes,"productos":productos})
 
+
+
+def generarTotales(request):
+    pedidos_list = re.findall("\d+",request.GET['pedidos'])
+    totales={}
+    nombres={}
+    precios={}
+    pedidos = []
+    for id in pedidos_list:
+        pedidos.append(models.PedidoCliente.objects.get(pk=id))
+    for pedido in pedidos:
+        for producto in pedido.productos.all():
+            if producto.pk in totales:
+                totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                nombres[producto.pk] = "%s" % producto
+            else:
+                totales[producto.pk]=0
+                totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                nombres[producto.pk] = "%s" % producto
+    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')

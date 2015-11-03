@@ -77,6 +77,8 @@ function filtrar_tupla(n){
 
 $("#id_insumo").on("change", function() {
     var insumo = $("#id_insumo").val();
+    alert(document.getElementById('id_insumo').value);
+
     console.log("en ajax");
     console.log("pedidos: "+pedidos);
     var myJsonString = JSON.stringify(pedidos);
@@ -89,7 +91,7 @@ $("#id_insumo").on("change", function() {
              'pedidos': myJsonString
          },
         dataType: 'html',
-        url: '/datosInsumo/'+document.getElementById('id_insumo').value,
+        url: '/datosInsumo/'+document.getElementById('id_insumo').value,        //nico: como se hace para q el value sea siempre el id del insumo??
         success: function(json){
                 lista = JSON.parse(json);
                 console.log(lista[0].fields);

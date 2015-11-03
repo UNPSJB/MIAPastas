@@ -26,6 +26,10 @@ class Chofer (models.Model):
     telefono=models.PositiveIntegerField()
     e_mail=models.CharField(max_length=100)
 
+    def __str__(self):
+        return "%s" % (self.nombre)
+
+
 #********************************************************#
                #     I N S U M O     #
 #********************************************************#
@@ -378,10 +382,8 @@ class PedidoProveedor(models.Model):
     proveedor = models.ForeignKey(Proveedor)
     estado_pedido = models.PositiveSmallIntegerField(choices=ESTADO,default="1")
     insumos = models.ManyToManyField(Insumo, through="DetallePedidoProveedor")
-    descripcion = models.TextField()
-    #fecha_desde =  models.DateField()
-    #fecha_hasta =  models.DateField()
-    #fecha_cancelacion =  models.DateField()
+    descripcion = models.TextField(null=True)
+    fecha_cancelacion =  models.DateField(blank=True,null=True)
 
     #relacion con proveedor
     #relacion con
@@ -419,7 +421,7 @@ class Lote(models.Model):
          #    HOJA DE RUTA   #
 #********************************************************#
 
-'''
+
 class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
@@ -432,7 +434,7 @@ class LotesExtraDetalle(models.Model):
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
 
-
+'''
 #********************************************************#
          #    ENTREGA PEDIDO   #
 #********************************************************#

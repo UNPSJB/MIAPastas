@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Proyecto &mdash; miaPastas 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="miaPastas 1.0.0 documentation" href="index.html"/>
+        <link rel="next" title="Codigo" href="Codigo.html"/>
+        <link rel="prev" title="Eliminar Receta" href="Eliminar Receta.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> miaPastas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Tutorial.html">Tutorial</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Proyecto</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#objetivos">Objetivos</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#alcance-del-sistema">Alcance del Sistema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#l-mites-del-sistema">L?mites del Sistema</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requisitos-funcionales">Requisitos Funcionales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#requisitos-no-funcionales">Requisitos No Funcionales</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#decisiones-sobre-la-tecnolog-a-utilizada">Decisiones sobre la tecnolog?a utilizada</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#perfiles-de-usuario">Perfiles de usuario</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#modelo-er">Modelo ER</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diagrama-de-clases">Diagrama de clases</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#diagrama-de-estados-de-pedido">Diagrama de estados de pedido</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Codigo.html">Codigo</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">miaPastas</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Proyecto</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/Proyecto.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="proyecto">
+<h1>Proyecto<a class="headerlink" href="#proyecto" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="objetivos">
+<h2>Objetivos<a class="headerlink" href="#objetivos" title="Permalink to this headline">¶</a></h2>
+<p>Desarrollar un sistema de gesti?n para la f?brica de pastas M?A PASTAS participando de un desarrollo ?gil e introduciendo innovaciones tecnol?gicas en una arquitectura web, permiti?ndonos la experiencia de trabajar en equipo.</p>
+</div>
+<div class="section" id="alcance-del-sistema">
+<h2>Alcance del Sistema<a class="headerlink" href="#alcance-del-sistema" title="Permalink to this headline">¶</a></h2>
+<p>Este sistema realizar?:
+?       Gesti?n de recetas.
+?       Gesti?n de productos
+?       Gesti?n de producci?n.
+?       Gesti?n de clientes.
+?       Gesti?n choferes.
+?       Gesti?n de proveedores.
+?       Gesti?n de pedidos de clientes.
+?       Gesti?n de insumos.
+?       Gesti?n de pedidos a proveedores.
+?       Gesti?n de zonas.
+?       Gesti?n de ciudades.</p>
+</div>
+<div class="section" id="l-mites-del-sistema">
+<h2>L?mites del Sistema<a class="headerlink" href="#l-mites-del-sistema" title="Permalink to this headline">¶</a></h2>
+<p>En esta versi?n del  sistema no se manejar? la gesti?n de vencimiento de insumos.
+Se asume que todos los pedidos a proveedores son recibidos correctamente, y no se contempla la gesti?n de reclamos por faltante o sobrante de productos del pedido.
+Tampoco manejara la facturaci?n y pago a proveedores.
+Cuando se reparten los pedidos solamente se podr?n dejar productos de m?s a un cliente siempre y cuando se hayan cargados productos extras en la hoja de ruta que permitan cumplir con esas solicitudes no programadas.</p>
+</div>
+<div class="section" id="requisitos-funcionales">
+<h2>Requisitos Funcionales<a class="headerlink" href="#requisitos-funcionales" title="Permalink to this headline">¶</a></h2>
+<p>Gesti?n de recetas</p>
+<ol class="arabic simple">
+<li>Registrar receta.</li>
+<li>Modificar receta.</li>
+<li>Baja de receta.</li>
+<li>Consultar receta</li>
+</ol>
+<p>Gesti?n de productos</p>
+<ol class="arabic simple" start="5">
+<li>Alta producto</li>
+<li>Modificar producto</li>
+<li>Baja de producto</li>
+<li>Consultar productos</li>
+</ol>
+<p>Gesti?n de producci?n</p>
+<ol class="arabic simple" start="9">
+<li>Registrar producci?n.</li>
+<li>Consultar producciones.</li>
+<li>Generar listado de productos terminados disponibles.</li>
+<li>Decrementar stock de un producto terminado.</li>
+<li>Modificar precio de producto terminado.</li>
+</ol>
+<p>Gesti?n de clientes</p>
+<ol class="arabic simple" start="14">
+<li>Alta cliente.</li>
+<li>Modificar cliente.</li>
+<li>Consultar cliente.</li>
+<li>Baja cliente.</li>
+<li>Consultar todos los clientes morosos.</li>
+<li>Consultar Cuenta Corriente de un Cliente.</li>
+<li>Generar Listado de Cuenta Corriente.</li>
+</ol>
+<p>Gesti?n de choferes</p>
+<ol class="arabic simple" start="21">
+<li>Alta chofer.</li>
+<li>Modificar chofer.</li>
+<li>Baja chofer.</li>
+<li>Consultar choferes.</li>
+</ol>
+<p>Gesti?n de proveedores</p>
+<ol class="arabic simple" start="25">
+<li>Alta proveedor.</li>
+<li>Consulta proveedores.</li>
+<li>Baja proveedor.</li>
+<li>Modificar proveedor.</li>
+</ol>
+<p>Gesti?n de Pedidos a proveedores</p>
+<ol class="arabic simple" start="29">
+<li>Realizar pedido a proveedor.</li>
+<li>Modificar pedido de un proveedor.</li>
+<li>Consultar pedidos pendientes de un proveedor.</li>
+<li>Eliminar pedido pendiente a proveedor.</li>
+<li>Recepci?n de pedido a proveedor.</li>
+</ol>
+<p>Gesti?n de pedidos de clientes</p>
+<ol class="arabic simple" start="34">
+<li>Registrar pedido fijo para cliente fijo.</li>
+<li>Registrar pedido ocasional para cliente ocasional.</li>
+<li>Modificar productos del pedido de cliente.</li>
+<li>Eliminar pedido cliente.</li>
+<li>Consultar pedidos de un cliente.</li>
+<li>Cobrar a cliente.</li>
+<li>Registrar Rendici?n del Reparto.</li>
+<li>Generar hoja de ruta.</li>
+<li>Registrar pedido de cambio por productos vencidos.</li>
+<li>Modificar fecha de entrega de un pedido ocasional.</li>
+<li>Modificar periodicidad de entrega de un pedido fijo.</li>
+<li>Consultar productos a entregar en un per?odo.</li>
+</ol>
+<p>Gesti?n de insumos</p>
+<ol class="arabic simple" start="46">
+<li>Alta insumo.</li>
+<li>Actualizar stock insumo.</li>
+<li>Agregar insumo como comercializado por un proveedor.</li>
+<li>Eliminar insumo a proveedor.</li>
+<li>Generar listado de insumos disponibles.</li>
+<li>Baja de insumo.</li>
+</ol>
+<p>Gesti?n de zonas</p>
+<ol class="arabic simple" start="52">
+<li>Alta zona.</li>
+<li>Baja zona.</li>
+<li>Modificar zona.</li>
+<li>Consultar zona.</li>
+</ol>
+<p>Gesti?n de ciudades</p>
+<ol class="arabic simple" start="56">
+<li>Alta ciudad.</li>
+<li>Baja ciudad.</li>
+<li>Modificar ciudad.</li>
+<li>Consultar ciudad.</li>
+</ol>
+</div>
+<div class="section" id="requisitos-no-funcionales">
+<h2>Requisitos No Funcionales<a class="headerlink" href="#requisitos-no-funcionales" title="Permalink to this headline">¶</a></h2>
+<p>?       Se va a hacer uso de una arquitectura cliente-servidor basada en tecnolog?a Web, se crear? una red de uso interno (intranet) en donde los clientes se conectar?n al servidor central mediante un navegador web.
+?       El lenguaje elegido para desarrollar la aplicaci?n es Python versi?n 2.7.10 a trav?s del Framework Django versi?n 1.8.3.
+?       La aplicaci?n debe utilizar el Motor de Base de Datos relacional PostgreSQL versi?n 9.0.18.
+?       Proveer diferentes perfiles de usuarios cada uno con distintos permisos para ejecutar las funcionalidades provistas por el sistema.
+?       Debe contar con un manual de uso y ayuda en l?nea.
+?       Debe utilizar el idioma espa?ol para los mensajes y textos de la interfaz.</p>
+</div>
+<div class="section" id="decisiones-sobre-la-tecnolog-a-utilizada">
+<h2>Decisiones sobre la tecnolog?a utilizada<a class="headerlink" href="#decisiones-sobre-la-tecnolog-a-utilizada" title="Permalink to this headline">¶</a></h2>
+<p>El sistema nace como un peque?o sistema web interno (Intranet), donde cada usuario puede acceder desde una terminal remota al sistema. La idea a futuro es poder escalar el sistema con muy poco esfuerzo para que funcione en Internet, se podr?a as?, por ejemplo, facilitar a los clientes realizar pedidos.
+Tambi?n influy? en esta decisi?n los deseos del grupo de aprender a desarrollar aplicaciones bajo dicha tecnolog?a, ya que las aplicaciones web son los sistemas de informaci?n con mayor demanda en la actualidad.
+Se selecciona Django como framework que utiliza el lenguaje Python por la extensibilidad que provee para continuar escalando el software a futuro, si bien el sistema nace como un sistema de uso interno se empieza a percibir por parte del cliente la intenciones de publicarlo en Internet y esto hace que decidamos utilizar algo que escale r?pido y bien. Caracter?sticas de Django:
+?       Es un framework que respeta el patr?n de dise?o MVC.
+?       Cuenta con una aplicaci?n administrativa que permite administrar varias p?ginas.
+?       Provee un Mapeador Objeto-Relacional.
+?       Provee una API de Bases de Datos robusta.
+?       La meta principal de Django es facilitar la creaci?n de sitios web complejos.
+?       Es muy usado actualmente.
+?       Es de f?cil aprendizaje.
+?       Es vers?til: lo que posibilita el desarrollo e implementaci?n r?pido de aplicaciones web escalables y seguras.
+?       Posee licencia BSD: lo que otorga la libertad de distribuir y comercializar los productos desarrollados utilizando el mismo.
+?       Tiene una amplia documentaci?n Online.
+El lenguaje Python posee una sintaxis simple, clara y sencilla, el tipado din?mico, la gran cantidad de bibliotecas disponibles, la facilidad de instalaci?n en sistemas operativos tanto en Windows como Linux, la potencia del lenguaje (parecido al pseudoc?digo) y la documentaci?n disponible, entre otros, hacen que desarrollar una aplicaci?n en Python sea sencillo y muy r?pido.
+Si bien SQLite ya viene incorporado con Django, hemos decidido utilizar el Motor de BD PostgreSQL por los siguientes motivos:
+o       Nos provee manejo de concurrencia para los diferentes usuarios que har?n uso de la aplicaci?n.
+o       Es de c?digo abierto.
+o       Es compatible con el framework.
+o       Posee funcionalidades orientadas al resguardo y migraci?n de datos m?s estables y seguras frente a las proporcionadas por SQLite, MySQL y los otros motores compatibles con Django.</p>
+</div>
+<div class="section" id="perfiles-de-usuario">
+<h2>Perfiles de usuario<a class="headerlink" href="#perfiles-de-usuario" title="Permalink to this headline">¶</a></h2>
+<p>?       Administrador: se encarga de la gesti?n de roles y permisos para los diferentes usuarios del sistema.
+?       Encargado de Producci?n: se encarga de la gesti?n de las recetas, producto y producci?n.
+?       Encargado de Ventas: se encarga de la gesti?n de clientes, gesti?n de pedidos a clientes, gesti?n de zonas y gesti?n de ciudades.
+?       Encargado de Compras: se encarga de la gesti?n de proveedores, gesti?n de insumos y gesti?n de pedidos a proveedores.
+?       Encargado de reparto: se encarga de la gesti?n de choferes.
+?       Encargado de Cobros: se encarga de consultar todos los clientes morosos, consultar cuenta corriente de un cliente, generar listado de cuenta corriente y cobrar a cliente.
+?       Encargado de Stock: se encarga de decrementar stock de producto terminado, consultar stock de producto terminado, Registrar rendici?n de reparto, generar hoja de ruta, consultar productos a entregar en un per?odo, actualizar stock de insumo, baja de insumo, consultar stock de insumos en un per?odo y recepci?n de pedido a proveedor.</p>
+</div>
+<div class="section" id="modelo-er">
+<h2>Modelo ER<a class="headerlink" href="#modelo-er" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/modeloER.jpeg" src="_images/modeloER.jpeg" />
+</div>
+<div class="section" id="diagrama-de-clases">
+<h2>Diagrama de clases<a class="headerlink" href="#diagrama-de-clases" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/DIAGRAMAClases.jpg" src="_images/DIAGRAMAClases.jpg" />
+</div>
+<div class="section" id="diagrama-de-estados-de-pedido">
+<h2>Diagrama de estados de pedido<a class="headerlink" href="#diagrama-de-estados-de-pedido" title="Permalink to this headline">¶</a></h2>
+<img alt="_images/diagramaEstadospedido.jpg" src="_images/diagramaEstadospedido.jpg" />
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="Codigo.html" class="btn btn-neutral float-right" title="Codigo" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="Eliminar Receta.html" class="btn btn-neutral" title="Eliminar Receta" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, James Lecuna Gomez Parra.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

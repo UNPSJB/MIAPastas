@@ -314,7 +314,7 @@ class PedidoProveedorAltaForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion']
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','fecha_cancelacion']
 
 
 
@@ -323,7 +323,7 @@ class PedidoProveedorModificarForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor']
+        exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor','fecha_cancelacion']
 
 
 class PedidoProveedorRecepcionarForm(forms.ModelForm):
@@ -331,7 +331,8 @@ class PedidoProveedorRecepcionarForm(forms.ModelForm):
         model = models.PedidoProveedor
         widgets = {
             'fecha_de_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['fecha_realizacion','insumos','proveedor']
+        exclude = ['fecha_realizacion','insumos','proveedor','fecha_cancelacion','estado_pedido']
+
 
 
 class DetallePedidoProveedorForm(forms.ModelForm):
@@ -359,28 +360,19 @@ class PedidoClienteFijoForm(forms.ModelForm):
         widgets = {
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'}),
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        #exclude = ['productos', 'tipo_pedido']
-
-    def __init__(self, *args, **kwargs):
-        super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-            super(PedidoClienteFijoForm, self).clean()
-            print("soy cleannnnn",self.cleaned_data)
-            if self.cleaned_data["fecha_inicio"] < datetime.date.today():
-                print("en el if")
-                raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
-                print "Fecha de inicio debe ser mayor o igual a la fecha actual"
-            elif (self.cleaned_data["fecha_cancelacion"] !=None) and (self.cleaned_data["fecha_cancelacion"] < self.cleaned_data["fecha_inicio"]):
-                print("en el elif")
+        cleaned_data = super(PedidoClienteFijoForm, self).clean()
+        if not self.errors:
+            if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < cleaned_data["fecha_inicio"]):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
-                print "Fecha de cancelacion debe ser mayor a la de inicio"
-            print("saliendo del clean")
+        return cleaned_data
 
-
-
-
-
+    def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
+        fecha = self.cleaned_data['fecha_inicio']
+        if fecha < datetime.date.today():
+            raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
+        return fecha
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):
@@ -401,6 +393,8 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         fecha = self.cleaned_data['fecha_entrega']
         if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
+        elif fecha.weekday() == 5 or fecha.weekday() == 6:
+            raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
@@ -418,6 +412,8 @@ class PedidoClienteCambioForm(forms.ModelForm):
         fecha = self.cleaned_data['fecha_entrega']
         if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
+        elif fecha.weekday() == 5 or fecha.weekday() == 6:
+            raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
@@ -480,7 +476,7 @@ class LoteForm(forms.ModelForm):
 ############################################################################
 
 
-'''
+
 class HojaDeRutaForm(forms.ModelForm):
     class Meta:
         model = models.HojaDeRuta
@@ -491,7 +487,7 @@ class LotesExtraDetalleForm(forms.ModelForm):
         model = models.LotesExtraDetalle
         exclude = ['hoja_de_ruta']
 
-'''
+
 
 
 
