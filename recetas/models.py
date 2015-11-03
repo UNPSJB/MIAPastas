@@ -417,6 +417,24 @@ class Lote(models.Model):
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
 
+
+
+    def reservar_stock(self,cantidad):
+        """ Resibe la cantidad de stock que se necesita reservar.
+            Si stock disponible alcanza a cubrirla, se aumenta el stock reservado en esa cantidad
+            Si stock disponible no alcanza a cubrirla, se aumenta el stock reservado con stock disponible
+            Este metodo retorna la cantidad que LOGRO reservar
+        """
+        print "EN RESERVAR_STOCK MAN, ",cantidad
+        if cantidad <= self.stock_disponible:
+            reservar = cantidad
+        else:
+            reservar = self.stock_disponible
+        #self.stock_reservado = reservar
+        #self.save()
+        return reservar
+
+
 #********************************************************#
          #    HOJA DE RUTA   #
 #********************************************************#

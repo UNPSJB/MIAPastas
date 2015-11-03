@@ -72,7 +72,6 @@ urlpatterns = [
     url(r'^lotes/alta/$',recetasviews.lotesAlta,name='lotesAlta'),
     url(r'^lotes/(?P<lote_id>[0-9]+)/$',recetasviews.lotes,name='loteConsulta'),
     url(r'^lotes/modificar/(?P<lote_id>[0-9]+)/$',recetasviews.lotesModificar,name='loteModificar'),
-    url(r'^lotes/baja/(?P<lote_id>[0-9]+)/$',recetasviews.lotesBaja,name='lotesBaja'),
 
 
     url(r'^insumos/$',recetasviews.insumos,name='insumos'),

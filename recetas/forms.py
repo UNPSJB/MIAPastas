@@ -222,6 +222,8 @@ class LoteStockForm(forms.ModelForm):
         lote.stock_disponible += self.cleaned_data['cantidad']
         print "stock final es: ",lote.stock_disponible
         lote.save()
+        lote.producto_terminado.stock += self.cleaned_data['cantidad']
+        lote.producto_terminado.save()
         return lote
 
 
@@ -232,16 +234,25 @@ class LoteStockForm(forms.ModelForm):
 
 
     def clean_cantidad_producida(self):
+        print "clean_cantidad_producida "
         return self.cleaned_data["cantidad_producida"]
+
     def clean_stock_disponible(self):
+        print "clean_stock_disponible "
         return self.cleaned_data["stock_disponible"]
+
     def clean_cantidad(self):
+        print "clean_cantidad "
         c =self.cleaned_data['cantidad']
         cantidad_producida = self.cleaned_data['cantidad_producida']
         nueva_cantidad = self.cleaned_data['stock_disponible'] + c
         if nueva_cantidad > cantidad_producida:
             print "lanzo error"
             raise ValidationError("El stock disponible no debe superar la cantidad producida")
+        elif nueva_cantidad < 0:
+            raise ValidationError("El stock disponible no puede ser Negativo")
+
+
         return self.cleaned_data['cantidad']
 
 class CiudadForm(forms.ModelForm):

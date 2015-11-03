@@ -1066,13 +1066,6 @@ def lotesAlta(request):
         lote_form=forms.LoteForm()
     return render(request,"lotesAlta.html",{"lote_form":lote_form})
 
-def lotesBaja(request,lote_id):
-    l = models.Lote.objects.get(pk=lote_id)
-    l.producto_terminado.stock = l.producto_terminado.stock - l.stock_disponible
-    l.producto_terminado.save()
-    l.delete()
-    messages.success(request, 'Lote fue eliminado correctamente.')
-    return redirect ('lotes')
 
 def loteStock(request,lote_id):
     lote_instancia = models.Lote.objects.get(pk = lote_id)
