@@ -10,7 +10,7 @@
                   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b></b></font></p>
 
                       {% if pedido_form.errors %}
-                    <h3><font color="red">Error: Verifique los datos</font></h3>
+                      {% bootstrap_form_errors pedido_form %}
                         {% endif %}
 
 

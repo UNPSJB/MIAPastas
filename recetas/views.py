@@ -1095,16 +1095,20 @@ def hojaDeRuta(request):
 
 
 def generarTotales(request):
-    print "soy viewwwwwww"
-    pedidos=request.POST.getlist('tasks[]')
-    #pedidos = json.loads(request.raw_post_data)
-    print pedidos, "soy listtaaaaaaaaaaaaa"
-
-
-
-    return HttpResponse('Success')
-    '''
-    data = serializers.serialize('json', [insumo,])
-    print "en datois del insumooooooo", data
-    return HttpResponse(data, content_type='json')
-'''
+    pedidos_list = re.findall("\d+",request.GET['pedidos'])
+    totales={}
+    nombres={}
+    precios={}
+    pedidos = []
+    for id in pedidos_list:
+        pedidos.append(models.PedidoCliente.objects.get(pk=id))
+    for pedido in pedidos:
+        for producto in pedido.productos.all():
+            if producto.pk in totales:
+                totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                nombres[producto.pk] = "%s" % producto
+            else:
+                totales[producto.pk]=0
+                totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                nombres[producto.pk] = "%s" % producto
+    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')

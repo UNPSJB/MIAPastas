@@ -311,25 +311,19 @@ class PedidoClienteFijoForm(forms.ModelForm):
         widgets = {
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'}),
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}
-        #exclude = ['productos', 'tipo_pedido']
-
-    def __init__(self, *args, **kwargs):
-        super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
 
     def clean(self):
-            super(PedidoClienteFijoForm, self).clean()
-            if self.cleaned_data["fecha_inicio"] < datetime.date.today():
-                raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
-            elif (self.cleaned_data["fecha_cancelacion"] !=None) and (self.cleaned_data["fecha_cancelacion"] < self.cleaned_data["fecha_inicio"]):
+        cleaned_data = super(PedidoClienteFijoForm, self).clean()
+        if not self.errors:
+            if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < cleaned_data["fecha_inicio"]):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
-            print("saliendo del clean")
+        return cleaned_data
 
-
-
-
-
-
-
+    def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
+        fecha = self.cleaned_data['fecha_inicio']
+        if fecha < datetime.date.today():
+            raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
+        return fecha
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):
@@ -348,7 +342,6 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        print fecha.weekday(),"fechaaaaaa"
         if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:

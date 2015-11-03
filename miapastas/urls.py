@@ -136,7 +136,7 @@ urlpatterns = [
 
 
      url(r'^hojaDeRuta$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
-     url(r'^hojaDeRuta/generarTotales/$',recetasviews.generarTotales,name='generarTotales'),
+     url(r'^hojaDeRuta/generarTotales$',recetasviews.generarTotales,name='generarTotales'),
 
 
 
