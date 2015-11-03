@@ -33,6 +33,10 @@ var unidad;
 var insumo_posta;
 var probando=[];
 var pedidos = [1,2,3,45,5,6];
+var filtro_tuplas = [];
+
+
+
 
 
 tuplas = {{tuplas_json}};
@@ -42,6 +46,34 @@ function validar(){
     return true;
 
 }
+
+var esconder = function (){
+    $(arguments).each(function(index, value) {
+        console.log("en esconder argumentos  "+value);
+
+        $("#id_unidad_medida option[value=" + value + "]").hide(); }) };
+
+
+var mostrar = function (){
+    $(arguments).each(function(index, value) {
+        $("#id_unidad_medida option[value=" + value + "]").show(); })};
+
+
+
+function filtrar_tupla(n){
+    $(tuplas).each(function(i,val){
+        $(val).each(function(z,v){
+           if (v == n){
+                $(val).each(function(x,c){
+                    mostrar(c);
+                });
+           }
+        });
+    });
+}
+
+
+
 
 $("#id_insumo").on("change", function() {
     var insumo = $("#id_insumo").val();
@@ -63,6 +95,7 @@ $("#id_insumo").on("change", function() {
                 console.log(lista[0].fields);
                 insumo_posta=  lista[0].fields;
                 console.log("INSUMO RESIBIDO: "+ insumo_posta.nombre);
+                filtrar_tupla(insumo_posta.unidad_medida);
             }
     });
     console.log("FIN AJAX");

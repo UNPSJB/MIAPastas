@@ -7,6 +7,7 @@ from django.core import exceptions
 from django.forms import CheckboxSelectMultiple, MultipleChoiceField
 import re
 import datetime
+from datetime import timedelta
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -84,11 +85,12 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "producto_terminado","cant_prod_terminado","unidad_medida", "descripcion"]
+        fields = ["nombre", "producto_terminado","cant_prod_terminado", "descripcion"]
 
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
-        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+        self.fields['cant_prod_terminado'].label = "Cantidad Bolsines ( * )"
+
 
     def save(self, *args, **kwargs):
         # Sobrecargar save devuelve el objeto apunto de ser guardado
@@ -183,7 +185,13 @@ class ProveedorForm(forms.ModelForm):
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
         model = models.ProductoTerminado
-        fields = ["nombre","unidad_medida","precio"]
+        fields = ["nombre","precio","dias_vigencia"]
+
+
+
+    def __init__(self, *args, **kwargs):
+        super(ProductoTerminadoForm, self).__init__(*args, **kwargs)
+        self.fields['precio'].label = "Precio Bolsin ( * )"
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -193,7 +201,48 @@ class ProductoTerminadoForm(forms.ModelForm):
         return nombre
 
 
+class LoteStockForm(forms.ModelForm):
 
+    class Meta:
+        model = models.Lote
+        fields = ["stock_disponible", "cantidad_producida"]
+    cantidad = forms.IntegerField(label = "Cantidad (*)")
+
+    def __init__(self, *args, **kwargs):
+        super(LoteStockForm, self).__init__(*args, **kwargs)
+        self.fields['stock_disponible'].label = "Stock (*)"
+        self.fields['cantidad_producida'].label = "producida(*)"
+        self.fields['cantidad'].label = "Cantidad ( * )"
+
+
+
+    def save(self, *args, **kwargs):
+        lote= super(LoteStockForm, self).save(*args, **kwargs)
+        print "cantuidad a modificar: ",self.cleaned_data['cantidad']
+        lote.stock_disponible += self.cleaned_data['cantidad']
+        print "stock final es: ",lote.stock_disponible
+        lote.save()
+        return lote
+
+
+    def clean(self):
+        print "CLEAN POSTA"
+        cleaned_data = super(LoteStockForm, self).clean()
+        return cleaned_data
+
+
+    def clean_cantidad_producida(self):
+        return self.cleaned_data["cantidad_producida"]
+    def clean_stock_disponible(self):
+        return self.cleaned_data["stock_disponible"]
+    def clean_cantidad(self):
+        c =self.cleaned_data['cantidad']
+        cantidad_producida = self.cleaned_data['cantidad_producida']
+        nueva_cantidad = self.cleaned_data['stock_disponible'] + c
+        if nueva_cantidad > cantidad_producida:
+            print "lanzo error"
+            raise ValidationError("El stock disponible no debe superar la cantidad producida")
+        return self.cleaned_data['cantidad']
 
 class CiudadForm(forms.ModelForm):
     class Meta:
@@ -383,14 +432,32 @@ class PedidoClienteCambioForm(forms.ModelForm):
 ############################################################################
 
 
+
 class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
-        fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
+        fields = ["producto_terminado","fecha_produccion","cantidad_producida"]
         widgets = {
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
-           'fecha_vencimiento': forms.DateInput(attrs={'class': 'datepicker'}),
         }
+
+    def save(self, *args, **kwargs):
+        print "en metodo save del form de Lote"
+        # Sobrecargar save devuelve el objeto apunto de ser guardado
+        lote = super(LoteForm, self).save(*args, **kwargs)
+        lote.stock_disponible = lote.cantidad_producida
+        prod = lote.producto_terminado
+        dias = prod.dias_vigencia
+        print "DIAS DE VIGENCIA DEL PRODUCTO: ",dias
+        delta = timedelta(days=dias)
+        print  "DELTA A SUMAR ES: ",delta
+        lote.fecha_vencimiento = lote.fecha_produccion + delta
+        print "fecha de vencimiento del lote: " ,lote.fecha_vencimiento
+        lote.save()
+        return lote
+
+
+
 
 
     def clean_fecha_vencimiento(self):

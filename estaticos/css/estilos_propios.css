@@ -25,6 +25,12 @@ bottom:0;}
     font-size: 11px;
 }
 
+.my_label{
+        color: "black";
+        font-weight: bold;
+}
+
+
 .boton_menu{
 	float:left; 
 	background-color:#8AC007;

@@ -13,6 +13,18 @@ function armar_hidden(prefix,valor,nombre,indice){
   return probando;
 };
 
+function armar_hidden_comun(valor,nombre){
+
+    var probando = "<input class="+'"'+"form-control"+'"'+
+           " id="+'"' +"id_"+nombre+'"'
+	   +" name="+'"'+nombre+'"'
+           +" type="+'"'+"hidden"+'"'
+           + " value="+'"'+valor+'"'+">"
+           console.log(probando);
+    return probando;
+};
+
+
 function armar_input(valor,nombre){
     var probando = "<input class="+'"'+"form-control"+'"'+
            " id="+'"'+nombre+'"'

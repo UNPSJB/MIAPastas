@@ -240,7 +240,7 @@ def insumosModificarStock(request):
             return redirect('insumos')
     else:
         insumo_form = forms.ModificarStockInsumoForm()
-    tuplas_json = json.dumps(models.Insumo.TUPLAS)
+    tuplas_json = json.dumps(models.Insumo.TUPLAS)  # es para diccionarios
     return render(request,"modificarStockInsumo.html",{"insumo_form":insumo_form,"tuplas_json":tuplas_json})
 
 
@@ -502,6 +502,11 @@ def productosTerminadosBaja(request, producto_id=None):
         p.delete()
 
     return redirect('productosTerminados')
+
+
+
+
+
 
 
 
@@ -1008,16 +1013,15 @@ def lotes(request,lote_id=None):
     else:
         # filtros
         filters, mfilters = get_filtros(request.GET, models.Lote)
-        lotes= models.Lote.objects.filter(**mfilters)
+        print "por aplicar filtros",filters,mfilters
 
+        lotes= models.Lote.objects.filter(**mfilters)
     productos = models.ProductoTerminado.objects.all()
     return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
 
-
 def lotesModificar(request,lote_id=None):
     lote_instancia = models.Lote.objects.get(pk=lote_id)
-    lote_form = forms.LoteForm(instance=lote_instancia)
-    return render(request,"lotesModificar.html",{"lote_form":lote_form,"id":lote_id})
+    return render(request,"lotesModificar.html",{"lote_form_modificar":forms.LoteForm() ,"lote_instancia":lote_instancia,"id":lote_id})
 
 
 def lotesAlta(request):
@@ -1056,7 +1060,18 @@ def lotesBaja(request,lote_id):
     messages.success(request, 'Lote fue eliminado correctamente.')
     return redirect ('lotes')
 
-
+def loteStock(request,lote_id):
+    lote_instancia = models.Lote.objects.get(pk = lote_id)
+    if request.method == "POST":
+        lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
+        if lote_form.is_valid():
+            lote_form.save()
+            return redirect("lotes")
+    else:
+        lote_form = forms.LoteStockForm(instance = lote_instancia)
+    return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
+                                                         "lote": lote_instancia,
+                                                         "id":lote_id})
 #********************************************************#
          #    H O J A   D E  R U T A    #
 #********************************************************#

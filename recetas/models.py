@@ -118,14 +118,12 @@ class Insumo(models.Model):
 #********************************************************#
 
 class ProductoTerminado(models.Model):
-    UNIDADES = {
-        (1, "Bolsines"),
-    }
+
     FILTROS = ['nombre__icontains','stock__lte']
     nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
     stock = models.PositiveIntegerField(default = 0)
-    unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
+    dias_vigencia = models.PositiveIntegerField(default=01)
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
 
 
@@ -140,14 +138,10 @@ class ProductoTerminado(models.Model):
 
 
 class Receta(models.Model):
-    UNIDADES = (
 
-        (1, "Bolsines"),
-    )
     FILTROS = ['nombre__icontains','producto_terminado']
     fecha_creacion = models.DateField(auto_now_add = True)
     nombre = models.CharField(max_length=100, unique=True,help_text="El nombre de la receta")
-    unidad_medida =  models.PositiveSmallIntegerField(choices=UNIDADES)
     descripcion = models.TextField()
     cant_prod_terminado= models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)
@@ -155,7 +149,7 @@ class Receta(models.Model):
 
 
     def __str__(self):
-        return "%s (%d %s)" % (self.nombre, self.cant_prod_terminado, self.get_unidad_medida_display())
+        return "%s (%d) Bolsines" % (self.nombre, self.cant_prod_terminado)
 
 
 class RecetaDetalle(models.Model):

@@ -2,36 +2,48 @@
 {% load staticfiles %}
 {% block contenido %}
 
-
-
 <div class="container">
 <div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripcion del Lote</b></font></p></div>
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Lote-{{lote.nro_lote}} </b></font></p></div>
   <div class="panel-body">
-        <form role="form">
-                  <div class="form-group">
-                      <label for="producto_terminado">Producto Terminado</label>
-                    <input value="{{lote.producto_terminado}}" type="text" class="form-control" id="producto_terminado" readonly>
+        <form class="form-horizontal">
+              <div class=" form-group">
+                <label  class="col-sm-2 control-label my_label">Producto</label>
+                <div class="col-sm-10">
+                  {{lote.producto_terminado}}
+                </div>
+              </div>
+
+             <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Cantidad Producida</label>
+                    <div class="col-sm-10">
+                      {{lote.cantidad_producida}} Bolsines
                   </div>
-                  <div class="form-group">
-                     <label for="cantidad_producida" >Cantidad que producida</label>
-                    <input value="{{lote.cantidad_producida}}" type="text" class="form-control" id="cantidad_producida" readonly>
-                  </div>
-                 <div class="form-group">
-                   <label for="fecha_produccion">Fecha de produccion</label>
-                    <input value="{{lote.fecha_produccion}}" type="text" class="form-control" id="fecha_produccion" readonly>
-                  </div>
-                <div class="form-group">
-                   <label for="fecha_vencimiento">Fecha de vencimiento</label>
-                    <input value="{{lote.fecha_produccion}}" type="text" class="form-control" id="fecha_vencimiento" readonly>
-                  </div>
+             </div>
+            <div class=" form-group">
+                <label  class="col-sm-2 control-label">Fecha de Produccion</label>
+                <div class="col-sm-10">
+                  {{lote.fecha_produccion}}
+                </div>
+            </div>
+
+            <div class=" form-group">
+                <label  class="col-sm-2 control-label">Fecha de Vencimiento</label>
+                <div class="col-sm-10">
+                  {{lote.fecha_vencimiento}}
+                </div>
+           </div>
+            <div class=" form-group">
+                <label  class="col-sm-2 control-label">Stock Disponible</label>
+                <div class="col-sm-10">
+                  {{lote.stock_disponible}} Bolsines
+                </div>
+           </div>
         </form>
-                  <a class="btn pull-right" href="{%url 'lotes'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-
-
+      <a class="btn pull-right" href="{%url 'lotes'%}" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 </div>
 </div>
-    </div>
+</div>
 </div>
 
 {% endblock %}
