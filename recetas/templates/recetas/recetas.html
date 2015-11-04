@@ -44,7 +44,7 @@
             <tr class="renglon select-item" data-id="{{receta.id}}" id="renglon-{{receta.id}}">
                 <td>{{receta.nombre}}</td>
                 <td><a href="{% url 'productosTerminadosConsulta' receta.producto_terminado.id %}">{{receta.producto_terminado}}</a></td>
-                <td>{{receta.cant_prod_terminado}} {{receta.get_unidad_medida_display}}</td>
+                <td>{{receta.cant_prod_terminado}} Bolsines</td>
 
           </tr>
             {% endfor %}

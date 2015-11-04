@@ -8,19 +8,8 @@
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Lote</b></font></p></div>
            <p>&nbsp;</p>
-                <form action="{% url 'loteModificar' id %}" method="post" class="form">
-                    {% csrf_token %}
-                    {% bootstrap_form lote_form layout='horizontal' %}
-                    <p>&nbsp;</p>
-                        {% buttons %}
-                            <button type="submit" class="btn btn-primary">
-                                {% bootstrap_icon "star" %} Agregar
-                            </button>
-                                        <a href = "{%url 'lotes' %}" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
-                        {% endbuttons %}
 
-                 </form>
     </div>
 </div>
 {% endblock %}

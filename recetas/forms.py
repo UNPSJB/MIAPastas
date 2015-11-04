@@ -7,6 +7,7 @@ from django.core import exceptions
 from django.forms import CheckboxSelectMultiple, MultipleChoiceField
 import re
 import datetime
+from datetime import timedelta
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -84,11 +85,12 @@ class InsumoForm(forms.ModelForm):
 class RecetaForm(forms.ModelForm):
     class Meta:
         model = models.Receta
-        fields = ["nombre", "producto_terminado","cant_prod_terminado","unidad_medida", "descripcion"]
+        fields = ["nombre", "producto_terminado","cant_prod_terminado", "descripcion"]
 
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
-        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+        self.fields['cant_prod_terminado'].label = "Cantidad Bolsines ( * )"
+
 
     def save(self, *args, **kwargs):
         # Sobrecargar save devuelve el objeto apunto de ser guardado
@@ -183,7 +185,13 @@ class ProveedorForm(forms.ModelForm):
 class ProductoTerminadoForm(forms.ModelForm):
     class Meta:
         model = models.ProductoTerminado
-        fields = ["nombre","unidad_medida","precio"]
+        fields = ["nombre","precio","dias_vigencia"]
+
+
+
+    def __init__(self, *args, **kwargs):
+        super(ProductoTerminadoForm, self).__init__(*args, **kwargs)
+        self.fields['precio'].label = "Precio Bolsin ( * )"
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -193,7 +201,59 @@ class ProductoTerminadoForm(forms.ModelForm):
         return nombre
 
 
+class LoteStockForm(forms.ModelForm):
 
+    class Meta:
+        model = models.Lote
+        fields = ["stock_disponible", "cantidad_producida"]
+    cantidad = forms.IntegerField(label = "Cantidad (*)")
+
+    def __init__(self, *args, **kwargs):
+        super(LoteStockForm, self).__init__(*args, **kwargs)
+        self.fields['stock_disponible'].label = "Stock (*)"
+        self.fields['cantidad_producida'].label = "producida(*)"
+        self.fields['cantidad'].label = "Cantidad ( * )"
+
+
+
+    def save(self, *args, **kwargs):
+        lote= super(LoteStockForm, self).save(*args, **kwargs)
+        print "cantuidad a modificar: ",self.cleaned_data['cantidad']
+        lote.stock_disponible += self.cleaned_data['cantidad']
+        print "stock final es: ",lote.stock_disponible
+        lote.save()
+        lote.producto_terminado.stock += self.cleaned_data['cantidad']
+        lote.producto_terminado.save()
+        return lote
+
+
+    def clean(self):
+        print "CLEAN POSTA"
+        cleaned_data = super(LoteStockForm, self).clean()
+        return cleaned_data
+
+
+    def clean_cantidad_producida(self):
+        print "clean_cantidad_producida "
+        return self.cleaned_data["cantidad_producida"]
+
+    def clean_stock_disponible(self):
+        print "clean_stock_disponible "
+        return self.cleaned_data["stock_disponible"]
+
+    def clean_cantidad(self):
+        print "clean_cantidad "
+        c =self.cleaned_data['cantidad']
+        cantidad_producida = self.cleaned_data['cantidad_producida']
+        nueva_cantidad = self.cleaned_data['stock_disponible'] + c
+        if nueva_cantidad > cantidad_producida:
+            print "lanzo error"
+            raise ValidationError("El stock disponible no debe superar la cantidad producida")
+        elif nueva_cantidad < 0:
+            raise ValidationError("El stock disponible no puede ser Negativo")
+
+
+        return self.cleaned_data['cantidad']
 
 class CiudadForm(forms.ModelForm):
     class Meta:
@@ -379,14 +439,32 @@ class PedidoClienteCambioForm(forms.ModelForm):
 ############################################################################
 
 
+
 class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
-        fields = ["producto_terminado","fecha_produccion","fecha_vencimiento","cantidad_producida"]
+        fields = ["producto_terminado","fecha_produccion","cantidad_producida"]
         widgets = {
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
-           'fecha_vencimiento': forms.DateInput(attrs={'class': 'datepicker'}),
         }
+
+    def save(self, *args, **kwargs):
+        print "en metodo save del form de Lote"
+        # Sobrecargar save devuelve el objeto apunto de ser guardado
+        lote = super(LoteForm, self).save(*args, **kwargs)
+        lote.stock_disponible = lote.cantidad_producida
+        prod = lote.producto_terminado
+        dias = prod.dias_vigencia
+        print "DIAS DE VIGENCIA DEL PRODUCTO: ",dias
+        delta = timedelta(days=dias)
+        print  "DELTA A SUMAR ES: ",delta
+        lote.fecha_vencimiento = lote.fecha_produccion + delta
+        print "fecha de vencimiento del lote: " ,lote.fecha_vencimiento
+        lote.save()
+        return lote
+
+
+
 
 
     def clean_fecha_vencimiento(self):
@@ -408,17 +486,54 @@ class LoteForm(forms.ModelForm):
 #############################################################################
 ############################################################################
 
-
-
-class HojaDeRutaForm(forms.ModelForm):
+class ProductoExtraForm(forms.ModelForm):
     class Meta:
-        model = models.HojaDeRuta
-        fields = ["chofer"]
+        model = models.ProductoExtra
+        fields = ["cantidad","producto_terminado"]
+    #productos_terminados = forms.ModelMultipleChoiceField(queryset=models.ProductoTerminado.objects.all())
 
-class LotesExtraDetalleForm(forms.ModelForm):
-    class Meta:
-        model = models.LotesExtraDetalle
-        exclude = ['hoja_de_ruta']
+    def clean_producto_terminado(self):
+        print "en clean de producto terminado"
+        prod = self.cleaned_data["producto_terminado"]
+        print "producto:" ,prod
+        return prod
+        # aca tengo q agarrar el producto y salir a buscar a los lotes.
+
+
+
+
+class HojaDeRutaForm(forms.Form):
+    pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
+    chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
+
+    def save(self):
+        pedidos = self.cleaned_data["pedidos"]
+        chofer = self.cleaned_data["chofer"]
+        print "EN SAVE DE HOJA DE RUTA"
+        hoja = models.HojaDeRuta.objects.create(chofer = chofer)
+        for pedido in pedidos:
+            # por cada pedido tengo q crear una ENTREGA asociada a el
+            for detalle in pedido.pedidoclientedetalle_set.all():
+                #por cada detalle tengo q crear un detalle de entrega q apunte a uno o mas lotes para q cubran la cantidad buscada
+                producto_buscado = detalle.producto_terminado
+                cantidad_buscada = detalle.cantidad_producto
+                #esta cantidad hay que salir a buscarla a los lotes
+                lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
+                lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
+                for lote in lotes:
+                    cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+                    cantidad_buscada -=  cantidad_reservada
+                    if  cantidad_buscada == 0:
+                        break; #busco otro detalle
+		        if cantidad_buscada > 0:
+			    print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
+        print "fin de procesar los pedidos"
+        hoja.save()
+        return hoja
+        ##
+
+
+
 
 
 

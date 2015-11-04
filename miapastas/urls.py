@@ -72,7 +72,6 @@ urlpatterns = [
     url(r'^lotes/alta/$',recetasviews.lotesAlta,name='lotesAlta'),
     url(r'^lotes/(?P<lote_id>[0-9]+)/$',recetasviews.lotes,name='loteConsulta'),
     url(r'^lotes/modificar/(?P<lote_id>[0-9]+)/$',recetasviews.lotesModificar,name='loteModificar'),
-    url(r'^lotes/baja/(?P<lote_id>[0-9]+)/$',recetasviews.lotesBaja,name='lotesBaja'),
 
 
     url(r'^insumos/$',recetasviews.insumos,name='insumos'),
@@ -111,6 +110,9 @@ urlpatterns = [
     url(r'^productosTerminados/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminados,name='productosTerminadosConsulta'),
     url(r'^productosTerminados/modificar/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminados/baja/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosBaja,name='productosTerminadosBaja'),
+
+    url(r'^productosTerminadosActualizarStock/(?P<lote_id>[0-9]+)/$',recetasviews.loteStock,name='productosTerminadosActualizarStock'),
+
                 # FIN PRIMERA ENTREGA
 
 
@@ -137,6 +139,7 @@ urlpatterns = [
 
      url(r'^hojaDeRuta$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
      url(r'^hojaDeRuta/generarTotales$',recetasviews.generarTotales,name='generarTotales'),
+     url(r'^hojaDeRuta/alta/$',recetasviews.hojaDeRutaAlta,name='hojaDeRutaAlta'),
 
 
 
@@ -178,7 +181,6 @@ urlpatterns = [
     url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
-    url(r'^productosTerminadosActualizarStock',views.productosTerminadosActualizarStock,name='productosTerminadosActualizarStock'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
     url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
 

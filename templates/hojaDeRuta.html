@@ -11,33 +11,40 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
-      <form class="form-inline">
+           <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return altaHojaRuta()" method="post">
 
           {% csrf_token %}
-                    {% bootstrap_form hojaDeRuta_form layout='horizontal' %}
             <!-- lo de arriba es una prueba -->
+                     {{ extras_form_factory.management_form }}
 
 
-          <div class="form-group">
-            <label for="exampleInputName2">N° de Hoja de Ruta</label>
-            <input type="text" class="form-control" id="exampleInputName2" placeholder="N° hoja de ruta" readonly>
+
+               <div class=" form-group">
+            <label  class="col-sm-2 control-label">Fecha de Creacion</label>
+            <div class="col-sm-10">
+              Nro
+            </div>
           </div>
-          <div class="form-group">
-            <label for="exampleInputEmail2">Fecha</label>
-            <input type="date" class="form-control" id="exampleInputEmail2" placeholder="huevo" readonly>
-          </div>
-          <div class="form-group">
-                        <label for="inputEmail3">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
-                          <select class="form-control">
-                              <option>--------</option>
-                              {% for chofer in choferes %}
-                              <option>{{chofer.nombre}}</option>
-                              {% endfor %}
-                          </select>
 
-                   </div>            <tr>
+            <div class=" form-group">
+                <label  class="col-sm-2 control-label">Fecha</label>
+                <div class="col-sm-10">
+                     {{fecha}}
+                 </div>
+            </div>
+                <div class="form-group">
+                        <label class="col-sm-2 control-label" for="chofer">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
+                         <div class="col-sm-2">
+                              <select class="form-control "  id="chofer" name="chofer" required="required">
+                                  <option value="">--------</option>
+                                  {% for chofer in choferes %}
+                                  <option value="{{chofer.id}}">{{chofer.nombre}}</option>
+                                  {% endfor %}
+                              </select>
+                         </div>
+                   </div>
+               <tr>
 
-      </form>
           <p>&nbsp;</p>
       <div class="row">
           <div class="col-md-6" style="overflow-y:scroll; max-height:450px;">
@@ -100,7 +107,6 @@
           </div>
 
 
-
           <div class="col-md-5">
               <div>
                     <!-- Trigger the modal with a button -->
@@ -132,9 +138,16 @@
       </div>
        <div>
             <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
-          <button type="button" onclick="generarHoja()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
-          <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
+               <button type="button" onclick="altaHojaRuta()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
+            <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
+               <div id="pedidos_hidden"></div>
+               {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Crear Hoja
+                    </button>
+                {% endbuttons %}
 
+           </form>
 
 
 
@@ -155,7 +168,7 @@
                           <select class="form-control" id="select_productos">
                               <option>--------</option>
                               {% for producto in productos %}
-                              <option>{{producto.nombre}}</option>
+                              <option value="{{producto.id}}">{{producto.nombre}}</option>
                                 {% endfor %}
                           </select>
 
@@ -208,6 +221,11 @@ var id_asignado;
 var $el;
 var $el_asignado;
 var pedidosAsignados=[];
+
+var productos_extras=[];
+var prefix_extras = "{{prefix_extras}}";
+console.log("prefix extras:" +prefix_extras)
+
         $(function() {
 
         var estado;
@@ -272,7 +290,9 @@ var pedidosAsignados=[];
             $("#renglon-"+id_show).show();
             generarTotales();
        }
+
        function generarHoja(){
+       console.log ("EN GENERAR HOJA");
            pedidosAsignados = [];
            $('#cuerpoPedidosAsignados').find('tr').each(function(){
                 var cont = 0;
@@ -286,10 +306,12 @@ var pedidosAsignados=[];
            }
            )
            //guardar todo e imprimir
+
        }
 
 
         function generarTotales(){
+            console.log("EN GENERAR TOTALES");
             generarHoja();
             console.log(pedidosAsignados);
             totales = {};
@@ -324,9 +346,29 @@ var pedidosAsignados=[];
 
         function agregar_productos_extra(){
             $('#tabla_extras').append('<tr ><td>'+document.getElementById('select_productos').value+'</td><td>'+document.getElementById('cantidad_producto').value+'</td></tr>');
+            productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
+            console.log(productos_extras);
+        }
 
+        function altaHojaRuta(){
+             console.log("EN DAR DE ALTA LA HOJA DE RUTA");
+             var html="";
+             $(pedidosAsignados).each(function(i,val){
+                html = html + armar_hidden_comun(val,"pedidos");
+             });
+            // $("#pedidos_hidden").html(html);
+             $(productos_extras).each(function(i,val){
+                html = html + armar_hidden(prefix_extras,val.cantidad,"cantidad",i);
+                html = html + armar_hidden(prefix_extras,val.producto,"producto_terminado",i);
+             });
+            $("#pedidos_hidden").html(html);
+            document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(productos_extras);
+
+             console.log($("#pedidos_hidden"));
 
         }
+
+
 
 
 </script>

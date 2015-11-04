@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar stock Lote</b></font></p></div>
+            <div class="panel-body">
+             <form class="form-horizontal">
+                <div class=" form-group">
+                    <label class="col-sm-2 control-label">Producto</label>
+                    <div class="col-sm-10">
+                      {{lote.producto_terminado}}
+                    </div>
+                </div>
+                <div class=" form-group">
+                    <label class="col-sm-2 control-label">Fecha de Produccion</label>
+                    <div class="col-sm-10">
+                      {{lote.fecha_produccion}}
+                    </div>
+                </div>
+                <div class=" form-group">
+                    <label class="col-sm-2 control-label">Fecha de Vencimiento</label>
+                    <div class="col-sm-10">
+                      {{lote.fecha_vencimiento}}
+                    </div>
+                </div>
+                 <div class=" form-group">
+                    <label class="col-sm-2 control-label">Cantidad Producida</label>
+                    <div class="col-sm-10">
+                      {{lote.cantidad_producida}} Bolsines
+                    </div>
+                </div>
+
+                <div class=" form-group">
+                    <label class="col-sm-2 control-label">Stock Disponible</label>
+                    <div class="col-sm-10">
+                      {{lote.stock_disponible}} Bolsines
+                    </div>
+                </div>
+             </form>
+                <form action="{% url 'productosTerminadosActualizarStock' id %}" method="post" class="form-horizontal" >
+
+                    {% if lote_form.errors%}
+                        {% bootstrap_form_errors lote_form %}
+                    {% endif %}
+
+                    {% if lote_form.cantidad.errors%}
+                        Stock disponible no puede superar cantidad producida ni ser menor a 0
+                    {% endif %}
+                    {% csrf_token %}
+                    <div id="fields_hidden"></div>
+
+                    <div class=" form-group">
+                        <label class="col-sm-2 control-label">Cantidad (*)</label>
+                        <div class="col-sm-10">
+                            {{ lote_form.cantidad}}
+                        </div>
+                    </div>
+                    <p>&nbsp;</p>
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">
+                            {% bootstrap_icon "star" %} Aceptar
+                        </button>
+                    {% endbuttons %}
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+                </form>
+            </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
+{% block javascript %}
+
+<script>
+var html="";
+html = html + armar_hidden_comun({{lote.cantidad_producida}},"cantidad_producida");
+html = html + armar_hidden_comun({{lote.stock_disponible}},"stock_disponible");
+$('#fields_hidden').html(html);
+</script>
+
+{% endblock %}
