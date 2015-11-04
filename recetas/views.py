@@ -1112,3 +1112,33 @@ def generarTotales(request):
                 totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 nombres[producto.pk] = "%s" % producto
     return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
+
+
+
+'''
+
+pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
+lotes_dict = []
+for pedido in pedidos:
+	for detalle in pedido.pedidoclientedetalle_set.all():
+		producto_buscado = detalle.producto_terminado
+		cantidad_buscada = detalle.cantidad_producto
+		#esta cantidad hay que salir a buscarla a los lotes
+		lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
+		lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
+		for lote in lotes:
+			print "cantidad buscad: " ,cantidad_buscada
+			cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+			cantidad_buscada -=  cantidad_reservada
+			print "RESERVAR SOTKC RETORNO:" ,cantidad_buscada
+			lotes_dict.append = {"lote:"lote,"cantidad":cantidad_reservada}
+			if  cantidad_buscada == 0:
+				# si logro cubrir la cantidad buscada con stock disponible en uno o mas lotes
+				# termino el bucle y voy a buscar otro detalle
+				break;
+		if cantidad_buscada > 0:
+			print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
+# al finalizar debo imprimir los lotes y sus cantidades a buscar
+print lotes_dict
+
+'''
