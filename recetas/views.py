@@ -1098,7 +1098,35 @@ def hojaDeRuta(request):
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
-        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,"pedidos":pedidos_clientes_enviar,"choferes":choferes,"productos":productos})
+        extras_factory_class = formset_factory(forms.ProductoExtraForm)
+        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
+                                                  "pedidos":pedidos_clientes_enviar,
+                                                  "choferes":choferes,
+                                                  "productos":productos,
+                                                  "fecha":datetime.date.today(),
+                                                  "extras_form_factory":extras_factory_class(prefix="productos_extras"),
+                                                  "prefix_extras": "productos_extras"})
+
+
+
+def hojaDeRutaAlta(request):
+    print "EN HOJA DE RUTA ALTA"
+    hoja_form = forms.HojaDeRutaForm(request.POST)
+    if hoja_form.is_valid():
+        hoja_ruta_instancia = hoja_form.save()
+
+        extras_factory_class = formset_factory(forms.ProductoExtraForm)
+        extras_factory = extras_factory_class(request.POST,request.FILES,prefix="productos_extras")
+        if extras_factory.is_valid():
+            print "extras fctory es valido"
+            for extra_form in extras_factory:
+                extra_instancia = extra_form.save(commit=False)
+                extra_instancia.hoja_de_ruta = hoja_ruta_instancia
+                print "guarde extra:" ,extra_instancia.hoja_de_ruta.chofer, extra_instancia.producto_terminado
+                extra_instancia.save()
+    return redirect('lotes') #no va esto
+    #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
+
 
 
 
@@ -1119,4 +1147,4 @@ def generarTotales(request):
                 totales[producto.pk]=0
                 totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 nombres[producto.pk] = "%s" % producto
-    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
+    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres}),content_type='json')

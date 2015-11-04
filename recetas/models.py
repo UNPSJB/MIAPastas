@@ -426,10 +426,11 @@ class Lote(models.Model):
             Este metodo retorna la cantidad que LOGRO reservar
         """
         print "EN RESERVAR_STOCK MAN, ",cantidad
-        if cantidad <= self.stock_disponible:
+        puede_reservar = self.stock_disponible - self.stock_reservado
+        if cantidad <= puede_reservar:
             reservar = cantidad
         else:
-            reservar = self.stock_disponible
+            reservar = puede_reservar
         #self.stock_reservado = reservar
         #self.save()
         return reservar
@@ -443,14 +444,18 @@ class Lote(models.Model):
 class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
-    lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle")
+    #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
 
-class LotesExtraDetalle(models.Model):
+class ProductoExtra(models.Model):
     cantidad = models.FloatField()
-    lote = models.ForeignKey(Lote)
+    producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
+class ProductosExtraDetalle(models.Model):
+    cantidad = models.PositiveIntegerField()
+    lote = models.ForeignKey(Lote)
+    producto_extra = models.ForeignKey(ProductoExtra)
 
 '''
 #********************************************************#

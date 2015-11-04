@@ -486,17 +486,54 @@ class LoteForm(forms.ModelForm):
 #############################################################################
 ############################################################################
 
-
-
-class HojaDeRutaForm(forms.ModelForm):
+class ProductoExtraForm(forms.ModelForm):
     class Meta:
-        model = models.HojaDeRuta
-        fields = ["chofer"]
+        model = models.ProductoExtra
+        fields = ["cantidad","producto_terminado"]
+    #productos_terminados = forms.ModelMultipleChoiceField(queryset=models.ProductoTerminado.objects.all())
 
-class LotesExtraDetalleForm(forms.ModelForm):
-    class Meta:
-        model = models.LotesExtraDetalle
-        exclude = ['hoja_de_ruta']
+    def clean_producto_terminado(self):
+        print "en clean de producto terminado"
+        prod = self.cleaned_data["producto_terminado"]
+        print "producto:" ,prod
+        return prod
+        # aca tengo q agarrar el producto y salir a buscar a los lotes.
+
+
+
+
+class HojaDeRutaForm(forms.Form):
+    pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
+    chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
+
+    def save(self):
+        pedidos = self.cleaned_data["pedidos"]
+        chofer = self.cleaned_data["chofer"]
+        print "EN SAVE DE HOJA DE RUTA"
+        hoja = models.HojaDeRuta.objects.create(chofer = chofer)
+        for pedido in pedidos:
+            # por cada pedido tengo q crear una ENTREGA asociada a el
+            for detalle in pedido.pedidoclientedetalle_set.all():
+                #por cada detalle tengo q crear un detalle de entrega q apunte a uno o mas lotes para q cubran la cantidad buscada
+                producto_buscado = detalle.producto_terminado
+                cantidad_buscada = detalle.cantidad_producto
+                #esta cantidad hay que salir a buscarla a los lotes
+                lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
+                lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
+                for lote in lotes:
+                    cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+                    cantidad_buscada -=  cantidad_reservada
+                    if  cantidad_buscada == 0:
+                        break; #busco otro detalle
+		        if cantidad_buscada > 0:
+			    print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
+        print "fin de procesar los pedidos"
+        hoja.save()
+        return hoja
+        ##
+
+
+
 
 
 
