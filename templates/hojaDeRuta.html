@@ -347,6 +347,7 @@ var pedidosAsignados=[];
             $("#renglon-"+id_show).show();
        }
        function generarHoja(){
+            pedidosAsignados = [];
            $('#cuerpoPedidosAsignados').find('tr').each(function(){
                 var cont = 0;
                 $(this).find('td').each(function(){
@@ -366,12 +367,6 @@ var pedidosAsignados=[];
 
         function generarTotales(){
             generarHoja();
-            $.ajax({
-                type: "POST",
-                url: 'hojaDeRuta/generarTotales',
-                data: {'tasks[]': pedidosAsignados},
-
-            });
 
 
 
@@ -380,17 +375,15 @@ var pedidosAsignados=[];
         $.ajax({
             type: 'get',
             data : {
-                 't': 'titleeeee',<h></h>
+                 't': 'titleeeee',
                  'b': 'bodyyyyyyy',
                  'pedidos': myJsonString
              },
             dataType: 'html',
-            url: 'hojaDeRuta/generarTotales'+document.getElementById('id_insumo').value,        //nico: como se hace para q el value sea siempre el id del insumo??
+            url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
             success: function(json){
                     lista = JSON.parse(json);
                     console.log(lista[0].fields);
-                    insumo_posta=  lista[0].fields;
-                    console.log("INSUMO RESIBIDO: "+ insumo_posta.nombre);
                 }
         });
 
