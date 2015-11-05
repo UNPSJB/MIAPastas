@@ -1131,10 +1131,7 @@ def hojaDeRutaAlta(request):
         if entregas_factory.is_valid():
             print "LAS ENTREGAS SON VALIDAS"
             for entrega_form in entregas_factory:
-                entrega_instancia = entrega_form.save(commit = False)
-                entrega_instancia.hoja_de_ruta = hoja_ruta_instancia
-                entrega_instancia.save()
-                entrega_form.cargar_lotes()
+                entrega_instancia = entrega_form.save(hoja_ruta_instancia)
 
     return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
     return redirect('lotes') #no va esto

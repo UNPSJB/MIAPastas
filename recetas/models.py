@@ -425,7 +425,6 @@ class Lote(models.Model):
             Si stock disponible no alcanza a cubrirla, se aumenta el stock reservado con stock disponible
             Este metodo retorna la cantidad que LOGRO reservar
         """
-        print "EN RESERVAR_STOCK MAN, ",cantidad
         puede_reservar = self.stock_disponible - self.stock_reservado
         if cantidad <= puede_reservar:
             reservar = cantidad
@@ -434,6 +433,17 @@ class Lote(models.Model):
         self.stock_reservado += reservar
         self.save()
         return reservar
+
+        #    E N   C O N S T R U C C I O N  necesitamos rendicion.
+    def reservar_stock_2(self,cantidad):
+        print "en reservar stock 2, el stock disponible es:", self.stock_disponible
+        #tengo q recorrer loteEntregaDetalle y DetalleProdExtra
+        cantidad_total_reservada=0
+        for d in self.loteentregadetalle_set.all():
+            if d.cantidad_entregada == None:
+                cantidad_total_reservada += d.cantidad
+        # falta recorrer los detalles de productos EXTRAS!
+        return cantidad_total_reservada
 
 
 #********************************************************#
@@ -462,6 +472,32 @@ class Entrega(models.Model):
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
     pedido = models.ForeignKey(PedidoCliente)
     fecha = models.DateField(auto_now_add = True)
+
+    def generar_detalles(self):
+        if self.entregadetalle_set.all().exists():
+            raise "Ya tengo detalles para el pedido %s" % self.pedido
+
+        print "EN CARGAR LOTES", self
+        for detalle_pedido in self.pedido.pedidoclientedetalle_set.all():
+            # creo detalle de entrega asociada al detalle del pedido
+            entrega_detalle = EntregaDetalle.objects.create(entrega=self,
+                                                                   precio=(detalle_pedido.producto_terminado.precio *detalle_pedido.cantidad_producto),
+                                                                   cantidad_entregada = None,
+                                                                   pedido_cliente_detalle=detalle_pedido)
+            cantidad_buscada = detalle_pedido.cantidad_producto
+            producto_buscado = detalle_pedido.producto_terminado
+            for lote in Lote.objects.filter(producto_terminado = producto_buscado,
+                                                   fecha_vencimiento__gte=datetime.date.today(),
+                                                   stock_disponible__gte = 0):
+                cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+                if cantidad_reservada == 0:
+                    continue
+                cantidad_buscada -= cantidad_reservada
+                LoteEntregaDetalle.objects.create(lote=lote,cantidad=cantidad_reservada,entrega_detalle=entrega_detalle)
+                if cantidad_buscada == 0:
+                    break
+            if cantidad_buscada > 0:
+                print "no alcance a cubrir la cantidad pedida para el producto: ",producto_buscado
 
 class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
