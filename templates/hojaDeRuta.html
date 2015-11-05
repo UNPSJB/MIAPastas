@@ -160,11 +160,11 @@
                 <div class="modal-content">
                   <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Agregar productos extra</h4>
+                    <h2 class="modal-title">Agregar productos extra</h2>
                   </div>
                   <div class="modal-body">
                     <div class="form-group col-md-5">
-                        <label for="inputEmail3">Producto Terminado</label>
+                        <label for="select_productos">Producto Terminado</label>
 
                           <select class="form-control" id="select_productos">
                               <option>--------</option>
@@ -175,18 +175,18 @@
 
                    </div>
                       <div class="form-group col-md-5">
-                            <label for="exampleInputEmail2">Cantidad a agregar</label>
+                            <label for="cantidad_producto">Cantidad a agregar</label>
                             <input type="text" class="form-control" id="cantidad_producto" placeholder="cantidad" >
                           </div>
                       <div class="form-group col-md-1">
                             <label for="exampleInputEmail2"></label>
-                            <button type="button" onclick="agregar_productos_extra()" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
+                            <button type="button" id="add-detalle-extra" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
 
                           </div>
 
-                      <table class="table table-hover">
+                      <table class="table table-hover ">
                         <thead>
-                        <h1>Detalle de productos extras</h1>
+                        <h3 class="col-md-12">Detalle de productos extras</h3>
                         <tr>
                             <th>Producto Terminado</th>
                             <th>Cantidad Bolsines</th>
@@ -197,7 +197,7 @@
                       </table>
                   </div>
                   <div class="modal-footer">
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                      <button type="button" onclick="aceptar_extras()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
                       <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                   </div>
                 </div>
@@ -295,6 +295,7 @@ console.log("prefix extras:" +prefix_extras)
             generarTotales();
        }
 
+
        function generarHoja(){
        console.log ("EN GENERAR HOJA");
            pedidosAsignados = [];
@@ -307,7 +308,14 @@ console.log("prefix extras:" +prefix_extras)
                     cont=1;
                 }
                 )
+
            });}
+
+
+
+           //guardar todo e imprimir
+
+       
 
 
         function generarTotales(){
@@ -344,11 +352,52 @@ console.log("prefix extras:" +prefix_extras)
             $('#bolsines_total').val(total);
         }
 
-        function agregar_productos_extra(){
-            $('#tabla_extras').append('<tr ><td>'+document.getElementById('select_productos').value+'</td><td>'+document.getElementById('cantidad_producto').value+'</td></tr>');
-            productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
-            console.log(productos_extras);
-        }
+
+
+
+      $("#add-detalle-extra").click(function(){
+            var cantidad = $("#cantidad_producto").val();
+            var producto = $("#select_productos").val();
+            var texto = document.getElementById('select_productos').options[document.getElementById('select_productos').selectedIndex].text;
+            if ((cantidad == "") || (producto == "")){
+                alert("Debe llenar todos los campos");
+            }else{
+                if (!esEnteroPositivo(cantidad)){
+                     alert("debe ingresar una cantidad valida");
+                }else{
+                     var ins = _.find(productos_extras,{producto:producto});
+                     if (ins != undefined){
+                        alert("Producto ya cargado");
+                     }else{
+                        var id_prod = document.getElementById('select_productos').value;
+                        var nombre_prod = $('#select_productos option:selected').text();
+                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad('+id_prod+')"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
+                        productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
+                        console.log(productos_extras);
+                        det = productos_extras[0];
+                        console.log(det);
+                        d = det.cantidad;
+                        console.log(d);
+                     }
+                }
+            }
+      });
+
+      function eliminar(id){
+        $('#'+id+'').remove();  //elimino de la tabla
+        productos_extras = _.reject(productos_extras, function(d){ return d.producto == id; });  //elimina de la lista los elementos verdaderos de function
+      }
+
+      function modificar(id){
+            var nueva_cantidad = $("#cantidad-"+id).val();
+            id_input = document.getElementById("cantidad-"+id);
+            var index = _.indexOf(productos_extras,_.findWhere(productos_extras, function(d){return d.producto==id;}));
+            productos_extras = modificar_cantidad_arreglo(productos_extras,nueva_cantidad,id_input,index);
+        //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto q de la lista q cumple con la funcion
+      }
+
+
+
 
 
 
@@ -371,6 +420,9 @@ console.log("prefix extras:" +prefix_extras)
 
         }
 
+        function aceptar_extras(){
+            console.log(productos_extras);
+        }
 
 
 
