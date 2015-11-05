@@ -502,42 +502,54 @@ class ProductoExtraForm(forms.ModelForm):
 
 
 
-class HojaDeRutaForm(forms.Form):
-    pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
-    chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
-
-    def save(self):
-        pedidos = self.cleaned_data["pedidos"]
+class HojaDeRutaForm(forms.ModelForm):
+    #pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
+    #chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
+    class Meta:
+        model = models.HojaDeRuta
+        fields = ["chofer"]
+    def clean_chofer(self):
         chofer = self.cleaned_data["chofer"]
-        print "EN SAVE DE HOJA DE RUTA"
-        hoja = models.HojaDeRuta.objects.create(chofer = chofer)
-        for pedido in pedidos:
-            # por cada pedido tengo q crear una ENTREGA asociada a el
-            for detalle in pedido.pedidoclientedetalle_set.all():
-                #por cada detalle tengo q crear un detalle de entrega q apunte a uno o mas lotes para q cubran la cantidad buscada
-                producto_buscado = detalle.producto_terminado
-                cantidad_buscada = detalle.cantidad_producto
-                #esta cantidad hay que salir a buscarla a los lotes
-                lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
-                lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
-                for lote in lotes:
-                    cantidad_reservada = lote.reservar_stock(cantidad_buscada)
-                    cantidad_buscada -=  cantidad_reservada
-                    if  cantidad_buscada == 0:
-                        break; #busco otro detalle
-		        if cantidad_buscada > 0:
-			    print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
-        print "fin de procesar los pedidos"
-        hoja.save()
-        return hoja
-        ##
+        print "en clean de chofer de hoja de ruta:", chofer
+        return chofer
 
 
+class EntregaForm(forms.ModelForm):
+    class Meta:
+        model = models.Entrega
+        fields = ["pedido"]
+
+    def clean_pedido(self):
+        pedido = self.cleaned_data["pedido"]
+        print "en clean pedido de ENTREGA", pedido
+        return pedido
 
 
+    def cargar_lotes(self):
+        entrega = super(EntregaForm, self).save()
+        print "EN CARGAR LOTES", entrega
+        for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():
+            # creo detalle de entrega asociada al detalle del pedido
+            entrega_detalle = models.EntregaDetalle.objects.create(entrega= entrega,
+                                                                   precio=(detalle_pedido.producto_terminado.precio *detalle_pedido.cantidad_producto),
+                                                                   cantidad_entregada = None,
+                                                                   pedido_cliente_detalle=detalle_pedido)
+            cantidad_buscada = detalle_pedido.cantidad_producto
+            producto_buscado = detalle_pedido.producto_terminado
+            for lote in models.Lote.objects.filter(producto_terminado = producto_buscado,
+                                                   fecha_vencimiento__gte=datetime.date.today(),
+                                                   stock_disponible__gte = 0):
+                cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+                if cantidad_reservada == 0:
+                    continue
+                cantidad_buscada -= cantidad_reservada
+                models.LoteEntregaDetalle.objects.create(lote=lote,cantidad=cantidad_reservada,entrega_detalle=entrega_detalle)
+                if cantidad_buscada == 0:
+                    break
+            if cantidad_buscada > 0:
 
-
-
+                print "no alcance a cubrir la cantidad pedida para el producto: ",producto_buscado
+        return entrega
 
 
 

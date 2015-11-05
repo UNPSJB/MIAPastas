@@ -431,8 +431,8 @@ class Lote(models.Model):
             reservar = cantidad
         else:
             reservar = puede_reservar
-        #self.stock_reservado = reservar
-        #self.save()
+        self.stock_reservado += reservar
+        self.save()
         return reservar
 
 
@@ -456,6 +456,24 @@ class ProductosExtraDetalle(models.Model):
     cantidad = models.PositiveIntegerField()
     lote = models.ForeignKey(Lote)
     producto_extra = models.ForeignKey(ProductoExtra)
+
+
+class Entrega(models.Model):
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
+    pedido = models.ForeignKey(PedidoCliente)
+    fecha = models.DateField(auto_now_add = True)
+
+class EntregaDetalle(models.Model):
+    entrega = models.ForeignKey(Entrega)
+    cantidad_enviada = models.PositiveIntegerField(null=True)
+    cantidad_entregada = models.PositiveIntegerField(null=True)
+    precio = models.PositiveIntegerField() # esto es derivado del precio del producto
+    pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle)
+
+class LoteEntregaDetalle(models.Model):
+    entrega_detalle = models.ForeignKey(EntregaDetalle)
+    lote = models.ForeignKey(Lote)
+    cantidad = models.PositiveIntegerField()
 
 '''
 #********************************************************#

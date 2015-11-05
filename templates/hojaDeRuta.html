@@ -16,6 +16,7 @@
           {% csrf_token %}
             <!-- lo de arriba es una prueba -->
                      {{ extras_form_factory.management_form }}
+                     {{ entregas_form_factory.management_form }}
 
 
 
@@ -224,6 +225,9 @@ var pedidosAsignados=[];
 
 var productos_extras=[];
 var prefix_extras = "{{prefix_extras}}";
+var prefix_entregas = "{{prefix_entregas}}";
+
+
 console.log("prefix extras:" +prefix_extras)
 
         $(function() {
@@ -353,7 +357,7 @@ console.log("prefix extras:" +prefix_extras)
              console.log("EN DAR DE ALTA LA HOJA DE RUTA");
              var html="";
              $(pedidosAsignados).each(function(i,val){
-                html = html + armar_hidden_comun(val,"pedidos");
+                html = html + armar_hidden(prefix_entregas,val,"pedido",i);
              });
             // $("#pedidos_hidden").html(html);
              $(productos_extras).each(function(i,val){
@@ -362,6 +366,7 @@ console.log("prefix extras:" +prefix_extras)
              });
             $("#pedidos_hidden").html(html);
             document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(productos_extras);
+            document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);
 
              console.log($("#pedidos_hidden"));
 
