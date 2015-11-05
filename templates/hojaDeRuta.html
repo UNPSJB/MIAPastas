@@ -11,32 +11,40 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
-      <form class="form-inline">
+           <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return altaHojaRuta()" method="post">
 
           {% csrf_token %}
-                    {% bootstrap_form hojaDeRuta_form layout='horizontal' %}
+            <!-- lo de arriba es una prueba -->
+                     {{ extras_form_factory.management_form }}
 
 
-          <div class="form-group">
-            <label for="exampleInputName2">N° de Hoja de Ruta</label>
-            <input type="text" class="form-control" id="exampleInputName2" placeholder="N° hoja de ruta" readonly>
+
+               <div class=" form-group">
+            <label  class="col-sm-2 control-label">Fecha de Creacion</label>
+            <div class="col-sm-10">
+              Nro
+            </div>
           </div>
-          <div class="form-group">
-            <label for="exampleInputEmail2">Fecha</label>
-            <input type="date" class="form-control" id="exampleInputEmail2" placeholder="huevo" readonly>
-          </div>
-          <div class="form-group">
-                        <label for="inputEmail3">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
-                          <select class="form-control">
-                              <option>--------</option>
-                              {% for chofer in choferes %}
-                              <option>{{chofer.nombre}}</option>
-                              {% endfor %}
-                          </select>
 
-                   </div>            <tr>
+            <div class=" form-group">
+                <label  class="col-sm-2 control-label">Fecha</label>
+                <div class="col-sm-10">
+                     {{fecha}}
+                 </div>
+            </div>
+                <div class="form-group">
+                        <label class="col-sm-2 control-label" for="chofer">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
+                         <div class="col-sm-2">
+                              <select class="form-control "  id="chofer" name="chofer" required="required">
+                                  <option value="">--------</option>
+                                  {% for chofer in choferes %}
+                                  <option value="{{chofer.id}}">{{chofer.nombre}}</option>
+                                  {% endfor %}
+                              </select>
+                         </div>
+                   </div>
+               <tr>
 
-      </form>
           <p>&nbsp;</p>
       <div class="row">
           <div class="col-md-6" style="overflow-y:scroll; max-height:450px;">
@@ -99,7 +107,6 @@
           </div>
 
 
-
           <div class="col-md-5">
               <div>
                     <!-- Trigger the modal with a button -->
@@ -111,29 +118,18 @@
             <h1>Totales para envio</h1>
             <tr>
                 <th>Producto Terminado</th>
-                <th>Cantidad Bolsones</th>
-                <th>Precio</th>
+                <th>Cantidad Bolsines</th>
             </tr>
             </thead>
-              <tbody>
-            {% for receta in recetas %}
-                <tr>
-              <td>{{receta.nombre}}</td>
-              <td>{{receta.descripcion}}</td>
-          </tr>
-            {% endfor %}
+              <tbody id="cuerpoTotalesPedidos" class="totales">
           </tbody>
           </table>
           </div>
               <hr>
               <row>
-              <div class="form-group col-md-6">
-            <label for="exampleInputName2">Precio Total</label>
-            <input type="text" class="form-control" id="exampleInputName2" readonly>
-          </div>
                   <div class="form-group col-md-6">
-            <label for="exampleInputName2">Total bolsones</label>
-            <input type="text" class="form-control" id="exampleInputName2" readonly>
+            <label for="bolsines_total">Total bolsines</label>
+            <input type="text" class="form-control" id="bolsines_total" readonly>
           </div>
                   </row>
 
@@ -142,69 +138,17 @@
       </div>
        <div>
             <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
-          <button type="button" onclick="generarHoja()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
-          <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
+               <button type="button" onclick="altaHojaRuta()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
+            <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
+               <div id="pedidos_hidden"></div>
+               {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Crear Hoja
+                    </button>
+                {% endbuttons %}
 
+           </form>
 
-            <!-- Modal -->
-            <div id="myModal" class="modal fade" role="dialog">
-              <div class="modal-dialog">
-
-                <!-- Modal content-->
-                <div class="modal-content">
-                  <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h4 class="modal-title">Pedido del día</h4>
-                  </div>
-                  <div class="modal-body">
-                    <form class="form-horizontal col-md-12">
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">N°Pedido</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino" readonly>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Tipo de pedido</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="huevo" readonly>
-                          </div></div>
-                        <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Cliente</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino" readonly>
-                          </div></div>
-                        <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">dirección</label>
-                            <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2" placeholder="fideo fino" readonly>
-                          </div></div>
-
-                      </form>
-                      <table class="table table-hover">
-                        <thead>
-                        <h1>Detalle de productos del pedido</h1>
-                        <tr>
-                            <th>Producto Terminado</th>
-                            <th>Cantidad Bolsones</th>
-                        </tr>
-                        </thead>
-                          <tbody>
-                        {% for receta in recetas %}
-                            <tr >
-                          <td>{{receta.nombre}}</td>
-                          <td>{{receta.descripcion}}</td>
-                      </tr>
-                        {% endfor %}
-                      </tbody>
-                      </table>
-                  </div>
-                  <div class="modal-footer">
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                  </div>
-                </div>
-
-              </div>
-            </div>
 
 
            <!-- Modal de PRODUCTOS EXTRAS -->
@@ -221,21 +165,21 @@
                     <div class="form-group col-md-5">
                         <label for="inputEmail3">Producto Terminado</label>
 
-                          <select class="form-control">
+                          <select class="form-control" id="select_productos">
                               <option>--------</option>
                               {% for producto in productos %}
-                              <option>{{producto.nombre}}</option>
+                              <option value="{{producto.id}}">{{producto.nombre}}</option>
                                 {% endfor %}
                           </select>
 
                    </div>
                       <div class="form-group col-md-5">
                             <label for="exampleInputEmail2">Cantidad a agregar</label>
-                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="cantidad" >
+                            <input type="text" class="form-control" id="cantidad_producto" placeholder="cantidad" >
                           </div>
                       <div class="form-group col-md-1">
                             <label for="exampleInputEmail2"></label>
-                            <button type="button" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
+                            <button type="button" onclick="agregar_productos_extra()" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
 
                           </div>
 
@@ -244,16 +188,10 @@
                         <h1>Detalle de productos extras</h1>
                         <tr>
                             <th>Producto Terminado</th>
-                            <th>Cantidad Bolsones</th>
+                            <th>Cantidad Bolsines</th>
                         </tr>
                         </thead>
-                          <tbody>
-                        {% for receta in recetas %}
-                            <tr>
-                          <td>{{receta.nombre}}</td>
-                          <td>{{receta.descripcion}}</td>
-                      </tr>
-                        {% endfor %}
+                          <tbody id="tabla_extras">
                       </tbody>
                       </table>
                   </div>
@@ -283,6 +221,11 @@ var id_asignado;
 var $el;
 var $el_asignado;
 var pedidosAsignados=[];
+
+var productos_extras=[];
+var prefix_extras = "{{prefix_extras}}";
+console.log("prefix extras:" +prefix_extras)
+
         $(function() {
 
         var estado;
@@ -345,9 +288,12 @@ var pedidosAsignados=[];
             id_show= $el_asignado.data()["id"]; //manejan los mismos id
             $el_asignado=null;
             $("#renglon-"+id_show).show();
+            generarTotales();
        }
+
        function generarHoja(){
-            pedidosAsignados = [];
+       console.log ("EN GENERAR HOJA");
+           pedidosAsignados = [];
            $('#cuerpoPedidosAsignados').find('tr').each(function(){
                 var cont = 0;
                 $(this).find('td').each(function(){
@@ -357,39 +303,71 @@ var pedidosAsignados=[];
                     cont=1;
                 }
                 )
-           }
-           )
-               //
+           });
+
 
        }
-       //tuplas = {{tuplas_json}};
 
 
         function generarTotales(){
+            console.log("EN GENERAR TOTALES");
             generarHoja();
-
-
-
-        var myJsonString = JSON.stringify(pedidosAsignados);
-        console.log("json a enviar: "+myJsonString);
-        $.ajax({
-            type: 'get',
-            data : {
-                 't': 'titleeeee',
-                 'b': 'bodyyyyyyy',
-                 'pedidos': myJsonString
-             },
-            dataType: 'html',
-            url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
-            success: function(json){
-                    lista = JSON.parse(json);
-                    console.log(lista[0].fields);
-                }
-        });
-
-
+            console.log(pedidosAsignados);
+            totales = {};
+            datos = {};
+            var myJsonString = JSON.stringify(pedidosAsignados);
+            console.log("json a enviar: "+myJsonString);
+            $.ajax({
+                type: 'get',
+                data : {
+                     't': 'titleeeee',
+                     'b': 'bodyyyyyyy',
+                     'pedidos': myJsonString
+                 },
+                dataType: 'json',
+                url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
+                success: function(json){
+                    mostrarTotales(json.totales,json.datos);
+                    }
+            });
 
         }
+
+        function mostrarTotales(bolsines_total,datos){
+            $("#cuerpoTotalesPedidos tr").remove();
+            var total=0;
+            for(var i in bolsines_total){
+                $('#cuerpoTotalesPedidos').append('<tr ><td>'+datos[i]+'</td><td>'+bolsines_total[i]+'</td></tr>');
+                total=total+bolsines_total[i];
+            }
+            $('#bolsines_total').val(total);
+        }
+
+        function agregar_productos_extra(){
+            $('#tabla_extras').append('<tr ><td>'+document.getElementById('select_productos').value+'</td><td>'+document.getElementById('cantidad_producto').value+'</td></tr>');
+            productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
+            console.log(productos_extras);
+        }
+
+        function altaHojaRuta(){
+             console.log("EN DAR DE ALTA LA HOJA DE RUTA");
+             var html="";
+             $(pedidosAsignados).each(function(i,val){
+                html = html + armar_hidden_comun(val,"pedidos");
+             });
+            // $("#pedidos_hidden").html(html);
+             $(productos_extras).each(function(i,val){
+                html = html + armar_hidden(prefix_extras,val.cantidad,"cantidad",i);
+                html = html + armar_hidden(prefix_extras,val.producto,"producto_terminado",i);
+             });
+            $("#pedidos_hidden").html(html);
+            document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(productos_extras);
+
+             console.log($("#pedidos_hidden"));
+
+        }
+
+
 
 
 </script>

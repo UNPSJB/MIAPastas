@@ -242,7 +242,7 @@ def insumosModificarStock(request):
             return redirect('insumos')
     else:
         insumo_form = forms.ModificarStockInsumoForm()
-    tuplas_json = json.dumps(models.Insumo.TUPLAS)
+    tuplas_json = json.dumps(models.Insumo.TUPLAS)  # es para diccionarios
     return render(request,"modificarStockInsumo.html",{"insumo_form":insumo_form,"tuplas_json":tuplas_json})
 
 
@@ -504,6 +504,11 @@ def productosTerminadosBaja(request, producto_id=None):
         p.delete()
 
     return redirect('productosTerminados')
+
+
+
+
+
 
 
 
@@ -1022,16 +1027,15 @@ def lotes(request,lote_id=None):
     else:
         # filtros
         filters, mfilters = get_filtros(request.GET, models.Lote)
-        lotes= models.Lote.objects.filter(**mfilters)
+        print "por aplicar filtros",filters,mfilters
 
+        lotes= models.Lote.objects.filter(**mfilters)
     productos = models.ProductoTerminado.objects.all()
     return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
 
-
 def lotesModificar(request,lote_id=None):
     lote_instancia = models.Lote.objects.get(pk=lote_id)
-    lote_form = forms.LoteForm(instance=lote_instancia)
-    return render(request,"lotesModificar.html",{"lote_form":lote_form,"id":lote_id})
+    return render(request,"lotesModificar.html",{"lote_form_modificar":forms.LoteForm() ,"lote_instancia":lote_instancia,"id":lote_id})
 
 
 def lotesAlta(request):
@@ -1062,15 +1066,19 @@ def lotesAlta(request):
         lote_form=forms.LoteForm()
     return render(request,"lotesAlta.html",{"lote_form":lote_form})
 
-def lotesBaja(request,lote_id):
-    l = models.Lote.objects.get(pk=lote_id)
-    l.producto_terminado.stock = l.producto_terminado.stock - l.stock_disponible
-    l.producto_terminado.save()
-    l.delete()
-    messages.success(request, 'Lote fue eliminado correctamente.')
-    return redirect ('lotes')
 
-
+def loteStock(request,lote_id):
+    lote_instancia = models.Lote.objects.get(pk = lote_id)
+    if request.method == "POST":
+        lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
+        if lote_form.is_valid():
+            lote_form.save()
+            return redirect("lotes")
+    else:
+        lote_form = forms.LoteStockForm(instance = lote_instancia)
+    return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
+                                                         "lote": lote_instancia,
+                                                         "id":lote_id})
 #********************************************************#
          #    H O J A   D E  R U T A    #
 #********************************************************#
@@ -1090,21 +1098,53 @@ def hojaDeRuta(request):
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
-        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,"pedidos":pedidos_clientes_enviar,"choferes":choferes,"productos":productos})
+        extras_factory_class = formset_factory(forms.ProductoExtraForm)
+        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
+                                                  "pedidos":pedidos_clientes_enviar,
+                                                  "choferes":choferes,
+                                                  "productos":productos,
+                                                  "fecha":datetime.date.today(),
+                                                  "extras_form_factory":extras_factory_class(prefix="productos_extras"),
+                                                  "prefix_extras": "productos_extras"})
+
+
+
+def hojaDeRutaAlta(request):
+    print "EN HOJA DE RUTA ALTA"
+    hoja_form = forms.HojaDeRutaForm(request.POST)
+    if hoja_form.is_valid():
+        hoja_ruta_instancia = hoja_form.save()
+
+        extras_factory_class = formset_factory(forms.ProductoExtraForm)
+        extras_factory = extras_factory_class(request.POST,request.FILES,prefix="productos_extras")
+        if extras_factory.is_valid():
+            print "extras fctory es valido"
+            for extra_form in extras_factory:
+                extra_instancia = extra_form.save(commit=False)
+                extra_instancia.hoja_de_ruta = hoja_ruta_instancia
+                print "guarde extra:" ,extra_instancia.hoja_de_ruta.chofer, extra_instancia.producto_terminado
+                extra_instancia.save()
+    return redirect('lotes') #no va esto
+    #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
+
 
 
 
 def generarTotales(request):
-    print "soy viewwwwwww"
-    pedidos=request.POST.getlist('tasks[]')
-    #pedidos = json.loads(request.raw_post_data)
-    print pedidos, "soy listtaaaaaaaaaaaaa"
-
-
-
-    return HttpResponse('Success')
-    '''
-    data = serializers.serialize('json', [insumo,])
-    print "en datois del insumooooooo", data
-    return HttpResponse(data, content_type='json')
-'''
+    pedidos_list = re.findall("\d+",request.GET['pedidos'])
+    totales={}
+    nombres={}
+    precios={}
+    pedidos = []
+    for id in pedidos_list:
+        pedidos.append(models.PedidoCliente.objects.get(pk=id))
+    for pedido in pedidos:
+        for producto in pedido.productos.all():
+            if producto.pk in totales:
+                totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                nombres[producto.pk] = "%s" % producto
+            else:
+                totales[producto.pk]=0
+                totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
+                nombres[producto.pk] = "%s" % producto
+    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres}),content_type='json')
