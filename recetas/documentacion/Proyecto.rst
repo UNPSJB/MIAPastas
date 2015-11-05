@@ -1,57 +1,57 @@
-Proyecto
+ÔªøProyecto
 ========
 
 Objetivos
 ---------
-Desarrollar un sistema de gestiÛn para la f·brica de pastas MÕA PASTAS participando de un desarrollo ·gil e introduciendo innovaciones tecnolÛgicas en una arquitectura web, permitiÈndonos la experiencia de trabajar en equipo.
+Desarrollar un sistema de gesti√≥n para la f√°brica de pastas M√çA PASTAS participando de un desarrollo √°gil e introduciendo innovaciones tecnol√≥gicas en una arquitectura web, permiti√©ndonos la experiencia de trabajar en equipo.
 
 Alcance del Sistema
 -------------------
-Este sistema realizar·:
-ï	GestiÛn de recetas.
-ï	GestiÛn de productos
-ï	GestiÛn de producciÛn.
-ï	GestiÛn de clientes.
-ï	GestiÛn choferes.
-ï	GestiÛn de proveedores.
-ï	GestiÛn de pedidos de clientes.
-ï	GestiÛn de insumos.
-ï	GestiÛn de pedidos a proveedores.
-ï	GestiÛn de zonas.
-ï	GestiÛn de ciudades.
+Este sistema realizar√°:
+‚Ä¢	Gesti√≥n de recetas.
+‚Ä¢	Gesti√≥n de productos
+‚Ä¢	Gesti√≥n de producci√≥n.
+‚Ä¢	Gesti√≥n de clientes.
+‚Ä¢	Gesti√≥n choferes.
+‚Ä¢	Gesti√≥n de proveedores.
+‚Ä¢	Gesti√≥n de pedidos de clientes.
+‚Ä¢	Gesti√≥n de insumos.
+‚Ä¢	Gesti√≥n de pedidos a proveedores.
+‚Ä¢	Gesti√≥n de zonas.
+‚Ä¢	Gesti√≥n de ciudades.
 
-LÌmites del Sistema
+L√≠mites del Sistema
 -------------------
-En esta versiÛn del  sistema no se manejar· la gestiÛn de vencimiento de insumos. 
-Se asume que todos los pedidos a proveedores son recibidos correctamente, y no se contempla la gestiÛn de reclamos por faltante o sobrante de productos del pedido. 
-Tampoco manejara la facturaciÛn y pago a proveedores.
-Cuando se reparten los pedidos solamente se podr·n dejar productos de m·s a un cliente siempre y cuando se hayan cargados productos extras en la hoja de ruta que permitan cumplir con esas solicitudes no programadas.
+En esta versi√≥n del  sistema no se manejar√° la gesti√≥n de vencimiento de insumos. 
+Se asume que todos los pedidos a proveedores son recibidos correctamente, y no se contempla la gesti√≥n de reclamos por faltante o sobrante de productos del pedido. 
+Tampoco manejara la facturaci√≥n y pago a proveedores.
+Cuando se reparten los pedidos solamente se podr√°n dejar productos de m√°s a un cliente siempre y cuando se hayan cargados productos extras en la hoja de ruta que permitan cumplir con esas solicitudes no programadas.
 
 Requisitos Funcionales
 ----------------------
-GestiÛn de recetas
+Gesti√≥n de recetas
 
 1.	Registrar receta.
 2.	Modificar receta.
 3.	Baja de receta.
 4.	Consultar receta
 
-GestiÛn de productos
+Gesti√≥n de productos
 
 5.	Alta producto
 6.	Modificar producto
 7.	Baja de producto
 8.	Consultar productos
 
-GestiÛn de producciÛn
+Gesti√≥n de producci√≥n
 
-9.	Registrar producciÛn.
+9.	Registrar producci√≥n.
 10.	Consultar producciones.
 11.	Generar listado de productos terminados disponibles.
 12.	Decrementar stock de un producto terminado.
 13.	Modificar precio de producto terminado.
 
-GestiÛn de clientes
+Gesti√≥n de clientes
 
 14.	Alta cliente.
 15.	Modificar cliente.
@@ -61,29 +61,29 @@ GestiÛn de clientes
 19.	Consultar Cuenta Corriente de un Cliente.
 20.	Generar Listado de Cuenta Corriente.
 
-GestiÛn de choferes
+Gesti√≥n de choferes
 
 21.	 Alta chofer.
 22.	 Modificar chofer.
 23.	Baja chofer.
 24.	Consultar choferes.
 
-GestiÛn de proveedores
+Gesti√≥n de proveedores
 
 25.	 Alta proveedor.
 26.	 Consulta proveedores.
 27.	 Baja proveedor.
 28.	 Modificar proveedor.
 
-GestiÛn de Pedidos a proveedores
+Gesti√≥n de Pedidos a proveedores
 
 29.	 Realizar pedido a proveedor.
 30.	 Modificar pedido de un proveedor.
 31.	 Consultar pedidos pendientes de un proveedor.
 32.	 Eliminar pedido pendiente a proveedor.
-33.	 RecepciÛn de pedido a proveedor.
+33.	 Recepci√≥n de pedido a proveedor.
 
-GestiÛn de pedidos de clientes
+Gesti√≥n de pedidos de clientes
 
 34.	 Registrar pedido fijo para cliente fijo.
 35.	 Registrar pedido ocasional para cliente ocasional.
@@ -91,14 +91,14 @@ GestiÛn de pedidos de clientes
 37.	 Eliminar pedido cliente.
 38.	 Consultar pedidos de un cliente.
 39.	 Cobrar a cliente.
-40.	 Registrar RendiciÛn del Reparto.
+40.	 Registrar Rendici√≥n del Reparto.
 41.	 Generar hoja de ruta.
 42.	 Registrar pedido de cambio por productos vencidos.
 43.	 Modificar fecha de entrega de un pedido ocasional.
 44.	 Modificar periodicidad de entrega de un pedido fijo.
-45.	Consultar productos a entregar en un perÌodo.
+45.	Consultar productos a entregar en un per√≠odo.
 
-GestiÛn de insumos
+Gesti√≥n de insumos
 
 46.	 Alta insumo.
 47.	 Actualizar stock insumo.
@@ -107,14 +107,14 @@ GestiÛn de insumos
 50.	 Generar listado de insumos disponibles.
 51.	 Baja de insumo.
 
-GestiÛn de zonas
+Gesti√≥n de zonas
 
 52.	 Alta zona.
 53.	 Baja zona.
 54.	 Modificar zona.
 55.	 Consultar zona.
 
-GestiÛn de ciudades
+Gesti√≥n de ciudades
 
 56.	 Alta ciudad.
 57.	 Baja ciudad.
@@ -123,44 +123,44 @@ GestiÛn de ciudades
 
 Requisitos No Funcionales
 -------------------------
-ï	Se va a hacer uso de una arquitectura cliente-servidor basada en tecnologÌa Web, se crear· una red de uso interno (intranet) en donde los clientes se conectar·n al servidor central mediante un navegador web.
-ï	El lenguaje elegido para desarrollar la aplicaciÛn es Python versiÛn 2.7.10 a travÈs del Framework Django versiÛn 1.8.3. 
-ï	La aplicaciÛn debe utilizar el Motor de Base de Datos relacional PostgreSQL versiÛn 9.0.18.
-ï	Proveer diferentes perfiles de usuarios cada uno con distintos permisos para ejecutar las funcionalidades provistas por el sistema.
-ï	Debe contar con un manual de uso y ayuda en lÌnea.
-ï	Debe utilizar el idioma espaÒol para los mensajes y textos de la interfaz.
+‚Ä¢	Se va a hacer uso de una arquitectura cliente-servidor basada en tecnolog√≠a Web, se crear√° una red de uso interno (intranet) en donde los clientes se conectar√°n al servidor central mediante un navegador web.
+‚Ä¢	El lenguaje elegido para desarrollar la aplicaci√≥n es Python versi√≥n 2.7.10 a trav√©s del Framework Django versi√≥n 1.8.3. 
+‚Ä¢	La aplicaci√≥n debe utilizar el Motor de Base de Datos relacional PostgreSQL versi√≥n 9.0.18.
+‚Ä¢	Proveer diferentes perfiles de usuarios cada uno con distintos permisos para ejecutar las funcionalidades provistas por el sistema.
+‚Ä¢	Debe contar con un manual de uso y ayuda en l√≠nea.
+‚Ä¢	Debe utilizar el idioma espa√±ol para los mensajes y textos de la interfaz.
 
-Decisiones sobre la tecnologÌa utilizada
+Decisiones sobre la tecnolog√≠a utilizada
 ----------------------------------------
-El sistema nace como un pequeÒo sistema web interno (Intranet), donde cada usuario puede acceder desde una terminal remota al sistema. La idea a futuro es poder escalar el sistema con muy poco esfuerzo para que funcione en Internet, se podrÌa asÌ, por ejemplo, facilitar a los clientes realizar pedidos. 
-TambiÈn influyÛ en esta decisiÛn los deseos del grupo de aprender a desarrollar aplicaciones bajo dicha tecnologÌa, ya que las aplicaciones web son los sistemas de informaciÛn con mayor demanda en la actualidad.
-Se selecciona Django como framework que utiliza el lenguaje Python por la extensibilidad que provee para continuar escalando el software a futuro, si bien el sistema nace como un sistema de uso interno se empieza a percibir por parte del cliente la intenciones de publicarlo en Internet y esto hace que decidamos utilizar algo que escale r·pido y bien. CaracterÌsticas de Django:
-ï	Es un framework que respeta el patrÛn de diseÒo MVC. 
-ï	Cuenta con una aplicaciÛn administrativa que permite administrar varias p·ginas.
-ï	Provee un Mapeador Objeto-Relacional.
-ï	Provee una API de Bases de Datos robusta.
-ï	La meta principal de Django es facilitar la creaciÛn de sitios web complejos. 
-ï	Es muy usado actualmente.
-ï	Es de f·cil aprendizaje.
-ï	Es vers·til: lo que posibilita el desarrollo e implementaciÛn r·pido de aplicaciones web escalables y seguras.
-ï	Posee licencia BSD: lo que otorga la libertad de distribuir y comercializar los productos desarrollados utilizando el mismo.
-ï	Tiene una amplia documentaciÛn Online.
-El lenguaje Python posee una sintaxis simple, clara y sencilla, el tipado din·mico, la gran cantidad de bibliotecas disponibles, la facilidad de instalaciÛn en sistemas operativos tanto en Windows como Linux, la potencia del lenguaje (parecido al pseudocÛdigo) y la documentaciÛn disponible, entre otros, hacen que desarrollar una aplicaciÛn en Python sea sencillo y muy r·pido.
+El sistema nace como un peque√±o sistema web interno (Intranet), donde cada usuario puede acceder desde una terminal remota al sistema. La idea a futuro es poder escalar el sistema con muy poco esfuerzo para que funcione en Internet, se podr√≠a as√≠, por ejemplo, facilitar a los clientes realizar pedidos. 
+Tambi√©n influy√≥ en esta decisi√≥n los deseos del grupo de aprender a desarrollar aplicaciones bajo dicha tecnolog√≠a, ya que las aplicaciones web son los sistemas de informaci√≥n con mayor demanda en la actualidad.
+Se selecciona Django como framework que utiliza el lenguaje Python por la extensibilidad que provee para continuar escalando el software a futuro, si bien el sistema nace como un sistema de uso interno se empieza a percibir por parte del cliente la intenciones de publicarlo en Internet y esto hace que decidamos utilizar algo que escale r√°pido y bien. Caracter√≠sticas de Django:
+‚Ä¢	Es un framework que respeta el patr√≥n de dise√±o MVC. 
+‚Ä¢	Cuenta con una aplicaci√≥n administrativa que permite administrar varias p√°ginas.
+‚Ä¢	Provee un Mapeador Objeto-Relacional.
+‚Ä¢	Provee una API de Bases de Datos robusta.
+‚Ä¢	La meta principal de Django es facilitar la creaci√≥n de sitios web complejos. 
+‚Ä¢	Es muy usado actualmente.
+‚Ä¢	Es de f√°cil aprendizaje.
+‚Ä¢	Es vers√°til: lo que posibilita el desarrollo e implementaci√≥n r√°pido de aplicaciones web escalables y seguras.
+‚Ä¢	Posee licencia BSD: lo que otorga la libertad de distribuir y comercializar los productos desarrollados utilizando el mismo.
+‚Ä¢	Tiene una amplia documentaci√≥n Online.
+El lenguaje Python posee una sintaxis simple, clara y sencilla, el tipado din√°mico, la gran cantidad de bibliotecas disponibles, la facilidad de instalaci√≥n en sistemas operativos tanto en Windows como Linux, la potencia del lenguaje (parecido al pseudoc√≥digo) y la documentaci√≥n disponible, entre otros, hacen que desarrollar una aplicaci√≥n en Python sea sencillo y muy r√°pido.
 Si bien SQLite ya viene incorporado con Django, hemos decidido utilizar el Motor de BD PostgreSQL por los siguientes motivos:
-o	Nos provee manejo de concurrencia para los diferentes usuarios que har·n uso de la aplicaciÛn.
-o	Es de cÛdigo abierto.
+o	Nos provee manejo de concurrencia para los diferentes usuarios que har√°n uso de la aplicaci√≥n.
+o	Es de c√≥digo abierto.
 o	Es compatible con el framework.
-o	Posee funcionalidades orientadas al resguardo y migraciÛn de datos m·s estables y seguras frente a las proporcionadas por SQLite, MySQL y los otros motores compatibles con Django. 
+o	Posee funcionalidades orientadas al resguardo y migraci√≥n de datos m√°s estables y seguras frente a las proporcionadas por SQLite, MySQL y los otros motores compatibles con Django. 
 
 Perfiles de usuario
 -------------------
-ï	Administrador: se encarga de la gestiÛn de roles y permisos para los diferentes usuarios del sistema.
-ï	Encargado de ProducciÛn: se encarga de la gestiÛn de las recetas, producto y producciÛn.
-ï	Encargado de Ventas: se encarga de la gestiÛn de clientes, gestiÛn de pedidos a clientes, gestiÛn de zonas y gestiÛn de ciudades.
-ï	Encargado de Compras: se encarga de la gestiÛn de proveedores, gestiÛn de insumos y gestiÛn de pedidos a proveedores.
-ï	Encargado de reparto: se encarga de la gestiÛn de choferes.
-ï	Encargado de Cobros: se encarga de consultar todos los clientes morosos, consultar cuenta corriente de un cliente, generar listado de cuenta corriente y cobrar a cliente.
-ï	Encargado de Stock: se encarga de decrementar stock de producto terminado, consultar stock de producto terminado, Registrar rendiciÛn de reparto, generar hoja de ruta, consultar productos a entregar en un perÌodo, actualizar stock de insumo, baja de insumo, consultar stock de insumos en un perÌodo y recepciÛn de pedido a proveedor.
+‚Ä¢	Administrador: se encarga de la gesti√≥n de roles y permisos para los diferentes usuarios del sistema.
+‚Ä¢	Encargado de Producci√≥n: se encarga de la gesti√≥n de las recetas, producto y producci√≥n.
+‚Ä¢	Encargado de Ventas: se encarga de la gesti√≥n de clientes, gesti√≥n de pedidos a clientes, gesti√≥n de zonas y gesti√≥n de ciudades.
+‚Ä¢	Encargado de Compras: se encarga de la gesti√≥n de proveedores, gesti√≥n de insumos y gesti√≥n de pedidos a proveedores.
+‚Ä¢	Encargado de reparto: se encarga de la gesti√≥n de choferes.
+‚Ä¢	Encargado de Cobros: se encarga de consultar todos los clientes morosos, consultar cuenta corriente de un cliente, generar listado de cuenta corriente y cobrar a cliente.
+‚Ä¢	Encargado de Stock: se encarga de decrementar stock de producto terminado, consultar stock de producto terminado, Registrar rendici√≥n de reparto, generar hoja de ruta, consultar productos a entregar en un per√≠odo, actualizar stock de insumo, baja de insumo, consultar stock de insumos en un per√≠odo y recepci√≥n de pedido a proveedor.
 
 Modelo ER
 ------------------
