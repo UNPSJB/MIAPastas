@@ -114,6 +114,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+
 from django.contrib import messages
 MESSAGE_TAGS = {
     messages.ERROR: 'danger'

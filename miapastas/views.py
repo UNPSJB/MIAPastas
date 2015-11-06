@@ -282,3 +282,9 @@ def pedidosProveedor(request):
 @login_required()
 def pedidosProveedorAlta(request):
     return render(request, "pedidosProveedorAlta.html", {})
+
+
+def documentacion(request):
+    #return redirect("lotes")
+    return render(request,"/recetas/documentacion/_build/html/index.html", {})
+    #return render(request, , {})
