@@ -468,7 +468,7 @@ console.log("prefix extras:" +prefix_extras)
             console.log("cantiddddd ",totales_cantidades);
             console.log("proddd ",totales_productos);
              $(totales_cantidades).each(function(i,val){
-                html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad",i);
+                html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad_pedida",i);
                 html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
              });
             $("#pedidos_hidden").html(html);

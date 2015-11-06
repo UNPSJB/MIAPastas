@@ -1192,26 +1192,10 @@ def generarTotales(request):
 # tiene que llegar a esta view el id de algun hoja de ruta q se quiera hacer rendicion papa!
 def rendicionReparto(request):
     print "en views de rendicion de reparto"
-    return HojaDeRutaPdf(request,1)
+    #return HojaDeRutaPdf(request,1)
     hoja = models.HojaDeRuta.objects.all()[0]
-    entregas = hoja.entrega_set.all()
-    listado_detalles=[]
-    posta=[]
-    for entrega in entregas:
-        print  "UNA ENTREGA: ",len(entrega.entregadetalle_set.all())
-        for detalle in entrega.entregadetalle_set.all():
-            posta.append({"id" :detalle.id,
-                          "cantidad_enviada":detalle.cantidad_enviada,
-                          "entrega":entrega.id})
-        listado_detalles.append(entrega.entregadetalle_set.all().values())
 
-    print "posta: ",len(posta),posta
-    detalles_inlinefactory_class = inlineformset_factory(models.Entrega,models.EntregaDetalle,form=forms.EntregaDetalleForm)
-    detalles_factory = detalles_inlinefactory_class(initial=posta, prefix='entregas')
-    return render(request,"rendicionDeReparto.html",{"hoja":hoja,
-                                                     "entregas":entregas,
-                                                     "detalles_factory":detalles_factory
-                                                     })
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja})
 
 
 '''
