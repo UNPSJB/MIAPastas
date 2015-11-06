@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import datetime
 
 
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recetas', '0004_auto_20151104_1137'),
+        ('recetas', '0001_initial'),
     ]
 
     operations = [
@@ -24,7 +25,8 @@ class Migration(migrations.Migration):
             name='EntregaDetalle',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad_enviada', models.PositiveIntegerField()),
+                ('cantidad_enviada', models.PositiveIntegerField(null=True)),
+                ('cantidad_entregada', models.PositiveIntegerField(null=True)),
                 ('precio', models.PositiveIntegerField()),
                 ('entrega', models.ForeignKey(to='recetas.Entrega')),
                 ('pedido_cliente_detalle', models.ForeignKey(to='recetas.PedidoClienteDetalle')),
@@ -35,16 +37,26 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.PositiveIntegerField()),
+                ('entrega_detalle', models.ForeignKey(to='recetas.EntregaDetalle')),
                 ('lote', models.ForeignKey(to='recetas.Lote')),
             ],
         ),
         migrations.RenameModel(
-            old_name='ProductosExtra',
-            new_name='ProductoExtra',
+            old_name='ProductoExtra',
+            new_name='ProductosLlevados',
+        ),
+        migrations.RenameModel(
+            old_name='ProductosExtraDetalle',
+            new_name='ProductosLlevadosDetalle',
         ),
         migrations.RenameField(
-            model_name='productosextradetalle',
-            old_name='lote_extra',
-            new_name='producto_extra',
+            model_name='productosllevadosdetalle',
+            old_name='producto_extra',
+            new_name='producto_llevado',
+        ),
+        migrations.AlterField(
+            model_name='pedidofijo',
+            name='fecha_inicio',
+            field=models.DateField(default=datetime.date(2015, 11, 5)),
         ),
     ]

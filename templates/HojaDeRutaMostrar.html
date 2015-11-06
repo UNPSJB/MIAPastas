@@ -3,7 +3,7 @@
 {% block contenido %}
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta {{hoja_ruta.fecha}}</b></font></p></div>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta {{hoja_ruta.fecha_creacion}}</b></font></p></div>
             <div class="panel-body">
                 <form class=" form-horizontal">
 
@@ -38,13 +38,9 @@
                                             {%for detalle_entrega in entrega.entregadetalle_set.all %}
                                                  <tr>
                                                     <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
+                                                    <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}<td>
                                                  </tr>
-                                                 {%for lote_entrega_detalle in detalle_entrega.loteentregadetalle_set.all  %}
-                                                      <tr>
-                                                        <td> Lote-{{lote_entrega_detalle.lote.nro_lote}}<td>
-                                                        <td> {{lote_entrega_detalle.cantidad}} Bolsines <td>
-                                                      </tr>
-                                                 {% endfor %}
+
                                             {% endfor %}
                                             </table>
                                     </td>
@@ -57,8 +53,39 @@
 
             </div>
         </div>
+
+            <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b> Lotes</b></font></p></div>
+
+                           <table class="table table-hover">
+                             <thead>
+                                <tr>
+                                    <th>Productos</th>
+                                    <th>Lotes</th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for p in hoja_ruta.productosllevados_set.all %}
+                                <tr>
+                                    <td>{{p.producto_terminado}}</td>
+                                    <td align="center">
+                                        <table  cellspacing="2" cellpadding="2" border="2">
+                                            {%for d in p.productosllevadosdetalle_set.all %}
+                                                 <tr>
+                                                    <td>Lote-{{d.lote.nro_lote}}    </td>
+                                                    <td> {{d.cantidad}} Bolsines    <td>
+                                                 </tr>
+                                            {% endfor %}
+                                            </table>
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                         </table>
+
             <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-    </div>
+
+</div>
 </div>
 
 {% endblock %}

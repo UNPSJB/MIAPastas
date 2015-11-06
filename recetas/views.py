@@ -1098,15 +1098,15 @@ def hojaDeRuta(request):
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
-        extras_factory_class = formset_factory(forms.ProductoExtraForm)
+        extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
         entregas_factory_class = formset_factory(forms.EntregaForm)
         return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
                                                   "pedidos":pedidos_clientes_enviar,
                                                   "choferes":choferes,
                                                   "productos":productos,
                                                   "fecha":datetime.date.today(),
-                                                  "extras_form_factory":extras_factory_class(prefix="productos_extras"),
-                                                  "prefix_extras": "productos_extras",
+                                                  "extras_form_factory":extras_factory_class(prefix="productos_totales"),
+                                                  "prefix_extras": "productos_totales",
                                                   "entregas_form_factory":entregas_factory_class(prefix = "entregas"),
                                                   "prefix_entregas":"entregas"})
 
@@ -1116,15 +1116,6 @@ def hojaDeRutaAlta(request):
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
-        extras_factory_class = formset_factory(forms.ProductoExtraForm)
-        extras_factory = extras_factory_class(request.POST,request.FILES,prefix="productos_extras")
-        if extras_factory.is_valid():
-            print "extras fctory es valido"
-            for extra_form in extras_factory:
-                extra_instancia = extra_form.save(commit=False)
-                extra_instancia.hoja_de_ruta = hoja_ruta_instancia
-                print "guarde extra:" ,extra_instancia.hoja_de_ruta.chofer, extra_instancia.producto_terminado
-                extra_instancia.save()
         # ahora las entregas
         entregas_factory_class= formset_factory(forms.EntregaForm)
         entregas_factory =  entregas_factory_class(request.POST,request.FILES,prefix="entregas")
@@ -1132,6 +1123,13 @@ def hojaDeRutaAlta(request):
             print "LAS ENTREGAS SON VALIDAS"
             for entrega_form in entregas_factory:
                 entrega_instancia = entrega_form.save(hoja_ruta_instancia)
+            prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
+            prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
+            if prod_llevados_factory.is_valid():
+                print "PRODUCTOS LLEVADOS SON VALIDOS"
+                for prod_llevado_form in prod_llevados_factory:
+
+                    prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
 
     return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
     return redirect('lotes') #no va esto
@@ -1157,6 +1155,7 @@ def generarTotales(request):
                 totales[producto.pk]=0
                 totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 nombres[producto.pk] = "%s" % producto
+    print "EN GENERAR TOTALES: totales: ",totales, "datos: ",nombres
     return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
 
 

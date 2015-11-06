@@ -486,18 +486,6 @@ class LoteForm(forms.ModelForm):
 #############################################################################
 ############################################################################
 
-class ProductoExtraForm(forms.ModelForm):
-    class Meta:
-        model = models.ProductoExtra
-        fields = ["cantidad","producto_terminado"]
-    #productos_terminados = forms.ModelMultipleChoiceField(queryset=models.ProductoTerminado.objects.all())
-
-    def clean_producto_terminado(self):
-        print "en clean de producto terminado"
-        prod = self.cleaned_data["producto_terminado"]
-        print "producto:" ,prod
-        return prod
-        # aca tengo q agarrar el producto y salir a buscar a los lotes.
 
 
 
@@ -514,6 +502,7 @@ class HojaDeRutaForm(forms.ModelForm):
         return chofer
 
 
+
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = models.Entrega
@@ -528,7 +517,22 @@ class EntregaForm(forms.ModelForm):
         entrega = super(EntregaForm, self).save(commit=False)
         entrega.hoja_de_ruta = hoja_de_ruta
         entrega.save()
-        entrega.generar_detalles()
+        entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
         return entrega
 
+  ############### TOTALES PARA BUSCAR EN LOTES ####################
+class ProductosLlevadosForm(forms.ModelForm):
+    class Meta:
+        model = models.ProductosLlevados
+        fields = ["cantidad","producto_terminado"]
+
+
+    # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
+    def save(self, hoja_de_ruta):
+        productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
+        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad
+        print "Y TIENE EL PRODUCTO, ",productos_llevados.producto_terminado
+        productos_llevados.hoja_de_ruta = hoja_de_ruta
+        productos_llevados.save()
+        productos_llevados.generar_detalles()
 

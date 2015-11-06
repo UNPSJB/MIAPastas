@@ -227,6 +227,9 @@ var productos_extras=[];
 var prefix_extras = "{{prefix_extras}}";
 var prefix_entregas = "{{prefix_entregas}}";
 
+var totales_productos=[];
+var totales_cantidades=[];
+
 
 console.log("prefix extras:" +prefix_extras)
 
@@ -315,7 +318,7 @@ console.log("prefix extras:" +prefix_extras)
 
            //guardar todo e imprimir
 
-       
+
 
 
         function generarTotales(){
@@ -337,6 +340,9 @@ console.log("prefix extras:" +prefix_extras)
                 url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
                 success: function(json){
                     mostrarTotales(json.totales,json.datos);
+                    console.log(json.totales);
+                    totales_productos = _.keys(json.totales);
+                    totales_cantidades = _.values(json.totales);
                     }
             });
 
@@ -348,6 +354,7 @@ console.log("prefix extras:" +prefix_extras)
             for(var i in bolsines_total){
                 $('#cuerpoTotalesPedidos').append('<tr ><td>'+datos[i]+'</td><td>'+bolsines_total[i]+'</td></tr>');
                 total=total+bolsines_total[i];
+
             }
             $('#bolsines_total').val(total);
         }
@@ -408,12 +415,13 @@ console.log("prefix extras:" +prefix_extras)
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
              });
             // $("#pedidos_hidden").html(html);
-             $(productos_extras).each(function(i,val){
-                html = html + armar_hidden(prefix_extras,val.cantidad,"cantidad",i);
-                html = html + armar_hidden(prefix_extras,val.producto,"producto_terminado",i);
+             $(totales_cantidades).each(function(i,val){
+                html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad",i);
+                html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
              });
             $("#pedidos_hidden").html(html);
-            document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(productos_extras);
+            console.log(_.size(totales_cantidades));
+            document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(totales_cantidades);
             document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);
 
              console.log($("#pedidos_hidden"));

@@ -457,15 +457,31 @@ class HojaDeRuta(models.Model):
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
 
-class ProductoExtra(models.Model):
+class ProductosLlevados(models.Model):
     cantidad = models.FloatField()
     producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
-class ProductosExtraDetalle(models.Model):
+    def generar_detalles(self):
+        cantidad_buscada = self.cantidad
+        for lote in Lote.objects.filter(producto_terminado = self.producto_terminado,
+                                        fecha_vencimiento__gte=datetime.date.today(),
+                                        stock_disponible__gte = 0):
+            cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+            if cantidad_reservada == 0:
+                continue
+            cantidad_buscada -=cantidad_reservada
+            ProductosLlevadosDetalle.objects.create(cantidad = cantidad_reservada,
+                                                    lote=lote,
+                                                    producto_llevado = self)
+            if cantidad_buscada == 0:
+                break
+
+
+class ProductosLlevadosDetalle(models.Model):
     cantidad = models.PositiveIntegerField()
     lote = models.ForeignKey(Lote)
-    producto_extra = models.ForeignKey(ProductoExtra)
+    producto_llevado= models.ForeignKey(ProductosLlevados)
 
 
 class Entrega(models.Model):
@@ -473,31 +489,19 @@ class Entrega(models.Model):
     pedido = models.ForeignKey(PedidoCliente)
     fecha = models.DateField(auto_now_add = True)
 
+
     def generar_detalles(self):
         if self.entregadetalle_set.all().exists():
             raise "Ya tengo detalles para el pedido %s" % self.pedido
 
-        print "EN CARGAR LOTES", self
         for detalle_pedido in self.pedido.pedidoclientedetalle_set.all():
             # creo detalle de entrega asociada al detalle del pedido
             entrega_detalle = EntregaDetalle.objects.create(entrega=self,
                                                                    precio=(detalle_pedido.producto_terminado.precio *detalle_pedido.cantidad_producto),
                                                                    cantidad_entregada = None,
                                                                    pedido_cliente_detalle=detalle_pedido)
-            cantidad_buscada = detalle_pedido.cantidad_producto
-            producto_buscado = detalle_pedido.producto_terminado
-            for lote in Lote.objects.filter(producto_terminado = producto_buscado,
-                                                   fecha_vencimiento__gte=datetime.date.today(),
-                                                   stock_disponible__gte = 0):
-                cantidad_reservada = lote.reservar_stock(cantidad_buscada)
-                if cantidad_reservada == 0:
-                    continue
-                cantidad_buscada -= cantidad_reservada
-                LoteEntregaDetalle.objects.create(lote=lote,cantidad=cantidad_reservada,entrega_detalle=entrega_detalle)
-                if cantidad_buscada == 0:
-                    break
-            if cantidad_buscada > 0:
-                print "no alcance a cubrir la cantidad pedida para el producto: ",producto_buscado
+
+
 
 class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
