@@ -276,6 +276,10 @@ console.log("prefix extras:" +prefix_extras)
             var cont = 0;
             $el.hide(); // en vez de hide se puede usar remove(), para que se muestre es con show()
 
+            $el.find('tr').each (function() {
+
+            }
+
             $el.find('td').each (function() {
               if(cont==0)
                 nro_pedido = $(this).html();//me muestra el codigo html del objeto al que esta asignado
@@ -400,7 +404,7 @@ console.log("prefix extras:" +prefix_extras)
             id_input = document.getElementById("cantidad-"+id);
             var index = _.indexOf(productos_extras,_.findWhere(productos_extras, function(d){return d.producto==id;}));
             productos_extras = modificar_cantidad_arreglo(productos_extras,nueva_cantidad,id_input,index);
-        //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto q de la lista q cumple con la funcion
+        //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto de la lista q cumple con la funcion
       }
 
 
