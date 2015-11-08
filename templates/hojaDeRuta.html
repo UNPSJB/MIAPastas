@@ -188,6 +188,7 @@
                         <thead>
                         <h3 class="col-md-12">Detalle de productos extras</h3>
                         <tr>
+                            <td style="display:none;">aafsf</td>
                             <th>Producto Terminado</th>
                             <th>Cantidad Bolsines</th>
                         </tr>
@@ -197,8 +198,8 @@
                       </table>
                   </div>
                   <div class="modal-footer">
-                      <button type="button" onclick="aceptar_extras()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                      <button type="button" onclick="generarTotales()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                     <!--  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button> -->
                   </div>
                 </div>
 
@@ -229,6 +230,7 @@ var prefix_entregas = "{{prefix_entregas}}";
 
 var totales_productos=[];
 var totales_cantidades=[];
+var totales_datos=[];
 
 
 console.log("prefix extras:" +prefix_extras)
@@ -270,8 +272,6 @@ console.log("prefix extras:" +prefix_extras)
        });
 
 
-
-
         function agregarHojaDeRutaMismoCliente(){
             var nro_pedido;
             var razon_social;
@@ -284,8 +284,11 @@ console.log("prefix extras:" +prefix_extras)
                 razon_social = $(this).html();
               cont=cont+1;
             });
+            var razon_social_clase = razon_social;
+            razon_social_clase.trim();  //quito los espacios en blanco porque sino no lo puedo usar como una clase
+            var cliente = $el.data()["cliente"];
+            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados cliente-'+razon_social_clase+'" data-clase='+razon_social_clase+'  data-cliente='+cliente+' data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
 
-            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados" data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
             }
 
 
@@ -304,10 +307,12 @@ console.log("prefix extras:" +prefix_extras)
               cont=cont+1;
             });
 
-            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados" data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
-                var cliente = $el.data()["cliente"];
+            var razon_social_clase = razon_social;
+            razon_social_clase.trim();  //quito los espacios en blanco porque sino no lo puedo usar como una clase
+            var cliente = $el.data()["cliente"];
+            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados cliente-'+razon_social_clase+'" data-clase='+razon_social_clase+'  data-cliente='+cliente+' data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
                 $(".cliente-"+cliente+"").each(function(){
-                    if((original != $(this).data()["id"]) || ($(this).is(':visible')&& $(this).parents (':hidden').length == 0)){   //agrego todos los de cliente menos el que ya cargue arriba
+                    if((original != $(this).data()["id"])){   //agrego todos los de cliente menos el que ya cargue arriba
                         $(this).trigger("click");   //simulo click de esos elementos
                         console.log($(this));
                         agregarHojaDeRutaMismoCliente();
@@ -318,10 +323,12 @@ console.log("prefix extras:" +prefix_extras)
        }
 
        function quitarHojaDeRuta(){
-            $el_asignado.remove();
-            id_show= $el_asignado.data()["id"]; //manejan los mismos id
+            cliente_show= $el_asignado.data()["cliente"];
+            var clase=$el_asignado.data()["clase"];
+            $('.cliente-'+clase+'').remove();
+
             $el_asignado=null;
-            $("#renglon-"+id_show).show();
+            $('.cliente-'+cliente_show+'').show();
             generarTotales();
        }
 
@@ -339,13 +346,10 @@ console.log("prefix extras:" +prefix_extras)
                 }
                 )
 
-           });}
+           });
 
 
-
-           //guardar todo e imprimir
-
-
+           }
 
 
         function generarTotales(){
@@ -366,27 +370,50 @@ console.log("prefix extras:" +prefix_extras)
                 dataType: 'json',
                 url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
                 success: function(json){
-                    mostrarTotales(json.totales,json.datos);
                     console.log(json.totales);
-                    totales_productos = _.keys(json.totales);
+                    totales_productos = _.keys(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
                     totales_cantidades = _.values(json.totales);
+                    totales_datos = _.values(json.datos);
+                    console.log("soy totales de productos",totales_productos,"sot datos: ",totales_datos);
+                    agregar_extra_totales();
+                    mostrarTotales();
                     }
             });
+        }
+
+        function agregar_extra_totales(){
+            $('#tabla_extras').find('tr').each(function(){
+                id_elemento = $(this).find("td").eq(0).html();
+                elemento = $(this).find("td").eq(1).html();
+                elemento_siguiente=$(this).find("td").eq(2).html();
+                var index = _.indexOf(totales_datos,elemento);
+                if (index == -1){
+                    console.log("estoy en elemento nuevoooooo")
+                    totales_productos.push(id_elemento);
+                    totales_datos.push(elemento);
+                    totales_cantidades.push(parseInt($(elemento_siguiente).val()));
+                }
+                else{
+                     console.log("estoy en ya estabaaaaa ",totales_cantidades[index]," y la cant nueva es ",$(elemento_siguiente).val())
+
+                    totales_cantidades[index]+= parseInt($(elemento_siguiente).val());
+                }
+                }
+                )
 
         }
 
-        function mostrarTotales(bolsines_total,datos){
+        function mostrarTotales(){
             $("#cuerpoTotalesPedidos tr").remove();
             var total=0;
-            for(var i in bolsines_total){
-                $('#cuerpoTotalesPedidos').append('<tr ><td>'+datos[i]+'</td><td>'+bolsines_total[i]+'</td></tr>');
-                total=total+bolsines_total[i];
-
+            console.log("soy totales_datos ",totales_datos);
+            for(i=0;i< totales_cantidades.length;i++){
+                $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_datos[i]+'</td><td>'+totales_cantidades[i]+'</td></tr>');
+                total=total+parseInt(totales_cantidades[i]);
             }
+
             $('#bolsines_total').val(total);
         }
-
-
 
 
       $("#add-detalle-extra").click(function(){
@@ -405,7 +432,7 @@ console.log("prefix extras:" +prefix_extras)
                      }else{
                         var id_prod = document.getElementById('select_productos').value;
                         var nombre_prod = $('#select_productos option:selected').text();
-                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad('+id_prod+')"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
+                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td style="display:none;">'+id_prod+'</td><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad('+id_prod+')"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
                         productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
                         console.log(productos_extras);
                         det = productos_extras[0];
@@ -430,18 +457,16 @@ console.log("prefix extras:" +prefix_extras)
         //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto de la lista q cumple con la funcion
       }
 
-
-
-
-
-
         function altaHojaRuta(){
              console.log("EN DAR DE ALTA LA HOJA DE RUTA");
              var html="";
              $(pedidosAsignados).each(function(i,val){
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
+
              });
             // $("#pedidos_hidden").html(html);
+            console.log("cantiddddd ",totales_cantidades);
+            console.log("proddd ",totales_productos);
              $(totales_cantidades).each(function(i,val){
                 html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad",i);
                 html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
@@ -455,9 +480,9 @@ console.log("prefix extras:" +prefix_extras)
 
         }
 
-        function aceptar_extras(){
-            console.log(productos_extras);
-        }
+
+
+
 
 
 

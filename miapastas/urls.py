@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^index$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^ayuda$', views.ayuda, name='ayuda'),
+    url(r'^documentacion$',views.documentacion, name='documentacion'),
     url(r'^cacho$', views.cacho, name='cacho'),
     url(r'^probando$', views.probando, name='probando'),
     url(r'^prueba$', views.prueba, name='prueba'),

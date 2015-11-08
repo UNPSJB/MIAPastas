@@ -1173,7 +1173,6 @@ def generarTotales(request):
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
     totales={}
     nombres={}
-    precios={}
     pedidos = []
     for id in pedidos_list:
         pedidos.append(models.PedidoCliente.objects.get(pk=id))
@@ -1242,3 +1241,6 @@ for pedido in pedidos:
 print lotes_dict
 
 '''
+
+
+
