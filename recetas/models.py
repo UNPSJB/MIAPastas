@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from datetime import date
 import datetime
 from multiselectfield import MultiSelectField
-
+from django.utils import timezone
 
 TIPODIAS = (
         (1, "lunes"),
@@ -329,6 +329,7 @@ class PedidoClienteDetalle(models.Model):
 
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField(default=date.today())
+    #fecha_inicio = models.DateField(default=timezone.now())
     fecha_cancelacion = models.DateField(blank=True,null=True)
     dias = MultiSelectField(choices=TIPODIAS)
 
