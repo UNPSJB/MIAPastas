@@ -8,6 +8,7 @@ from django.forms import CheckboxSelectMultiple, MultipleChoiceField
 import re
 import datetime
 from datetime import timedelta
+from django.utils.safestring import mark_safe
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -375,6 +376,20 @@ class PedidoClienteFijoForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(PedidoClienteFijoForm, self).clean()
         if not self.errors:
+            cliente = cleaned_data["cliente"]
+            pedidos = cliente.pedidocliente_set.all()
+            try:
+                dias = cleaned_data["dias"]
+            except:
+                raise ValidationError("Debe marcar al menos un dia para la entrega.")
+            for pedido in pedidos:
+                if pedido.tipo_pedido == 1:
+                    lista =pedido.pedidofijo.dias
+                    for dia in dias:
+                        if dia in lista:
+                            id = str(pedido.id)
+                            raise forms.ValidationError(((mark_safe('Ya existen pedido/s de este cliente para el/los dias marcados. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
+
             if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < cleaned_data["fecha_inicio"]):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
         return cleaned_data
@@ -393,12 +408,29 @@ class PedidoClienteDetalleForm(forms.ModelForm):
 
 
 
+
+
 class PedidoClienteOcacionalForm(forms.ModelForm):
     class Meta:
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+
+    def clean(self):
+        cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
+        if not self.errors:
+            cliente = cleaned_data["cliente"]
+            pedidos = cliente.pedidocliente_set.all()
+            dia = cleaned_data['fecha_entrega']
+            for pedido in pedidos:
+                if pedido.tipo_pedido == 2:
+                    fecha =pedido.pedidoocacional.fecha_entrega
+                    if dia == fecha:
+                        id = str(pedido.id)
+                        raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
+
+
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
@@ -418,6 +450,21 @@ class PedidoClienteCambioForm(forms.ModelForm):
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido']
+
+
+    def clean(self):
+            cleaned_data = super(PedidoClienteCambioForm, self).clean()
+            if not self.errors:
+                cliente = cleaned_data["cliente"]
+                pedidos = cliente.pedidocliente_set.all()
+                dia = cleaned_data['fecha_entrega']
+                for pedido in pedidos:
+                    if pedido.tipo_pedido == 3:
+                        fecha =pedido.pedidocambio.fecha_entrega
+                        if dia == fecha:
+                            id = str(pedido.id)
+                            raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
+
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
@@ -486,58 +533,55 @@ class LoteForm(forms.ModelForm):
 #############################################################################
 ############################################################################
 
-class ProductoExtraForm(forms.ModelForm):
+class HojaDeRutaForm(forms.ModelForm):
+    #pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
+    #chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
     class Meta:
-        model = models.ProductoExtra
-        fields = ["cantidad","producto_terminado"]
-    #productos_terminados = forms.ModelMultipleChoiceField(queryset=models.ProductoTerminado.objects.all())
-
-    def clean_producto_terminado(self):
-        print "en clean de producto terminado"
-        prod = self.cleaned_data["producto_terminado"]
-        print "producto:" ,prod
-        return prod
-        # aca tengo q agarrar el producto y salir a buscar a los lotes.
-
-
-
-
-class HojaDeRutaForm(forms.Form):
-    pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
-    chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
-
-    def save(self):
-        pedidos = self.cleaned_data["pedidos"]
+        model = models.HojaDeRuta
+        fields = ["chofer"]
+    def clean_chofer(self):
         chofer = self.cleaned_data["chofer"]
-        print "EN SAVE DE HOJA DE RUTA"
-        hoja = models.HojaDeRuta.objects.create(chofer = chofer)
-        for pedido in pedidos:
-            # por cada pedido tengo q crear una ENTREGA asociada a el
-            for detalle in pedido.pedidoclientedetalle_set.all():
-                #por cada detalle tengo q crear un detalle de entrega q apunte a uno o mas lotes para q cubran la cantidad buscada
-                producto_buscado = detalle.producto_terminado
-                cantidad_buscada = detalle.cantidad_producto
-                #esta cantidad hay que salir a buscarla a los lotes
-                lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
-                lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
-                for lote in lotes:
-                    cantidad_reservada = lote.reservar_stock(cantidad_buscada)
-                    cantidad_buscada -=  cantidad_reservada
-                    if  cantidad_buscada == 0:
-                        break; #busco otro detalle
-		        if cantidad_buscada > 0:
-			    print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
-        print "fin de procesar los pedidos"
-        hoja.save()
-        return hoja
-        ##
+        print "en clean de chofer de hoja de ruta:", chofer
+        return chofer
 
 
 
+class EntregaForm(forms.ModelForm):
+    class Meta:
+        model = models.Entrega
+        fields = ["pedido"]
+
+    def clean_pedido(self):
+        pedido = self.cleaned_data["pedido"]
+        print "en clean pedido de ENTREGA", pedido
+        return pedido
+
+    def save(self, hoja_de_ruta):
+        entrega = super(EntregaForm, self).save(commit=False)
+        entrega.hoja_de_ruta = hoja_de_ruta
+        entrega.save()
+        entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
+        return entrega
+
+class EntregaDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.EntregaDetalle
+        fields = ["cantidad_enviada"]
 
 
+  ############### TOTALES PARA BUSCAR EN LOTES ####################
+class ProductosLlevadosForm(forms.ModelForm):
+    class Meta:
+        model = models.ProductosLlevados
+        fields = ["cantidad","producto_terminado"]
 
 
-
-
+    # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
+    def save(self, hoja_de_ruta):
+        productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
+        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad
+        print "Y TIENE EL PRODUCTO, ",productos_llevados.producto_terminado
+        productos_llevados.hoja_de_ruta = hoja_de_ruta
+        productos_llevados.save()
+        productos_llevados.generar_detalles()
 

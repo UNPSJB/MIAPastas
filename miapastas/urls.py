@@ -28,6 +28,7 @@ urlpatterns = [
     url(r'^index$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^ayuda$', views.ayuda, name='ayuda'),
+    url(r'^documentacion$',views.documentacion, name='documentacion'),
     url(r'^cacho$', views.cacho, name='cacho'),
     url(r'^probando$', views.probando, name='probando'),
     url(r'^prueba$', views.prueba, name='prueba'),
@@ -113,6 +114,8 @@ urlpatterns = [
 
     url(r'^productosTerminadosActualizarStock/(?P<lote_id>[0-9]+)/$',recetasviews.loteStock,name='productosTerminadosActualizarStock'),
 
+    url(r'^rendicionReparto$',recetasviews.rendicionReparto,name='rendicionReparto'),
+
                 # FIN PRIMERA ENTREGA
 
 
@@ -177,7 +180,6 @@ urlpatterns = [
     url(r'^zonasConsulta$',views.zonasConsulta,name='zonasConsulta'),
     url(r'^zonasModificar$',views.zonasModificar,name='zonasMoficar'),
     url(r'^hojaDeRuta$',views.hojaDeRuta,name='hojaDeRuta'),
-    url(r'^rendicionReparto$',views.rendicionReparto,name='rendicionReparto'),
     url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),

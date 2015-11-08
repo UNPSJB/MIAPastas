@@ -1,42 +1,73 @@
 
-{% block content %}
+{% load staticfiles %}
+<!DOCTYPE HTML>
+<html >
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Mia Pastas SRL</title>
+         <!-- {% block stylesheet %}{% endblock %} -->
+		<link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+        <link rel="stylesheet" href="{% static "css/estilos_propios.css" %}">
+        <link rel="stylesheet" href="{% static "css/styles.css" %}">
+        <script src="{% static "js/jquery.js" %}"></script>
+        <script src="{% static "js/bootstrap.min.js" %}"></script>
 
-    {% if form.errors %}
-        <p>{{ form.errors }}</p>
-    {% endif %}
 
-    <form method="post" action="{% url 'signup' %}">
 
-        {% csrf_token %}
 
-        <table>
-            <tr>
-                <td>{{ form.username.label_tag }}</td>
-                <td>{{ form.username }}</td>
-            </tr>
-            <tr>
-                <td>{{ form.password.label_tag }}</td>
-                <td>{{ form.password }}</td>
-            </tr>
+    </head>
 
-            <tr>
-                <td>{{ form.email.label_tag }}</td>
-                <td>{{ form.email }}</td>
-            </tr>
+<body>
+        <div class="cabecera">
+            <!-- imagen de mia pastas -->
+            <div style="float:left;">
+                <img src="{% static "images/miaspastas.png" %}" alt="aca va el logo mia pastas" />
+			</div>
+            <div style="clear:both;"></div>
+        </div>
 
-            <tr>
-                <td>{{ form.first_name.label_tag }}</td>
-                <td>{{ form.first_name }}</td>
-            </tr>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-4 col-md-offset-4">
+            <h1 class="text-center login-title"><font face="tahoma" size="3" color="green"><b>Mía Pastas System</font><font face="verdana" size="1" color="green" ><br>versión 1.0</br></b></font></h1>
 
-            <tr>
-                <td>{{ form.last_name.label_tag }}</td>
-                <td>{{ form.last_name }}</td>
-            </tr>
+            <div class="account-wall">
 
-        </table>
 
-        <input type="submit" value="login"/>
-    </form>
+                <form  method="post" action="{% url 'signup' %}">
 
-{% endblock %}
+                    {% csrf_token %}
+                    <input placeholder="Nombre de usuario" class="form-control" type="text"  id="username"  name="username" tabindex="1" required autofocus>
+                    <input placeholder="Contraseña" class="form-control" type="password"  id="password" name="password" tabindex="2" required>
+                    <input placeholder="e-mail" class="form-control" type="email"  id="e-mail" name="e-mail" tabindex="3" required>
+                    <input placeholder="Nombre" class="form-control" type="text"  id="nombre" name="e-mail" tabindex="4" required>
+                    <input placeholder="Apellido" class="form-control" type="text"  id="apellido" name="e-mail" tabindex="5" required>
+
+
+                    <input class="btn btn-lg btn-success btn-block" type="submit" value="login"/><input type="hidden" name="next" value="/signup/" />
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+
+
+<div class="container marketing">
+    <!-- FOOTER -->
+      <footer>
+        <p class="pull-right"><a href="#">Back to top</a></p><br></br>
+          <div>
+            <input title= "Gmail" href="#" type = image src ="{% static "images/gmail.png" %}" alt="aca va el logo mia pastas" height = "40" ></input>
+            <input title= "Twitter" href="#" type = image src ="{% static "images/twitter.png" %}" alt="aca va el logo mia pastas" height = "40"  ></input>
+            <input title= "Facebook" href="#" type = image src ="{% static "images/facebook.png" %}" alt="aca va el logo mia pastas"  height = "40" ></input>
+        </div>
+        <p><i><small>Mia Pastas S.R.L.© 2015. Designed by Calfuquir Nicolas - Gómez Agustina - James Kevin - Lecuna Facundo - Parra Iván. Todos los derechos reservados.</small> </i> </p>
+
+      </footer>
+
+
+
+</div><!-- /.container -->
+

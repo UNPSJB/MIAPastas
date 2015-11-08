@@ -19,7 +19,13 @@ from datetime import date
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from itertools import chain
-
+import xhtml2pdf.pisa as pisa
+from wkhtmltopdf import *
+from django.template.loader import get_template
+from django.template.context import RequestContext
+from django.core.context_processors import csrf
+import StringIO
+from django.template import Context
 
 #from datetime import date, datetime
 #import time
@@ -1098,35 +1104,68 @@ def hojaDeRuta(request):
                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
-        extras_factory_class = formset_factory(forms.ProductoExtraForm)
+        extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
+        entregas_factory_class = formset_factory(forms.EntregaForm)
         return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
                                                   "pedidos":pedidos_clientes_enviar,
                                                   "choferes":choferes,
                                                   "productos":productos,
                                                   "fecha":datetime.date.today(),
-                                                  "extras_form_factory":extras_factory_class(prefix="productos_extras"),
-                                                  "prefix_extras": "productos_extras"})
+                                                  "extras_form_factory":extras_factory_class(prefix="productos_totales"),
+                                                  "prefix_extras": "productos_totales",
+                                                  "entregas_form_factory":entregas_factory_class(prefix = "entregas"),
+                                                  "prefix_entregas":"entregas"})
 
 
 
 def hojaDeRutaAlta(request):
-    print "EN HOJA DE RUTA ALTA"
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
+        # ahora las entregas
+        entregas_factory_class= formset_factory(forms.EntregaForm)
+        entregas_factory =  entregas_factory_class(request.POST,request.FILES,prefix="entregas")
+        if entregas_factory.is_valid():
+            print "LAS ENTREGAS SON VALIDAS"
+            for entrega_form in entregas_factory:
+                entrega_instancia = entrega_form.save(hoja_ruta_instancia)
+            prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
+            prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
+            if prod_llevados_factory.is_valid():
+                print "PRODUCTOS LLEVADOS SON VALIDOS"
+                for prod_llevado_form in prod_llevados_factory:
 
-        extras_factory_class = formset_factory(forms.ProductoExtraForm)
-        extras_factory = extras_factory_class(request.POST,request.FILES,prefix="productos_extras")
-        if extras_factory.is_valid():
-            print "extras fctory es valido"
-            for extra_form in extras_factory:
-                extra_instancia = extra_form.save(commit=False)
-                extra_instancia.hoja_de_ruta = hoja_ruta_instancia
-                print "guarde extra:" ,extra_instancia.hoja_de_ruta.chofer, extra_instancia.producto_terminado
-                extra_instancia.save()
+                    prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
+
+
+    return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
     return redirect('lotes') #no va esto
     #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
 
+
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    context = Context(context_dict)
+    html  = template.render(context)
+    result = StringIO.StringIO()
+    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type="application/pdf")
+    return HttpResponse('We had some errors<pre>%s</pre>' % html)
+
+
+
+
+def HojaDeRutaPdf(request,hoja_id=None):
+    hoja = models.HojaDeRuta.objects.all()[0] #tengo q buscar la hoja q resiba por parametro
+    fecha = hoja.fecha_creacion
+    print "EN HOJA DE RUA PDF POR ENVIAR"
+    return render_to_pdf('HojaDeRutaPdf.html',{'pagesize':'A4',
+                                                   'hoja': hoja,
+                                                   'date': fecha,
+            }
+        )
 
 
 
@@ -1134,7 +1173,6 @@ def generarTotales(request):
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
     totales={}
     nombres={}
-    precios={}
     pedidos = []
     for id in pedidos_list:
         pedidos.append(models.PedidoCliente.objects.get(pk=id))
@@ -1147,4 +1185,62 @@ def generarTotales(request):
                 totales[producto.pk]=0
                 totales[producto.pk]=totales[producto.pk]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
                 nombres[producto.pk] = "%s" % producto
-    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres}),content_type='json')
+    print "EN GENERAR TOTALES: totales: ",totales, "datos: ",nombres
+    return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
+
+
+# tiene que llegar a esta view el id de algun hoja de ruta q se quiera hacer rendicion papa!
+def rendicionReparto(request):
+    print "en views de rendicion de reparto"
+    return HojaDeRutaPdf(request,1)
+    hoja = models.HojaDeRuta.objects.all()[0]
+    entregas = hoja.entrega_set.all()
+    listado_detalles=[]
+    posta=[]
+    for entrega in entregas:
+        print  "UNA ENTREGA: ",len(entrega.entregadetalle_set.all())
+        for detalle in entrega.entregadetalle_set.all():
+            posta.append({"id" :detalle.id,
+                          "cantidad_enviada":detalle.cantidad_enviada,
+                          "entrega":entrega.id})
+        listado_detalles.append(entrega.entregadetalle_set.all().values())
+
+    print "posta: ",len(posta),posta
+    detalles_inlinefactory_class = inlineformset_factory(models.Entrega,models.EntregaDetalle,form=forms.EntregaDetalleForm)
+    detalles_factory = detalles_inlinefactory_class(initial=posta, prefix='entregas')
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja,
+                                                     "entregas":entregas,
+                                                     "detalles_factory":detalles_factory
+                                                     })
+
+
+'''
+
+pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
+lotes_dict = []
+for pedido in pedidos:
+	for detalle in pedido.pedidoclientedetalle_set.all():
+		producto_buscado = detalle.producto_terminado
+		cantidad_buscada = detalle.cantidad_producto
+		#esta cantidad hay que salir a buscarla a los lotes
+		lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
+		lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
+		for lote in lotes:
+			print "cantidad buscad: " ,cantidad_buscada
+			cantidad_reservada = lote.reservar_stock(cantidad_buscada)
+			cantidad_buscada -=  cantidad_reservada
+			print "RESERVAR SOTKC RETORNO:" ,cantidad_buscada
+			lotes_dict.append = {"lote:"lote,"cantidad":cantidad_reservada}
+			if  cantidad_buscada == 0:
+				# si logro cubrir la cantidad buscada con stock disponible en uno o mas lotes
+				# termino el bucle y voy a buscar otro detalle
+				break;
+		if cantidad_buscada > 0:
+			print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
+# al finalizar debo imprimir los lotes y sus cantidades a buscar
+print lotes_dict
+
+'''
+
+
+

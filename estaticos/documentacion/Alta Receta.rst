@@ -1,2 +1,3 @@
-Eliminar Receta
+﻿Alta Receta
 ====================================
+

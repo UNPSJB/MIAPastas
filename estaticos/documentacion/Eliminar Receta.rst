@@ -1,2 +1,2 @@
-Eliminar Cliente
+﻿Eliminar Receta
 ====================================

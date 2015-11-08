@@ -36,7 +36,7 @@
 
             <div class="account-wall">
                <img class="profile-img" src="{% static "images/avatar.png" %}" alt="La imagen no se pudo cargar">
-               <form method="post" action="{% url 'django.contrib.auth.views.login' %}">
+               <form class="form-signin" method="post" action="{% url 'django.contrib.auth.views.login' %}">
                         {% csrf_token %}
                    <input type="text" class="form-control" id="username" placeholder="Usuario" name="username" data-icon="U" tabindex="1" required autofocus>
                    <input placeholder="Contraseña" class="form-control" type="password" name="password" id="password" data-icon="x" tabindex="2" required>
