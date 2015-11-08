@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion</b></font></p></div>
+            <div class="panel-body">
+                <form action="{% url 'zonasAlta' %}" method="post" class="form-horizontal">
+
+                    <div class=" form-group">
+                        <label class="col-sm-2 control-label">Hoja De Ruta</label>
+                        <div class="col-sm-10">
+                             {{hoja.id}}
+                        </div>
+                    </div>
+
+                    <div class=" form-group">
+                        <label class="col-sm-2 control-label">Fecha</label>
+                        <div class="col-sm-10">
+                             {{hoja.fecha_creacion}}
+                        </div>
+                    </div>
+
+                    <div class=" form-group">
+                        <label class="col-sm-2 control-label">Chofer</label>
+                        <div class="col-sm-10">
+                             {{hoja.chofer}}
+                        </div>
+                    </div>
+
+
+
+                    <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Entregas</b></font></p></div>
+
+                    <table class="table table-hover">
+                         <thead>
+                            <tr>
+                               <th>Pedido</th>
+                               <th>Cliente</th>
+                               <th>Produtos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for e in entregas %}
+                               <tr>
+                                  <td> Nro {{e.pedido.id}} {{e.pedido.get_tipo_pedido_display}}</td>
+                                  <td>{{e.pedido.cliente}}</td>
+                                  <td align="center">
+                                        <table   border="2">
+                                            <th>Producto</th>
+                                            <th>Cantidad Enviada</th>
+                                            <th>Precio/u </th>
+                                            <th>Cantidad Entregado</th>
+                                            {%for detalle_entrega in e.entregadetalle_set.all %}
+                                                 <tr>
+                                                    <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
+                                                    <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}</td>
+                                                    <td>{{detalle_entrega.precio}} $ </td>
+                                                    <td> <input data-detalle="{{detalle_entrega.id}}"
+                                                                data-entrega="{{e.id}}" type="text" class="probando"
+                                                                placeholder="Cantidad "
+                                                            </td>
+                                                 </tr>
+
+                                            {% endfor %}
+                                            </table>
+                                    </td>
+                               </tr>
+                            {% endfor %}
+                        </tbody>
+                 </table>
+                 {% csrf_token %}
+                  {% bootstrap_formset detalles_factory layout='horizontal' %}
+                    <div id="metiendola"></div>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+                </form>
+            </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+    var listado_entregas = [
+        {% for entrega in entregas %}
+            {% for detalle_entrega in entrega.entregadetalle_set.all%}
+                {"detalle_id": {{detalle_entrega.id}},
+                "entrega_id": {{entrega.id}},
+                "cantidad_enviada":0},
+            {% endfor%}
+        {%endfor%}
+    ];
+
+var prefix_entregas = "entregas"; //este tiene q venir desde la view
+
+
+
+var cant_entregadas = $(".probando");
+
+var diccionario={};
+
+$(cant_entregadas).each(function(i,val){
+    console.log(val);
+    diccionario[prefix_entregas+"-"+i+"-id"]= val.getAttribute('data-detalle');
+    diccionario[prefix_entregas+"-"+i+"-entrega"]= val.getAttribute('data-entrega');
+    diccionario[prefix_entregas+"-"+i+"-cantidad_enviada"]= val.value;
+    });
+console.log(diccionario);
+
+
+
+
+    function validacion(){
+        return true;
+
+    }
+
+
+
+</script>
+{% endblock %}

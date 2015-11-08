@@ -113,6 +113,8 @@ urlpatterns = [
 
     url(r'^productosTerminadosActualizarStock/(?P<lote_id>[0-9]+)/$',recetasviews.loteStock,name='productosTerminadosActualizarStock'),
 
+    url(r'^rendicionReparto$',recetasviews.rendicionReparto,name='rendicionReparto'),
+
                 # FIN PRIMERA ENTREGA
 
 
@@ -177,7 +179,6 @@ urlpatterns = [
     url(r'^zonasConsulta$',views.zonasConsulta,name='zonasConsulta'),
     url(r'^zonasModificar$',views.zonasModificar,name='zonasMoficar'),
     url(r'^hojaDeRuta$',views.hojaDeRuta,name='hojaDeRuta'),
-    url(r'^rendicionReparto$',views.rendicionReparto,name='rendicionReparto'),
     url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),

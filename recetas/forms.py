@@ -529,10 +529,6 @@ class LoteForm(forms.ModelForm):
 #############################################################################
 ############################################################################
 
-
-
-
-
 class HojaDeRutaForm(forms.ModelForm):
     #pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
     #chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
@@ -562,6 +558,12 @@ class EntregaForm(forms.ModelForm):
         entrega.save()
         entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
         return entrega
+
+class EntregaDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.EntregaDetalle
+        fields = ["cantidad_enviada"]
+
 
   ############### TOTALES PARA BUSCAR EN LOTES ####################
 class ProductosLlevadosForm(forms.ModelForm):

@@ -507,7 +507,7 @@ class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
     cantidad_enviada = models.PositiveIntegerField(null=True)
     cantidad_entregada = models.PositiveIntegerField(null=True)
-    precio = models.PositiveIntegerField() # esto es derivado del precio del producto
+    precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle)
 
 class LoteEntregaDetalle(models.Model):

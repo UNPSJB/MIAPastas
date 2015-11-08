@@ -19,7 +19,13 @@ from datetime import date
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from itertools import chain
-
+import xhtml2pdf.pisa as pisa
+from wkhtmltopdf import *
+from django.template.loader import get_template
+from django.template.context import RequestContext
+from django.core.context_processors import csrf
+import StringIO
+from django.template import Context
 
 #from datetime import date, datetime
 #import time
@@ -1131,10 +1137,35 @@ def hojaDeRutaAlta(request):
 
                     prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
 
+
     return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
     return redirect('lotes') #no va esto
     #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
 
+
+
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    context = Context(context_dict)
+    html  = template.render(context)
+    result = StringIO.StringIO()
+    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type="application/pdf")
+    return HttpResponse('We had some errors<pre>%s</pre>' % html)
+
+
+
+
+def HojaDeRutaPdf(request,hoja_id=None):
+    hoja = models.HojaDeRuta.objects.all()[0] #tengo q buscar la hoja q resiba por parametro
+    fecha = hoja.fecha_creacion
+    print "EN HOJA DE RUA PDF POR ENVIAR"
+    return render_to_pdf('HojaDeRutaPdf.html',{'pagesize':'A4',
+                                                   'hoja': hoja,
+                                                   'date': fecha,
+            }
+        )
 
 
 
@@ -1158,6 +1189,30 @@ def generarTotales(request):
     print "EN GENERAR TOTALES: totales: ",totales, "datos: ",nombres
     return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
 
+
+# tiene que llegar a esta view el id de algun hoja de ruta q se quiera hacer rendicion papa!
+def rendicionReparto(request):
+    print "en views de rendicion de reparto"
+    return HojaDeRutaPdf(request,1)
+    hoja = models.HojaDeRuta.objects.all()[0]
+    entregas = hoja.entrega_set.all()
+    listado_detalles=[]
+    posta=[]
+    for entrega in entregas:
+        print  "UNA ENTREGA: ",len(entrega.entregadetalle_set.all())
+        for detalle in entrega.entregadetalle_set.all():
+            posta.append({"id" :detalle.id,
+                          "cantidad_enviada":detalle.cantidad_enviada,
+                          "entrega":entrega.id})
+        listado_detalles.append(entrega.entregadetalle_set.all().values())
+
+    print "posta: ",len(posta),posta
+    detalles_inlinefactory_class = inlineformset_factory(models.Entrega,models.EntregaDetalle,form=forms.EntregaDetalleForm)
+    detalles_factory = detalles_inlinefactory_class(initial=posta, prefix='entregas')
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja,
+                                                     "entregas":entregas,
+                                                     "detalles_factory":detalles_factory
+                                                     })
 
 
 '''
