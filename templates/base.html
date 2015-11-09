@@ -14,7 +14,8 @@
         <link rel="stylesheet" href="{% static "css/bootstrap-dialog.css" %}" >
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
-             var s=window.location.pathname.substring(0,_.size(n)-1);
+             var n=window.location.pathname;
+             var s=n.substring(0,_.size(n)-1);
              console.log(s);
              frame = $("#frameDocumentacion");
              frame.attr("src",url+s+".html");
