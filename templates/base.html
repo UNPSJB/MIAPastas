@@ -14,8 +14,10 @@
         <link rel="stylesheet" href="{% static "css/bootstrap-dialog.css" %}" >
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
+             var s=window.location.pathname.substring(0,_.size(n)-1);
+             console.log(s);
              frame = $("#frameDocumentacion");
-             frame.attr("src",url);
+             frame.attr("src",url+s+".html");
              $("#modalDocumentacion").modal("show");
 
              }
@@ -58,7 +60,8 @@
             </div>
         <!-- boton "Documentacion " -->
             <div style="float:right;">
-            <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html/index.html" %}')" class="btn btn-success btn-lg" type="button">
+           <!-- <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html/index.html" %}')" class="btn btn-success btn-lg" type="button">-->
+            <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html" %}')" class="btn btn-success btn-lg" type="button">
                 <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Documentacion    <br> <br/></span>
 
 

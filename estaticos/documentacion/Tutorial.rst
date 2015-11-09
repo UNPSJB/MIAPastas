@@ -3,6 +3,6 @@
 .. toctree::
    :maxdepth: 2
    
-   Cliente
+   Clientes
    Proveedor
    Recetas
