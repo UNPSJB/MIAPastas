@@ -66,7 +66,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad_enviada', models.PositiveIntegerField(null=True)),
                 ('cantidad_entregada', models.PositiveIntegerField(null=True)),
-                ('precio', models.PositiveIntegerField()),
+                ('precio', models.DecimalField(max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
                 ('entrega', models.ForeignKey(to='recetas.Entrega')),
             ],
         ),
@@ -216,7 +216,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 6))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 9))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],

@@ -19,7 +19,13 @@ from datetime import date
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from itertools import chain
-
+import xhtml2pdf.pisa as pisa
+from wkhtmltopdf import *
+from django.template.loader import get_template
+from django.template.context import RequestContext
+from django.core.context_processors import csrf
+import StringIO
+from django.template import Context
 
 #from datetime import date, datetime
 #import time
@@ -1131,18 +1137,19 @@ def hojaDeRutaAlta(request):
 
                     prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
 
-    return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
-    return redirect('lotes') #no va esto
+    return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
+   # return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
+    #return redirect('lotes') #no va esto
     #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
 
-
-
+def HojaDeRutaMostrar(request,hoja_id):
+    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
+    return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja})
 
 def generarTotales(request):
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
     totales={}
     nombres={}
-    precios={}
     pedidos = []
     for id in pedidos_list:
         pedidos.append(models.PedidoCliente.objects.get(pk=id))
@@ -1158,6 +1165,56 @@ def generarTotales(request):
     print "EN GENERAR TOTALES: totales: ",totales, "datos: ",nombres
     return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
 
+
+# tiene que llegar a esta view el id de algun hoja de ruta q se quiera hacer rendicion papa!
+def rendicionReparto(request,hoja_id=None):
+    print "en views de rendicion de reparto"
+    #return HojaDeRutaPdf(request,1)
+    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
+
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja})
+
+
+
+def rendicionHojasDeRutas(request):
+    hojas = models.HojaDeRuta.objects.all() #a futuro filtrar por hojas de rutas no rendidas
+    print hojas
+    return render(request,"rendicionHojasDeRutas.html",{"hojas":hojas})
+
+
+
+
+#********************************************************#
+         #    P D F    #
+#********************************************************###
+def render_to_pdf(template_src, context_dict):
+    template = get_template(template_src)
+    context = Context(context_dict)
+    html  = template.render(context)
+    result = StringIO.StringIO()
+    pdf = pisa.pisaDocument(StringIO.StringIO(html.encode("ISO-8859-1")), result)
+    if not pdf.err:
+        return HttpResponse(result.getvalue(), content_type="application/pdf")
+    return HttpResponse('We had some errors<pre>%s</pre>' % html)
+
+
+
+
+def HojaDeRutaPdf(request,hoja_id=None):
+    hoja = models.HojaDeRuta.objects.get(pk=hoja_id) #tengo q buscar la hoja q resiba por parametro
+    fecha = hoja.fecha_creacion
+    return render_to_pdf('PDFs/HojaDeRutaPdf.html',{'pagesize':'A4',
+                                                   'hoja': hoja,
+                                                   'date': fecha,
+            }
+        )
+
+def LotesHojaRutaPdf(request,hoja_id=None):
+    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
+    return render_to_pdf('PDFs/LoteHojaRutaPdf.html',{'pagesize':'A4',
+                                                   'hoja': hoja,
+            }
+        )
 
 
 '''
@@ -1187,6 +1244,3 @@ for pedido in pedidos:
 print lotes_dict
 
 '''
-
-
-

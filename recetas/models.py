@@ -4,7 +4,7 @@ from django.core.validators import MinValueValidator
 from datetime import date
 import datetime
 from multiselectfield import MultiSelectField
-
+from django.utils import timezone
 
 TIPODIAS = (
         (1, "lunes"),
@@ -329,6 +329,7 @@ class PedidoClienteDetalle(models.Model):
 
 class PedidoFijo(PedidoCliente):
     fecha_inicio = models.DateField(default=date.today())
+    #fecha_inicio = models.DateField(default=timezone.now())
     fecha_cancelacion = models.DateField(blank=True,null=True)
     dias = MultiSelectField(choices=TIPODIAS)
 
@@ -458,12 +459,13 @@ class HojaDeRuta(models.Model):
 
 
 class ProductosLlevados(models.Model):
-    cantidad = models.FloatField()
+    cantidad_pedida = models.PositiveIntegerField(default=0)
+    cantidad_enviada = models.PositiveIntegerField(default=0)
     producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
     def generar_detalles(self):
-        cantidad_buscada = self.cantidad
+        cantidad_buscada = self.cantidad_pedida
         for lote in Lote.objects.filter(producto_terminado = self.producto_terminado,
                                         fecha_vencimiento__gte=datetime.date.today(),
                                         stock_disponible__gte = 0):
@@ -476,6 +478,15 @@ class ProductosLlevados(models.Model):
                                                     producto_llevado = self)
             if cantidad_buscada == 0:
                 break
+        self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
+
+    def setear_cantidad_enviada(self):
+        detalles = self.productosllevadosdetalle_set.all()
+        cantidad_total = 0
+        for detalle in detalles:
+            cantidad_total += detalle.cantidad
+        print "en actualizar cantidades llevadas: ",cantidad_total
+        self.cantidad_pedida = cantidad_total
 
 
 class ProductosLlevadosDetalle(models.Model):
@@ -507,7 +518,7 @@ class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
     cantidad_enviada = models.PositiveIntegerField(null=True)
     cantidad_entregada = models.PositiveIntegerField(null=True)
-    precio = models.PositiveIntegerField() # esto es derivado del precio del producto
+    precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle)
 
 class LoteEntregaDetalle(models.Model):

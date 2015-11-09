@@ -8,6 +8,7 @@ from django.forms import CheckboxSelectMultiple, MultipleChoiceField
 import re
 import datetime
 from datetime import timedelta
+from django.utils.safestring import mark_safe
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -386,7 +387,8 @@ class PedidoClienteFijoForm(forms.ModelForm):
                     lista =pedido.pedidofijo.dias
                     for dia in dias:
                         if dia in lista:
-                            raise ValidationError("Ya existen pedido/s de este cliente para el/los dias marcados.")
+                            id = str(pedido.id)
+                            raise forms.ValidationError(((mark_safe('Ya existen pedido/s de este cliente para el/los dias marcados. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
             if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < cleaned_data["fecha_inicio"]):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
@@ -425,7 +427,9 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
                 if pedido.tipo_pedido == 2:
                     fecha =pedido.pedidoocacional.fecha_entrega
                     if dia == fecha:
-                        raise ValidationError("Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido") #como generar link??
+                        id = str(pedido.id)
+                        raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
+
 
 
     def clean_fecha_entrega(self):
@@ -458,8 +462,8 @@ class PedidoClienteCambioForm(forms.ModelForm):
                     if pedido.tipo_pedido == 3:
                         fecha =pedido.pedidocambio.fecha_entrega
                         if dia == fecha:
-                            raise ValidationError("Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido") #como generar link??
-
+                            id = str(pedido.id)
+                            raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
@@ -529,10 +533,6 @@ class LoteForm(forms.ModelForm):
 #############################################################################
 ############################################################################
 
-
-
-
-
 class HojaDeRutaForm(forms.ModelForm):
     #pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
     #chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
@@ -563,17 +563,23 @@ class EntregaForm(forms.ModelForm):
         entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
         return entrega
 
+class EntregaDetalleForm(forms.ModelForm):
+    class Meta:
+        model = models.EntregaDetalle
+        fields = ["cantidad_enviada"]
+
+
   ############### TOTALES PARA BUSCAR EN LOTES ####################
 class ProductosLlevadosForm(forms.ModelForm):
     class Meta:
         model = models.ProductosLlevados
-        fields = ["cantidad","producto_terminado"]
+        fields = ["cantidad_pedida","producto_terminado"]
 
 
     # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
     def save(self, hoja_de_ruta):
         productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
-        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad
+        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad_pedida,productos_llevados.cantidad_enviada
         print "Y TIENE EL PRODUCTO, ",productos_llevados.producto_terminado
         productos_llevados.hoja_de_ruta = hoja_de_ruta
         productos_llevados.save()

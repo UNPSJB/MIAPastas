@@ -1,0 +1,193 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion</b></font></p></div>
+            <div class="panel-body">
+                      <form class="form-horizontal">
+                          <div class=" form-group">
+                        <label class="col-sm-2 control-label">Hoja De Ruta</label>
+                        <div class="col-sm-10">
+                             {{hoja.id}}
+                        </div>
+                        </div>
+
+                        <div class=" form-group">
+                            <label class="col-sm-2 control-label">Fecha</label>
+                            <div class="col-sm-10">
+                                 {{hoja.fecha_creacion}}
+                            </div>
+                        </div>
+
+                        <div class=" form-group">
+                            <label class="col-sm-2 control-label">Chofer</label>
+                            <div class="col-sm-10">
+                                 {{hoja.chofer}}
+                            </div>
+                        </div>
+                      </form>
+
+                <form action="" method="post" class="form-horizontal panel panel-default ">
+                    <div class="panel-heading"><p class="login-title"><font face="tahoma" size="2" color="black"><b>Productos Sobrantes</b></font></p></div>
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th>Producto</th>
+                                    <th>Cantidad</th>
+                                    <th>Lotes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for producto_llevado in hoja.productosllevados_set.all %}
+                                    <tr>
+                                        <td>{{producto_llevado.producto_terminado}}</td>
+                                        <td>{{producto_llevado.cantidad}}</td>
+                                        <td>
+                                            <table BORDER="2" CELLPADDING="6" CELLSPACING="6">
+                                                <th>  Lote  </th>
+                                                <th>  Enviado  </th>
+                                                <th>  Sobrante  </th>
+                                            {% for det in producto_llevado.productosllevadosdetalle_set.all%}
+                                                 <tr>
+                                                    <td>Lote-{{det.lote.nro_lote}} </td>
+                                                    <td>{{  det.cantidad}}</td>
+                                                     <td><input producto_id="{{producto_llevado.producto_terminado.id}}"
+                                                                lote_id="{{det.lote.nro_lote}}"
+                                                                cant_enviada="{{det.cantidad}}"
+                                                                type="number" class="input-sobrantes" placeholder="Cantidad Sobrante "></td>
+                                                 </tr>
+                                            {% endfor %}
+                                            </table>
+                                        </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                            <button id="boton-sobrantes" type="button" class="btn btn-primary pull-right">Aceptar</button>
+                                      <p>&nbsp;</p>
+                                      <p>&nbsp;</p>
+                </form>
+
+                <form action="" method="post" class="form-horizontal panel panel-default ">
+                    <div class="panel-heading"><p class=" login-title"><font face="tahoma" size="2" color="black"><b>Entregas</b></font></p></div>
+                    <table class="table table-hover">
+                         <thead>
+                            <tr>
+                               <th>Pedido</th>
+                               <th>Cliente</th>
+                               <th>Productos</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for e in hoja.entrega_set.all %}
+                               <tr>
+                                  <td> Nro {{e.pedido.id}} {{e.pedido.get_tipo_pedido_display}}</td>
+                                  <td>{{e.pedido.cliente}}</td>
+                                  <td align="center">
+                                        <table   border="2">
+                                            <th>Producto</th>
+                                            <th>Cantidad Pedida</th>
+                                            <th>Precio/u </th>
+                                            <th>Cantidad Entregado</th>
+                                            {%for detalle_entrega in e.entregadetalle_set.all %}
+                                                 <tr>
+                                                    <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
+                                                    <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}</td>
+                                                    <td>{{detalle_entrega.precio}} $ </td>
+                                                    <td> <input data-detalle="{{detalle_entrega.id}}"
+                                                                data-entrega="{{e.id}}" type="text" class="input-entregas"
+                                                                placeholder="Cantidad "
+                                                            </td>
+                                                 </tr>
+
+                                            {% endfor %}
+                                            </table>
+                                    </td>
+                               </tr>
+                            {% endfor %}
+                        </tbody>
+                 </table>
+
+                    <div id="metiendola"></div>
+      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+                </form>
+            </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block javascript %}
+<script>
+
+    var listado_entregas = [
+        {% for entrega in hoja.entrega_set.all %}
+            {% for detalle_entrega in entrega.entregadetalle_set.all%}
+                {"detalle_id": {{detalle_entrega.id}},
+                "entrega_id": {{entrega.id}},
+                "cantidad_enviada":0},
+            {% endfor%}
+        {%endfor%}
+    ];
+
+    var listado_productos_totales = [
+        {% for producto_llevado in hoja.productosllevados_set.all %}
+            {% for detalle in producto_llevado.productosllevadosdetalle_set.all%}
+                {"producto_id":{{producto_llevado.producto_terminado.id}},
+                "lote_id":{{detalle.lote.nro_lote}},
+                "cantidad":{{detalle.cantidad}}
+                },
+            {%endfor%}
+        {% endfor%}
+    ]
+
+console.log("TOTALES PRODUCTOS");
+console.log(listado_productos_totales);
+
+var prefix_entregas = "entregas"; //este tiene q venir desde la view
+
+
+
+$("#boton-sobrantes").click(function(){
+    console.log("EN SOBRANTES");
+    var sobrantes = $(".input-sobrantes");
+    //validar_inputs_llenos(sobrantes);
+    $(sobrantes).each(function(i,val){
+
+        var z = _.find(listado_productos_totales,{producto_id:val.getAttribute("producto_id")});
+        console.log(val.getAttribute("producto_id"));
+        console.log(z);
+        console.log("-------------------------");
+
+
+
+    });
+});
+
+
+
+
+
+
+    function validacion(){
+
+        var cant_entregadas = $(".input-entregas");
+        var diccionario={};
+        $(cant_entregadas).each(function(i,val){
+            console.log(val);
+            diccionario[prefix_entregas+"-"+i+"-id"]= val.getAttribute('data-detalle');
+            diccionario[prefix_entregas+"-"+i+"-entrega"]= val.getAttribute('data-entrega');
+            diccionario[prefix_entregas+"-"+i+"-cantidad_enviada"]= val.value;
+            });
+        console.log(diccionario);
+        return true;
+    }
+
+
+
+</script>
+{% endblock %}
