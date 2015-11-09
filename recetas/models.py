@@ -459,12 +459,13 @@ class HojaDeRuta(models.Model):
 
 
 class ProductosLlevados(models.Model):
-    cantidad = models.FloatField()
+    cantidad_pedida = models.PositiveIntegerField(default=0)
+    cantidad_enviada = models.PositiveIntegerField(default=0)
     producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
     def generar_detalles(self):
-        cantidad_buscada = self.cantidad
+        cantidad_buscada = self.cantidad_pedida
         for lote in Lote.objects.filter(producto_terminado = self.producto_terminado,
                                         fecha_vencimiento__gte=datetime.date.today(),
                                         stock_disponible__gte = 0):
@@ -477,6 +478,15 @@ class ProductosLlevados(models.Model):
                                                     producto_llevado = self)
             if cantidad_buscada == 0:
                 break
+        self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
+
+    def setear_cantidad_enviada(self):
+        detalles = self.productosllevadosdetalle_set.all()
+        cantidad_total = 0
+        for detalle in detalles:
+            cantidad_total += detalle.cantidad
+        print "en actualizar cantidades llevadas: ",cantidad_total
+        self.cantidad_pedida = cantidad_total
 
 
 class ProductosLlevadosDetalle(models.Model):

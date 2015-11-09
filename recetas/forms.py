@@ -597,13 +597,13 @@ class EntregaDetalleForm(forms.ModelForm):
 class ProductosLlevadosForm(forms.ModelForm):
     class Meta:
         model = models.ProductosLlevados
-        fields = ["cantidad","producto_terminado"]
+        fields = ["cantidad_pedida","producto_terminado"]
 
 
     # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
     def save(self, hoja_de_ruta):
         productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
-        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad
+        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad_pedida,productos_llevados.cantidad_enviada
         print "Y TIENE EL PRODUCTO, ",productos_llevados.producto_terminado
         productos_llevados.hoja_de_ruta = hoja_de_ruta
         productos_llevados.save()

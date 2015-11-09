@@ -268,12 +268,6 @@ def productosTerminadosActualizarPrecio(request):
 def pedidosClienteAlta(request):
     return render(request, "pedidosClienteAlta.html", {})
 
-
-@login_required()
-def rendicionRepartoPedidos(request):
-    return render(request, "rendicionRepartoPedidos.html", {})
-
-
 @login_required()
 def pedidosProveedor(request):
     return render(request, "pedidosProveedor.html", {})

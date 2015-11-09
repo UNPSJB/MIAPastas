@@ -54,6 +54,23 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Entrega',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('fecha', models.DateField(auto_now_add=True)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='EntregaDetalle',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('cantidad_enviada', models.PositiveIntegerField(null=True)),
+                ('cantidad_entregada', models.PositiveIntegerField(null=True)),
+                ('precio', models.DecimalField(max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
+                ('entrega', models.ForeignKey(to='recetas.Entrega')),
+            ],
+        ),
+        migrations.CreateModel(
             name='HojaDeRuta',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -80,6 +97,15 @@ class Migration(migrations.Migration):
                 ('cantidad_producida', models.PositiveIntegerField()),
                 ('stock_disponible', models.PositiveIntegerField()),
                 ('stock_reservado', models.PositiveIntegerField(default=0)),
+            ],
+        ),
+        migrations.CreateModel(
+            name='LoteEntregaDetalle',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('cantidad', models.PositiveIntegerField()),
+                ('entrega_detalle', models.ForeignKey(to='recetas.EntregaDetalle')),
+                ('lote', models.ForeignKey(to='recetas.Lote')),
             ],
         ),
         migrations.CreateModel(
@@ -110,7 +136,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ProductoExtra',
+            name='ProductosLlevados',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.FloatField()),
@@ -118,12 +144,12 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='ProductosExtraDetalle',
+            name='ProductosLlevadosDetalle',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad', models.PositiveIntegerField()),
                 ('lote', models.ForeignKey(to='recetas.Lote')),
-                ('producto_extra', models.ForeignKey(to='recetas.ProductoExtra')),
+                ('producto_llevado', models.ForeignKey(to='recetas.ProductosLlevados')),
             ],
         ),
         migrations.CreateModel(
@@ -190,7 +216,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 5))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 9))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],
@@ -215,7 +241,7 @@ class Migration(migrations.Migration):
             field=models.ForeignKey(to='recetas.ProductoTerminado'),
         ),
         migrations.AddField(
-            model_name='productoextra',
+            model_name='productosllevados',
             name='producto_terminado',
             field=models.ForeignKey(to='recetas.ProductoTerminado'),
         ),
@@ -248,6 +274,21 @@ class Migration(migrations.Migration):
             model_name='lote',
             name='producto_terminado',
             field=models.ForeignKey(to='recetas.ProductoTerminado'),
+        ),
+        migrations.AddField(
+            model_name='entregadetalle',
+            name='pedido_cliente_detalle',
+            field=models.ForeignKey(to='recetas.PedidoClienteDetalle'),
+        ),
+        migrations.AddField(
+            model_name='entrega',
+            name='hoja_de_ruta',
+            field=models.ForeignKey(to='recetas.HojaDeRuta'),
+        ),
+        migrations.AddField(
+            model_name='entrega',
+            name='pedido',
+            field=models.ForeignKey(to='recetas.PedidoCliente'),
         ),
         migrations.AddField(
             model_name='detallepedidoproveedor',

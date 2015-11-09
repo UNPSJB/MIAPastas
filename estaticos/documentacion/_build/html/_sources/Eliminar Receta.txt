@@ -1,2 +1,2 @@
-Eliminar Receta
+﻿Eliminar Receta
 ====================================

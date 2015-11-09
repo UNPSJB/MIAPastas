@@ -11,7 +11,7 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
-           <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return altaHojaRuta()" method="post">
+           <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return validar()" method="post">
 
           {% csrf_token %}
             <!-- lo de arriba es una prueba -->
@@ -139,7 +139,6 @@
       </div>
        <div>
             <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
-               <button type="button" onclick="altaHojaRuta()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
             <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
                <div id="pedidos_hidden"></div>
                {% buttons %}
@@ -468,7 +467,7 @@ console.log("prefix extras:" +prefix_extras)
             console.log("cantiddddd ",totales_cantidades);
             console.log("proddd ",totales_productos);
              $(totales_cantidades).each(function(i,val){
-                html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad",i);
+                html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad_pedida",i);
                 html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
              });
             $("#pedidos_hidden").html(html);
@@ -478,6 +477,27 @@ console.log("prefix extras:" +prefix_extras)
 
              console.log($("#pedidos_hidden"));
 
+        }
+
+        function validar(){
+            if(pedidosAsignados.length == 0){
+                BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe cargar almenos un pedido a la hoja de ruta",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+            return false;
+            }
+            else{
+                altaHojaRuta();
+            }
         }
 
 
