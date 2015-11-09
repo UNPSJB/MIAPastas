@@ -31,6 +31,7 @@
                 <th>Producto</th>
                 <th>Vencimiento</th>
                 <th>Stock Disponible</th>
+                <th>Stock Reservado</th>
 
 
             </tr>
@@ -44,6 +45,7 @@
                   <td><a href="{% url 'productosTerminadosConsulta' l.producto_terminado.id %}">{{l.producto_terminado}}</a></td>
                     <td>{{l.fecha_vencimiento}}</td>
                     <td>{{l.stock_disponible}} Bolsines</td>
+                    <td>{{l.stock_reservado}} Bolsines</td>
 
               </tr>
               {%endfor%}
