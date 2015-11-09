@@ -270,8 +270,6 @@ console.log("prefix extras:" +prefix_extras)
        });
 
 
-
-
         function agregarHojaDeRutaMismoCliente(){
             var nro_pedido;
             var razon_social;
@@ -284,8 +282,11 @@ console.log("prefix extras:" +prefix_extras)
                 razon_social = $(this).html();
               cont=cont+1;
             });
+            var razon_social_clase = razon_social;
+            razon_social_clase.trim();  //quito los espacios en blanco porque sino no lo puedo usar como una clase
+            var cliente = $el.data()["cliente"];
+            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados cliente-'+razon_social_clase+'" data-clase='+razon_social_clase+'  data-cliente='+cliente+' data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
 
-            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados" data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
             }
 
 
@@ -304,10 +305,12 @@ console.log("prefix extras:" +prefix_extras)
               cont=cont+1;
             });
 
-            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados" data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
-                var cliente = $el.data()["cliente"];
+            var razon_social_clase = razon_social;
+            razon_social_clase.trim();  //quito los espacios en blanco porque sino no lo puedo usar como una clase
+            var cliente = $el.data()["cliente"];
+            $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados cliente-'+razon_social_clase+'" data-clase='+razon_social_clase+'  data-cliente='+cliente+' data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
                 $(".cliente-"+cliente+"").each(function(){
-                    if((original != $(this).data()["id"]) || ($(this).is(':visible')&& $(this).parents (':hidden').length == 0)){   //agrego todos los de cliente menos el que ya cargue arriba
+                    if((original != $(this).data()["id"])){   //agrego todos los de cliente menos el que ya cargue arriba
                         $(this).trigger("click");   //simulo click de esos elementos
                         console.log($(this));
                         agregarHojaDeRutaMismoCliente();
@@ -318,10 +321,12 @@ console.log("prefix extras:" +prefix_extras)
        }
 
        function quitarHojaDeRuta(){
-            $el_asignado.remove();
-            id_show= $el_asignado.data()["id"]; //manejan los mismos id
+            cliente_show= $el_asignado.data()["cliente"];
+            var clase=$el_asignado.data()["clase"];
+            $('.cliente-'+clase+'').remove();
+
             $el_asignado=null;
-            $("#renglon-"+id_show).show();
+            $('.cliente-'+cliente_show+'').show();
             generarTotales();
        }
 
@@ -340,12 +345,6 @@ console.log("prefix extras:" +prefix_extras)
                 )
 
            });}
-
-
-
-           //guardar todo e imprimir
-
-
 
 
         function generarTotales(){
