@@ -815,7 +815,7 @@ def pedidosClienteModificar(request, pedido_id):
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
         detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-        pedidosClientes_form = forms.PedidoClienteFijoForm
+        pedidosClientes_form = forms.PedidoClienteFijoModificarForm
 
     elif pedido_instancia.tipo_pedido == 2:
         pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
@@ -832,13 +832,29 @@ def pedidosClienteModificar(request, pedido_id):
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
-            pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia)
+           # fecha_posta = pedido_instancia.fecha_inicio
+
+
         elif pedido_instancia.tipo_pedido == 2:
             pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+            #fecha_posta = pedido_instancia.fecha_entrega
         else:
             pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
+            #fecha_posta = pedido_instancia.fecha_entrega
+
         if pedidosClientes_form.is_valid():
             pedido_instancia = pedidosClientes_form.save(commit=False)
+            #if pedido_instancia.tipo_pedido == 1:
+             #   #probando probando
+              #  print("fecha poista del pedido:", fecha_posta)
+               # print("fecha que me quizo meter el salamin: ", pedido_instancia.fecha_inicio)
+                #if pedido_instancia.fecha_inicio != fecha_posta:
+                 #   if pedido_instancia.fecha_inicio < datetime.date.today():
+                  #      pedido_instancia.fecha_inicio = fecha_posta
+                   #     pedido_instancia.save()
+                    #    messages.error(request, 'fecha inicio mal')
+                     #   return redirect('/pedidosCliente/Modificar/'+pedido_id)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
             print detalles_formset.is_valid()
