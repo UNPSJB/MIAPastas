@@ -10,11 +10,14 @@
                         <div class=" form-group">
                             <label  class="col-sm-2 control-label">Hoja de Ruta {{hoja_ruta.id}}</label>
                         </div>
+
                         <div class=" form-group">
                             <label class="col-sm-2 control-label">Chofer</label>
                             <div class="col-sm-10">
                                 {{hoja_ruta.chofer}}
                             </div>
+                            <button type="button" onclick="imprimirHojaRuta()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
+
                         </div>
 
                         <table class="table table-hover">
@@ -55,6 +58,7 @@
         </div>
 
             <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b> Lotes</b></font></p></div>
+            <button type="button" onclick="imprimirLotes()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
 
                            <table class="table table-hover">
                              <thead>
@@ -88,4 +92,24 @@
 </div>
 </div>
 
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+
+    function imprimirHojaRuta(){
+        window.open('/imprimir/HojaRuta/'+{{hoja_ruta.pk}}+'',"_self")
+    }
+
+    function imprimirLotes(){
+        window.open('/imprimir/Lotes/'+{{hoja_ruta.pk}}+'',"_self")
+
+    }
+
+
+
+
+
+</script>
 {% endblock %}

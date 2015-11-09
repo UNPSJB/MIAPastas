@@ -4,7 +4,7 @@
         <title>Listado de estancias</title>
         <style type="text/css">
             @page {
-                size: {{ pagesize }};
+                size: letter;
                 margin: 2cm;
                 @frame footer {
                     -pdf-frame-content: footerContent;
@@ -13,7 +13,11 @@
                     margin-right: 9cm;
                     height: 1cm;
                 }
+
             }
+            @page land{
+       size:landscape;
+ }
         </style>
     </head>
     <body>

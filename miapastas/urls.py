@@ -57,6 +57,22 @@ urlpatterns = [
                     # Hechos en forms
 
 
+    ##############################################################################################
+    #                                         PDF
+
+    url(r'^imprimir/HojaRuta/(?P<hoja_id>[0-9]+)/$',recetasviews.HojaDeRutaPdf,name='imprimirHojaRuta'),
+    url(r'^/imprimir/LotesHojaRuta/(?P<hoja_id>[0-9]+)/$',recetasviews.LotesHojaRutaPdf,name='imprimirLotesHojaRuta'),
+
+
+
+
+    #############################################################################################
+
+
+
+
+
+
     url(r'^choferes$',recetasviews.choferes,name='choferes'),
     url(r'^choferes/(?P<chofer_id>[0-9]+)/$',recetasviews.choferes,name='choferConsulta'),
     url(r'^choferes/alta/$',recetasviews.choferesAlta,name='choferesAlta'),
