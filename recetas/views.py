@@ -28,6 +28,7 @@ import StringIO
 from django.template import Context
 from decimal import Decimal
 
+
 #from datetime import date, datetime
 #import time
 
@@ -1235,28 +1236,34 @@ def LotesHojaRutaPdf(request,hoja_id=None):
 
 
 
-def cobrarCliente(request):
+def cobrarClienteFiltrado(request,cliente_id=None):
     entregas_no_facturadas = []
-    entregas = models.Entrega.objects.all()
+    cliente=models.Cliente.objects.get(pk=(cliente_id))
+    entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
     saldo = 0
     for entrega in entregas:
         print "soy entrega:::",entrega.factura
         if entrega.factura == None:
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()
+            print entrega.monto_restante()," eerere"
     clientes = models.Cliente.objects.all()
     entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.monto_restante())
-
+    print entregas_no_facturadas,"saldoo", saldo
     return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"clientes":clientes,"saldo":saldo})
+
+
+def cobrarCliente(request):
+    clientes = models.Cliente.objects.all()
+    return render(request, "cobrarCliente.html", {"entregas":[],"clientes":clientes,"saldo":-1})
 
 
 
 def cobrarClienteSaldo(request):
     entregas = re.findall("\d+",request.GET['entregas'])
-    mont = re.findall("\d+",request.GET['monto'])
-    print entregas,"entregas"
-    for mon in mont:
-        monto=mon
+    mont = re.findall("\S+",request.GET['monto'])
+    monto = re.sub('["]', '', mont[0])
+    monto=monto.replace(',', '.')
     monto=Decimal(monto)
     entregas_para_factura = {}
     entregas_para_recibo={}
@@ -1272,23 +1279,26 @@ def cobrarClienteSaldo(request):
         else:
             entregas_para_factura[entrega_id]="%s" % entrega.fecha
         monto -= entrega.monto_restante()
+    print "monto_", monto_recibo
     return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
 
 def cobrarClienteFacturar(request):
     para_factura = re.findall("\d+",request.GET['para_facturas'])
     para_recibo = re.findall("\d+",request.GET['para_recibo'])
-    monto_recibo = re.findall("\d+",request.GET['monto_recibo'])
-    monto_factura = re.findall("\d+",request.GET['monto_factura'])
+    monto_recibo = re.findall("\S+",request.GET['monto_recibo'])
+    monto_factura = re.findall("\S+",request.GET['monto_factura'])
     num_factura = re.findall("\d+",request.GET['num_factura'])
     num_recibo = re.findall("\d+",request.GET['num_recibo'])
-
-    monto_factura = Decimal(monto_factura[0])
-    monto_recibo = Decimal(monto_recibo[0])
+    if len(para_factura) != 0:
+        monto_factura = re.sub('["]', '', monto_factura[0])
+        monto_factura=Decimal(monto_factura)
+    if len(para_recibo) != 0:
+        monto_recibo = re.sub('["]', '', monto_recibo[0])
+        monto_recibo=Decimal(monto_recibo)
     if len(num_factura) !=0:
         num_factura = int(num_factura[0])
     if len(num_recibo) !=0:
         num_recibo = int(num_recibo[0])
-
     print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
     for id_entrega in para_factura:
         entrega = models.Entrega.objects.get(pk=id_entrega)
@@ -1296,13 +1306,18 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
-
-    print "SALIIIIIIIIIIIII"
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 
-
-
+def cobrarClienteMostrarRecibos(request):
+        var=request.POST.getlist('terid[]')
+        print var ,"dddddddddddddddd"
+        entrega_id = re.findall("\d+",request.GET['entrega_id'])
+        entrega = models.Entrega.objects.get(pk=entrega_id[0])
+        recibos = models.Recibo.objects.filter(entrega=entrega)
+        print recibos," estos son los recibos"
+        recibos=serializers.serialize('json', recibos)
+        return HttpResponse(json.dumps({"recibos":(recibos)}),content_type='json')
 
 
 
@@ -1313,9 +1328,6 @@ def cobrarClienteFacturar(request):
     else:
         #solicitar numero de recibo
         entregas[0].cobrate(monto)
-
-
-
 
 
 

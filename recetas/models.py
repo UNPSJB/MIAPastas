@@ -493,15 +493,11 @@ class Entrega(models.Model):
         if (len(factura) == 0):
             factura=Factura.objects.create(numero=numero_factura,fecha=date.today(),monto_pagado=monto)
             self.factura=factura
-            print "soy factura de model ",factura.numero,"y de tipooo", type(factura)
         else:
             self.factura=factura[0]
-            print "soy factura de lista model ",factura[0].numero," desde la entrega ",self.factura.numero,"soy entrega id: ",self.pk
         self.save()
 
     def cobrar_con_recibo(self,monto,numero_recibo=None):
-        print "con reciboooooooooooo"
-
         recibo = Recibo.objects.create(entrega=self,fecha=date.today(),numero=numero_recibo,monto_pagado=monto)
 
 
