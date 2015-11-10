@@ -188,6 +188,7 @@
                         <thead>
                         <h3 class="col-md-12">Detalle de productos extras</h3>
                         <tr>
+                            <td style="display:none;">aafsf</td>
                             <th>Producto Terminado</th>
                             <th>Cantidad Bolsines</th>
                         </tr>
@@ -229,6 +230,7 @@ var prefix_entregas = "{{prefix_entregas}}";
 
 var totales_productos=[];
 var totales_cantidades=[];
+var totales_datos=[];
 
 
 console.log("prefix extras:" +prefix_extras)
@@ -369,8 +371,10 @@ console.log("prefix extras:" +prefix_extras)
                 url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
                 success: function(json){
                     console.log(json.totales);
-                    totales_productos = _.values(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
+                    totales_productos = _.keys(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
                     totales_cantidades = _.values(json.totales);
+                    totales_datos = _.values(json.datos);
+                    console.log("soy totales de productos",totales_productos,"sot datos: ",totales_datos);
                     agregar_extra_totales();
                     mostrarTotales();
                     }
@@ -379,13 +383,15 @@ console.log("prefix extras:" +prefix_extras)
 
         function agregar_extra_totales(){
             $('#tabla_extras').find('tr').each(function(){
-                elemento = $(this).find("td").eq(0).html();
-                elemento_siguiente=$(this).find("td").eq(1).html();
-                var index = _.indexOf(totales_productos,elemento);
+                id_elemento = $(this).find("td").eq(0).html();
+                elemento = $(this).find("td").eq(1).html();
+                elemento_siguiente=$(this).find("td").eq(2).html();
+                var index = _.indexOf(totales_datos,elemento);
                 if (index == -1){
                     console.log("estoy en elemento nuevoooooo")
-                    totales_productos.push(elemento);
-                    totales_cantidades.push($(elemento_siguiente).val());
+                    totales_productos.push(id_elemento);
+                    totales_datos.push(elemento);
+                    totales_cantidades.push(parseInt($(elemento_siguiente).val()));
                 }
                 else{
                      console.log("estoy en ya estabaaaaa ",totales_cantidades[index]," y la cant nueva es ",$(elemento_siguiente).val())
@@ -400,16 +406,14 @@ console.log("prefix extras:" +prefix_extras)
         function mostrarTotales(){
             $("#cuerpoTotalesPedidos tr").remove();
             var total=0;
-            console.log("soy totales_prductos ",totales_productos);
+            console.log("soy totales_datos ",totales_datos);
             for(i=0;i< totales_cantidades.length;i++){
-                $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_productos[i]+'</td><td>'+totales_cantidades[i]+'</td></tr>');
-                total=total+totales_cantidades[i];
+                $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_datos[i]+'</td><td>'+totales_cantidades[i]+'</td></tr>');
+                total=total+parseInt(totales_cantidades[i]);
             }
 
             $('#bolsines_total').val(total);
         }
-
-
 
 
       $("#add-detalle-extra").click(function(){
@@ -428,7 +432,7 @@ console.log("prefix extras:" +prefix_extras)
                      }else{
                         var id_prod = document.getElementById('select_productos').value;
                         var nombre_prod = $('#select_productos option:selected').text();
-                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad('+id_prod+')"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
+                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td style="display:none;">'+id_prod+'</td><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad('+id_prod+')"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
                         productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
                         console.log(productos_extras);
                         det = productos_extras[0];
@@ -447,25 +451,22 @@ console.log("prefix extras:" +prefix_extras)
 
       function modificar(id){
             var nueva_cantidad = $("#cantidad-"+id).val();
-            alert(nueva_cantidad);
             id_input = document.getElementById("cantidad-"+id);
             var index = _.indexOf(productos_extras,_.findWhere(productos_extras, function(d){return d.producto==id;}));
             productos_extras = modificar_cantidad_arreglo(productos_extras,nueva_cantidad,id_input,index);
         //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto de la lista q cumple con la funcion
       }
 
-
-
-
-
-
         function altaHojaRuta(){
              console.log("EN DAR DE ALTA LA HOJA DE RUTA");
              var html="";
              $(pedidosAsignados).each(function(i,val){
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
+
              });
             // $("#pedidos_hidden").html(html);
+            console.log("cantiddddd ",totales_cantidades);
+            console.log("proddd ",totales_productos);
              $(totales_cantidades).each(function(i,val){
                 html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad",i);
                 html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
