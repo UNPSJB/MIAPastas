@@ -375,6 +375,19 @@ class PedidoClienteFijoForm(forms.ModelForm):
     def clean(self):
         cleaned_data = super(PedidoClienteFijoForm, self).clean()
         if not self.errors:
+            cliente = cleaned_data["cliente"]
+            pedidos = cliente.pedidocliente_set.all()
+            try:
+                dias = cleaned_data["dias"]
+            except:
+                raise ValidationError("Debe marcar al menos un dia para la entrega.")
+            for pedido in pedidos:
+                if pedido.tipo_pedido == 1:
+                    lista =pedido.pedidofijo.dias
+                    for dia in dias:
+                        if dia in lista:
+                            raise ValidationError("Ya existen pedido/s de este cliente para el/los dias marcados.")
+
             if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < cleaned_data["fecha_inicio"]):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
         return cleaned_data
@@ -393,12 +406,27 @@ class PedidoClienteDetalleForm(forms.ModelForm):
 
 
 
+
+
 class PedidoClienteOcacionalForm(forms.ModelForm):
     class Meta:
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+
+    def clean(self):
+        cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
+        if not self.errors:
+            cliente = cleaned_data["cliente"]
+            pedidos = cliente.pedidocliente_set.all()
+            dia = cleaned_data['fecha_entrega']
+            for pedido in pedidos:
+                if pedido.tipo_pedido == 2:
+                    fecha =pedido.pedidoocacional.fecha_entrega
+                    if dia == fecha:
+                        raise ValidationError("Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido") #como generar link??
+
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
@@ -418,6 +446,21 @@ class PedidoClienteCambioForm(forms.ModelForm):
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido']
+
+
+    def clean(self):
+            cleaned_data = super(PedidoClienteCambioForm, self).clean()
+            if not self.errors:
+                cliente = cleaned_data["cliente"]
+                pedidos = cliente.pedidocliente_set.all()
+                dia = cleaned_data['fecha_entrega']
+                for pedido in pedidos:
+                    if pedido.tipo_pedido == 3:
+                        fecha =pedido.pedidocambio.fecha_entrega
+                        if dia == fecha:
+                            raise ValidationError("Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido") #como generar link??
+
+
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
