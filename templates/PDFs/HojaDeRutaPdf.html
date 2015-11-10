@@ -17,8 +17,8 @@
 
             }
             @page land{
-                size:landscape;
- }
+                   size:landscape;
+                   }
         </style>
     </head>
     <body>
@@ -35,16 +35,17 @@
                         <tr>
                             <th style="text-align:center;" width="15%" font size = "6">Pedido</th>
                             <th style="text-align:center;" width="15%" font size = "6">Cliente</th>
-                            <th style="text-align:center;" width="15%" font size = "6">Productos</th>
+                            <th style="text-align:center;" width="15%" font size = "6">Productos Enviados</th>
                             <th style="text-align:center;" width="10%" font size = "6">Direccion</th>
-                            <th style="text-align:center;" width="22%" font size = "6">Productos</th>
+                            <th style="text-align:center;" width="22%" font size = "6">Productos Entregados</th>
+                            <th style="text-align:center;" width="22%" font size = "6">Cobros</th>
                         </tr>
                         {% for entrega in hoja.entrega_set.all %}
                         <tr>
                             <td style="text-align:center;" width="15%" size = "6">{{entrega.pedido.get_tipo_pedido_display}}</td>
-                            <td style="text-align:center;" width="15%" size = "6">{{entrega.pedido.cliente}}</td>
+                            <td style="text-align:center;" width="15%" size = "6">Cuit-{{entrega.pedido.cliente.cuit_cuil}}</td>
                             <td style="text-align:center;" width="15%" size = "6">{{Provincia}}</td>
-                            <td style="text-align:center;" width="10%" size = "6">{{dato.Zona}}</td>
+                            <td style="text-align:center;" width="10%" size = "6">{{entrega.pedido.cliente.direccion}}</td>
                             <td style="text-align:center;" width="22%" size = "6">{{dato.Representante}}</td>
                             <td style="text-align:center;" width="22%" size = "6">{{dato.Productor}}</td>
                         </tr>

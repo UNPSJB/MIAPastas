@@ -1217,7 +1217,6 @@ def LotesHojaRutaPdf(request,hoja_id=None):
         )
 
 
-
 '''
 
 pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
