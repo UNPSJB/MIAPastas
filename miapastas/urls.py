@@ -61,7 +61,7 @@ urlpatterns = [
     #                                         PDF
 
     url(r'^imprimir/HojaRuta/(?P<hoja_id>[0-9]+)/$',recetasviews.HojaDeRutaPdf,name='imprimirHojaRuta'),
-    url(r'^/imprimir/LotesHojaRuta/(?P<hoja_id>[0-9]+)/$',recetasviews.LotesHojaRutaPdf,name='imprimirLotesHojaRuta'),
+    url(r'^imprimir/LotesHojaRuta/(?P<hoja_id>[0-9]+)/$',recetasviews.LotesHojaRutaPdf,name='imprimirLotesHojaRuta'),
 
 
 
@@ -130,7 +130,8 @@ urlpatterns = [
 
     url(r'^productosTerminadosActualizarStock/(?P<lote_id>[0-9]+)/$',recetasviews.loteStock,name='productosTerminadosActualizarStock'),
 
-    url(r'^rendicionReparto$',recetasviews.rendicionReparto,name='rendicionReparto'),
+    url(r'^rendicionReparto/(?P<hoja_id>[0-9]+)/$',recetasviews.rendicionReparto,name='rendicionReparto'),
+    url(r'^rendicionHojasDeRutas$',recetasviews.rendicionHojasDeRutas,name='rendicionHojasDeRutas'), #este llama al de arriba "rendicionReparto$"
 
                 # FIN PRIMERA ENTREGA
 
@@ -159,6 +160,7 @@ urlpatterns = [
      url(r'^hojaDeRuta$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
      url(r'^hojaDeRuta/generarTotales$',recetasviews.generarTotales,name='generarTotales'),
      url(r'^hojaDeRuta/alta/$',recetasviews.hojaDeRutaAlta,name='hojaDeRutaAlta'),
+     url(r'^hojaDeRuta/mostrar/(?P<hoja_id>[0-9]+)$',recetasviews.HojaDeRutaMostrar,name='HojaDeRutaMostrar'),
 
 
 
@@ -200,7 +202,6 @@ urlpatterns = [
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
-    url(r'^rendicionRepartoPedidos$',views.rendicionRepartoPedidos,name='rendicionRepartoPedidos'),
 
 
 
