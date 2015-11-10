@@ -197,8 +197,8 @@
                       </table>
                   </div>
                   <div class="modal-footer">
-                      <button type="button" onclick="aceptar_extras()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                      <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                      <button type="button" onclick="generarTotales()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                     <!--  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button> -->
                   </div>
                 </div>
 
@@ -344,7 +344,10 @@ console.log("prefix extras:" +prefix_extras)
                 }
                 )
 
-           });}
+           });
+
+
+           }
 
 
         function generarTotales(){
@@ -365,23 +368,44 @@ console.log("prefix extras:" +prefix_extras)
                 dataType: 'json',
                 url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
                 success: function(json){
-                    mostrarTotales(json.totales,json.datos);
                     console.log(json.totales);
-                    totales_productos = _.keys(json.totales);
+                    totales_productos = _.values(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
                     totales_cantidades = _.values(json.totales);
+                    agregar_extra_totales();
+                    mostrarTotales();
                     }
             });
+        }
+
+        function agregar_extra_totales(){
+            $('#tabla_extras').find('tr').each(function(){
+                elemento = $(this).find("td").eq(0).html();
+                elemento_siguiente=$(this).find("td").eq(1).html();
+                var index = _.indexOf(totales_productos,elemento);
+                if (index == -1){
+                    console.log("estoy en elemento nuevoooooo")
+                    totales_productos.push(elemento);
+                    totales_cantidades.push($(elemento_siguiente).val());
+                }
+                else{
+                     console.log("estoy en ya estabaaaaa ",totales_cantidades[index]," y la cant nueva es ",$(elemento_siguiente).val())
+
+                    totales_cantidades[index]+= parseInt($(elemento_siguiente).val());
+                }
+                }
+                )
 
         }
 
-        function mostrarTotales(bolsines_total,datos){
+        function mostrarTotales(){
             $("#cuerpoTotalesPedidos tr").remove();
             var total=0;
-            for(var i in bolsines_total){
-                $('#cuerpoTotalesPedidos').append('<tr ><td>'+datos[i]+'</td><td>'+bolsines_total[i]+'</td></tr>');
-                total=total+bolsines_total[i];
-
+            console.log("soy totales_prductos ",totales_productos);
+            for(i=0;i< totales_cantidades.length;i++){
+                $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_productos[i]+'</td><td>'+totales_cantidades[i]+'</td></tr>');
+                total=total+totales_cantidades[i];
             }
+
             $('#bolsines_total').val(total);
         }
 
@@ -423,6 +447,7 @@ console.log("prefix extras:" +prefix_extras)
 
       function modificar(id){
             var nueva_cantidad = $("#cantidad-"+id).val();
+            alert(nueva_cantidad);
             id_input = document.getElementById("cantidad-"+id);
             var index = _.indexOf(productos_extras,_.findWhere(productos_extras, function(d){return d.producto==id;}));
             productos_extras = modificar_cantidad_arreglo(productos_extras,nueva_cantidad,id_input,index);
@@ -454,9 +479,9 @@ console.log("prefix extras:" +prefix_extras)
 
         }
 
-        function aceptar_extras(){
-            console.log(productos_extras);
-        }
+
+
+
 
 
 
