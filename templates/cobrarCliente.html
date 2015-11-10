@@ -95,9 +95,9 @@
 
                 <!-- Modal content-->
                 <div class="modal-content">
-                  <div class="modal-header">
+                  <div class="modal-header" style="background-color:#3AB31B;">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 align="center" class="modal-title center">Formulario de pago</h1>
+                    <h1 align="center"  class="modal-title center">Formulario de pago</h1>
                   </div>
                   <div class="modal-body" id="cuerpo_factura">
 
@@ -135,9 +135,9 @@
                   </div>
 
                   <div class="modal-body" id="cuerpo_recibo">
-
-
+                  
                     <form class="form-horizontal col-md-12">
+                      <hr style="background-color:green; height:7px;" id="barra_separadora">
                         <br>
                         <h4>Emision de recibo</h4>
                         <table class="table table-hover" id="body_entregas_recibo">
@@ -177,7 +177,7 @@
                   <div class="modal-footer">
                       <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
                        en el modelo, -->
-                    <button type="button" onclick="pagar()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                    <button type="button" onclick="pagar()" class="btn btn-default" >Aceptar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 
                   </div>
@@ -314,9 +314,7 @@ var para_recibo = [];
 
     function cargar_modal_recibos(id){
         var myJsonEntrega = JSON.stringify(id);
-        $.post('{% url 'cobrarClienteMostrarRecibos' %}', {terid: id}, function(response){
-    alert(response);
-});
+
         $.ajax({
                 type: 'get',
                 data : {
@@ -342,10 +340,21 @@ var para_recibo = [];
     function cobrar(){      //hacer filtro por cliente si o si
         monto = $('#monto_a_pagar').val();
         monto = monto.replace(/,/g, '.');
-
+        if  (esFloatPositivo(monto)== false){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe ser un numero positivo",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+          return false;}
         entregas = [];
-
-
         $('#entregas').find('tr').each(function(){
                 id = $(this).find("td").eq(0).html();
                 entregas.push(id);
@@ -381,7 +390,6 @@ var para_recibo = [];
 
             monto_recibo = parseFloat(monto_recibo).toFixed(2);
 
-            alert(monto-monto_recibo);
             $('#body_entregas').empty();
             $('#body_entregas_recibo').empty();
             $('#cuerpo_factura').show();
@@ -410,6 +418,7 @@ var para_recibo = [];
                     $('#body_entregas_recibo').append('<tr><td>'+key+'</td><td>'+para_recibo[key]+'</td></tr>');
                     }
                  $('#cuerpo_factura').hide();
+                 $('#barra_separadora').hide();
              }
 
              $('#modal_facturacion').modal("show");
@@ -423,6 +432,44 @@ var para_recibo = [];
             var num_factura = $('#numero_factura').val();
             var num_recibo = $('#numero_recibo').val();
 
+            if ($('#cuerpo_recibo').is(':visible')){
+              if  (esEnteroPositivo(num_recibo)== false){
+                  BootstrapDialog.show({
+                      title: "Error",
+                      cssClass: 'error-dialog',
+                      message: "El numero de recibo debe ser un numero positivo",
+                      type: BootstrapDialog.TYPE_DANGER,
+                      buttons: [{
+                              label: 'Aceptar',
+                              action: function(dialogRef){
+                                  dialogRef.close();
+                              }
+                      }]
+                  });
+              return false;} 
+              } 
+
+             if ($('#cuerpo_factura').is(':visible')){
+              if  (esEnteroPositivo(num_factura)== false){
+                  BootstrapDialog.show({
+                      title: "Error",
+                      cssClass: 'error-dialog',
+                      message: "El numero de factura debe ser un numero positivo",
+                      type: BootstrapDialog.TYPE_DANGER,
+                      buttons: [{
+                              label: 'Aceptar',
+                              action: function(dialogRef){
+                                  dialogRef.close();
+                              }
+                      }]
+                  });
+              return false;} 
+              } 
+
+
+
+
+            $('#modal_facturacion').modal('hide');    
             var jsonFactura = JSON.stringify(_.keys(para_facturas));
             var jsonRecibos = JSON.stringify(_.keys(para_recibo));
             var jsonMontoRecibo = JSON.stringify(monto_recibo);
@@ -461,7 +508,7 @@ var para_recibo = [];
 
                     }
             });
-
+            
 
         }
 

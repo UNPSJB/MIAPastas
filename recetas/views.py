@@ -1318,14 +1318,26 @@ def cobrarClienteFacturar(request):
     monto_factura = re.findall("\S+",request.GET['monto_factura'])
     num_factura = re.findall("\d+",request.GET['num_factura'])
     num_recibo = re.findall("\d+",request.GET['num_recibo'])
+    cliente=None
     if len(para_factura) != 0:
         monto_factura = re.sub('["]', '', monto_factura[0])
         monto_factura=Decimal(monto_factura)
+        entrega = models.Entrega.objects.get(pk=para_factura[0])
+        cliente=entrega.pedido.cliente
+        cliente.saldo -=float(monto_factura)
+
+
     if len(para_recibo) != 0:
         monto_recibo = re.sub('["]', '', monto_recibo[0])
         monto_recibo=Decimal(monto_recibo)
+        if cliente==None:
+            entrega = models.Entrega.objects.get(pk=para_recibo[0])
+            cliente=entrega.pedido.cliente
+        cliente.saldo -=float(monto_recibo)
+        cliente.save()
     if len(num_factura) !=0:
         num_factura = int(num_factura[0])
+
     if len(num_recibo) !=0:
         num_recibo = int(num_recibo[0])
     print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
@@ -1335,6 +1347,10 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+    print "monto factura",monto_factura," monto recibo: ",monto_recibo
+    print "monto cliente ",cliente.saldo
+
+
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 
