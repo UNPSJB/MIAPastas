@@ -14,9 +14,12 @@
         <link rel="stylesheet" href="{% static "css/bootstrap-dialog.css" %}" >
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
+             var n=window.location.pathname;
+             var s=n.substring(0,_.size(n)-1);
+             console.log(s);
              frame = $("#frameDocumentacion");
-             frame.attr("src",url);
-             $("#myModal").modal("show");
+             frame.attr("src",url+s+".html");
+             $("#modalDocumentacion").modal("show");
 
              }
         </script>
@@ -58,7 +61,8 @@
             </div>
         <!-- boton "Documentacion " -->
             <div style="float:right;">
-            <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html/index.html" %}')" class="btn btn-success btn-lg" type="button">
+           <!-- <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html/index.html" %}')" class="btn btn-success btn-lg" type="button">-->
+            <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html" %}')" class="btn btn-success btn-lg" type="button">
                 <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Documentacion    <br> <br/></span>
 
 
@@ -292,19 +296,18 @@
 
 
 <!-- Modal -->
-<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+<div class="modal fade" id="modalDocumentacion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Ayuda</h4>
       </div>
       <div class="modal-body">
         <iframe style="height:500px; width:500px;" id="frameDocumentacion" src=""></iframe>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <button type="button" class="btn btn-primary">Save changes</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal">Cerrar</button>
       </div>
     </div>
   </div>
