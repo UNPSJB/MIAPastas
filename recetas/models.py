@@ -499,6 +499,7 @@ class Entrega(models.Model):
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
     pedido = models.ForeignKey(PedidoCliente)
     fecha = models.DateField(auto_now_add = True)
+    factura = models.ForeignKey(Factura)
 
 
     def generar_detalles(self):
@@ -525,6 +526,23 @@ class LoteEntregaDetalle(models.Model):
     entrega_detalle = models.ForeignKey(EntregaDetalle)
     lote = models.ForeignKey(Lote)
     cantidad = models.PositiveIntegerField()
+
+
+
+class Factura(models.Model):
+    fecha = models.DateField(auto_now_add = True)
+    numero = models.PositiveIntegerField()  #es el numero de la factura en papel
+    monto_pagado = models.PositiveIntegerField()
+
+
+class Recibo(models.Model):
+    fecha = models.DateField(auto_now_add = True)
+    numero = models.PositiveIntegerField()  #es el numero del recibo en papel
+    monto_pagado = models.PositiveIntegerField()
+    entrega = models.ForeignKey(Entrega)
+
+
+
 
 '''
 #********************************************************#

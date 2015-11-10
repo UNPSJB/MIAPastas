@@ -67,14 +67,16 @@ function eliminar_objeto(arreglo,indice){
         return arreglo;
 }
 
-function cambio_cantidad(i){
-    document.getElementById("cantidad-"+i).style.background="red";
+function cambio_cantidad(ele){
+    ele.style.background="red";
+    return true;
+}
 
-        }
 function modificar_cantidad_arreglo(arreglo,nueva_cantidad,id_input,i){
     if (!esEnteroPositivo(nueva_cantidad)){
         alert("la cantidad debe ser un entero positivo");
     }else{
+
         arreglo[i].cantidad = nueva_cantidad;
         id_input.style.background="white";
     }
