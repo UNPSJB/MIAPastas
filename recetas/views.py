@@ -26,6 +26,7 @@ from django.template.context import RequestContext
 from django.core.context_processors import csrf
 import StringIO
 from django.template import Context
+from decimal import Decimal
 
 #from datetime import date, datetime
 #import time
@@ -1233,7 +1234,90 @@ def LotesHojaRutaPdf(request,hoja_id=None):
         )
 
 
+
+def cobrarCliente(request):
+    entregas_no_facturadas = []
+    entregas = models.Entrega.objects.all()
+    saldo = 0
+    for entrega in entregas:
+        print "soy entrega:::",entrega.factura
+        if entrega.factura == None:
+            entregas_no_facturadas.append(entrega)
+            saldo += entrega.monto_restante()
+    clientes = models.Cliente.objects.all()
+    entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.monto_restante())
+
+    return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"clientes":clientes,"saldo":saldo})
+
+
+
+def cobrarClienteSaldo(request):
+    entregas = re.findall("\d+",request.GET['entregas'])
+    mont = re.findall("\d+",request.GET['monto'])
+    print entregas,"entregas"
+    for mon in mont:
+        monto=mon
+    monto=Decimal(monto)
+    entregas_para_factura = {}
+    entregas_para_recibo={}
+    monto_recibo = 0
+    for entrega_id in entregas:
+        entrega = models.Entrega.objects.get(pk=entrega_id)
+        if entrega.monto_restante() > monto:
+            entregas_para_recibo[entrega_id]="%s" % entrega.fecha
+            monto_recibo = "%s" % monto
+            break
+        else:
+            entregas_para_factura[entrega_id]="%s" % entrega.fecha
+        monto -= entrega.monto_restante()
+    return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
+
+def cobrarClienteFacturar(request):
+    para_factura = re.findall("\d+",request.GET['para_facturas'])
+    para_recibo = re.findall("\d+",request.GET['para_recibo'])
+    monto_recibo = re.findall("\d+",request.GET['monto_recibo'])
+    monto_factura = re.findall("\d+",request.GET['monto_factura'])
+    num_factura = re.findall("\d+",request.GET['num_factura'])
+    num_recibo = re.findall("\d+",request.GET['num_recibo'])
+
+    monto_factura = Decimal(monto_factura[0])
+    monto_recibo = Decimal(monto_recibo[0])
+    num_factura = int(num_factura[0])
+    num_recibo = int(num_recibo[0])
+
+    print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
+    for id_entrega in para_factura:
+        entrega = models.Entrega.objects.get(pk=id_entrega)
+        print "soy entrega", entrega, "id ",id_entrega
+        entrega.cobrar_con_factura(monto_factura,(num_factura))
+    for id_entrega in para_recibo:
+        entrega = models.Entrega.objects.get(pk=id_entrega)
+        entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+
+    print "SALIIIIIIIIIIIII"
+    return HttpResponse(json.dumps("ok"),content_type='json')
+
+
+
+
+
+
+
 '''
+    if entregas[0].monto_restante() <= monto:
+        #solicitar carga de numero de factura
+        return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
+    else:
+        #solicitar numero de recibo
+        entregas[0].cobrate(monto)
+
+
+
+
+
+
+
+
 
 pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
 lotes_dict = []
@@ -1249,7 +1333,7 @@ for pedido in pedidos:
 			cantidad_reservada = lote.reservar_stock(cantidad_buscada)
 			cantidad_buscada -=  cantidad_reservada
 			print "RESERVAR SOTKC RETORNO:" ,cantidad_buscada
-			lotes_dict.append = {"lote:"lote,"cantidad":cantidad_reservada}
+			lotes_dict.append = {"lote":lote,"cantidad":cantidad_reservada}
 			if  cantidad_buscada == 0:
 				# si logro cubrir la cantidad buscada con stock disponible en uno o mas lotes
 				# termino el bucle y voy a buscar otro detalle

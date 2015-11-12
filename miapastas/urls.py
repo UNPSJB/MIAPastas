@@ -135,6 +135,9 @@ urlpatterns = [
 
                 # FIN PRIMERA ENTREGA
 
+    url(r'^cobrarCliente$',recetasviews.cobrarCliente,name='cobrarCliente'),
+    url(r'^cobrarCliente/cobrarSaldo$',recetasviews.cobrarClienteSaldo,name='cobrarClienteSaldo'),
+    url(r'^cobrarCliente/facturar$',recetasviews.cobrarClienteFacturar,name='cobrarClienteFacturar'),
 
 
 
@@ -198,7 +201,6 @@ urlpatterns = [
     url(r'^zonasConsulta$',views.zonasConsulta,name='zonasConsulta'),
     url(r'^zonasModificar$',views.zonasModificar,name='zonasMoficar'),
     url(r'^hojaDeRuta$',views.hojaDeRuta,name='hojaDeRuta'),
-    url(r'^cobrarCliente$',views.cobrarCliente,name='cobrarCliente'),
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),

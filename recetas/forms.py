@@ -609,3 +609,7 @@ class ProductosLlevadosForm(forms.ModelForm):
         productos_llevados.save()
         productos_llevados.generar_detalles()
 
+
+
+  ############### COBRAR A CLIENTE ####################
+
