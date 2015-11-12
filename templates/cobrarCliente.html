@@ -29,8 +29,11 @@
                   <hr>
 
               </form>
+                            <textoprueba style="color:black;"> {{entregas.0.pedido.cliente.razon_social}} PREGUNTAR COMO INSTALAR FUENTES LOCALMENTE DE GOOGLE FONT</textoprueba>
+                             
               <p>&nbsp;</p>
               <div class="col-md-6" >
+
               <!--INPUT DE LO QUE EL CLIENTE DEBE-->
               <form class="form-inline ocultos" style="display: none;">
                   <div class="form-group">
@@ -45,13 +48,12 @@
 
               <input type="text" class="form-control" id="monto_a_pagar" >
               <button type="button" id="pagar" onclick="cobrar()" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
-
         </form>
               </div>
           <!--TABLA DE PEDIDOS NO FACTURADOS-->
           <p>&nbsp;</p>
           <div class="row ocultos" style="display: none;">
-                <div class="col-md-7">
+                <div class="col-md-9">
                     <table class="table table-hover" >
                         <thead>
                             <h1>Pedidos no Facturados del Cliente </h1>

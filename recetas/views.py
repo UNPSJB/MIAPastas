@@ -29,6 +29,11 @@ from django.template import Context
 from decimal import Decimal
 
 
+
+
+
+
+
 #from datetime import date, datetime
 #import time
 
@@ -140,7 +145,13 @@ def choferesBaja(request,chofer_id=None):
     """
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
-    chofer.delete()
+    hojas_de_ruta=models.HojaDeRuta.objects.filter(chofer=chofer)
+    if len(hojas_de_ruta) == 0:
+        #chofer.delete()
+        chofer.activo=False
+        chofer.save()
+    else:
+        messages.success(request, 'El chofer: ' + chofer.nombre + ' no se puede eliminar porque tiene hojas de rutas pendientes')
     return redirect('choferes')
 
 
@@ -215,11 +226,12 @@ def insumosBaja(request,insumo_id):
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in insumo.receta_set.all()]
         ))
-        insumo.delete()
+        #insumo.delete()
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
-        insumo.delete()
-
+        #insumo.delete()
+    insumo.activo=False
+    insumo.save()
     return redirect('insumos')
 
 
@@ -362,7 +374,9 @@ def recetasBaja(request,receta_id):
     """
     receta = models.Receta.objects.get(pk=receta_id)
     messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
-    receta.delete()
+    #receta.delete()
+    receta.activo=False
+    receta.save()
     return redirect('recetas')
 
 #********************************************************#
@@ -402,13 +416,11 @@ def proveedoresAlta(request):
 def proveedoresBaja(request,proveedor_id =None):
     print "estoy en bajaaa"
     p = models.Proveedor.objects.get(pk=proveedor_id)
-    p.delete()
+    #p.delete()
+    p.activo=False
+    p.save()
     return redirect('proveedores')
-    proveedores = models.Proveedor.objects.all  ()
-    proveedores_form = forms.ProveedorForm()
-    filters, mfilters = get_filtros(request.GET, models.Proveedor)
-    proveedores = models.Proveedor.objects.filter(**mfilters)
-    return redirect('proveedores')
+    
 
 
 def proveedoresModificar(request,proveedor_id =None):
@@ -507,10 +519,12 @@ def productosTerminadosBaja(request, producto_id=None):
         messages.success(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in p.receta_set.all()]
         ))
-        p.delete()
+        #p.delete()
     else:
         messages.success(request, 'El Producto: ' + p.nombre + ', ha sido eliminado correctamente.')
-        p.delete()
+        #p.delete()
+    p.activo=False
+    p.save()
 
     return redirect('productosTerminados')
 
@@ -592,7 +606,9 @@ def zonasBaja(request,zona_id =None):
 
     else:
         messages.success(request, 'La zona: ' + p.nombre + ', ha sido eliminado correctamente.')
-        p.delete()
+        #p.delete()
+        p.activo=False
+        p.save()
 
     return redirect('zonas')
 
@@ -648,9 +664,13 @@ def clientesAlta(request):
 
 @csrf_exempt
 def clientesBaja(request,cliente_id =None):
-    print "estoy en bajaaa"
     p = models.Cliente.objects.get(pk=cliente_id)
-    p.delete()
+    if p.saldo >0:
+        messages.error(request, 'El cliente: ' + p.razon_social + ', no se puede eliminar porque tiene deudas')
+    else:
+        p.activo=False
+        p.save()
+        #p.delete()
     return redirect('clientes')
 
 
@@ -715,7 +735,9 @@ def ciudadesBaja(request,ciudad_id =None):
         postcondicion: La ciudad ha sido dada de baja
     """
     p = models.Ciudad.objects.get(pk=ciudad_id)
-    p.delete()
+    #p.delete()
+    p.activo=False
+    p.save()
     return redirect('ciudades')
 
 
@@ -830,20 +852,20 @@ def pedidosClienteModificar(request, pedido_id):
         pedidosClientes_form = forms.PedidoClienteCambioForm
 
     detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
-    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
+    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia,my_arg = pedido_id)
     productos = models.ProductoTerminado.objects.all() #para detalles
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
-            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
            # fecha_posta = pedido_instancia.fecha_inicio
 
 
         elif pedido_instancia.tipo_pedido == 2:
-            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
             #fecha_posta = pedido_instancia.fecha_entrega
         else:
-            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
             #fecha_posta = pedido_instancia.fecha_entrega
 
         if pedidosClientes_form.is_valid():
@@ -1224,7 +1246,7 @@ def RendicionDeRepartoMostrar(request,hoja_id):
 
 
 def rendicionHojasDeRutas(request):
-    hojas = models.HojaDeRuta.objects.all() #a futuro filtrar por hojas de rutas no rendidas
+    hojas = models.HojaDeRuta.objects.filter(rendida=False) #a futuro filtrar por hojas de rutas no rendidas
     print hojas
     return render(request,"rendicionHojasDeRutas.html",{"hojas":hojas})
 
@@ -1264,6 +1286,10 @@ def LotesHojaRutaPdf(request,hoja_id=None):
         )
 
 
+
+#********************************************************#
+         #    COBRAR CLIENTE  #
+#********************************************************#
 
 def cobrarClienteFiltrado(request,cliente_id=None):
     entregas_no_facturadas = []

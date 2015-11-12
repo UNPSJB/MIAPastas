@@ -438,14 +438,17 @@ class PedidoClienteDetalleForm(forms.ModelForm):
 
 
 class PedidoClienteOcacionalForm(forms.ModelForm):
+
     class Meta:
         model = models.PedidoOcacional
-        exclude = ['productos','tipo_pedido']
+        exclude = ['productos','tipo_pedido','activo']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
+    my_field = forms.CharField(required=False)
 
     def clean(self):
         cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
+        print "pruebaaaaaaaaaa", self.instance.my_field, " s "
         if not self.errors:
             cliente = cleaned_data["cliente"]
             pedidos = cliente.pedidocliente_set.all()
@@ -453,10 +456,10 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             for pedido in pedidos:
                 if pedido.tipo_pedido == 2:
                     fecha =pedido.pedidoocacional.fecha_entrega
-                    if dia == fecha:
+                    print "iddddddddd",cleaned_data, " "
+                    if (dia == fecha):
                         id = str(pedido.id)
                         raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
-
 
 
     def clean_fecha_entrega(self):
@@ -468,7 +471,16 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         return fecha
 
     def __init__(self, *args, **kwargs):
-        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+        try:
+            my_arg = kwargs.pop('my_arg')
+            self.url = kwargs.pop('my_arg')
+            super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+            self.instance.my_field=my_arg
+        except:
+            super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+
+        
+        
 
 
 class PedidoClienteCambioForm(forms.ModelForm):
@@ -476,7 +488,7 @@ class PedidoClienteCambioForm(forms.ModelForm):
         model = models.PedidoCambio
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-        exclude = ['productos','tipo_pedido']
+        exclude = ['productos','tipo_pedido','activo']
 
 
     def clean(self):
@@ -488,7 +500,7 @@ class PedidoClienteCambioForm(forms.ModelForm):
                 for pedido in pedidos:
                     if pedido.tipo_pedido == 3:
                         fecha =pedido.pedidocambio.fecha_entrega
-                        if dia == fecha:
+                        if dia == fecha :
                             id = str(pedido.id)
                             raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
@@ -502,8 +514,11 @@ class PedidoClienteCambioForm(forms.ModelForm):
         return fecha
 
     def __init__(self, *args, **kwargs):
-        super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
+        my_arg = kwargs.pop('my_arg')
 
+        super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
+        
+        self.fields['my_field'] = forms.CharField(initial=my_arg)
 
 
 

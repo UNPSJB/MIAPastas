@@ -6,6 +6,22 @@ import datetime
 from multiselectfield import MultiSelectField
 from django.utils import timezone
 
+
+
+
+
+#clase para redefinir objects y obtener solo instancias activas
+
+class ManagerActivos(models.Manager):
+    def get_queryset(self):
+        return super(ManagerActivos, self).get_queryset().filter(activo=True)
+
+
+
+
+
+
+
 TIPODIAS = (
         (1, "lunes"),
         (2, "martes"),
@@ -18,13 +34,15 @@ TIPODIAS = (
 #********************************************************#
                #     C H O F E R E S    #
 #********************************************************#
-class Chofer (models.Model):
+class Chofer (models.Model):    
     FILTROS = ['cuit_icontains', 'nombre_icontains']
     cuit= models.CharField(max_length=20, unique=True)
     nombre= models.CharField(max_length=100)
     direccion= models.CharField(max_length=100)
     telefono=models.PositiveIntegerField()
     e_mail=models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s" % (self.nombre)
@@ -99,7 +117,9 @@ class Insumo(models.Model):
     descripcion = models.TextField("Descripcón")
     stock = models.IntegerField(blank=True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
+    
     # Control de stock
     def incrementar(self, cantidad, unidad=NONE):
         self.stock += self.CONVERT[unidad](cantidad)
@@ -129,7 +149,8 @@ class ProductoTerminado(models.Model):
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     dias_vigencia = models.PositiveIntegerField(default=01)
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s"% self.nombre
@@ -150,7 +171,8 @@ class Receta(models.Model):
     cant_prod_terminado= models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)
     insumos = models.ManyToManyField(Insumo, through="RecetaDetalle")
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%d) Bolsines" % (self.nombre, self.cant_prod_terminado)
@@ -180,6 +202,8 @@ class Proveedor(models.Model):
     cuit= models.PositiveIntegerField(unique=True)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
 #RELACION UNO A MUCHOS CON pedidosProveedor
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%d %s)" % (self.razon_social, self.telefono, self.cuit)
@@ -194,7 +218,8 @@ class Zona(models.Model):
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
     #el campo "activo" es para las bajas logicas
-    #activo = models.BooleanField(default=True);
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return (self.nombre)
@@ -210,7 +235,8 @@ class Ciudad(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     codigo_postal = models.PositiveIntegerField(unique=True)
     zona = models.ForeignKey(Zona,related_name="ciudades")
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.codigo_postal, self.zona)
 
@@ -233,6 +259,8 @@ class Cliente(models.Model):
     email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
     es_moroso = models.BooleanField(default=False)
     saldo = models.FloatField(default=0)
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
@@ -254,6 +282,9 @@ class PedidoCliente(models.Model):
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()    #si es ocacional o de cambio, cuando hago rendicion hay q haccer la baja, y si es fijo???
+
     def esParaHoy(self):
         pass
 
@@ -416,6 +447,7 @@ class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
+
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
     def generar_rendicion(self):
