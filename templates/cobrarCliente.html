@@ -299,7 +299,6 @@ var para_recibo = [];
                 dataType: 'json',
                 url: 'cobrarCliente/cobrarSaldo',
                 success: function(json){
-
                     mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo);
                     para_facturas = (json.para_facturas);
                     para_recibo = (json.para_recibo);

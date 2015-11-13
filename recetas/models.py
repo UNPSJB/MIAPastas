@@ -506,9 +506,6 @@ class Entrega(models.Model):
 
 
 
-
-
-
 class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
     cantidad_enviada = models.PositiveIntegerField(null=True) #no va

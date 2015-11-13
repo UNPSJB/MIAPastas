@@ -1263,6 +1263,8 @@ def cobrarClienteSaldo(request):
     monto_recibo = 0
     for entrega_id in entregas:
         entrega = models.Entrega.objects.get(pk=entrega_id)
+        if monto == 0:
+            break
         if entrega.monto_restante() > monto:
             entregas_para_recibo[entrega_id]="%s" % entrega.fecha
             monto_recibo = "%s" % monto
@@ -1282,13 +1284,14 @@ def cobrarClienteFacturar(request):
 
     monto_factura = Decimal(monto_factura[0])
     monto_recibo = Decimal(monto_recibo[0])
-    num_factura = int(num_factura[0])
-    num_recibo = int(num_recibo[0])
+    if len(num_factura) !=0:
+        num_factura = int(num_factura[0])
+    if len(num_recibo) !=0:
+        num_recibo = int(num_recibo[0])
 
     print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
     for id_entrega in para_factura:
         entrega = models.Entrega.objects.get(pk=id_entrega)
-        print "soy entrega", entrega, "id ",id_entrega
         entrega.cobrar_con_factura(monto_factura,(num_factura))
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
