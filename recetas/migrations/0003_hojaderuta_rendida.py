@@ -7,13 +7,13 @@ from django.db import models, migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recetas', '0001_initial'),
+        ('recetas', '0002_auto_20151114_1220'),
     ]
 
     operations = [
-        migrations.AlterField(
-            model_name='entrega',
-            name='factura',
-            field=models.ForeignKey(to='recetas.Factura', null=True),
+        migrations.AddField(
+            model_name='hojaderuta',
+            name='rendida',
+            field=models.BooleanField(default=False),
         ),
     ]

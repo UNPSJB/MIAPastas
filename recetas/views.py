@@ -1199,16 +1199,14 @@ def rendicionReparto(request,hoja_id=None):
     if request.method == "POST":
         detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix)
         if detalles_factory_form.is_valid():
-            print "form valido"
             for det_form in  detalles_factory_form:
                 det_form.rendir_detalle() #busca detalle y le setea cantidad enviada.
             prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
             if prod_llevados_forms.is_valid():
-                print "PROD LLEVADOS SON VALIDOS"
                 for prod_llevado_form in prod_llevados_forms:
                     prod_llevado_form.save()
-
-            totales = hoja.balance()
+                hoja.rendida = True
+                hoja.save()
             return redirect("rendicionDeRepartoMostrar",hoja.id)
 
 

@@ -415,6 +415,7 @@ class Factura(models.Model):
 class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
+    rendida = models.BooleanField(default=False)
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
     def generar_rendicion(self):
