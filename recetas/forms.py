@@ -612,9 +612,22 @@ class EntregaDetalleForm(forms.ModelForm):
 
 class BaseEntregaDetalleFormset(BaseFormSet):
     def clean(self):
-        print "crean del form base, tengo q validar totales entregaedos no superen totales llevados"
+        productos_totales={}
         if any(self.errors):
             return
+        for f in self.forms:
+            detalle = f.cleaned_data["detalle"]
+            try:
+                productos_totales[detalle.get_producto_terminado()] += f.cleaned_data["cantidad_entregada"]
+            except:
+                productos_totales[detalle.get_producto_terminado()] = 0
+                productos_totales[detalle.get_producto_terminado()] += f.cleaned_data["cantidad_entregada"]
+        productos_llevados = self.forms[0].cleaned_data["detalle"].entrega.hoja_de_ruta.productosllevados_set.all()
+        for llevado in productos_llevados:
+            cant_entregada = productos_totales[llevado.producto_terminado]
+            cant_llevada = llevado.cantidad_enviada
+            if cant_entregada > cant_llevada:
+                raise ValidationError("Se entregaste mas productos de los que llevaste")
 
 
 EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)

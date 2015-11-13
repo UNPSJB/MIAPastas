@@ -581,6 +581,10 @@ class EntregaDetalle(models.Model):
     pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle,null=True)
     producto_terminado = models.ForeignKey(ProductoTerminado,null=True)
 
+    def get_producto_terminado(self):
+        if self.producto_terminado is not None:
+            return self.producto_terminado
+        return self.pedido_cliente_detalle.producto_terminado
 class LoteEntregaDetalle(models.Model):
     entrega_detalle = models.ForeignKey(EntregaDetalle)
     lote = models.ForeignKey(Lote)
