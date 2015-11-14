@@ -384,18 +384,17 @@ console.log("prefix extras:" +prefix_extras)
             $('#tabla_extras').find('tr').each(function(){
                 id_elemento = $(this).find("td").eq(0).html();
                 elemento = $(this).find("td").eq(1).html();
-                elemento_siguiente=$(this).find("td").eq(2).html();
+                elemento_siguiente=$(this).find("td").eq(2);
+                elemento_siguiente=$(elemento_siguiente).find("input").val();
                 var index = _.indexOf(totales_datos,elemento);
                 if (index == -1){
                     console.log("estoy en elemento nuevoooooo")
                     totales_productos.push(id_elemento);
                     totales_datos.push(elemento);
-                    totales_cantidades.push(parseInt($(elemento_siguiente).val()));
+                    totales_cantidades.push(parseInt(elemento_siguiente));
                 }
                 else{
-                     console.log("estoy en ya estabaaaaa ",totales_cantidades[index]," y la cant nueva es ",$(elemento_siguiente).val())
-
-                    totales_cantidades[index]+= parseInt($(elemento_siguiente).val());
+                    totales_cantidades[index]+= parseInt(elemento_siguiente);
                 }
                 }
                 )
@@ -405,7 +404,6 @@ console.log("prefix extras:" +prefix_extras)
         function mostrarTotales(){
             $("#cuerpoTotalesPedidos tr").remove();
             var total=0;
-            console.log("soy totales_datos ",totales_datos);
             for(i=0;i< totales_cantidades.length;i++){
                 $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_datos[i]+'</td><td>'+totales_cantidades[i]+'</td></tr>');
                 total=total+parseInt(totales_cantidades[i]);
@@ -431,9 +429,8 @@ console.log("prefix extras:" +prefix_extras)
                      }else{
                         var id_prod = document.getElementById('select_productos').value;
                         var nombre_prod = $('#select_productos option:selected').text();
-                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td style="display:none;">'+id_prod+'</td><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad('+id_prod+')"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
+                        $('#tabla_extras').append('<tr id="'+id_prod+'"><td style="display:none;">'+id_prod+'</td><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad(this)"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
                         productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
-                        console.log(productos_extras);
                         det = productos_extras[0];
                         console.log(det);
                         d = det.cantidad;

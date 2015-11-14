@@ -1,84 +1,96 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
+{% load bootstrap3 %}
 {% block contenido %}
 
-
-
-<!-- Este es el formulario de recetas -->
+<!-- Este es el formulario de Cobro a Cliente -->
 <div class="container">
-<div class="panel panel-default">
-  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Cobrar a Cliente</b></font></p></div>
-  <div class="panel-body">
-      <!-- formulario -->
-      <form class="form-inline">
-          <div class="form-group">
-            <label for="exampleInputName2">N° Cuil/Cuit</label>
-            <input type="text" class="form-control" id="exampleInputName2" placeholder="Cuil/Cuit" >
+    <div class="panel panel-default">
+          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Cobrar a Cliente</b></font></p></div>
+          <div class="panel-body">
+              <!-- formulario -->
+              <form class="form-inline">
+                  <!--
+                  <div class="form-group">
+                    <label for="exampleInputName2">N° Cuil/Cuit</label>
+                    <input type="text" class="form-control" id="exampleInputName2" placeholder="Cuil/Cuit" >
+                  </div>
+                    FILTRO DE CUIT-->
+
+                <div>
+                  <label for="cliente">Cliente &nbsp;</label>
+                   <select class="form-control" id="cliente" name="cliente">
+                              <option value="" selected="selected">---------</option>
+                                 {% for c in clientes %}
+                                     <option value="{{c.id}}">{{c}}</option>
+                                {% endfor %}
+              </select>
+                    </div>
+                  <hr>
+
+              </form>
+              <p>&nbsp;</p>
+              <div class="col-md-6" >
+              <!--INPUT DE LO QUE EL CLIENTE DEBE-->
+              <form class="form-inline ocultos" style="display: none;">
+                  <div class="form-group">
+                        <label for="exampleInputEmail2">El cliente debe:  $</label>
+                        <input type="text" value="{{saldo}}" class="form-control" id="exampleInputEmail2" placeholder="Saldo del Cliente" readonly>
+                  </div>
+              </form>
+              <p></p>
           </div>
-          <div class="form-group">
-            <label for="exampleInputEmail2">Razon social</label>
-            <input type="date" class="form-control" id="exampleInputEmail2" placeholder="huevo" >
-          </div>
-          <button type="submit" class="btn btn-default">Filtrar</button>
-      </form>
+        <form class="form-inline ocultos" style="display: none;">
+             <label for="exampleInputEmail2"> Monto a abonar: $ </label>
+
+              <input type="text" class="form-control" id="monto_a_pagar" >
+              <button type="button" id="pagar" onclick="cobrar()" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
+
+        </form>
+              </div>
+          <!--TABLA DE PEDIDOS NO FACTURADOS-->
           <p>&nbsp;</p>
-      <div class="row">
-          -<div class="col-md-6">
-          <table class="table table-hover">
-            <thead>
-            <h1>Pedidos no facturados</h1>
-            <tr>
-                <th>N° Pedido</th>
-                <th>Fecha</th>
-                <th>Precio total</th>
-                <th>Monto abonado</th>
-
-
-            </tr>
-            </thead>
-              <tbody>
-
-                <tr>
-
-                    <td>manola</td>
-                    <td>pocha</td>
-                    <td>lola</td>
-                    <td>asdsa</td>
-                    <td><!-- Trigger the modal with a button -->
-              <button type="button" class=" glyphicon glyphicon-zoom-in pull-left" data-toggle="modal" data-target="#myModal"></button>
-</td>
-          </tr>
-
-          </tbody>
-          </table>
+          <div class="row ocultos" style="display: none;">
+                <div class="col-md-7">
+                    <table class="table table-hover" >
+                        <thead>
+                            <h1>Pedidos no Facturados del Cliente </h1>
+                            <tr>
+                                <th style="display:none;"></th>
+                                <th>N° Pedido</th>
+                                <th>Fecha de Entrega</th>
+                                <th>Monto abonado $</th>
+                                <th>Monto restante $</th>
+                                <th>Monto total $</th>
+                            </tr>
+                        </thead>
+                        <tbody id="entregas">
+                            {% for entrega in entregas %}
+                            <tr>
+                                <td style="display:none;">{{entrega.pk}}</td>
+                                <td> {{entrega.pedido.pk}}</td>
+                                <td>{{entrega.fecha}}</td>
+                                <td>  {{entrega.monto_ya_abonado}}</td>
+                                <td>  {{entrega.monto_restante }}</td>
+                                <td>  {{entrega.monto_total}}</td>
+                                <td><button type="button" onclick="cargar_modal_recibos({{entrega.pk}})" class=" glyphicon glyphicon-zoom-in pull-left" id="boton_recibos" data-id="{{entrega.pk}}" data-toggle="modal" data-target="#modalRecibos"></button></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div> <!--FIN COL MD 6-->
+          </div><!--FIN ROW-->
           </div>
-          <div class="col-md-4">
-              <div class="form-group">
-            <label for="exampleInputName2">Saldo del Cliente</label>
-            <input type="text" class="form-control" id="exampleInputName2"  readonly>
-          </div>
+     </div>
+</div>
 
-          <p></p>
-          </div>
-
-
-          </div>
-
-              <hr>
-<button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Aceptar </span></button>
-          <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-back" aria-hidden="true"> Cancelar </span></button>
+<!--aca empieza el modal-->
+<div>
 
 
 
-          </div>
 
-      </div>
-       <div>
-            <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
-
-            <!-- Modal -->
-            <div id="myModal" class="modal fade" role="dialog">
+    <div id="modal_facturacion" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
               <div class="modal-dialog">
 
                 <!-- Modal content-->
@@ -87,47 +99,85 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                     <h1 align="center" class="modal-title center">Formulario de pago</h1>
                   </div>
-                  <div class="modal-body">
-                    <table class="table table-hover">
-                        <thead>
-                        <h4>Recibos anteriores</h4>
-                        <tr>
-                            <th>N° Recibo</th>
-                            <th>Fecha</th>
-                            <th>Monto pagado</th>
+                  <div class="modal-body" id="cuerpo_factura">
 
+
+                    <form class="form-horizontal col-md-12">
+
+                        <h4>Facturacion</h4>
+                        <table class="table table-hover" id="body_entregas">
+                        <thead>
+                        <h4>Entregas a facturar</h4>
+                        <tr>
+                            <th>N° Entrega</th>
+                            <th>Fecha</th>
                         </tr>
                         </thead>
-                          <tbody>
-                        {% for receta in recetas %}
-                            <tr>
-                          <td>{{receta.nombre}}</td>
-                          <td>{{receta.descripcion}}</td>
-                      </tr>
-                        {% endfor %}
+                          <tbody >
+
                       </tbody>
                       </table>
 
-                    <form class="form-horizontal col-md-12">
-                        <br>
-                        <h4>Ingrese pago</h4>
+
+
                           <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Monto restante del pedido</label>
+                            <label for="exampleInputName2" class="col-md-3">Ingrese numero de factura</label>
                               <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputName2"  readonly>
+                            <input type="text" class="form-control" id="numero_factura" placeholder="N° Factura">
                           </div></div>
                           <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Monto a pagar</label>
+                            <label for="exampleInputEmail2" class="col-md-3">Monto a facturar: $</label>
                             <div class=" col-md-5">
-                            <input type="text" class="form-control" id="exampleInputEmail2" placeholder="Monto" >
+                            <input type="number" step="any" class="form-control" id="monto_factura" placeholder="Monto" readonly>
                           </div></div>
                       </form>
 
                   </div>
+
+                  <div class="modal-body" id="cuerpo_recibo">
+
+
+                    <form class="form-horizontal col-md-12">
+                        <br>
+                        <h4>Emision de recibo</h4>
+                        <table class="table table-hover" id="body_entregas_recibo">
+                        <thead>
+                        <tr>
+                            <th>N° Entrega</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                          <tbody >
+
+                      </tbody>
+                      </table>
+
+
+
+                          <div class="form-group">
+                            <label class="col-md-3">Ingrese numero de recibo</label>
+                              <div class=" col-md-5">
+                            <input type="text" class="form-control" id="numero_recibo" placeholder="N° Recibo" required>
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">Monto a cargar en el recibo: </label>
+                            <div>
+                            <div class=" col-md-1">
+                                <label><h3>$</h3></label>
+                            </div>
+                            <div class=" col-md-5">
+                                <input type="number" step="any" class="form-control" id="monto_recibo" placeholder="Monto" readonly >
+                          </div></div></div>
+                      </form>
+
+                  </div>
+
+
+
                   <div class="modal-footer">
                       <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
                        en el modelo, -->
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                    <button type="button" onclick="pagar()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
 
                   </div>
@@ -139,9 +189,284 @@
 
 
 
-</div>
+    <div id="modalRecibos" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
+              <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                  <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h1 align="center" class="modal-title center">Formulario de pago</h1>
+                  </div>
+                  <div class="modal-body" id="modal_recibos">
+
+                    <form class="form-horizontal col-md-12">
+
+                        <h4>Facturacion</h4>
+                        <table class="table table-hover" id="body_recibos_modal">
+                        <thead>
+                        <h4>Entregas a facturar</h4>
+                        <tr>
+                            <th>N° Entrega</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                          <tbody >
+
+                      </tbody>
+                      </table>
+
+
+
+                          <div class="form-group">
+                            <label for="exampleInputName2" class="col-md-3">Ingrese numero de factura</label>
+                              <div class=" col-md-5">
+                            <input type="text" class="form-control" id="numero_factura" placeholder="N° Factura">
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">Monto a facturar: $</label>
+                            <div class=" col-md-5">
+                            <input type="number" step="any" class="form-control" id="monto_factura" placeholder="Monto" readonly>
+                          </div></div>
+                      </form>
+
+                  </div>
+
+                  <div class="modal-body" id="cuerpo_recibo">
+
+
+                    <form class="form-horizontal col-md-12">
+                        <br>
+                        <h4>Emision de recibo</h4>
+                        <table class="table table-hover" id="body_entregas_recibo">
+                        <thead>
+                        <tr>
+                            <th>N° Entrega</th>
+                            <th>Fecha</th>
+                        </tr>
+                        </thead>
+                          <tbody >
+
+                      </tbody>
+                      </table>
+
+
+
+                          <div class="form-group">
+                            <label class="col-md-3">Ingrese numero de recibo</label>
+                              <div class=" col-md-5">
+                            <input type="text" class="form-control" id="numero_recibo" placeholder="N° Recibo" required>
+                          </div></div>
+                          <div class="form-group">
+                            <label for="exampleInputEmail2" class="col-md-3">Monto a cargar en el recibo: </label>
+                            <div>
+                            <div class=" col-md-1">
+                                <label><h3>$</h3></label>
+                            </div>
+                            <div class=" col-md-5">
+                                <input type="number" step="any" class="form-control" id="monto_recibo" placeholder="Monto" readonly >
+                          </div></div></div>
+                      </form>
+
+                  </div>
+
+                  <div class="modal-footer">
+                      <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
+                       en el modelo, -->
+                    <button type="button" onclick="pagar()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                  </div>
+                </div>
+              </div>
+            </div>
 </div>
 
-    <!-- Este es el fin del formulario de recetas -->
 
+
+
+    <!-- Este es el fin del formulario de cobrarCliente -->
+
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+var monto = 0;
+var entregas = [];
+var para_facturas = [];
+var para_recibo = [];
+
+
+    $(function(){
+        if({{saldo}} != -1){
+            $('.ocultos').css({display:''});}
+        $( "#cliente" ).change( function(){
+            var cliente = $("#cliente").val();
+            window.open('/cobrarCliente/Filtrado/'+cliente+'',"_self")
+
+
+        } );
+
+
+    });
+
+
+
+    function cargar_modal_recibos(id){
+        var myJsonEntrega = JSON.stringify(id);
+        $.post('{% url 'cobrarClienteMostrarRecibos' %}', {terid: id}, function(response){
+    alert(response);
+});
+        $.ajax({
+                type: 'get',
+                data : {
+                     'entrega_id': myJsonEntrega
+                 },
+                dataType: 'json',
+                url:'{% url 'cobrarClienteMostrarRecibos' %}',
+                success: function(json){
+                    console.log(json.recibos);
+                    for(rec in json.recibos){
+                    console.log(rec.fields);}
+                    }
+            });
+
+        $('#modal_recibos').modal('show');
+
+
+    }
+
+
+
+
+    function cobrar(){      //hacer filtro por cliente si o si
+        monto = $('#monto_a_pagar').val();
+        monto = monto.replace(/,/g, '.');
+
+        entregas = [];
+
+
+        $('#entregas').find('tr').each(function(){
+                id = $(this).find("td").eq(0).html();
+                entregas.push(id);
+        });
+
+
+        var myJsonString = JSON.stringify(entregas);
+        var myJsonMonto = JSON.stringify(monto);
+         para_facturas = [];
+         para_recibo = [];
+            console.log("json a enviar: "+myJsonString);
+            $.ajax({
+                type: 'get',
+                data : {
+                     'entregas': myJsonString,
+                     'monto': myJsonMonto
+                 },
+                dataType: 'json',
+                //url: 'cobrarCliente/cobrarSaldo',
+                url:'{% url 'cobrarClienteSaldo' %}',
+                success: function(json){
+                    mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo);
+                    para_facturas = (json.para_facturas);
+                    para_recibo = (json.para_recibo);
+                    }
+            });
+
+
+
+            }
+
+         function mostrar_datos(para_facturas,para_recibo,monto_recibo){
+
+            monto_recibo = parseFloat(monto_recibo).toFixed(2);
+
+            alert(monto-monto_recibo);
+            $('#body_entregas').empty();
+            $('#body_entregas_recibo').empty();
+            $('#cuerpo_factura').show();
+            $('#cuerpo_recibo').show();
+            $('#monto_factura').val(monto-monto_recibo);
+            $('#monto_recibo').val(monto_recibo);
+
+            if (_.size(para_facturas)> 0){
+                 console.log(para_facturas, "factura");
+                 console.log(para_recibo,"recibos");
+                 for (key in (para_facturas)){
+                    $('#body_entregas').append('<tr><td>'+key+'</td><td>'+para_facturas[key]+'</td></tr>');
+                    }
+
+                 if (monto>(monto-monto_recibo)){  //si tambien hay q cargar un recibo
+                    for (key in (para_recibo)){
+                        $('#body_entregas_recibo').append('<tr><td>'+key+'</td><td>'+para_recibo[key]+'</td></tr>');
+                    }
+                    }else{
+                        $('#cuerpo_recibo').hide();
+                    }
+
+             }
+             else{  //validar que el monto ingresado no sea 0 ni negativo
+                for (key in (para_recibo)){
+                    $('#body_entregas_recibo').append('<tr><td>'+key+'</td><td>'+para_recibo[key]+'</td></tr>');
+                    }
+                 $('#cuerpo_factura').hide();
+             }
+
+             $('#modal_facturacion').modal("show");
+
+
+         }
+
+        function pagar(){
+            var monto_recibo = $('#monto_recibo').val();
+            var monto_factura = $('#monto_factura').val();
+            var num_factura = $('#numero_factura').val();
+            var num_recibo = $('#numero_recibo').val();
+
+            var jsonFactura = JSON.stringify(_.keys(para_facturas));
+            var jsonRecibos = JSON.stringify(_.keys(para_recibo));
+            var jsonMontoRecibo = JSON.stringify(monto_recibo);
+            var jsonMontoFactura = JSON.stringify(monto_factura);
+            var jsonNumFactura = JSON.stringify(num_factura);
+            var jsonNumRecibo = JSON.stringify(num_recibo);
+            console.log("envio: ",jsonFactura);
+            console.log("envio: ",jsonRecibos);
+            console.log("mmonto",monto_recibo);
+            $.ajax({
+                type: 'get',
+                data : {
+                     'para_facturas': jsonFactura,
+                     'para_recibo': jsonRecibos,
+                     'monto_recibo':jsonMontoRecibo,
+                     'monto_factura':jsonMontoFactura,
+                     'num_factura':jsonNumFactura,
+                     'num_recibo':jsonNumRecibo
+                 },
+                dataType: 'json',
+                url: '{% url 'cobrarClienteFacturar' %}',
+                success: function(json){
+                    BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Pago realizado correctamente",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                                window.location.reload();
+                            }
+                    }]
+            });
+
+                    }
+            });
+
+
+        }
+
+
+
+
+</script>
 {% endblock %}

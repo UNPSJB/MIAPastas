@@ -214,10 +214,6 @@ def rendicionReparto(request):
 
 
 
-@login_required()
-def cobrarCliente(request):
-    return render(request, "cobrarCliente.html", {})
-
 
 @login_required()
 def pedidosCliente(request):

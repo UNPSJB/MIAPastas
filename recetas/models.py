@@ -242,62 +242,6 @@ class Cliente(models.Model):
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
 
-'''
-class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
-    fecha_creacion = models.DateField(auto_now_add = True)
-    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
-    cliente = models.ForeignKey(Cliente)
-    TIPOS = {}
-
-
-    def __str__(self):
-        return "%s " % (self.cliente)
-
-class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.FloatField()
-    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
-    pedido_cliente = models.ForeignKey(PedidoCliente)
-
-class PedidoFijo(PedidoCliente):
-    fecha_inicio = models.DateField(default=date.today())
-    fecha_cancelacion = models.DateField(blank=True,null=True)
-    dias = MultiSelectField(choices=TIPODIAS)
-    NOMBRE = "Pedido Fijo"
-    TIPO = 1
-
-    def esParaHoy(self):
-        d = date.today()
-        if d.day in self.dias:
-            return True
-        else:
-            return False
-PedidoCliente.TIPOS[PedidoFijo.TIPO] = PedidoFijo
-
-class PedidoCambio(PedidoCliente):
-    fecha_entrega = models.DateField()
-    TIPO = 3
-    def esParaHoy(self):
-        d = date.today()
-        if d in self.fecha_entrega:
-            return True
-        else:
-            return False
-PedidoCliente.TIPOS[PedidoCambio.TIPO] = PedidoCambio
-
-class PedidoOcacional(PedidoCliente):
-    fecha_entrega = models.DateField()
-    TIPO = 2
-    def esParaHoy(self):
-        d = date.today()
-        if d in self.fecha_entrega:
-            return True
-        else:
-            return False
-PedidoCliente.TIPOS[PedidoOcacional.TIPO] = PedidoOcacional
-
-'''
-
 
 class PedidoCliente(models.Model):
     FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
@@ -453,6 +397,16 @@ class Lote(models.Model):
     def decrementar_stock_disponible(self,cant):
         self.stock_disponible -= cant
         self.save()
+
+
+
+
+class Factura(models.Model):
+    fecha = models.DateField(auto_now_add = True)
+    numero = models.PositiveIntegerField()  #es el numero de la factura en papel
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
+
+
 #********************************************************#
          #    HOJA DE RUTA   #
 #********************************************************#
@@ -553,7 +507,8 @@ class Entrega(models.Model):
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
     pedido = models.ForeignKey(PedidoCliente)
     fecha = models.DateField(auto_now_add = True)
-
+    factura = models.ForeignKey(Factura,null=True)
+    #cliente = getCliente()
 
     def generar_detalles(self):
         if self.entregadetalle_set.all().exists():
@@ -565,6 +520,39 @@ class Entrega(models.Model):
                                                                    precio=(detalle_pedido.producto_terminado.precio *detalle_pedido.cantidad_producto),
                                                                    cantidad_entregada = None,
                                                                    pedido_cliente_detalle=detalle_pedido)
+    def getCliente(self):
+        print ("soy clienteeeee",self.pedido.cliente)
+        return self.pedido.cliente
+
+
+    def monto_ya_abonado(self):
+        recibos = self.recibo_set.all()
+        total = 0
+        for recibo in recibos:
+            total += recibo.monto_pagado
+        return total
+
+    def monto_total(self):
+        detalles = self.entregadetalle_set.all()
+        total = 0
+        for detalle in detalles:
+            total += detalle.precio
+        return total
+
+    def monto_restante(self):   # sirve solo para entregas no facturadas, si esta facturada nunca se deberia llamar, no tendria sentido
+        return self.monto_total()-self.monto_ya_abonado()
+
+    def cobrar_con_factura(self,monto,numero_factura=None):
+        factura=Factura.objects.filter(numero=numero_factura)   #devuelve una lista!!!!
+        if (len(factura) == 0):
+            factura=Factura.objects.create(numero=numero_factura,fecha=date.today(),monto_pagado=monto)
+            self.factura=factura
+        else:
+            self.factura=factura[0]
+        self.save()
+
+    def cobrar_con_recibo(self,monto,numero_recibo=None):
+        recibo = Recibo.objects.create(entrega=self,fecha=date.today(),numero=numero_recibo,monto_pagado=monto)
 
     def generar_detalle(self,detalle_pedido=None, prod_terminado=None):
         print "EN GENERAR DETALLE:"
@@ -586,7 +574,7 @@ class Entrega(models.Model):
 
 class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
-    cantidad_enviada = models.PositiveIntegerField(null=True)
+    cantidad_enviada = models.PositiveIntegerField(null=True) #no va
     cantidad_entregada = models.PositiveIntegerField(null=True)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle,null=True)
@@ -596,6 +584,24 @@ class LoteEntregaDetalle(models.Model):
     entrega_detalle = models.ForeignKey(EntregaDetalle)
     lote = models.ForeignKey(Lote)
     cantidad = models.PositiveIntegerField()
+
+
+entrega = models.ForeignKey(Entrega)
+
+
+
+
+
+class Recibo(models.Model):
+    entrega = models.ForeignKey(Entrega)
+    fecha = models.DateField(auto_now_add = True)
+    numero = models.PositiveIntegerField()  #es el numero del recibo en papel
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
+
+
+
+
+
 
 '''
 #********************************************************#
@@ -621,4 +627,66 @@ class EntregaPedidoDetalle(models.Model):
     entrega_pedido = models.ForeignKey(EntregaPedido)
 
 
+
+
+
+
+
+
+
+
+class PedidoCliente(models.Model):
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
+    fecha_creacion = models.DateField(auto_now_add = True)
+    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
+    cliente = models.ForeignKey(Cliente)
+    TIPOS = {}
+
+
+    def __str__(self):
+        return "%s " % (self.cliente)
+
+class PedidoClienteDetalle(models.Model):
+    cantidad_producto = models.FloatField()
+    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
+    pedido_cliente = models.ForeignKey(PedidoCliente)
+
+class PedidoFijo(PedidoCliente):
+    fecha_inicio = models.DateField(default=date.today())
+    fecha_cancelacion = models.DateField(blank=True,null=True)
+    dias = MultiSelectField(choices=TIPODIAS)
+    NOMBRE = "Pedido Fijo"
+    TIPO = 1
+
+    def esParaHoy(self):
+        d = date.today()
+        if d.day in self.dias:
+            return True
+        else:
+            return False
+PedidoCliente.TIPOS[PedidoFijo.TIPO] = PedidoFijo
+
+class PedidoCambio(PedidoCliente):
+    fecha_entrega = models.DateField()
+    TIPO = 3
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+PedidoCliente.TIPOS[PedidoCambio.TIPO] = PedidoCambio
+
+class PedidoOcacional(PedidoCliente):
+    fecha_entrega = models.DateField()
+    TIPO = 2
+    def esParaHoy(self):
+        d = date.today()
+        if d in self.fecha_entrega:
+            return True
+        else:
+            return False
+PedidoCliente.TIPOS[PedidoOcacional.TIPO] = PedidoOcacional
+
 '''
+

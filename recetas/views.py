@@ -26,6 +26,8 @@ from django.template.context import RequestContext
 from django.core.context_processors import csrf
 import StringIO
 from django.template import Context
+from decimal import Decimal
+
 
 #from datetime import date, datetime
 #import time
@@ -816,7 +818,7 @@ def pedidosClienteModificar(request, pedido_id):
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
         detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-        pedidosClientes_form = forms.PedidoClienteFijoForm
+        pedidosClientes_form = forms.PedidoClienteFijoModificarForm
 
     elif pedido_instancia.tipo_pedido == 2:
         pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
@@ -833,13 +835,29 @@ def pedidosClienteModificar(request, pedido_id):
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
-            pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia)
+           # fecha_posta = pedido_instancia.fecha_inicio
+
+
         elif pedido_instancia.tipo_pedido == 2:
             pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+            #fecha_posta = pedido_instancia.fecha_entrega
         else:
             pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
+            #fecha_posta = pedido_instancia.fecha_entrega
+
         if pedidosClientes_form.is_valid():
             pedido_instancia = pedidosClientes_form.save(commit=False)
+            #if pedido_instancia.tipo_pedido == 1:
+             #   #probando probando
+              #  print("fecha poista del pedido:", fecha_posta)
+               # print("fecha que me quizo meter el salamin: ", pedido_instancia.fecha_inicio)
+                #if pedido_instancia.fecha_inicio != fecha_posta:
+                 #   if pedido_instancia.fecha_inicio < datetime.date.today():
+                  #      pedido_instancia.fecha_inicio = fecha_posta
+                   #     pedido_instancia.save()
+                    #    messages.error(request, 'fecha inicio mal')
+                     #   return redirect('/pedidosCliente/Modificar/'+pedido_id)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
             print detalles_formset.is_valid()
@@ -1248,7 +1266,104 @@ def LotesHojaRutaPdf(request,hoja_id=None):
         )
 
 
+
+def cobrarClienteFiltrado(request,cliente_id=None):
+    entregas_no_facturadas = []
+    cliente=models.Cliente.objects.get(pk=(cliente_id))
+    entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
+    saldo = 0
+    for entrega in entregas:
+        print "soy entrega:::",entrega.factura
+        if entrega.factura == None:
+            entregas_no_facturadas.append(entrega)
+            saldo += entrega.monto_restante()
+            print entrega.monto_restante()," eerere"
+    clientes = models.Cliente.objects.all()
+    entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.monto_restante())
+    print entregas_no_facturadas,"saldoo", saldo
+    return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"clientes":clientes,"saldo":saldo})
+
+
+def cobrarCliente(request):
+    clientes = models.Cliente.objects.all()
+    return render(request, "cobrarCliente.html", {"entregas":[],"clientes":clientes,"saldo":-1})
+
+
+
+def cobrarClienteSaldo(request):
+    entregas = re.findall("\d+",request.GET['entregas'])
+    mont = re.findall("\S+",request.GET['monto'])
+    monto = re.sub('["]', '', mont[0])
+    monto=monto.replace(',', '.')
+    monto=Decimal(monto)
+    entregas_para_factura = {}
+    entregas_para_recibo={}
+    monto_recibo = 0
+    for entrega_id in entregas:
+        entrega = models.Entrega.objects.get(pk=entrega_id)
+        if monto == 0:
+            break
+        if entrega.monto_restante() > monto:
+            entregas_para_recibo[entrega_id]="%s" % entrega.fecha
+            monto_recibo = "%s" % monto
+            break
+        else:
+            entregas_para_factura[entrega_id]="%s" % entrega.fecha
+        monto -= entrega.monto_restante()
+    print "monto_", monto_recibo
+    return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
+
+def cobrarClienteFacturar(request):
+    para_factura = re.findall("\d+",request.GET['para_facturas'])
+    para_recibo = re.findall("\d+",request.GET['para_recibo'])
+    monto_recibo = re.findall("\S+",request.GET['monto_recibo'])
+    monto_factura = re.findall("\S+",request.GET['monto_factura'])
+    num_factura = re.findall("\d+",request.GET['num_factura'])
+    num_recibo = re.findall("\d+",request.GET['num_recibo'])
+    if len(para_factura) != 0:
+        monto_factura = re.sub('["]', '', monto_factura[0])
+        monto_factura=Decimal(monto_factura)
+    if len(para_recibo) != 0:
+        monto_recibo = re.sub('["]', '', monto_recibo[0])
+        monto_recibo=Decimal(monto_recibo)
+    if len(num_factura) !=0:
+        num_factura = int(num_factura[0])
+    if len(num_recibo) !=0:
+        num_recibo = int(num_recibo[0])
+    print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
+    for id_entrega in para_factura:
+        entrega = models.Entrega.objects.get(pk=id_entrega)
+        entrega.cobrar_con_factura(monto_factura,(num_factura))
+    for id_entrega in para_recibo:
+        entrega = models.Entrega.objects.get(pk=id_entrega)
+        entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+    return HttpResponse(json.dumps("ok"),content_type='json')
+
+
+def cobrarClienteMostrarRecibos(request):
+        var=request.POST.getlist('terid[]')
+        print var ,"dddddddddddddddd"
+        entrega_id = re.findall("\d+",request.GET['entrega_id'])
+        entrega = models.Entrega.objects.get(pk=entrega_id[0])
+        recibos = models.Recibo.objects.filter(entrega=entrega)
+        print recibos," estos son los recibos"
+        recibos=serializers.serialize('json', recibos)
+        return HttpResponse(json.dumps({"recibos":(recibos)}),content_type='json')
+
+
+
 '''
+    if entregas[0].monto_restante() <= monto:
+        #solicitar carga de numero de factura
+        return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
+    else:
+        #solicitar numero de recibo
+        entregas[0].cobrate(monto)
+
+
+
+
+
 
 pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
 lotes_dict = []
@@ -1264,7 +1379,7 @@ for pedido in pedidos:
 			cantidad_reservada = lote.reservar_stock(cantidad_buscada)
 			cantidad_buscada -=  cantidad_reservada
 			print "RESERVAR SOTKC RETORNO:" ,cantidad_buscada
-			lotes_dict.append = {"lote:"lote,"cantidad":cantidad_reservada}
+			lotes_dict.append = {"lote":lote,"cantidad":cantidad_reservada}
 			if  cantidad_buscada == 0:
 				# si logro cubrir la cantidad buscada con stock disponible en uno o mas lotes
 				# termino el bucle y voy a buscar otro detalle

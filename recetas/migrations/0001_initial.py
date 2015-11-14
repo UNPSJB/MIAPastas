@@ -71,6 +71,15 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Factura',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('fecha', models.DateField(auto_now_add=True)),
+                ('numero', models.PositiveIntegerField()),
+                ('monto_pagado', models.PositiveIntegerField()),
+            ],
+        ),
+        migrations.CreateModel(
             name='HojaDeRuta',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -139,7 +148,8 @@ class Migration(migrations.Migration):
             name='ProductosLlevados',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cantidad', models.FloatField()),
+                ('cantidad_pedida', models.PositiveIntegerField(default=0)),
+                ('cantidad_enviada', models.PositiveIntegerField(default=0)),
                 ('hoja_de_ruta', models.ForeignKey(to='recetas.HojaDeRuta')),
             ],
         ),
@@ -198,6 +208,16 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
+            name='Recibo',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('fecha', models.DateField(auto_now_add=True)),
+                ('numero', models.PositiveIntegerField()),
+                ('monto_pagado', models.PositiveIntegerField()),
+                ('entrega', models.ForeignKey(to='recetas.Entrega')),
+            ],
+        ),
+        migrations.CreateModel(
             name='Zona',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -216,7 +236,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 9))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 10))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],
@@ -279,6 +299,11 @@ class Migration(migrations.Migration):
             model_name='entregadetalle',
             name='pedido_cliente_detalle',
             field=models.ForeignKey(to='recetas.PedidoClienteDetalle'),
+        ),
+        migrations.AddField(
+            model_name='entrega',
+            name='factura',
+            field=models.ForeignKey(blank=True, to='recetas.Factura', null=True),
         ),
         migrations.AddField(
             model_name='entrega',
