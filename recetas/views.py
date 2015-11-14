@@ -300,6 +300,7 @@ def recetasModificar(request,receta_id):
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
             if detalles_formset.is_valid():
+
                 detalles_formset.save()
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
                 receta_instancia.save()
@@ -1126,25 +1127,22 @@ def hojaDeRutaAlta(request):
         entregas_factory_class= formset_factory(forms.EntregaForm)
         entregas_factory =  entregas_factory_class(request.POST,request.FILES,prefix="entregas")
         if entregas_factory.is_valid():
-            print "LAS ENTREGAS SON VALIDAS"
             for entrega_form in entregas_factory:
                 entrega_instancia = entrega_form.save(hoja_ruta_instancia)
             prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
             prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
             if prod_llevados_factory.is_valid():
-                print "PRODUCTOS LLEVADOS SON VALIDOS"
                 for prod_llevado_form in prod_llevados_factory:
 
                     prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
 
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
-   # return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
-    #return redirect('lotes') #no va esto
-    #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
+
 
 def HojaDeRutaMostrar(request,hoja_id):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
     return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja})
+
 
 def generarTotales(request):
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
@@ -1166,14 +1164,47 @@ def generarTotales(request):
     return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
 
 
-# tiene que llegar a esta view el id de algun hoja de ruta q se quiera hacer rendicion papa!
+
 def rendicionReparto(request,hoja_id=None):
-    print "en views de rendicion de reparto"
-    #return HojaDeRutaPdf(request,1)
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
+    try:
+        hoja.generar_rendicion()
+    except:
+        messages.error(request, 'Llena los campos')
+    detalles = models.EntregaDetalle.objects.filter(entrega__hoja_de_ruta__pk = hoja_id)
+    prefix = "entregas"
+    detalle_factory = forms.EntregaDetalleFormset(prefix=prefix)
+    detalle_inline_factory = forms.EntregaDetalleInlineFormset(initial=list(detalles.values()),prefix=prefix)
+    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)
+    prefix_prod_llevados = "prod_llevados"
 
-    return render(request,"rendicionDeReparto.html",{"hoja":hoja})
+    if request.method == "POST":
+        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix)
+        if detalles_factory_form.is_valid():
+            print "form valido"
+            for det_form in  detalles_factory_form:
+                det_form.rendir_detalle() #busca detalle y le setea cantidad enviada.
+            prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
+            if prod_llevados_forms.is_valid():
+                print "PROD LLEVADOS SON VALIDOS"
+                for prod_llevado_form in prod_llevados_forms:
+                    prod_llevado_form.save()
 
+            totales = hoja.balance()
+            return redirect("rendicionDeRepartoMostrar",hoja.id)
+
+
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja,
+                                                     "detalles_factory":detalle_factory,
+                                                     "prefix":prefix,
+                                                     "prod_llevados_factory":prod_llevados_factory(prefix=prefix_prod_llevados),
+                                                     "prefix_prod_llevados":prefix_prod_llevados
+                                                     })
+
+def RendicionDeRepartoMostrar(request,hoja_id):
+    hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
+    totales = hoja.balance()
+    return render(request,"rendicionDeRepartoMostrar.html",{"hoja_ruta":hoja,"totales":totales})
 
 
 def rendicionHojasDeRutas(request):
@@ -1186,7 +1217,7 @@ def rendicionHojasDeRutas(request):
 
 #********************************************************#
          #    P D F    #
-#********************************************************###
+#********************************************************#
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
     context = Context(context_dict)

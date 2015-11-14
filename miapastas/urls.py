@@ -162,6 +162,8 @@ urlpatterns = [
      url(r'^hojaDeRuta/alta/$',recetasviews.hojaDeRutaAlta,name='hojaDeRutaAlta'),
      url(r'^hojaDeRuta/mostrar/(?P<hoja_id>[0-9]+)$',recetasviews.HojaDeRutaMostrar,name='HojaDeRutaMostrar'),
 
+     url(r'^rendicionDeReparto/mostrar/(?P<hoja_id>[0-9]+)$',recetasviews.RendicionDeRepartoMostrar,name='rendicionDeRepartoMostrar'),
+
 
 
 

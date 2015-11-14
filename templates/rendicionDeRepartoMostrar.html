@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% block contenido %}
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja_ruta.fecha_creacion}}</b></font></p></div>
+            <div class="panel-body">
+                <form class=" form-horizontal">
+                    <h1>{{totales.productos_llevados}}</h1>
+                            {% for key,value in totales.items %}
+                                {{ key }} {{ value }}
+                            {% endfor %}
+                        <div class=" form-group">
+                            <label  class="col-sm-2 control-label">Hoja de Ruta {{hoja_ruta.id}}</label>
+                        </div>
+
+                        <div class=" form-group">
+                            <label class="col-sm-2 control-label">Chofer</label>
+                            <div class="col-sm-10">
+                                {{hoja_ruta.chofer}}
+                            </div>
+                            <button type="button" onclick="imprimirHojaRuta()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
+
+                        </div>
+
+
+
+                        <table class="table table-hover">
+                             <thead>
+                                <tr>
+                                   <th>Llevado</th>
+                                   <th>Entregado</th>
+                                   <th>Sobrantes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for key,value in totales.items %}
+                            <tr>
+                                    {% for k,v in value.items %}
+                                    <td>{{k}} {{v}}</td>
+                                   {% endfor %}
+                                    </td>
+                                </tr>
+                                                {% endfor %}
+
+                            </tbody>
+                         </table>
+
+                </form>
+
+            </div>
+        </div>
+
+            <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+</div>
+</div>
+
+{% endblock %}
+
+
+{% block javascript %}
+<script>
+
+
+
+
+
+
+</script>
+{% endblock %}

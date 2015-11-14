@@ -35,7 +35,26 @@ function armar_input(valor,nombre){
   return probando;
 };
 
+function imputs_llenos(inputs){
+    console.log("en inputs llenos");
+    var falso = 0;
+    $(inputs).each(function(i,val){
+        if (val.value == ""){
+            falso = 1 ;
+            console.log("retornbe falso");
+        }
+    });
+    if (falso == 1){
+        alert("debe llenar todos los campos");
+        return false;
+    }
 
+    return true;
+
+
+
+
+}
 
 function esFloatPositivo(num){
     var esFloat = /^[0-9]+(.[0-9]+)?$/;

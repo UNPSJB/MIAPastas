@@ -9,6 +9,9 @@ import re
 import datetime
 from datetime import timedelta
 from django.utils.safestring import mark_safe
+from django.forms.formsets import formset_factory
+from django.forms import BaseFormSet, formset_factory
+from django.forms.models import inlineformset_factory
 
 def cuit_valido(cuit):
     cuit = str(cuit)
@@ -560,13 +563,38 @@ class EntregaForm(forms.ModelForm):
         entrega = super(EntregaForm, self).save(commit=False)
         entrega.hoja_de_ruta = hoja_de_ruta
         entrega.save()
-        entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
+        #entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
         return entrega
+
 
 class EntregaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.EntregaDetalle
-        fields = ["cantidad_enviada"]
+        fields = ["cantidad_entregada"]
+    detalle= forms.ModelChoiceField(models.EntregaDetalle.objects.all())
+
+    def save(self):
+        print "EN SAVE PAPA: ",self.instance.pk
+
+    def rendir_detalle(self):
+        """ Este metodo, con id_detalle, busca al EntregaDetalle
+            le setea su cantidad entregada. Si la cant entregada es menor igual a 0 BORRA ese detalle.
+        """
+        detalle_entrega = self.cleaned_data["detalle"]
+        cantidad_nueva = self.cleaned_data["cantidad_entregada"]
+        detalle_entrega.cantidad_entregada = cantidad_nueva
+        print "cantidad entregada final: ",detalle_entrega.cantidad_entregada
+        detalle_entrega.save()
+
+class BaseEntregaDetalleFormset(BaseFormSet):
+    def clean(self):
+        print "crean del form base, tengo q validar totales entregaedos no superen totales llevados"
+        if any(self.errors):
+            return
+
+
+EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)
+EntregaDetalleInlineFormset = inlineformset_factory(models.Entrega, models.EntregaDetalle,fields=("cantidad_entregada",))
 
 
   ############### TOTALES PARA BUSCAR EN LOTES ####################
@@ -584,4 +612,21 @@ class ProductosLlevadosForm(forms.ModelForm):
         productos_llevados.hoja_de_ruta = hoja_de_ruta
         productos_llevados.save()
         productos_llevados.generar_detalles()
+
+class ProdLlevadoDetalleRendirForm(forms.Form):
+    detalle_id = forms.ModelChoiceField(models.ProductosLlevadosDetalle.objects.all())
+    cantidad_sobrante = forms.IntegerField()
+
+    def save(self):
+        """ recupera el detalle de prod llevado, y en base a la cantidad sobrane actualiza el stock reservado y disponible del LOTE """
+        det = self.cleaned_data["detalle_id"]
+        cant_sobrante = self.cleaned_data["cantidad_sobrante"]
+        #det.lote.decrementar_stock_reservado(det.cantidad_enviada)
+        det.cantidad_sobrante = cant_sobrante
+        print "EN RENDIR DETALLE: ",det.lote.nro_lote
+        det.lote.decrementar_stock_reservado(det.cantidad)
+        cant_vendida = det.cantidad - cant_sobrante
+        det.lote.decrementar_stock_disponible(cant_vendida)
+        det.save()
+
 
