@@ -38,10 +38,10 @@
                                     <td>{{entrega.pedido.cliente.direccion}}</td>
                                     <td align="center">
                                         <table  cellspacing="2" cellpadding="2" border="2">
-                                            {%for detalle_entrega in entrega.entregadetalle_set.all %}
+                                            {%for detalle_pedido  in entrega.pedido.pedidoclientedetalle_set.all %}
                                                  <tr>
-                                                    <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
-                                                    <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}<td>
+                                                    <td>{{detalle_pedido.producto_terminado}} </td>
+                                                    <td> {{detalle_pedido.cantidad_producto}}<td>
                                                  </tr>
 
                                             {% endfor %}
@@ -52,7 +52,7 @@
                             </tbody>
                          </table>
 
-                </form>>
+                </form>
 
             </div>
         </div>

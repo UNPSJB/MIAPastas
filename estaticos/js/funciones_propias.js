@@ -35,7 +35,26 @@ function armar_input(valor,nombre){
   return probando;
 };
 
+function imputs_llenos(inputs){
+    console.log("en inputs llenos");
+    var falso = 0;
+    $(inputs).each(function(i,val){
+        if (val.value == ""){
+            falso = 1 ;
+            console.log("retornbe falso");
+        }
+    });
+    if (falso == 1){
+        alert("debe llenar todos los campos");
+        return false;
+    }
 
+    return true;
+
+
+
+
+}
 
 function esFloatPositivo(num){
     var esFloat = /^[0-9]+(.[0-9]+)?$/;
@@ -76,7 +95,6 @@ function modificar_cantidad_arreglo(arreglo,nueva_cantidad,id_input,i){
     if (!esEnteroPositivo(nueva_cantidad)){
         alert("la cantidad debe ser un entero positivo");
     }else{
-
         arreglo[i].cantidad = nueva_cantidad;
         id_input.style.background="white";
     }

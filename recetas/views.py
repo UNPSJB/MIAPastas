@@ -28,6 +28,12 @@ import StringIO
 from django.template import Context
 from decimal import Decimal
 
+
+
+
+
+
+
 #from datetime import date, datetime
 #import time
 
@@ -139,7 +145,13 @@ def choferesBaja(request,chofer_id=None):
     """
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
-    chofer.delete()
+    hojas_de_ruta=models.HojaDeRuta.objects.filter(chofer=chofer)
+    if len(hojas_de_ruta) == 0:
+        #chofer.delete()
+        chofer.activo=False
+        chofer.save()
+    else:
+        messages.success(request, 'El chofer: ' + chofer.nombre + ' no se puede eliminar porque tiene hojas de rutas pendientes')
     return redirect('choferes')
 
 
@@ -214,11 +226,12 @@ def insumosBaja(request,insumo_id):
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in insumo.receta_set.all()]
         ))
-        insumo.delete()
+        #insumo.delete()
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
-        insumo.delete()
-
+        #insumo.delete()
+    insumo.activo=False
+    insumo.save()
     return redirect('insumos')
 
 
@@ -301,6 +314,7 @@ def recetasModificar(request,receta_id):
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
             if detalles_formset.is_valid():
+
                 detalles_formset.save()
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
                 receta_instancia.save()
@@ -360,7 +374,9 @@ def recetasBaja(request,receta_id):
     """
     receta = models.Receta.objects.get(pk=receta_id)
     messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
-    receta.delete()
+    #receta.delete()
+    receta.activo=False
+    receta.save()
     return redirect('recetas')
 
 #********************************************************#
@@ -400,13 +416,11 @@ def proveedoresAlta(request):
 def proveedoresBaja(request,proveedor_id =None):
     print "estoy en bajaaa"
     p = models.Proveedor.objects.get(pk=proveedor_id)
-    p.delete()
+    #p.delete()
+    p.activo=False
+    p.save()
     return redirect('proveedores')
-    proveedores = models.Proveedor.objects.all  ()
-    proveedores_form = forms.ProveedorForm()
-    filters, mfilters = get_filtros(request.GET, models.Proveedor)
-    proveedores = models.Proveedor.objects.filter(**mfilters)
-    return redirect('proveedores')
+    
 
 
 def proveedoresModificar(request,proveedor_id =None):
@@ -505,10 +519,12 @@ def productosTerminadosBaja(request, producto_id=None):
         messages.success(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in p.receta_set.all()]
         ))
-        p.delete()
+        #p.delete()
     else:
         messages.success(request, 'El Producto: ' + p.nombre + ', ha sido eliminado correctamente.')
-        p.delete()
+        #p.delete()
+    p.activo=False
+    p.save()
 
     return redirect('productosTerminados')
 
@@ -590,7 +606,9 @@ def zonasBaja(request,zona_id =None):
 
     else:
         messages.success(request, 'La zona: ' + p.nombre + ', ha sido eliminado correctamente.')
-        p.delete()
+        #p.delete()
+        p.activo=False
+        p.save()
 
     return redirect('zonas')
 
@@ -646,9 +664,13 @@ def clientesAlta(request):
 
 @csrf_exempt
 def clientesBaja(request,cliente_id =None):
-    print "estoy en bajaaa"
     p = models.Cliente.objects.get(pk=cliente_id)
-    p.delete()
+    if p.saldo >0:
+        messages.error(request, 'El cliente: ' + p.razon_social + ', no se puede eliminar porque tiene deudas')
+    else:
+        p.activo=False
+        p.save()
+        #p.delete()
     return redirect('clientes')
 
 
@@ -713,7 +735,9 @@ def ciudadesBaja(request,ciudad_id =None):
         postcondicion: La ciudad ha sido dada de baja
     """
     p = models.Ciudad.objects.get(pk=ciudad_id)
-    p.delete()
+    #p.delete()
+    p.activo=False
+    p.save()
     return redirect('ciudades')
 
 
@@ -828,20 +852,20 @@ def pedidosClienteModificar(request, pedido_id):
         pedidosClientes_form = forms.PedidoClienteCambioForm
 
     detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
-    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
+    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia,my_arg = pedido_id)
     productos = models.ProductoTerminado.objects.all() #para detalles
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
-            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
            # fecha_posta = pedido_instancia.fecha_inicio
 
 
         elif pedido_instancia.tipo_pedido == 2:
-            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteOcacionalForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
             #fecha_posta = pedido_instancia.fecha_entrega
         else:
-            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteCambioForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
             #fecha_posta = pedido_instancia.fecha_entrega
 
         if pedidosClientes_form.is_valid():
@@ -1143,25 +1167,22 @@ def hojaDeRutaAlta(request):
         entregas_factory_class= formset_factory(forms.EntregaForm)
         entregas_factory =  entregas_factory_class(request.POST,request.FILES,prefix="entregas")
         if entregas_factory.is_valid():
-            print "LAS ENTREGAS SON VALIDAS"
             for entrega_form in entregas_factory:
                 entrega_instancia = entrega_form.save(hoja_ruta_instancia)
             prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
             prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
             if prod_llevados_factory.is_valid():
-                print "PRODUCTOS LLEVADOS SON VALIDOS"
                 for prod_llevado_form in prod_llevados_factory:
 
                     prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
 
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
-   # return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja_ruta_instancia})
-    #return redirect('lotes') #no va esto
-    #return HttpResponse(json.dumps({ "totales": 1, "datos": "hola"}),content_type='json')
+
 
 def HojaDeRutaMostrar(request,hoja_id):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
     return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja})
+
 
 def generarTotales(request):
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
@@ -1183,18 +1204,49 @@ def generarTotales(request):
     return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
 
 
-# tiene que llegar a esta view el id de algun hoja de ruta q se quiera hacer rendicion papa!
+
 def rendicionReparto(request,hoja_id=None):
-    print "en views de rendicion de reparto"
-    #return HojaDeRutaPdf(request,1)
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
+    try:
+        hoja.generar_rendicion()
+    except:
+        messages.error(request, 'Llena los campos')
+    detalles = models.EntregaDetalle.objects.filter(entrega__hoja_de_ruta__pk = hoja_id)
+    prefix = "entregas"
+    detalle_factory = forms.EntregaDetalleFormset(prefix=prefix)
+    detalle_inline_factory = forms.EntregaDetalleInlineFormset(initial=list(detalles.values()),prefix=prefix)
+    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)
+    prefix_prod_llevados = "prod_llevados"
 
-    return render(request,"rendicionDeReparto.html",{"hoja":hoja})
+    if request.method == "POST":
+        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix)
+        if detalles_factory_form.is_valid():
+            for det_form in  detalles_factory_form:
+                det_form.rendir_detalle() #busca detalle y le setea cantidad enviada.
+            prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
+            if prod_llevados_forms.is_valid():
+                for prod_llevado_form in prod_llevados_forms:
+                    prod_llevado_form.save()
+                hoja.rendida = True
+                hoja.save()
+            return redirect("rendicionDeRepartoMostrar",hoja.id)
 
+
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja,
+                                                     "detalles_factory":detalle_factory,
+                                                     "prefix":prefix,
+                                                     "prod_llevados_factory":prod_llevados_factory(prefix=prefix_prod_llevados),
+                                                     "prefix_prod_llevados":prefix_prod_llevados
+                                                     })
+
+def RendicionDeRepartoMostrar(request,hoja_id):
+    hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
+    totales = hoja.balance()
+    return render(request,"rendicionDeRepartoMostrar.html",{"hoja_ruta":hoja,"totales":totales})
 
 
 def rendicionHojasDeRutas(request):
-    hojas = models.HojaDeRuta.objects.all() #a futuro filtrar por hojas de rutas no rendidas
+    hojas = models.HojaDeRuta.objects.filter(rendida=False) #a futuro filtrar por hojas de rutas no rendidas
     print hojas
     return render(request,"rendicionHojasDeRutas.html",{"hojas":hojas})
 
@@ -1203,7 +1255,7 @@ def rendicionHojasDeRutas(request):
 
 #********************************************************#
          #    P D F    #
-#********************************************************###
+#********************************************************#
 def render_to_pdf(template_src, context_dict):
     template = get_template(template_src)
     context = Context(context_dict)
@@ -1235,28 +1287,38 @@ def LotesHojaRutaPdf(request,hoja_id=None):
 
 
 
-def cobrarCliente(request):
+#********************************************************#
+         #    COBRAR CLIENTE  #
+#********************************************************#
+
+def cobrarClienteFiltrado(request,cliente_id=None):
     entregas_no_facturadas = []
-    entregas = models.Entrega.objects.all()
+    cliente=models.Cliente.objects.get(pk=(cliente_id))
+    entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
     saldo = 0
     for entrega in entregas:
         print "soy entrega:::",entrega.factura
         if entrega.factura == None:
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()
+            print entrega.monto_restante()," eerere"
     clientes = models.Cliente.objects.all()
     entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.monto_restante())
-
+    print entregas_no_facturadas,"saldoo", saldo
     return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"clientes":clientes,"saldo":saldo})
+
+
+def cobrarCliente(request):
+    clientes = models.Cliente.objects.all()
+    return render(request, "cobrarCliente.html", {"entregas":[],"clientes":clientes,"saldo":-1})
 
 
 
 def cobrarClienteSaldo(request):
     entregas = re.findall("\d+",request.GET['entregas'])
-    mont = re.findall("\d+",request.GET['monto'])
-    print entregas,"entregas"
-    for mon in mont:
-        monto=mon
+    mont = re.findall("\S+",request.GET['monto'])
+    monto = re.sub('["]', '', mont[0])
+    monto=monto.replace(',', '.')
     monto=Decimal(monto)
     entregas_para_factura = {}
     entregas_para_recibo={}
@@ -1272,23 +1334,38 @@ def cobrarClienteSaldo(request):
         else:
             entregas_para_factura[entrega_id]="%s" % entrega.fecha
         monto -= entrega.monto_restante()
+    print "monto_", monto_recibo
     return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
 
 def cobrarClienteFacturar(request):
     para_factura = re.findall("\d+",request.GET['para_facturas'])
     para_recibo = re.findall("\d+",request.GET['para_recibo'])
-    monto_recibo = re.findall("\d+",request.GET['monto_recibo'])
-    monto_factura = re.findall("\d+",request.GET['monto_factura'])
+    monto_recibo = re.findall("\S+",request.GET['monto_recibo'])
+    monto_factura = re.findall("\S+",request.GET['monto_factura'])
     num_factura = re.findall("\d+",request.GET['num_factura'])
     num_recibo = re.findall("\d+",request.GET['num_recibo'])
+    cliente=None
+    if len(para_factura) != 0:
+        monto_factura = re.sub('["]', '', monto_factura[0])
+        monto_factura=Decimal(monto_factura)
+        entrega = models.Entrega.objects.get(pk=para_factura[0])
+        cliente=entrega.pedido.cliente
+        cliente.saldo -=float(monto_factura)
 
-    monto_factura = Decimal(monto_factura[0])
-    monto_recibo = Decimal(monto_recibo[0])
+
+    if len(para_recibo) != 0:
+        monto_recibo = re.sub('["]', '', monto_recibo[0])
+        monto_recibo=Decimal(monto_recibo)
+        if cliente==None:
+            entrega = models.Entrega.objects.get(pk=para_recibo[0])
+            cliente=entrega.pedido.cliente
+        cliente.saldo -=float(monto_recibo)
+        cliente.save()
     if len(num_factura) !=0:
         num_factura = int(num_factura[0])
+
     if len(num_recibo) !=0:
         num_recibo = int(num_recibo[0])
-
     print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
     for id_entrega in para_factura:
         entrega = models.Entrega.objects.get(pk=id_entrega)
@@ -1296,13 +1373,22 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+    print "monto factura",monto_factura," monto recibo: ",monto_recibo
+    print "monto cliente ",cliente.saldo
 
-    print "SALIIIIIIIIIIIII"
+
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 
-
-
+def cobrarClienteMostrarRecibos(request):
+        var=request.POST.getlist('terid[]')
+        print var ,"dddddddddddddddd"
+        entrega_id = re.findall("\d+",request.GET['entrega_id'])
+        entrega = models.Entrega.objects.get(pk=entrega_id[0])
+        recibos = models.Recibo.objects.filter(entrega=entrega)
+        print recibos," estos son los recibos"
+        recibos=serializers.serialize('json', recibos)
+        return HttpResponse(json.dumps({"recibos":(recibos)}),content_type='json')
 
 
 
@@ -1313,9 +1399,6 @@ def cobrarClienteFacturar(request):
     else:
         #solicitar numero de recibo
         entregas[0].cobrate(monto)
-
-
-
 
 
 

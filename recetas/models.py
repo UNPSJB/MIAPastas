@@ -6,6 +6,22 @@ import datetime
 from multiselectfield import MultiSelectField
 from django.utils import timezone
 
+
+
+
+
+#clase para redefinir objects y obtener solo instancias activas
+
+class ManagerActivos(models.Manager):
+    def get_queryset(self):
+        return super(ManagerActivos, self).get_queryset().filter(activo=True)
+
+
+
+
+
+
+
 TIPODIAS = (
         (1, "lunes"),
         (2, "martes"),
@@ -18,13 +34,15 @@ TIPODIAS = (
 #********************************************************#
                #     C H O F E R E S    #
 #********************************************************#
-class Chofer (models.Model):
+class Chofer (models.Model):    
     FILTROS = ['cuit_icontains', 'nombre_icontains']
     cuit= models.CharField(max_length=20, unique=True)
     nombre= models.CharField(max_length=100)
     direccion= models.CharField(max_length=100)
     telefono=models.PositiveIntegerField()
     e_mail=models.CharField(max_length=100)
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s" % (self.nombre)
@@ -99,7 +117,9 @@ class Insumo(models.Model):
     descripcion = models.TextField("Descripcón")
     stock = models.IntegerField(blank=True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
+    
     # Control de stock
     def incrementar(self, cantidad, unidad=NONE):
         self.stock += self.CONVERT[unidad](cantidad)
@@ -129,7 +149,8 @@ class ProductoTerminado(models.Model):
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
     dias_vigencia = models.PositiveIntegerField(default=01)
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s"% self.nombre
@@ -150,7 +171,8 @@ class Receta(models.Model):
     cant_prod_terminado= models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)
     insumos = models.ManyToManyField(Insumo, through="RecetaDetalle")
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%d) Bolsines" % (self.nombre, self.cant_prod_terminado)
@@ -180,6 +202,8 @@ class Proveedor(models.Model):
     cuit= models.PositiveIntegerField(unique=True)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
 #RELACION UNO A MUCHOS CON pedidosProveedor
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%d %s)" % (self.razon_social, self.telefono, self.cuit)
@@ -194,7 +218,8 @@ class Zona(models.Model):
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
     #el campo "activo" es para las bajas logicas
-    #activo = models.BooleanField(default=True);
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return (self.nombre)
@@ -210,7 +235,8 @@ class Ciudad(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     codigo_postal = models.PositiveIntegerField(unique=True)
     zona = models.ForeignKey(Zona,related_name="ciudades")
-
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.codigo_postal, self.zona)
 
@@ -232,7 +258,9 @@ class Cliente(models.Model):
     telefono= models.PositiveIntegerField()
     email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
     es_moroso = models.BooleanField(default=False)
-
+    saldo = models.FloatField(default=0)
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
@@ -254,6 +282,9 @@ class PedidoCliente(models.Model):
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
+    activo = models.BooleanField(default=True)
+    objects=ManagerActivos()    #si es ocacional o de cambio, cuando hago rendicion hay q haccer la baja, y si es fijo???
+
     def esParaHoy(self):
         pass
 
@@ -390,7 +421,13 @@ class Lote(models.Model):
         # falta recorrer los detalles de productos EXTRAS!
         return cantidad_total_reservada
 
+    def decrementar_stock_reservado(self,cant):
+        self.stock_reservado -= cant
+        self.save()
 
+    def decrementar_stock_disponible(self,cant):
+        self.stock_disponible -= cant
+        self.save()
 
 
 
@@ -409,8 +446,55 @@ class Factura(models.Model):
 class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
+    rendida = models.BooleanField(default=False)
+
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
+    def generar_rendicion(self):
+        # aca tengo que generar TODOS los detalles de las entregas.
+        # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.
+        tiene_prod = False
+        for entrega in self.entrega_set.all():
+            if len(entrega.entregadetalle_set.all())>0:
+                raise "ya tengo rendicion"
+            for prod_llevado in self.productosllevados_set.all():
+                for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():
+                    if detalle_pedido.producto_terminado == prod_llevado.producto_terminado:
+                        tiene_prod=True
+                        break
+                if not tiene_prod:
+                    entrega.generar_detalle(None, prod_llevado.producto_terminado)
+                else:
+                    entrega.generar_detalle(detalle_pedido, None)
+                tiene_prod=False
+
+
+    def balance(self):
+        productos ={}
+        sobrantes ={}
+        for prod_llevado in self.productosllevados_set.all():
+            productos[prod_llevado.producto_terminado.id] = prod_llevado.cantidad_enviada
+
+            for det in prod_llevado.productosllevadosdetalle_set.all():
+                try:
+                    sobrantes[prod_llevado.producto_terminado.id] += det.cantidad_sobrante
+                except:
+                    sobrantes[prod_llevado.producto_terminado.id] =0
+                    sobrantes[prod_llevado.producto_terminado.id] += det.cantidad_sobrante
+
+        print "BALANCE productos llevados: ", productos
+        productos_llevados = productos
+        for entrega in self.entrega_set.all():
+            for detalle_entrega in entrega.entregadetalle_set.all():
+                if detalle_entrega.producto_terminado:
+                    productos[detalle_entrega.producto_terminado.id] -= detalle_entrega.cantidad_entregada
+                else:
+                    productos[detalle_entrega.pedido_cliente_detalle.producto_terminado.id] -= detalle_entrega.cantidad_entregada
+        print "Esto tenria que haber sobrado !!:",productos
+        # y ahora como sé que fue lo que realmente sobro???? CANTIDAD_SOBRANTE en detalle producto_llevado
+        print "LO QUE REALMENTE SOBRo: ",sobrantes
+        totales = {"sobrantes_reales":productos,"productos_llevados":productos_llevados,"sobrantes_ingresados":sobrantes}
+        return totales
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
@@ -418,7 +502,12 @@ class ProductosLlevados(models.Model):
     producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
 
+
     def generar_detalles(self):
+        """ En base al producto y a la cantidad pedida, sale a buscarlo en los lotes
+            por cada lote que se necesite para satisfacer la cantidad pedida se crea un detalle asociado a el
+            junto con la cantidad que pudo sacarle a ese lote.
+        """
         cantidad_buscada = self.cantidad_pedida
         for lote in Lote.objects.filter(producto_terminado = self.producto_terminado,
                                         fecha_vencimiento__gte=datetime.date.today(),
@@ -432,22 +521,20 @@ class ProductosLlevados(models.Model):
                                                     producto_llevado = self)
             if cantidad_buscada == 0:
                 break
+        if cantidad_buscada > 0:
+            print "Faltaron ",cantidad_buscada, "unidades para el producto: ",self.producto_terminado
         self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
+        self.save()
+        print "en generar detalles: cantida enviada: ",self.cantidad_enviada
 
-    def setear_cantidad_enviada(self):
-        detalles = self.productosllevadosdetalle_set.all()
-        cantidad_total = 0
-        for detalle in detalles:
-            cantidad_total += detalle.cantidad
-        print "en actualizar cantidades llevadas: ",cantidad_total
-        self.cantidad_pedida = cantidad_total
+
 
 
 class ProductosLlevadosDetalle(models.Model):
     cantidad = models.PositiveIntegerField()
     lote = models.ForeignKey(Lote)
     producto_llevado= models.ForeignKey(ProductosLlevados)
-
+    cantidad_sobrante = models.PositiveIntegerField(null=True)
 
 class Entrega(models.Model):
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
@@ -493,26 +580,43 @@ class Entrega(models.Model):
         if (len(factura) == 0):
             factura=Factura.objects.create(numero=numero_factura,fecha=date.today(),monto_pagado=monto)
             self.factura=factura
-            print "soy factura de model ",factura.numero,"y de tipooo", type(factura)
         else:
             self.factura=factura[0]
-            print "soy factura de lista model ",factura[0].numero," desde la entrega ",self.factura.numero,"soy entrega id: ",self.pk
         self.save()
 
     def cobrar_con_recibo(self,monto,numero_recibo=None):
-        print "con reciboooooooooooo"
-
         recibo = Recibo.objects.create(entrega=self,fecha=date.today(),numero=numero_recibo,monto_pagado=monto)
 
+    def generar_detalle(self,detalle_pedido=None, prod_terminado=None):
+        print "EN GENERAR DETALLE:"
 
+        if detalle_pedido:
+            precio = detalle_pedido.producto_terminado.precio
+        else:
+            precio = prod_terminado.precio
+
+        detalle = EntregaDetalle.objects.create(entrega=self,
+                                    pedido_cliente_detalle = detalle_pedido,
+                                      producto_terminado = prod_terminado,
+                                        cantidad_entregada=0,
+                                    precio = precio)
+
+        print "PRECIO PAPAAAA:", detalle.precio
+        detalle.save()
+        print "guarde detalle nuevo"
 
 class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
     cantidad_enviada = models.PositiveIntegerField(null=True) #no va
     cantidad_entregada = models.PositiveIntegerField(null=True)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
-    pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle)
+    pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle,null=True)
+    producto_terminado = models.ForeignKey(ProductoTerminado,null=True)
 
+    def get_producto_terminado(self):
+        if self.producto_terminado is not None:
+            return self.producto_terminado
+        return self.pedido_cliente_detalle.producto_terminado
 class LoteEntregaDetalle(models.Model):
     entrega_detalle = models.ForeignKey(EntregaDetalle)
     lote = models.ForeignKey(Lote)

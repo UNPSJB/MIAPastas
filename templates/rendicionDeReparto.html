@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load bootstrap3 %}
+{% load recetas %}
 {% block contenido %}
 
 <div class="container">
@@ -57,7 +58,8 @@
                                                      <td><input producto_id="{{producto_llevado.producto_terminado.id}}"
                                                                 lote_id="{{det.lote.nro_lote}}"
                                                                 cant_enviada="{{det.cantidad}}"
-                                                                type="number" class="input-sobrantes" placeholder="Cantidad Sobrante "></td>
+                                                                detalle_id="{{det.id}}"
+                                                                type="number" class="input-sobrantes" value="0"></td>
                                                  </tr>
                                             {% endfor %}
                                             </table>
@@ -66,13 +68,19 @@
                                 {% endfor %}
                             </tbody>
                         </table>
-                            <button id="boton-sobrantes" type="button" class="btn btn-primary pull-right">Aceptar</button>
-                                      <p>&nbsp;</p>
-                                      <p>&nbsp;</p>
+                            <button id="boton-sobrantes-modificar" type="button" class="btn btn-primary pull-right">Modificar</button>
+                            <button id="boton-sobrantes-aceptar" type="button" class="btn btn-primary pull-right">Aceptar</button>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
                 </form>
 
-                <form action="" method="post" class="form-horizontal panel panel-default ">
+                <form action="" method="post" class="form-horizontal panel panel-default " onsubmit="return validacion_final()">
                     <div class="panel-heading"><p class=" login-title"><font face="tahoma" size="2" color="black"><b>Entregas</b></font></p></div>
+                     {% csrf_token %}
+                    {{ detalles_factory.management_form }}
+                    {{ prod_llevados_factory.management_form }}
+
+
                     <table class="table table-hover">
                          <thead>
                             <tr>
@@ -82,24 +90,29 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {% for e in hoja.entrega_set.all %}
+                            {% for entrega  in hoja.entrega_set.all %}
                                <tr>
-                                  <td> Nro {{e.pedido.id}} {{e.pedido.get_tipo_pedido_display}}</td>
-                                  <td>{{e.pedido.cliente}}</td>
+                                  <td> Nro {{entrega.pedido.id}} {{entrega.pedido.get_tipo_pedido_display}}</td>
+                                  <td>{{entrega.pedido.cliente}}</td>
                                   <td align="center">
                                         <table   border="2">
                                             <th>Producto</th>
                                             <th>Cantidad Pedida</th>
-                                            <th>Precio/u </th>
                                             <th>Cantidad Entregado</th>
-                                            {%for detalle_entrega in e.entregadetalle_set.all %}
+                                            {%for detalle_entrega in entrega.entregadetalle_set.all %}
                                                  <tr>
-                                                    <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
+                                                     <td>{% producto_id detalle_entrega %}</td>
+                                                     {% if detalle_entrega.producto_terminado %}
+                                                        <td>{{detalle_entrega.producto_terminado}} </td>
+                                                     {% else%}
+                                                        <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
+                                                     {% endif%}
                                                     <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}</td>
-                                                    <td>{{detalle_entrega.precio}} $ </td>
-                                                    <td> <input data-detalle="{{detalle_entrega.id}}"
-                                                                data-entrega="{{e.id}}" type="text" class="input-entregas"
+                                                    <td> <input entrega_id="{{entrega.id}}" type="text" class="input-entregas"
+                                                                producto_id = "{%producto_id detalle_entrega%}"
+                                                                detalle_id = "{{detalle_entrega.id}}"
                                                                 placeholder="Cantidad "
+                                                                value="0">
                                                             </td>
                                                  </tr>
 
@@ -111,10 +124,27 @@
                         </tbody>
                  </table>
 
-                    <div id="metiendola"></div>
-      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+
+                    <button id="boton-entregas-modificar" type="button" class="btn btn-primary pull-right">Modificar</button>
+                            <button id="boton-entregas-aceptar" type="button" class="btn btn-primary pull-right">Aceptar</button>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+                    <p>&nbsp;</p>
+
+
+
+                    <div id="hidden-entregas"></div>
+
+                    {% buttons %}
+                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                        {% bootstrap_icon "star" %} Registrar Rendicion
+                    </button>
+                  {% endbuttons %}
 
                 </form>
+                      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
             </div>
     </div>
 </div>
@@ -134,59 +164,140 @@
         {%endfor%}
     ];
 
-    var listado_productos_totales = [
-        {% for producto_llevado in hoja.productosllevados_set.all %}
+
+var listado_productos_totales={};
+var listado_productos_sobrantes={};
+var listado_productos_entregados={};
+    {% for producto_llevado in hoja.productosllevados_set.all %}
             {% for detalle in producto_llevado.productosllevadosdetalle_set.all%}
-                {"producto_id":{{producto_llevado.producto_terminado.id}},
-                "lote_id":{{detalle.lote.nro_lote}},
-                "cantidad":{{detalle.cantidad}}
-                },
+                listado_productos_totales[{{producto_llevado.producto_terminado.id}}]= {{producto_llevado.cantidad_enviada}};
+                listado_productos_sobrantes[{{producto_llevado.producto_terminado.id}}]=0;
+                listado_productos_entregados[{{producto_llevado.producto_terminado.id}}]=0;
             {%endfor%}
         {% endfor%}
-    ]
+
 
 console.log("TOTALES PRODUCTOS");
 console.log(listado_productos_totales);
+console.log(listado_productos_sobrantes);
+var prefix_entregas = "{{prefix}}"; //este tiene q venir desde la view
+var prefix_prod_llevados = "{{prefix_prod_llevados}}";
 
-var prefix_entregas = "entregas"; //este tiene q venir desde la view
+function limpiar_diccionario(dic){
+    for (i in dic){
+        dic[i] = 0;
+    }
+
+}
 
 
-
-$("#boton-sobrantes").click(function(){
+$("#boton-sobrantes-aceptar").click(function(){
     console.log("EN SOBRANTES");
     var sobrantes = $(".input-sobrantes");
-    //validar_inputs_llenos(sobrantes);
-    $(sobrantes).each(function(i,val){
+    if (imputs_llenos(sobrantes) == true){
+        console.log("todos llenos");
+        $(sobrantes).each(function(i,val){
+            prod_id = val.getAttribute("producto_id");
+            enviado = parseInt(val.getAttribute("cant_enviada"));
+            valor_nuevo = parseInt(val.value);
+            if (enviado < valor_nuevo){
+                alert("No pueden sobrar mas productos de los que se llevaron");
+            }else{
+                listado_productos_sobrantes[prod_id] = valor_nuevo;
+                console.log("-------------------------");
+                $(this).prop('readonly',true);
+                }
+        });
+    }
+    console.log(listado_productos_sobrantes);
+});
 
-        var z = _.find(listado_productos_totales,{producto_id:val.getAttribute("producto_id")});
-        console.log(val.getAttribute("producto_id"));
-        console.log(z);
-        console.log("-------------------------");
-
-
-
+$("#boton-sobrantes-modificar").click(function(){
+    $($(".input-sobrantes")).each(function(i,val){
+        $(listado_productos_sobrantes).each(function(i,val){
+            for (prop in val){
+                listado_productos_sobrantes[prop]=0;
+            }
+        });
+        $(this).prop('readonly',false);
     });
+    console.log(listado_productos_sobrantes);
 });
 
 
+    function hay_balance(){
+        console.log("en hay balance");
+        var prod_ids = _.keys(listado_productos_totales);
+        console.log(prod_ids);
+        var count=0;
+        $(prod_ids).each(function(i,id){
+            count = listado_productos_sobrantes[id] + listado_productos_entregados[id];
+            console.log("count es: "+count);
+            console.log("el producto tiene un total: "+listado_productos_totales[id]);
+            if (listado_productos_totales[id] < count){
+                alert("Error para el producto "+ id+ " se cargaron de mas!");
+                //return false;
+            }else{
+                if (listado_productos_totales[id] > count ){
+                    var a = listado_productos_totales[id] - count;
+                    alert("faltan registrar para el producto "+id+" unidades: "+a);
+                }
+            }
+        })
+        alert("fin balance");
+        return false;
+    }
 
 
 
-
-    function validacion(){
-
+    function validacion_final(){
+    console.log("en validacion_final");
         var cant_entregadas = $(".input-entregas");
         var diccionario={};
         $(cant_entregadas).each(function(i,val){
-            console.log(val);
-            diccionario[prefix_entregas+"-"+i+"-id"]= val.getAttribute('data-detalle');
-            diccionario[prefix_entregas+"-"+i+"-entrega"]= val.getAttribute('data-entrega');
-            diccionario[prefix_entregas+"-"+i+"-cantidad_enviada"]= val.value;
+            console.log("ID PRODUCTOOOOOOOOOO");
+            console.log(val.getAttribute('producto_id'));
+            prod_id = parseInt(val.getAttribute('producto_id'));
+            nueva_cantidad = parseInt(val.value);
+            listado_productos_entregados[prod_id] += nueva_cantidad;
             });
         console.log(diccionario);
+        console.log(listado_productos_entregados);
+        if (hay_balance()){
+            return true;
+        }
+       // limpiar_diccionario(listado_productos_entregados);
+        armar_inputs();
         return true;
     }
 
+
+    function armar_inputs(){
+        var html = "";
+        var count=0;
+        $(".input-entregas").each(function(i,val){
+            html = html + armar_hidden(prefix_entregas,val.value,"cantidad_entregada",i);
+            html = html + armar_hidden(prefix_entregas,val.getAttribute("detalle_id"),"detalle",i);
+            count  = i+1;
+        });
+        document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = count;
+
+
+        $(".input-sobrantes").each(function(i,val){
+
+            html = html + armar_hidden(prefix_prod_llevados,val.value,"cantidad_sobrante",i);
+            html = html + armar_hidden(prefix_prod_llevados,val.getAttribute("detalle_id"),"detalle_id",i);
+            count=i+1;
+
+        });
+
+        console.log(html);
+        $("#hidden-entregas").html(html);
+        console.log(prefix_prod_llevados)
+        alert(count);
+        document.getElementById("id_"+prefix_prod_llevados+"-TOTAL_FORMS").value = count;
+
+    }
 
 
 </script>
