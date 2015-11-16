@@ -13,6 +13,57 @@ from forms import SignUpForm
 from django.contrib.auth.decorators import login_required
 
 
+from recetas import models
+from recetas import views
+from recetas import forms
+import datetime
+from datetime import date
+import re #esto sirve para usar expresiones regulares
+
+
+
+def get_order(get):
+    if "o" in get:
+        return get["o"]
+
+
+fechareg = re.compile("^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$") #esta es una expresion regular par las fechas
+##permite fechas del siguiente tipo: dd/mm/aa or d/m/aa or dd/mm/aaaa etc....
+#permite fechas del siguiente tipo: dd-mm-aa or d-m-aa or dd-mm-aaaa etc....
+
+def get_filtros(get, modelo):
+    filtros = {}
+    filtros_modelo = {}
+    for filtro in modelo.FILTROS:
+        attr = filtro.split("__")[0]
+        field = None
+        try:
+            field = modelo._meta.get_field(attr)
+        except:
+            pass
+        if attr in get and get[attr]:
+            texto = get[attr]
+            match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
+            if match is not None:
+                ano = int(match.groups()[2])
+                mes = int(match.groups()[1])
+                dia = int(match.groups()[0])
+                fecha = datetime.date(ano,mes,dia)
+                value = datetime.date(ano,mes,dia)
+            else:
+                value = texto
+            if hasattr(modelo, "FILTROS_MAPPER") and filtro in modelo.FILTROS_MAPPER:
+                filtro = modelo.FILTROS_MAPPER[filtro]
+            filtros[attr] = texto
+            filtros_modelo[filtro] = value
+        elif attr in get and field is not None and field.get_internal_type() == "BooleanField":
+            # Es un valor booleano
+            filtros[attr] = ""
+            filtros_modelo[filtro] = True
+    print(filtros, filtros_modelo)
+    return filtros, filtros_modelo
+
+
 
 @login_required()
 def index(request):
@@ -281,4 +332,28 @@ def documentacion(request):
 
 @login_required()
 def listadoClientesMorosos(request):
-    return render(request, "listadoClientesMorosos.html", {})
+    clientes = models.Cliente.objects.filter(saldo__gt=0)
+    print("pase por acaaaaaa")
+    print(clientes)
+    print("pase por acaaaaaa")
+    ciudades= models.Ciudad.objects.all()
+    return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
+
+@login_required()
+def listadoClientesMorososFiltros(request):
+    if request.method == "GET":
+        print("Entreee al GETTT")
+        filters, mfilters = get_filtros(request.GET, models.Cliente)
+        clientes = models.Cliente.objects.filter(**mfilters)
+        ciudades= models.Ciudad.objects.all()
+        return render(request, "listadoClientesMorosos.html",
+                  {"clientes": clientes,
+                   "filtros": filters,
+                   "ciudades":ciudades})
+
+    clientes = models.Cliente.objects.filter(saldo__gt=0)
+    print("pase por acaaaaaa")
+    print(clientes)
+    print("pase por acaaaaaa")
+    ciudades= models.Ciudad.objects.all()
+    return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})

@@ -1,12 +1,78 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
-    hola mundo!
-    hay que recorrer las entregas no facturadas
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
 
-</body>
-</html>
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Clientes Morosos</b></font></p></div>
+            <div class="panel-body">
+                 <!--Formulario del FILTRO-->
+            <div class="row">
+                 <form method="get" class="form-inline col-md-5" action="{% url 'listadoClientesMorososFiltros' %}">
+                    <div class="form-group">
+                        <label for="saldo">Saldo (Mayor igual)</label>
+                        <input type="number" class="form-control" value="{{filtros.saldo}}" name="saldo" id="saldo" >
+                    </div>
+
+
+
+                    <button type="submit" class="btn btn-default">Filtrar</button>
+                                         <p>&nbsp;</p>
+
+                  </form>
+                  <form method="get" class="form-inline col-md-1" action="{% url 'listadoClientesMorosos' %}">
+                      <button type="submit" class="btn btn-default">Filtrar Todos</button>
+                                         <p>&nbsp;</p>
+                  </form>
+            </div>
+            <div class="row">
+                <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
+                    <p>&nbsp;</p>
+                          <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Cuit</th>
+                                <th>Razon Social</th>
+                                <th>Ciudad</td>
+                                <th>Direccion</td>
+                                <th>Telefono</td>
+                                <th>Monto adeudado</td>
+                            </tr>
+                            </thead>
+                              <tbody>
+                                {% for cliente in clientes %}
+                                <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
+                                    <td>{{cliente.cuit_cuil}}</td>
+                                    <td>{{cliente.razon_social}}</td>
+                                    <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
+                                    <td>{{cliente.direccion}}</td>
+                                    <td>{{cliente.telefono}}</td>
+                                    <td>{{cliente.saldo}}</td>
+                                </tr>
+                                {% endfor %}
+                              </tbody>
+                          </table>
+                </div>
+
+           <div class="col-md-2">
+
+                  <!--<a class="btn" href = "{% url 'clientesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>-->
+                  <a class="btn" href = "#"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Exportar a Excel </span></b></font></a>
+           </div>
+            </div>
+            <hr/>
+                <div class="col-md-2">
+                    <div class="form-group">
+                        <label for="totalAdeudado">TOTAL ADEUDADO</label>
+                        <input type="text" class="form-control" value="" name="totalAdeudado" id="totalAdeudado" READONLY>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>
+
+    <!-- Este es el fin del formulario de Listado -->
+
+
+{% endblock %}
