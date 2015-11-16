@@ -319,8 +319,6 @@ class ClienteForm(forms.ModelForm):
         return direccion
 
 
-
-
 class PedidoProveedorAltaForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor

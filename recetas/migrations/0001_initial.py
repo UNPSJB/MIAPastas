@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha', models.DateField(auto_now_add=True)),
                 ('numero', models.PositiveIntegerField()),
-                ('monto_pagado', models.PositiveIntegerField()),
+                ('monto_pagado', models.DecimalField(max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
             ],
         ),
         migrations.CreateModel(
@@ -213,7 +213,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('fecha', models.DateField(auto_now_add=True)),
                 ('numero', models.PositiveIntegerField()),
-                ('monto_pagado', models.PositiveIntegerField()),
+                ('monto_pagado', models.DecimalField(max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
                 ('entrega', models.ForeignKey(to='recetas.Entrega')),
             ],
         ),
@@ -236,7 +236,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 10))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 12))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],
@@ -303,7 +303,7 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='entrega',
             name='factura',
-            field=models.ForeignKey(blank=True, to='recetas.Factura', null=True),
+            field=models.ForeignKey(to='recetas.Factura', null=True),
         ),
         migrations.AddField(
             model_name='entrega',

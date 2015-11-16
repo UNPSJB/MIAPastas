@@ -278,3 +278,7 @@ def documentacion(request):
     #return redirect("lotes")
     return render(request,"/recetas/documentacion/_build/html/index.html", {})
     #return render(request, , {})
+
+@login_required()
+def listadoClientesMorosos(request):
+    return render(request, "listadoClientesMorosos.html", {})
