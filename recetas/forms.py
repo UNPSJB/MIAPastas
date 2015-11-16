@@ -416,15 +416,15 @@ class PedidoClienteFijoModificarForm(forms.ModelForm):
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
          #   'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}#ponerlo como un boton "cancelarPedido"
 
-    def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
-        cleaned_data = super(PedidoClienteFijoModificarForm, self).clean()
-        cliente = cleaned_data["cliente"]
-        pedidos = cliente.pedidocliente_set.all()
-        fecha = self.cleaned_data['fecha_inicio']
+    #def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
+     #   cleaned_data = super(PedidoClienteFijoModificarForm, self).clean()
+      #  cliente = cleaned_data["cliente"]
+       # pedidos = cliente.pedidocliente_set.all()
+        #fecha = self.cleaned_data['fecha_inicio']
 
-        if fecha < datetime.date.today():
-            raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
-        return fecha
+        #if fecha < datetime.date.today():
+         #   raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
+        #return fecha
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):
