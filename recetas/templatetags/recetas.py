@@ -35,11 +35,11 @@ def devolver_detalle(entrega,prod):
 	for d in entrega.pedido.pedidoclientedetalle_set.all():
 		if d.producto_terminado == prod:
 			return d.id
-	return None
+	return ""
 
 @register.simple_tag
 def devolver_producto(entrega,prod):
 	for d in entrega.pedido.pedidoclientedetalle_set.all():
 		if d.producto_terminado == prod:
-			return None
+			return ""
 	return prod.id
