@@ -415,7 +415,7 @@ class PedidoClienteFijoModificarForm(forms.ModelForm):
         widgets = {
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
          #   'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}#ponerlo como un boton "cancelarPedido"
-
+'''
     def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
         cleaned_data = super(PedidoClienteFijoModificarForm, self).clean()
         cliente = cleaned_data["cliente"]
@@ -425,7 +425,7 @@ class PedidoClienteFijoModificarForm(forms.ModelForm):
         if fecha < datetime.date.today():
             raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
         return fecha
-
+'''
 
 class PedidoClienteDetalleForm(forms.ModelForm):
     class Meta:
@@ -443,11 +443,9 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         exclude = ['productos','tipo_pedido','activo']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-    #my_field = forms.CharField(required=False)
-
+    
     def clean(self):
         cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
-        #print "pruebaaaaaaaaaa", self.instance.my_field, " s "
         if not self.errors:
             cliente = cleaned_data["cliente"]
             pedidos = cliente.pedidocliente_set.all()
@@ -455,31 +453,22 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             for pedido in pedidos:
                 if pedido.tipo_pedido == 2:
                     fecha =pedido.pedidoocacional.fecha_entrega
-                    print "iddddddddd",cleaned_data, " "
-                    if (dia == fecha):
+                    if (dia == fecha) and pedido.id != int(self.my_arg):
                         id = str(pedido.id)
                         raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today():
+        if fecha < datetime.date.today() and self.my_arg == None:
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
-        try:
-            my_arg = kwargs.pop('my_arg')
-            self.url = kwargs.pop('my_arg')
-            super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
-            #self.instance.my_field=my_arg
-        except:
-            super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
-
-        
-        
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
 
 
 class PedidoClienteCambioForm(forms.ModelForm):
@@ -499,25 +488,23 @@ class PedidoClienteCambioForm(forms.ModelForm):
                 for pedido in pedidos:
                     if pedido.tipo_pedido == 3:
                         fecha =pedido.pedidocambio.fecha_entrega
-                        if dia == fecha :
+                        if (dia == fecha) and pedido.id != int(self.my_arg):
                             id = str(pedido.id)
                             raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today():
+        if fecha < datetime.date.today() and self.my_arg == None:
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
-        my_arg = kwargs.pop('my_arg')
-
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
         
-        self.fields['my_field'] = forms.CharField(initial=my_arg)
 
 
 

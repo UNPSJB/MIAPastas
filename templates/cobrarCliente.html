@@ -29,7 +29,7 @@
                   <hr>
 
               </form>
-                            <textoprueba style="color:black;"> {{entregas.0.pedido.cliente.razon_social}} PREGUNTAR COMO INSTALAR FUENTES LOCALMENTE DE GOOGLE FONT</textoprueba>
+                            <textoprueba style="color:black;" > {{entregas.0.pedido.cliente.razon_social}} </textoprueba>
                              
               <p>&nbsp;</p>
               <div class="col-md-6" >
@@ -316,7 +316,6 @@ var para_recibo = [];
 
     function cargar_modal_recibos(id){
         var myJsonEntrega = JSON.stringify(id);
-
         $.ajax({
                 type: 'get',
                 data : {
@@ -324,10 +323,10 @@ var para_recibo = [];
                  },
                 dataType: 'json',
                 url:'{% url 'cobrarClienteMostrarRecibos' %}',
-                success: function(json){
-                    console.log(json.recibos);
-                    for(rec in json.recibos){
-                    console.log(rec.fields);}
+                success: function(recibos){
+                    console.log("soy recibos ", recibos);
+                    for(rec in recibos){
+                    console.log("recb ",rec.fields);}
                     }
             });
 
@@ -478,9 +477,6 @@ var para_recibo = [];
             var jsonMontoFactura = JSON.stringify(monto_factura);
             var jsonNumFactura = JSON.stringify(num_factura);
             var jsonNumRecibo = JSON.stringify(num_recibo);
-            console.log("envio: ",jsonFactura);
-            console.log("envio: ",jsonRecibos);
-            console.log("mmonto",monto_recibo);
             $.ajax({
                 type: 'get',
                 data : {
