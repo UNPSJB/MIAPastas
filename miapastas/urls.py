@@ -52,8 +52,9 @@ urlpatterns = [
 
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
 
-
-
+    url(r'^listadoClientesMorosos$',views.listadoClientesMorosos,name='listadoClientesMorosos'),
+    url(r'^listadoClientesMorososFiltros$',views.listadoClientesMorososFiltros,name='listadoClientesMorososFiltros'),
+    url(r'^listadoClientesMorososExcel$',views.listadoClientesMorososExcel,name='listadoClientesMorososExcel'),
                     # Hechos en forms
 
 

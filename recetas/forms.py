@@ -322,8 +322,6 @@ class ClienteForm(forms.ModelForm):
         return direccion
 
 
-
-
 class PedidoProveedorAltaForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
@@ -410,18 +408,19 @@ class PedidoClienteFijoModificarForm(forms.ModelForm):
     class Meta:
         model = models.PedidoFijo
         dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
-        fields = ['cliente','dias']
-        #widgets = {
-        #    'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
+        fields = ['cliente','dias','fecha_inicio']
+        widgets = {
+            'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
 
-       # widgets = {
-        #    'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'}),
+        widgets = {
+            'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
          #   'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}#ponerlo como un boton "cancelarPedido"
+
     #def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
-     #   cleaned_data = super(PedidoClienteFijoForm, self).clean()
+     #   cleaned_data = super(PedidoClienteFijoModificarForm, self).clean()
       #  cliente = cleaned_data["cliente"]
        # pedidos = cliente.pedidocliente_set.all()
-       # fecha = self.cleaned_data['fecha_inicio']
+        #fecha = self.cleaned_data['fecha_inicio']
 
         #if fecha < datetime.date.today():
          #   raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
@@ -444,11 +443,11 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         exclude = ['productos','tipo_pedido','activo']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-    my_field = forms.CharField(required=False)
+    #my_field = forms.CharField(required=False)
 
     def clean(self):
         cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
-        print "pruebaaaaaaaaaa", self.instance.my_field, " s "
+        #print "pruebaaaaaaaaaa", self.instance.my_field, " s "
         if not self.errors:
             cliente = cleaned_data["cliente"]
             pedidos = cliente.pedidocliente_set.all()
@@ -475,7 +474,7 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             my_arg = kwargs.pop('my_arg')
             self.url = kwargs.pop('my_arg')
             super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
-            self.instance.my_field=my_arg
+            #self.instance.my_field=my_arg
         except:
             super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
 

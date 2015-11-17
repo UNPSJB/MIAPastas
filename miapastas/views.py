@@ -13,6 +13,73 @@ from forms import SignUpForm
 from django.contrib.auth.decorators import login_required
 
 
+from recetas import models
+from recetas import views
+from recetas import forms
+import datetime
+from datetime import date
+import re #esto sirve para usar expresiones regulares
+import xlsxwriter
+import io
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+
+from django.http import HttpResponse
+from django.http import HttpResponseNotFound
+
+from xlsxwriter.workbook import Workbook
+
+
+
+
+
+
+
+
+def get_order(get):
+    if "o" in get:
+        return get["o"]
+
+
+fechareg = re.compile("^(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})$") #esta es una expresion regular par las fechas
+##permite fechas del siguiente tipo: dd/mm/aa or d/m/aa or dd/mm/aaaa etc....
+#permite fechas del siguiente tipo: dd-mm-aa or d-m-aa or dd-mm-aaaa etc....
+
+def get_filtros(get, modelo):
+    filtros = {}
+    filtros_modelo = {}
+    for filtro in modelo.FILTROS:
+        attr = filtro.split("__")[0]
+        field = None
+        try:
+            field = modelo._meta.get_field(attr)
+        except:
+            pass
+        if attr in get and get[attr]:
+            texto = get[attr]
+            match=fechareg.match(texto) #aca estoy preguntando si el texto que me viene del GET tiene forma de fecha, si es asi, convierte texto en un tipo "date"
+            if match is not None:
+                ano = int(match.groups()[2])
+                mes = int(match.groups()[1])
+                dia = int(match.groups()[0])
+                fecha = datetime.date(ano,mes,dia)
+                value = datetime.date(ano,mes,dia)
+            else:
+                value = texto
+            if hasattr(modelo, "FILTROS_MAPPER") and filtro in modelo.FILTROS_MAPPER:
+                filtro = modelo.FILTROS_MAPPER[filtro]
+            filtros[attr] = texto
+            filtros_modelo[filtro] = value
+        elif attr in get and field is not None and field.get_internal_type() == "BooleanField":
+            # Es un valor booleano
+            filtros[attr] = ""
+            filtros_modelo[filtro] = True
+    print(filtros, filtros_modelo)
+    return filtros, filtros_modelo
+
+
 
 @login_required()
 def index(request):
@@ -278,3 +345,72 @@ def documentacion(request):
     #return redirect("lotes")
     return render(request,"/recetas/documentacion/_build/html/index.html", {})
     #return render(request, , {})
+
+@login_required()
+def listadoClientesMorosos(request):
+    clientes = models.Cliente.objects.filter(saldo__gt=0)
+    print("pase por acaaaaaa")
+    print(clientes)
+    print("pase por acaaaaaa")
+    ciudades= models.Ciudad.objects.all()
+    return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
+
+@login_required()
+def listadoClientesMorososFiltros(request):
+    if request.method == "GET":
+        print("Entreee al GETTT")
+        filters, mfilters = get_filtros(request.GET, models.Cliente)
+        clientes = models.Cliente.objects.filter(**mfilters)
+        ciudades= models.Ciudad.objects.all()
+        return render(request, "listadoClientesMorosos.html",
+                  {"clientes": clientes,
+                   "filtros": filters,
+                   "ciudades":ciudades})
+
+    clientes = models.Cliente.objects.filter(saldo__gt=0)
+    print("pase por acaaaaaa")
+    print(clientes)
+    print("pase por acaaaaaa")
+    ciudades= models.Ciudad.objects.all()
+    return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
+
+
+@login_required()
+def listadoClientesMorososExcel(request):
+    #para poner el total adeudado, recorrer los clientes
+    #hacer la validacion con un message.error cuando clientes=None
+
+    #OBTENIENDO LOS CLIENTES A TRAVES DEL ATRIBUTO FILTERS
+    filters, mfilters = get_filtros(request.GET, models.Cliente)
+    print(mfilters)
+    clientes = models.Cliente.objects.filter(**mfilters)
+
+    #VERIFICANDO QUE HAYA CLIENTES
+    if not clientes.exists():
+        return HttpResponseNotFound('No hay clientes morosos para exportar a Excel')
+
+    #ARMANDO EL ARCHIVO EXCEL
+    output = io.BytesIO()
+    workbook = Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+    worksheet.write(0, 0, "Cuit")
+    worksheet.write(0, 1, "Razon Social")
+    worksheet.write(0, 2, "Ciudad")
+    worksheet.write(0, 3, "Direccion")
+    worksheet.write(0, 4, "Telefono")
+    worksheet.write(0, 5, "Monto Adeudado")
+    for index, cliente in enumerate(clientes, 1):
+        worksheet.write(index, 0, cliente.cuit_cuil)
+        worksheet.write(index, 1, cliente.razon_social)
+        worksheet.write(index, 2, cliente.ciudad.nombre)
+        worksheet.write(index, 3, cliente.direccion)
+        worksheet.write(index, 4, cliente.telefono)
+        worksheet.write(index, 5, cliente.saldo)
+    workbook.close()
+
+    output.seek(0)
+
+    response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response['Content-Disposition'] = "attachment; filename=ListadoClientesMorosos.xlsx"
+
+    return response
