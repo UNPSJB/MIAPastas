@@ -56,9 +56,7 @@
                 </div>
 
            <div class="col-md-2">
-
-                  <!--<a class="btn" href = "{% url 'clientesAlta' %}"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar </span></b></font></a>-->
-                  <a class="btn" href = "#"><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Exportar a Excel </span></b></font></a>
+               <a href="{% url 'listadoClientesMorososExcel' %}?saldo={{filtros.saldo}}" class="btn btn-default">Exportar a Excel</a>
            </div>
             </div>
             <hr/>
@@ -72,6 +70,8 @@
     </div>
 </div>
 
+en cobrar a cliente esta el ejemplo de ajax
+hay un errror cuando queres mostrar todos los clientes MORORSOS!!! TE MUESTRA LOS QUE NO SON MOROSOS.
     <!-- Este es el fin del formulario de Listado -->
 
 

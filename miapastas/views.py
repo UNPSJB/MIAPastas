@@ -19,6 +19,22 @@ from recetas import forms
 import datetime
 from datetime import date
 import re #esto sirve para usar expresiones regulares
+import xlsxwriter
+import io
+try:
+    import cStringIO as StringIO
+except ImportError:
+    import StringIO
+
+from django.http import HttpResponse
+from django.http import HttpResponseNotFound
+
+from xlsxwriter.workbook import Workbook
+
+
+
+
+
 
 
 
@@ -357,3 +373,44 @@ def listadoClientesMorososFiltros(request):
     print("pase por acaaaaaa")
     ciudades= models.Ciudad.objects.all()
     return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
+
+
+@login_required()
+def listadoClientesMorososExcel(request):
+    #para poner el total adeudado, recorrer los clientes
+    #hacer la validacion con un message.error cuando clientes=None
+
+    #OBTENIENDO LOS CLIENTES A TRAVES DEL ATRIBUTO FILTERS
+    filters, mfilters = get_filtros(request.GET, models.Cliente)
+    print(mfilters)
+    clientes = models.Cliente.objects.filter(**mfilters)
+
+    #VERIFICANDO QUE HAYA CLIENTES
+    if not clientes.exists():
+        return HttpResponseNotFound('No hay clientes morosos para exportar a Excel')
+
+    #ARMANDO EL ARCHIVO EXCEL
+    output = io.BytesIO()
+    workbook = Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+    worksheet.write(0, 0, "Cuit")
+    worksheet.write(0, 1, "Razon Social")
+    worksheet.write(0, 2, "Ciudad")
+    worksheet.write(0, 3, "Direccion")
+    worksheet.write(0, 4, "Telefono")
+    worksheet.write(0, 5, "Monto Adeudado")
+    for index, cliente in enumerate(clientes, 1):
+        worksheet.write(index, 0, cliente.cuit_cuil)
+        worksheet.write(index, 1, cliente.razon_social)
+        worksheet.write(index, 2, cliente.ciudad.nombre)
+        worksheet.write(index, 3, cliente.direccion)
+        worksheet.write(index, 4, cliente.telefono)
+        worksheet.write(index, 5, cliente.saldo)
+    workbook.close()
+
+    output.seek(0)
+
+    response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response['Content-Disposition'] = "attachment; filename=ListadoClientesMorosos.xlsx"
+
+    return response
