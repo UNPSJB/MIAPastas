@@ -29,7 +29,7 @@
                   <hr>
 
               </form>
-                            <textoprueba style="color:black;"> {{entregas.0.pedido.cliente.razon_social}} PREGUNTAR COMO INSTALAR FUENTES LOCALMENTE DE GOOGLE FONT</textoprueba>
+                            <textoprueba style="color:black;" > {{entregas.0.pedido.cliente.razon_social}} </textoprueba>
                              
               <p>&nbsp;</p>
               <div class="col-md-6" >
@@ -75,7 +75,7 @@
                                 <td>  {{entrega.monto_ya_abonado}}</td>
                                 <td>  {{entrega.monto_restante }}</td>
                                 <td>  {{entrega.monto_total}}</td>
-                                <td><button type="button" onclick="cargar_modal_recibos({{entrega.pk}})" class=" glyphicon glyphicon-zoom-in pull-left" id="boton_recibos" data-id="{{entrega.pk}}" data-toggle="modal" data-target="#modalRecibos"></button></td>
+                                <td><button type="button" onclick="cargar_modal_recibos({{entrega.pk}})" class=" glyphicon glyphicon-zoom-in pull-left" id="boton_recibos" ></button></td>
                             </tr>
                             {% endfor %}
                         </tbody>
@@ -196,87 +196,35 @@
 
                 <!-- Modal content-->
                 <div class="modal-content">
-                  <div class="modal-header">
+                  <div class="modal-header" style="background-color:#3AB31B;">
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    <h1 align="center" class="modal-title center">Formulario de pago</h1>
+                    <h1 align="center" class="modal-title center">Recibos pagados</h1>
                   </div>
                   <div class="modal-body" id="modal_recibos">
 
                     <form class="form-horizontal col-md-12">
 
-                        <h4>Facturacion</h4>
+                        
                         <table class="table table-hover" id="body_recibos_modal">
                         <thead>
-                        <h4>Entregas a facturar</h4>
+                        <h4>Recibos</h4>
                         <tr>
-                            <th>N° Entrega</th>
+                            <th>N° Recibo</th>
                             <th>Fecha</th>
+                            <th>Monto abonado</th>   
                         </tr>
+
                         </thead>
-                          <tbody >
+                          <tbody id="body_recibos">
 
                       </tbody>
                       </table>
 
-
-
-                          <div class="form-group">
-                            <label for="exampleInputName2" class="col-md-3">Ingrese numero de factura</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="numero_factura" placeholder="N° Factura">
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Monto a facturar: $</label>
-                            <div class=" col-md-5">
-                            <input type="number" step="any" class="form-control" id="monto_factura" placeholder="Monto" readonly>
-                          </div></div>
-                      </form>
-
                   </div>
-
-                  <div class="modal-body" id="cuerpo_recibo">
-
-
-                    <form class="form-horizontal col-md-12">
-                        <br>
-                        <h4>Emision de recibo</h4>
-                        <table class="table table-hover" id="body_entregas_recibo">
-                        <thead>
-                        <tr>
-                            <th>N° Entrega</th>
-                            <th>Fecha</th>
-                        </tr>
-                        </thead>
-                          <tbody >
-
-                      </tbody>
-                      </table>
-
-
-
-                          <div class="form-group">
-                            <label class="col-md-3">Ingrese numero de recibo</label>
-                              <div class=" col-md-5">
-                            <input type="text" class="form-control" id="numero_recibo" placeholder="N° Recibo" required>
-                          </div></div>
-                          <div class="form-group">
-                            <label for="exampleInputEmail2" class="col-md-3">Monto a cargar en el recibo: </label>
-                            <div>
-                            <div class=" col-md-1">
-                                <label><h3>$</h3></label>
-                            </div>
-                            <div class=" col-md-5">
-                                <input type="number" step="any" class="form-control" id="monto_recibo" placeholder="Monto" readonly >
-                          </div></div></div>
-                      </form>
-
-                  </div>
-
                   <div class="modal-footer">
                       <!-- Cuando apretamos el boton aceptar, se verifica si cubre el monto total, en base a esose genera un recibo o una factura, y se guarda
                        en el modelo, -->
-                    <button type="button" onclick="pagar()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Aceptar</button>
                   </div>
                 </div>
               </div>
@@ -313,10 +261,8 @@ var para_recibo = [];
     });
 
 
-
     function cargar_modal_recibos(id){
         var myJsonEntrega = JSON.stringify(id);
-
         $.ajax({
                 type: 'get',
                 data : {
@@ -324,14 +270,16 @@ var para_recibo = [];
                  },
                 dataType: 'json',
                 url:'{% url 'cobrarClienteMostrarRecibos' %}',
-                success: function(json){
-                    console.log(json.recibos);
-                    for(rec in json.recibos){
-                    console.log(rec.fields);}
+                success: function(recibos){
+                     $('#body_recibos').empty();
+                    $('#nombre_entrega_modal').val()
+                    _.each(recibos, function(recibo){
+                        $('#body_recibos').append('<tr><td>'+recibo.fields.numero+'</td><td>'+recibo.fields.fecha+'</td><td>'+recibo.fields.monto_pagado+'</td></tr>');
+                    });
                     }
             });
 
-        $('#modal_recibos').modal('show');
+        $('#modalRecibos').modal('show');
 
 
     }
@@ -478,9 +426,6 @@ var para_recibo = [];
             var jsonMontoFactura = JSON.stringify(monto_factura);
             var jsonNumFactura = JSON.stringify(num_factura);
             var jsonNumRecibo = JSON.stringify(num_recibo);
-            console.log("envio: ",jsonFactura);
-            console.log("envio: ",jsonRecibos);
-            console.log("mmonto",monto_recibo);
             $.ajax({
                 type: 'get',
                 data : {

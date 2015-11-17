@@ -16,7 +16,9 @@ class ManagerActivos(models.Manager):
     def get_queryset(self):
         return super(ManagerActivos, self).get_queryset().filter(activo=True)
 
-
+class ManagerActivosHojasRutas(models.Manager):
+    def get_queryset(self):
+        return super(ManagerActivosHojasRutas, self).get_queryset().filter(rendida=False)
 
 
 
@@ -447,6 +449,7 @@ class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
+    objects=ManagerActivosHojasRutas()
 
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 

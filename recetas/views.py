@@ -146,6 +146,7 @@ def choferesBaja(request,chofer_id=None):
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
     hojas_de_ruta=models.HojaDeRuta.objects.filter(chofer=chofer)
+
     if len(hojas_de_ruta) == 0:
         #chofer.delete()
         chofer.activo=False
@@ -803,7 +804,7 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.pedido_cliente = pedido_instancia
                     detalle_instancia.save()
-               # messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
@@ -823,19 +824,6 @@ def pedidosClienteBaja(request,pedido_id):
 
 
 def pedidosClienteModificar(request, pedido_id):
-    '''
-    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
-    pedido_class = models.PedidoCliente.TIPOS[pedido_instancia.TIPO]
-    pedido_instancia = get_object_or_404(pedido_class, pk=pedido_id)
-    detalles_inlinefactory = inlineformset_factory(pedido_class, models.PedidoClienteDetalle, fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-    # aca hay que hacer o mismo que hicmos para modelos peropara form.
-    pedidosClientes_form = forms.PedidoClienteFijoForm
-
-    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
-    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
-    productos = models.ProductoTerminado.objects.all() #para detalles
-    '''
-
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
@@ -1374,14 +1362,12 @@ def cobrarClienteFacturar(request):
 
 
 def cobrarClienteMostrarRecibos(request):
-        var=request.POST.getlist('terid[]')
-        print var ,"dddddddddddddddd"
         entrega_id = re.findall("\d+",request.GET['entrega_id'])
         entrega = models.Entrega.objects.get(pk=entrega_id[0])
         recibos = models.Recibo.objects.filter(entrega=entrega)
         print recibos," estos son los recibos"
         recibos=serializers.serialize('json', recibos)
-        return HttpResponse(json.dumps({"recibos":(recibos)}),content_type='json')
+        return HttpResponse(recibos,content_type='json')
 
 
 
