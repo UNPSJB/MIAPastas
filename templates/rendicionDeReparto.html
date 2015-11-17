@@ -99,18 +99,16 @@
                                             <th>Producto</th>
                                             <th>Cantidad Pedida</th>
                                             <th>Cantidad Entregado</th>
-                                            {%for detalle_entrega in entrega.entregadetalle_set.all %}
-                                                 <tr>
-                                                     <td>{% producto_id detalle_entrega %}</td>
-                                                     {% if detalle_entrega.producto_terminado %}
-                                                        <td>{{detalle_entrega.producto_terminado}} </td>
-                                                     {% else%}
-                                                        <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
-                                                     {% endif%}
-                                                    <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}</td>
-                                                    <td> <input entrega_id="{{entrega.id}}" type="text" class="input-entregas"
-                                                                producto_id = "{%producto_id detalle_entrega%}"
-                                                                detalle_id = "{{detalle_entrega.id}}"
+                                            {%for p_llevado in hoja.productosllevados_set.all %}
+                                                 <tr>    
+                                                     <td>{{ p_llevado.producto_terminado.id }}
+                                                         {{ p_llevado.producto_terminado.nombre }} </td>
+                                                     <td>{% devolver_cantidad_pedida entrega p_llevado.producto_terminado %}</td>
+                                                     <td> <input entrega_id="{{entrega.id}}" type="text" class="input-entregas"
+                                                                producto_id = "{%devolver_producto 
+                                                                entrega p_llevado.producto_terminado %}"
+                                                                detalle_id = "{% devolver_detalle
+                                                                entrega p_llevado.producto_terminado %}"
                                                                 placeholder="Cantidad "
                                                                 value="0">
                                                             </td>
