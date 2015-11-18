@@ -453,7 +453,7 @@ class HojaDeRuta(models.Model):
 
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
-    def generar_rendicion(self):
+    def generar_rendicion(self): # E S T E   M E T O D O   N O   V A    M A S
         # aca tengo que generar TODOS los detalles de las entregas.
         # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.
         tiene_prod = False
@@ -472,32 +472,8 @@ class HojaDeRuta(models.Model):
                 tiene_prod=False
 
 
-    def balance(self):
-        productos ={}
-        sobrantes ={}
-        for prod_llevado in self.productosllevados_set.all():
-            productos[prod_llevado.producto_terminado.id] = prod_llevado.cantidad_enviada
-
-            for det in prod_llevado.productosllevadosdetalle_set.all():
-                try:
-                    sobrantes[prod_llevado.producto_terminado.id] += det.cantidad_sobrante
-                except:
-                    sobrantes[prod_llevado.producto_terminado.id] =0
-                    sobrantes[prod_llevado.producto_terminado.id] += det.cantidad_sobrante
-
-        print "BALANCE productos llevados: ", productos
-        productos_llevados = productos
-        for entrega in self.entrega_set.all():
-            for detalle_entrega in entrega.entregadetalle_set.all():
-                if detalle_entrega.producto_terminado:
-                    productos[detalle_entrega.producto_terminado.id] -= detalle_entrega.cantidad_entregada
-                else:
-                    productos[detalle_entrega.pedido_cliente_detalle.producto_terminado.id] -= detalle_entrega.cantidad_entregada
-        print "Esto tenria que haber sobrado !!:",productos
-        # y ahora como sé que fue lo que realmente sobro???? CANTIDAD_SOBRANTE en detalle producto_llevado
-        print "LO QUE REALMENTE SOBRo: ",sobrantes
-        totales = {"sobrantes_reales":productos,"productos_llevados":productos_llevados,"sobrantes_ingresados":sobrantes}
-        return totales
+    def balance(self):  # NO    V A    M A S 
+        return "nada"
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
@@ -528,7 +504,6 @@ class ProductosLlevados(models.Model):
             print "Faltaron ",cantidad_buscada, "unidades para el producto: ",self.producto_terminado
         self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
         self.save()
-        print "en generar detalles: cantida enviada: ",self.cantidad_enviada
 
 
 
@@ -613,8 +588,8 @@ class EntregaDetalle(models.Model):
     cantidad_enviada = models.PositiveIntegerField(null=True) #no va
     cantidad_entregada = models.PositiveIntegerField(null=True)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
-    pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle,null=True)
-    producto_terminado = models.ForeignKey(ProductoTerminado,null=True)
+    pedido_cliente_detalle = models.ForeignKey(PedidoClienteDetalle,null=True,blank=True)
+    producto_terminado = models.ForeignKey(ProductoTerminado,null=True,blank=True)
 
     def get_producto_terminado(self):
         if self.producto_terminado is not None:

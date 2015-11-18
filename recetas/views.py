@@ -1194,23 +1194,18 @@ def generarTotales(request):
 
 
 def rendicionReparto(request,hoja_id=None):
-    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
-    try:
-        hoja.generar_rendicion()
-    except:
-        messages.error(request, 'Llena los campos')
-    detalles = models.EntregaDetalle.objects.filter(entrega__hoja_de_ruta__pk = hoja_id)
-    prefix = "entregas"
-    detalle_factory = forms.EntregaDetalleFormset(prefix=prefix)
-    detalle_inline_factory = forms.EntregaDetalleInlineFormset(initial=list(detalles.values()),prefix=prefix)
-    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)
+    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)    
+    prefix_detalles_entregas = "entregas"
     prefix_prod_llevados = "prod_llevados"
-
+    detalles_factory_form = forms.EntregaDetalleFormset(prefix=prefix_detalles_entregas)
+    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)        
     if request.method == "POST":
-        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix)
+        # E n t r e g a s
+        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix_detalles_entregas)
         if detalles_factory_form.is_valid():
             for det_form in  detalles_factory_form:
-                det_form.rendir_detalle() #busca detalle y le setea cantidad enviada.
+                det_form.save()
+            #  P r o d u c t o s   L l e v a d o s
             prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
             if prod_llevados_forms.is_valid():
                 for prod_llevado_form in prod_llevados_forms:
@@ -1218,11 +1213,9 @@ def rendicionReparto(request,hoja_id=None):
                 hoja.rendida = True
                 hoja.save()
             return redirect("rendicionDeRepartoMostrar",hoja.id)
-
-
     return render(request,"rendicionDeReparto.html",{"hoja":hoja,
-                                                     "detalles_factory":detalle_factory,
-                                                     "prefix":prefix,
+                                                     "detalles_factory":detalles_factory_form,
+                                                     "prefix":prefix_detalles_entregas,
                                                      "prod_llevados_factory":prod_llevados_factory(prefix=prefix_prod_llevados),
                                                      "prefix_prod_llevados":prefix_prod_llevados
                                                      })

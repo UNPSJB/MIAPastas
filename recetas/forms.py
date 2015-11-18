@@ -552,74 +552,61 @@ class LoteForm(forms.ModelForm):
 ############################################################################
 
 class HojaDeRutaForm(forms.ModelForm):
-    #pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
-    #chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
+    
     class Meta:
         model = models.HojaDeRuta
         fields = ["chofer"]
-    def clean_chofer(self):
-        chofer = self.cleaned_data["chofer"]
-        print "en clean de chofer de hoja de ruta:", chofer
-        return chofer
-
-
+    
 
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = models.Entrega
         fields = ["pedido"]
-
-    def clean_pedido(self):
-        pedido = self.cleaned_data["pedido"]
-        print "en clean pedido de ENTREGA", pedido
-        return pedido
-
+    
     def save(self, hoja_de_ruta):
         entrega = super(EntregaForm, self).save(commit=False)
         entrega.hoja_de_ruta = hoja_de_ruta
         entrega.save()
-        #entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
         return entrega
-
 
 class EntregaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.EntregaDetalle
-        fields = ["cantidad_entregada"]
-    detalle= forms.ModelChoiceField(models.EntregaDetalle.objects.all())
+        fields = ["cantidad_entregada","entrega","pedido_cliente_detalle","producto_terminado"]
 
     def save(self):
-        print "EN SAVE PAPA: ",self.instance.pk
+        det = super(EntregaDetalleForm, self).save(commit=False)
+        det.precio = det.get_producto_terminado().precio
+        det.save()
 
-    def rendir_detalle(self):
-        """ Este metodo, con id_detalle, busca al EntregaDetalle
-            le setea su cantidad entregada. Si la cant entregada es menor igual a 0 BORRA ese detalle.
-        """
-        detalle_entrega = self.cleaned_data["detalle"]
-        cantidad_nueva = self.cleaned_data["cantidad_entregada"]
-        detalle_entrega.cantidad_entregada = cantidad_nueva
-        print "cantidad entregada final: ",detalle_entrega.cantidad_entregada
-        detalle_entrega.save()
 
 class BaseEntregaDetalleFormset(BaseFormSet):
-    def clean(self):
-        productos_totales={}
-        if any(self.errors):
-            return
-        for f in self.forms:
-            detalle = f.cleaned_data["detalle"]
+    def clean(self):        
+        print "en clean principal base"
+        cant_enviada = 0
+        hoja = None
+        productos={}
+        for form in self.forms:
+            if hoja is None:
+                hoja = form.cleaned_data["entrega"].hoja_de_ruta
+            p = form.cleaned_data["producto_terminado"] 
+            if p is None:
+                p = form.cleaned_data["pedido_cliente_detalle"].producto_terminado
+            print "producto terminado es: ",p.nombre, p.id
             try:
-                productos_totales[detalle.get_producto_terminado()] += f.cleaned_data["cantidad_entregada"]
+                productos[p.id] += form.cleaned_data["cantidad_entregada"]
             except:
-                productos_totales[detalle.get_producto_terminado()] = 0
-                productos_totales[detalle.get_producto_terminado()] += f.cleaned_data["cantidad_entregada"]
-        productos_llevados = self.forms[0].cleaned_data["detalle"].entrega.hoja_de_ruta.productosllevados_set.all()
-        for llevado in productos_llevados:
-            cant_entregada = productos_totales[llevado.producto_terminado]
-            cant_llevada = llevado.cantidad_enviada
-            if cant_entregada > cant_llevada:
-                raise ValidationError("Se entregaste mas productos de los que llevaste")
-
+                productos[p.id] = 0
+                productos[p.id] += form.cleaned_data["cantidad_entregada"]
+        print "cantidad total enviada:",productos
+        for p_llevado in hoja.productosllevados_set.all():
+            cant_entregada =productos[p_llevado.producto_terminado.id]
+            cant_enviada = p_llevado.cantidad_enviada
+            print "cantidad enviada: ",cant_enviada, "cantidad entregada: ",cant_entregada
+            if cant_entregada > cant_enviada:
+                print "cantidad entregada es mayor a la enviada, todo mal."
+                raise ValidationError("Cantidad entregada es mayor a la cantidad enviada")
+                
 
 EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)
 EntregaDetalleInlineFormset = inlineformset_factory(models.Entrega, models.EntregaDetalle,fields=("cantidad_entregada",))
@@ -635,8 +622,6 @@ class ProductosLlevadosForm(forms.ModelForm):
     # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
     def save(self, hoja_de_ruta):
         productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
-        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad_pedida,productos_llevados.cantidad_enviada
-        print "Y TIENE EL PRODUCTO, ",productos_llevados.producto_terminado
         productos_llevados.hoja_de_ruta = hoja_de_ruta
         productos_llevados.save()
         productos_llevados.generar_detalles()
@@ -649,9 +634,7 @@ class ProdLlevadoDetalleRendirForm(forms.Form):
         """ recupera el detalle de prod llevado, y en base a la cantidad sobrane actualiza el stock reservado y disponible del LOTE """
         det = self.cleaned_data["detalle_id"]
         cant_sobrante = self.cleaned_data["cantidad_sobrante"]
-        #det.lote.decrementar_stock_reservado(det.cantidad_enviada)
         det.cantidad_sobrante = cant_sobrante
-        print "EN RENDIR DETALLE: ",det.lote.nro_lote
         det.lote.decrementar_stock_reservado(det.cantidad)
         cant_vendida = det.cantidad - cant_sobrante
         det.lote.decrementar_stock_disponible(cant_vendida)

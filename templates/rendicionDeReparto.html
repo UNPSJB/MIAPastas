@@ -99,21 +99,19 @@
                                             <th>Producto</th>
                                             <th>Cantidad Pedida</th>
                                             <th>Cantidad Entregado</th>
-                                            {%for detalle_entrega in entrega.entregadetalle_set.all %}
-                                                 <tr>
-                                                     <td>{% producto_id detalle_entrega %}</td>
-                                                     {% if detalle_entrega.producto_terminado %}
-                                                        <td>{{detalle_entrega.producto_terminado}} </td>
-                                                     {% else%}
-                                                        <td>{{detalle_entrega.pedido_cliente_detalle.producto_terminado}} </td>
-                                                     {% endif%}
-                                                    <td> {{detalle_entrega.pedido_cliente_detalle.cantidad_producto}}</td>
-                                                    <td> <input entrega_id="{{entrega.id}}" type="text" class="input-entregas"
-                                                                producto_id = "{%producto_id detalle_entrega%}"
-                                                                detalle_id = "{{detalle_entrega.id}}"
-                                                                placeholder="Cantidad "
-                                                                value="0">
-                                                            </td>
+                                            {%for p_llevado in hoja.productosllevados_set.all %}
+                                                 <tr>    
+                                                     <td>{{ p_llevado.producto_terminado.id }}
+                                                         {{ p_llevado.producto_terminado.nombre }} </td>
+                                                     <td>{% devolver_cantidad_pedida entrega p_llevado.producto_terminado %}</td>
+                                 <td> <input entrega_id="{{entrega.id}}" 
+                                             type="text" class="input-entregas"
+                        producto_hidden_id = "{% devolver_producto entrega p_llevado.producto_terminado %}"
+                        detalle_pedido_id = "{% devolver_detalle entrega p_llevado.producto_terminado %}"
+                        producto_id = "{{p_llevado.producto_terminado.id}}"
+                                            placeholder="Cantidad "
+                                            value="0">
+                                        </td>
                                                  </tr>
 
                                             {% endfor %}
@@ -192,6 +190,8 @@ function limpiar_diccionario(dic){
 
 
 $("#boton-sobrantes-aceptar").click(function(){
+
+
     console.log("EN SOBRANTES");
     var sobrantes = $(".input-sobrantes");
     if (imputs_llenos(sobrantes) == true){
@@ -255,13 +255,11 @@ $("#boton-sobrantes-modificar").click(function(){
         var cant_entregadas = $(".input-entregas");
         var diccionario={};
         $(cant_entregadas).each(function(i,val){
-            console.log("ID PRODUCTOOOOOOOOOO");
-            console.log(val.getAttribute('producto_id'));
             prod_id = parseInt(val.getAttribute('producto_id'));
             nueva_cantidad = parseInt(val.value);
             listado_productos_entregados[prod_id] += nueva_cantidad;
             });
-        console.log(diccionario);
+        console.log("------------------------------");
         console.log(listado_productos_entregados);
         if (hay_balance()){
             return true;
@@ -276,8 +274,15 @@ $("#boton-sobrantes-modificar").click(function(){
         var html = "";
         var count=0;
         $(".input-entregas").each(function(i,val){
+             // con estos hidden voy a dar de altas a los detalles de las entregas
             html = html + armar_hidden(prefix_entregas,val.value,"cantidad_entregada",i);
-            html = html + armar_hidden(prefix_entregas,val.getAttribute("detalle_id"),"detalle",i);
+            html = html + armar_hidden(prefix_entregas,val.getAttribute("entrega_id"),"entrega",i);
+            html = html + armar_hidden(prefix_entregas,
+                                       val.getAttribute("producto_hidden_id"),
+                                       "producto_terminado",i);
+            html = html + armar_hidden(prefix_entregas,
+                                val.getAttribute("detalle_pedido_id"),
+                                "pedido_cliente_detalle",i);
             count  = i+1;
         });
         document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = count;
@@ -290,7 +295,6 @@ $("#boton-sobrantes-modificar").click(function(){
             count=i+1;
 
         });
-
         console.log(html);
         $("#hidden-entregas").html(html);
         console.log(prefix_prod_llevados)
