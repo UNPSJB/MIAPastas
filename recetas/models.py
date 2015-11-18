@@ -256,7 +256,7 @@ class Cliente(models.Model):
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
     direccion = models.CharField(max_length=100, unique=True)
     telefono= models.PositiveIntegerField()
-    email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
+    email = models.CharField(max_length=30,blank=True,null=True) #blank=True indica que puede estar el campo vacio
     es_moroso = models.BooleanField(default=False)
     saldo = models.FloatField(default=0)
     activo = models.BooleanField(default=True)
