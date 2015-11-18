@@ -252,7 +252,7 @@ class Ciudad(models.Model):
 class Cliente(models.Model):
 
     FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gte']#'zona_icontains'
-    cuit_cuil = models.PositiveIntegerField(unique=True)
+    cuit = models.PositiveIntegerField()
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
@@ -265,7 +265,7 @@ class Cliente(models.Model):
     objects=ManagerActivos()
 
     def __str__(self):
-        return "%s (%s)" % (self.cuit_cuil, self.razon_social)
+        return "%s (%s)" % (self.cuit, self.razon_social)
 
 
 #************************************************************************#

@@ -9,8 +9,8 @@
             <div class="panel-body">
                  <form method="get" class="form-inline col-md-12">
                     <div class="form-group">
-                        <label for="cuit_cuil">Cuit/Cuil</label>
-                        <input type="text" class="form-control" value="{{filtros.cuit_cuil}}" name="cuit_cuil" id="cuit_cuil" >
+                        <label for="cuit">Cuit</label>
+                        <input type="text" class="form-control" value="{{filtros.cuit}}" name="cuit" id="cuit" >
                     </div>
                     <div class="form-group">
                         <label for="razon_social">Razon Social</label>
@@ -41,7 +41,7 @@
                           <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>Cuit/Cuil</th>
+                                <th>Cuit</th>
                                 <th>Razón Social</th>
                                 <th>Ciudad</td>
                                 <th>Moroso</td>
@@ -50,7 +50,7 @@
                               <tbody>
                                 {% for cliente in clientes %}
                                 <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
-                                    <td>{{cliente.cuit_cuil}}</td>
+                                    <td>{{cliente.cuit}}</td>
                                     <td>{{cliente.razon_social}}</td>
                                  <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
                                     <td>{% if cliente.es_moroso == True %}

@@ -400,7 +400,7 @@ def listadoClientesMorososExcel(request):
     worksheet.write(0, 4, "Telefono")
     worksheet.write(0, 5, "Monto Adeudado")
     for index, cliente in enumerate(clientes, 1):
-        worksheet.write(index, 0, cliente.cuit_cuil)
+        worksheet.write(index, 0, cliente.cuit)
         worksheet.write(index, 1, cliente.razon_social)
         worksheet.write(index, 2, cliente.ciudad.nombre)
         worksheet.write(index, 3, cliente.direccion)

@@ -630,7 +630,7 @@ def clientes(request,cliente_id=None):
         #filtros
         filters, mfilters = get_filtros(request.GET, models.Cliente)
         clientes = models.Cliente.objects.filter(**mfilters)
-        clientes_form = forms.ClienteForm()
+        clientes_form = forms.ClienteModificarForm()
         ciudades= models.Ciudad.objects.all()
         return render(request, "recetas/clientes.html",
                   {"clientes": clientes,
@@ -643,22 +643,26 @@ def clientes(request,cliente_id=None):
 def clientesModificar(request,cliente_id = None):
     cliente_instancia = get_object_or_404(models.Cliente, pk=cliente_id)
     if request.method=="POST":
-        cliente_form = forms.ClienteForm(request.POST,instance= cliente_instancia)
+        cliente_form = forms.ClienteModificarForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
+            if cliente_instancia.saldo==0 and cliente_instancia.es_moroso==True:
+                messages.error(request,'El cliente no puede ser moroso ya que no posee saldo deudor')
+                cliente_form = forms.ClienteModificarForm(initial={'cuit':cliente_instancia.cuit,'razon_social':cliente_instancia.razon_social,'nombre_dueno':cliente_instancia.nombre_dueno,'ciudad':cliente_instancia.ciudad,'direccion':cliente_instancia.direccion,'telefono':cliente_instancia.telefono,'email':cliente_instancia.email,'es_moroso':cliente_instancia.es_moroso})
+                return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
             cliente_form.save()
         return redirect('clientes')
     else:
-        cliente_form = forms.ClienteForm(instance= cliente_instancia)
+        cliente_form = forms.ClienteModificarForm(instance= cliente_instancia)
         return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
 
 def clientesAlta(request):
     if request.method == "POST":
-        cliente_form = forms.ClienteForm(request.POST)
+        cliente_form = forms.ClienteAltaForm(request.POST)
         if cliente_form.is_valid():
             cliente_form.save()
             return redirect('clientes')
     else:
-        cliente_form = forms.ClienteForm()
+        cliente_form = forms.ClienteAltaForm()
     return render(request, "clientesAlta.html", {"cliente_form":cliente_form})
 
 
