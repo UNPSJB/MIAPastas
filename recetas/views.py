@@ -146,6 +146,7 @@ def choferesBaja(request,chofer_id=None):
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
     hojas_de_ruta=models.HojaDeRuta.objects.filter(chofer=chofer)
+
     if len(hojas_de_ruta) == 0:
         #chofer.delete()
         chofer.activo=False
@@ -803,7 +804,7 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                     detalle_instancia = detalle.save(commit=False)
                     detalle_instancia.pedido_cliente = pedido_instancia
                     detalle_instancia.save()
-               # messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
+                messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display() + ', ha sido registrada correctamente.')
 
                 return redirect('pedidosCliente')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
@@ -818,24 +819,13 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 def pedidosClienteBaja(request,pedido_id):
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
     #messages.success(request, 'El pedido: de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
-    pedido.delete()     #hacer baja logica
+    #pedido.delete()     #hacer baja logica
+    pedido.activo=False
+    pedido.save()
     return redirect('pedidosCliente')
 
 
 def pedidosClienteModificar(request, pedido_id):
-    '''
-    pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
-    pedido_class = models.PedidoCliente.TIPOS[pedido_instancia.TIPO]
-    pedido_instancia = get_object_or_404(pedido_class, pk=pedido_id)
-    detalles_inlinefactory = inlineformset_factory(pedido_class, models.PedidoClienteDetalle, fields=('cantidad_producto','producto_terminado','pedido_cliente'))
-    # aca hay que hacer o mismo que hicmos para modelos peropara form.
-    pedidosClientes_form = forms.PedidoClienteFijoForm
-
-    detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
-    pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
-    productos = models.ProductoTerminado.objects.all() #para detalles
-    '''
-
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
@@ -1139,10 +1129,16 @@ def hojaDeRuta(request):
         hojaDeRuta_form = forms.HojaDeRutaForm()
         pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
         pedidos_clientes_enviar = []
+        pedidos_ya_cargados = []
+        hojas_de_ruta=models.HojaDeRuta.objects.filter(fecha_creacion=date.today())
+        for hoja in hojas_de_ruta:
+            entregas=hoja.entrega_set.all()
+            for entrega in entregas:
+                pedidos_ya_cargados.append(entrega.pedido.id)
         for pedido in pedidos_clientes:
             #print pedido.__class__
-            if pedido.esParaHoy():
-               pedidos_clientes_enviar.append(pedido)
+            if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
+                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
@@ -1206,23 +1202,18 @@ def generarTotales(request):
 
 
 def rendicionReparto(request,hoja_id=None):
-    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
-    try:
-        hoja.generar_rendicion()
-    except:
-        messages.error(request, 'Llena los campos')
-    detalles = models.EntregaDetalle.objects.filter(entrega__hoja_de_ruta__pk = hoja_id)
-    prefix = "entregas"
-    detalle_factory = forms.EntregaDetalleFormset(prefix=prefix)
-    detalle_inline_factory = forms.EntregaDetalleInlineFormset(initial=list(detalles.values()),prefix=prefix)
-    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)
+    hoja = models.HojaDeRuta.objects.get(pk=hoja_id)    
+    prefix_detalles_entregas = "entregas"
     prefix_prod_llevados = "prod_llevados"
-
+    detalles_factory_form = forms.EntregaDetalleFormset(prefix=prefix_detalles_entregas)
+    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)        
     if request.method == "POST":
-        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix)
+        # E n t r e g a s
+        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix_detalles_entregas)
         if detalles_factory_form.is_valid():
             for det_form in  detalles_factory_form:
-                det_form.rendir_detalle() #busca detalle y le setea cantidad enviada.
+                det_form.save()
+            #  P r o d u c t o s   L l e v a d o s
             prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
             if prod_llevados_forms.is_valid():
                 for prod_llevado_form in prod_llevados_forms:
@@ -1230,11 +1221,9 @@ def rendicionReparto(request,hoja_id=None):
                 hoja.rendida = True
                 hoja.save()
             return redirect("rendicionDeRepartoMostrar",hoja.id)
-
-
     return render(request,"rendicionDeReparto.html",{"hoja":hoja,
-                                                     "detalles_factory":detalle_factory,
-                                                     "prefix":prefix,
+                                                     "detalles_factory":detalles_factory_form,
+                                                     "prefix":prefix_detalles_entregas,
                                                      "prod_llevados_factory":prod_llevados_factory(prefix=prefix_prod_llevados),
                                                      "prefix_prod_llevados":prefix_prod_llevados
                                                      })
@@ -1381,14 +1370,12 @@ def cobrarClienteFacturar(request):
 
 
 def cobrarClienteMostrarRecibos(request):
-        var=request.POST.getlist('terid[]')
-        print var ,"dddddddddddddddd"
         entrega_id = re.findall("\d+",request.GET['entrega_id'])
         entrega = models.Entrega.objects.get(pk=entrega_id[0])
         recibos = models.Recibo.objects.filter(entrega=entrega)
         print recibos," estos son los recibos"
         recibos=serializers.serialize('json', recibos)
-        return HttpResponse(json.dumps({"recibos":(recibos)}),content_type='json')
+        return HttpResponse(recibos,content_type='json')
 
 
 

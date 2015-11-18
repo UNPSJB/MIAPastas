@@ -63,7 +63,8 @@ class ChoferForm(forms.ModelForm):
 class ModificarStockInsumoForm(forms.Form):
     insumo = forms.ModelChoiceField(queryset=models.Insumo.objects.all(), empty_label="(----)")
     cantidad = forms.IntegerField()
-    unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
+    #unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
+    #unidad_medida.empty_label="(----)"
     def save(self):
         insumo = self.cleaned_data["insumo"]
         cantidad = self.cleaned_data["cantidad"]
@@ -416,17 +417,6 @@ class PedidoClienteFijoModificarForm(forms.ModelForm):
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'})}
          #   'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}#ponerlo como un boton "cancelarPedido"
 
-    def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
-        cleaned_data = super(PedidoClienteFijoModificarForm, self).clean()
-        cliente = cleaned_data["cliente"]
-        pedidos = cliente.pedidocliente_set.all()
-        fecha = self.cleaned_data['fecha_inicio']
-
-        if fecha < datetime.date.today():
-            raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
-        return fecha
-
-
 class PedidoClienteDetalleForm(forms.ModelForm):
     class Meta:
         model = models.PedidoClienteDetalle
@@ -443,11 +433,9 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         exclude = ['productos','tipo_pedido','activo']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-    #my_field = forms.CharField(required=False)
-
+    
     def clean(self):
         cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
-        #print "pruebaaaaaaaaaa", self.instance.my_field, " s "
         if not self.errors:
             cliente = cleaned_data["cliente"]
             pedidos = cliente.pedidocliente_set.all()
@@ -455,31 +443,22 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             for pedido in pedidos:
                 if pedido.tipo_pedido == 2:
                     fecha =pedido.pedidoocacional.fecha_entrega
-                    print "iddddddddd",cleaned_data, " "
-                    if (dia == fecha):
+                    if (dia == fecha) and pedido.id != int(self.my_arg):
                         id = str(pedido.id)
                         raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today():
+        if fecha < datetime.date.today() and self.my_arg == None:
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
-        try:
-            my_arg = kwargs.pop('my_arg')
-            self.url = kwargs.pop('my_arg')
-            super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
-            #self.instance.my_field=my_arg
-        except:
-            super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
-
-        
-        
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
 
 
 class PedidoClienteCambioForm(forms.ModelForm):
@@ -499,25 +478,23 @@ class PedidoClienteCambioForm(forms.ModelForm):
                 for pedido in pedidos:
                     if pedido.tipo_pedido == 3:
                         fecha =pedido.pedidocambio.fecha_entrega
-                        if dia == fecha :
+                        if (dia == fecha) and pedido.id != int(self.my_arg):
                             id = str(pedido.id)
                             raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today():
+        if fecha < datetime.date.today() and self.my_arg == None:
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
     def __init__(self, *args, **kwargs):
-        my_arg = kwargs.pop('my_arg')
-
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
         
-        self.fields['my_field'] = forms.CharField(initial=my_arg)
 
 
 
@@ -575,74 +552,61 @@ class LoteForm(forms.ModelForm):
 ############################################################################
 
 class HojaDeRutaForm(forms.ModelForm):
-    #pedidos = forms.ModelMultipleChoiceField(queryset=models.PedidoCliente.objects.all())
-    #chofer = forms.ModelChoiceField(queryset=models.Chofer.objects.all())
+    
     class Meta:
         model = models.HojaDeRuta
         fields = ["chofer"]
-    def clean_chofer(self):
-        chofer = self.cleaned_data["chofer"]
-        print "en clean de chofer de hoja de ruta:", chofer
-        return chofer
-
-
+    
 
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = models.Entrega
         fields = ["pedido"]
-
-    def clean_pedido(self):
-        pedido = self.cleaned_data["pedido"]
-        print "en clean pedido de ENTREGA", pedido
-        return pedido
-
+    
     def save(self, hoja_de_ruta):
         entrega = super(EntregaForm, self).save(commit=False)
         entrega.hoja_de_ruta = hoja_de_ruta
         entrega.save()
-        #entrega.generar_detalles() # esto gnera edtalles pero no recorre LOTES!
         return entrega
-
 
 class EntregaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.EntregaDetalle
-        fields = ["cantidad_entregada"]
-    detalle= forms.ModelChoiceField(models.EntregaDetalle.objects.all())
+        fields = ["cantidad_entregada","entrega","pedido_cliente_detalle","producto_terminado"]
 
     def save(self):
-        print "EN SAVE PAPA: ",self.instance.pk
+        det = super(EntregaDetalleForm, self).save(commit=False)
+        det.precio = det.get_producto_terminado().precio
+        det.save()
 
-    def rendir_detalle(self):
-        """ Este metodo, con id_detalle, busca al EntregaDetalle
-            le setea su cantidad entregada. Si la cant entregada es menor igual a 0 BORRA ese detalle.
-        """
-        detalle_entrega = self.cleaned_data["detalle"]
-        cantidad_nueva = self.cleaned_data["cantidad_entregada"]
-        detalle_entrega.cantidad_entregada = cantidad_nueva
-        print "cantidad entregada final: ",detalle_entrega.cantidad_entregada
-        detalle_entrega.save()
 
 class BaseEntregaDetalleFormset(BaseFormSet):
-    def clean(self):
-        productos_totales={}
-        if any(self.errors):
-            return
-        for f in self.forms:
-            detalle = f.cleaned_data["detalle"]
+    def clean(self):        
+        print "en clean principal base"
+        cant_enviada = 0
+        hoja = None
+        productos={}
+        for form in self.forms:
+            if hoja is None:
+                hoja = form.cleaned_data["entrega"].hoja_de_ruta
+            p = form.cleaned_data["producto_terminado"] 
+            if p is None:
+                p = form.cleaned_data["pedido_cliente_detalle"].producto_terminado
+            print "producto terminado es: ",p.nombre, p.id
             try:
-                productos_totales[detalle.get_producto_terminado()] += f.cleaned_data["cantidad_entregada"]
+                productos[p.id] += form.cleaned_data["cantidad_entregada"]
             except:
-                productos_totales[detalle.get_producto_terminado()] = 0
-                productos_totales[detalle.get_producto_terminado()] += f.cleaned_data["cantidad_entregada"]
-        productos_llevados = self.forms[0].cleaned_data["detalle"].entrega.hoja_de_ruta.productosllevados_set.all()
-        for llevado in productos_llevados:
-            cant_entregada = productos_totales[llevado.producto_terminado]
-            cant_llevada = llevado.cantidad_enviada
-            if cant_entregada > cant_llevada:
-                raise ValidationError("Se entregaste mas productos de los que llevaste")
-
+                productos[p.id] = 0
+                productos[p.id] += form.cleaned_data["cantidad_entregada"]
+        print "cantidad total enviada:",productos
+        for p_llevado in hoja.productosllevados_set.all():
+            cant_entregada =productos[p_llevado.producto_terminado.id]
+            cant_enviada = p_llevado.cantidad_enviada
+            print "cantidad enviada: ",cant_enviada, "cantidad entregada: ",cant_entregada
+            if cant_entregada > cant_enviada:
+                print "cantidad entregada es mayor a la enviada, todo mal."
+                raise ValidationError("Cantidad entregada es mayor a la cantidad enviada")
+                
 
 EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)
 EntregaDetalleInlineFormset = inlineformset_factory(models.Entrega, models.EntregaDetalle,fields=("cantidad_entregada",))
@@ -658,8 +622,6 @@ class ProductosLlevadosForm(forms.ModelForm):
     # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
     def save(self, hoja_de_ruta):
         productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
-        print "PROCUTO LLEVADO TIENE LA CANTIDAD: ",productos_llevados.cantidad_pedida,productos_llevados.cantidad_enviada
-        print "Y TIENE EL PRODUCTO, ",productos_llevados.producto_terminado
         productos_llevados.hoja_de_ruta = hoja_de_ruta
         productos_llevados.save()
         productos_llevados.generar_detalles()
@@ -672,9 +634,7 @@ class ProdLlevadoDetalleRendirForm(forms.Form):
         """ recupera el detalle de prod llevado, y en base a la cantidad sobrane actualiza el stock reservado y disponible del LOTE """
         det = self.cleaned_data["detalle_id"]
         cant_sobrante = self.cleaned_data["cantidad_sobrante"]
-        #det.lote.decrementar_stock_reservado(det.cantidad_enviada)
         det.cantidad_sobrante = cant_sobrante
-        print "EN RENDIR DETALLE: ",det.lote.nro_lote
         det.lote.decrementar_stock_reservado(det.cantidad)
         cant_vendida = det.cantidad - cant_sobrante
         det.lote.decrementar_stock_disponible(cant_vendida)
