@@ -49,25 +49,30 @@ function validar(){
 
 var esconder = function (){
     $(arguments).each(function(index, value) {
-        console.log("en esconder argumentos  "+value);
+        $('#id_unidad_medida option[value=' + value + ']').hide(); 
+        });
+}
+        
 
-        $("#id_unidad_medida option[value=" + value + "]").hide(); }) };
-
-
-var mostrar = function (){
-    $(arguments).each(function(index, value) {
-        $("#id_unidad_medida option[value=" + value + "]").show(); })};
+var mostrar = function (value){
+        $("#id_unidad_medida option[value=" + value + "]").show(); }//)};
 
 
 
 function filtrar_tupla(n){
+    //$('#id_unidad_medida option[value=' + val + ']').hide(); }); 
+
+
+
     $(tuplas).each(function(i,val){
         $(val).each(function(z,v){
-           if (v == n){
-                $(val).each(function(x,c){
-                    mostrar(c);
-                });
+            esconder(v);
+           if (_.find(tuplas[n-1],function(num){ return num == v; }))  {
+                //$(val).each(function(x,c){
+                    mostrar(v);
            }
+                
+           
         });
     });
 }
@@ -77,7 +82,7 @@ function filtrar_tupla(n){
 
 $("#id_insumo").on("change", function() {
     var insumo = $("#id_insumo").val();
-    alert(document.getElementById('id_insumo').value);
+    //alert(document.getElementById('id_insumo').value);
 
     console.log("en ajax");
     console.log("pedidos: "+pedidos);

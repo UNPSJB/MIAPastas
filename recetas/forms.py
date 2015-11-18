@@ -63,7 +63,8 @@ class ChoferForm(forms.ModelForm):
 class ModificarStockInsumoForm(forms.Form):
     insumo = forms.ModelChoiceField(queryset=models.Insumo.objects.all(), empty_label="(----)")
     cantidad = forms.IntegerField()
-    unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
+    #unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
+    unidad_medida.empty_label="(----)"
     def save(self):
         insumo = self.cleaned_data["insumo"]
         cantidad = self.cleaned_data["cantidad"]
