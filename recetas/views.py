@@ -819,7 +819,9 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 def pedidosClienteBaja(request,pedido_id):
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
     #messages.success(request, 'El pedido: de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
-    pedido.delete()     #hacer baja logica
+    #pedido.delete()     #hacer baja logica
+    pedido.activo=False
+    pedido.save()
     return redirect('pedidosCliente')
 
 
@@ -1127,10 +1129,16 @@ def hojaDeRuta(request):
         hojaDeRuta_form = forms.HojaDeRutaForm()
         pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
         pedidos_clientes_enviar = []
+        pedidos_ya_cargados = []
+        hojas_de_ruta=models.HojaDeRuta.objects.filter(fecha_creacion=date.today())
+        for hoja in hojas_de_ruta:
+            entregas=hoja.entrega_set.all()
+            for entrega in entregas:
+                pedidos_ya_cargados.append(entrega.pedido.id)
         for pedido in pedidos_clientes:
             #print pedido.__class__
-            if pedido.esParaHoy():
-               pedidos_clientes_enviar.append(pedido)
+            if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
+                pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
