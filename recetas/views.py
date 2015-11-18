@@ -287,13 +287,10 @@ def recetas(request,receta_id=None):
     # filtros
     filters, mfilters = get_filtros(request.GET, models.Receta)
     recetas = models.Receta.objects.filter(**mfilters)
-
-        # filtrar recetas por productos
-    productos_terminados= models.ProductoTerminado.objects.all()
     return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
                        "filtros": filters,
-                       "productos_terminados":productos_terminados})
+                       "productos_terminados":models.ProductoTerminado.objects.all()})
 
 
 
@@ -312,18 +309,15 @@ def recetasModificar(request,receta_id):
         receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
         if receta_form.is_valid():
             receta_instancia = receta_form.save(commit=False)
-            #DETALLES
+            #Detalles
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
             if detalles_formset.is_valid():
-
                 detalles_formset.save()
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
                 receta_instancia.save()
             return redirect('recetas')
     else:
-        receta_form = forms.RecetaForm(instance= receta_instancia)
-
-        #si el form no es valido, le mando todo al html para que muestre los errores#
+        receta_form = forms.RecetaForm(instance= receta_instancia)        
     pref = "recetadetalle_set"
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
@@ -359,7 +353,6 @@ def recetasAlta(request):
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido registrada correctamente.')
 
                 return redirect('recetas')
-        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
     return render(request, "recetasAlta.html", {
             "insumos":insumos,
             "receta_form": receta_form or forms.RecetaForm(),

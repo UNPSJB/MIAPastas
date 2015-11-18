@@ -268,6 +268,14 @@ class Cliente(models.Model):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
 
 
+    def aumentar_saldo(self,cantidad):
+        self.saldo +=  cantidad
+
+    def decrementar_saldo(self,cantidad):
+        self.saldo -=  cantidad
+
+
+
 #************************************************************************#
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
@@ -450,29 +458,26 @@ class HojaDeRuta(models.Model):
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
     objects=ManagerActivosHojasRutas()
-
-    #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
-
-    def generar_rendicion(self): # E S T E   M E T O D O   N O   V A    M A S
-        # aca tengo que generar TODOS los detalles de las entregas.
-        # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.
-        tiene_prod = False
-        for entrega in self.entrega_set.all():
-            if len(entrega.entregadetalle_set.all())>0:
-                raise "ya tengo rendicion"
-            for prod_llevado in self.productosllevados_set.all():
-                for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():
-                    if detalle_pedido.producto_terminado == prod_llevado.producto_terminado:
-                        tiene_prod=True
-                        break
-                if not tiene_prod:
-                    entrega.generar_detalle(None, prod_llevado.producto_terminado)
-                else:
-                    entrega.generar_detalle(detalle_pedido, None)
-                tiene_prod=False
+    
 
 
-    def balance(self):  # NO    V A    M A S 
+    def balance(self):  
+        
+        p_llevados = self.productosllevados_set.all()
+        totales = {}
+        for e in self.entrega_set.all():
+            for d in e.entregadetalle_set.all():
+                print "ID: ",d.get_producto_terminado().id
+                try:
+                    totales[d.get_producto_terminado().id] += d.cantidad_enviada
+                except:
+                    totales[d.get_producto_terminado().id] = 0
+                    totales[d.get_producto_terminado().id] += d.cantidad_enviada
+        print "productos llevados: ", p_llevados
+        print "productos entregados ",totales
+        for p in p_llevados:            
+            if totales[p.producto_terminado.id] > p.cantidad_enviada:
+                print "Se entregaron productos de mas."
         return "nada"
 
 class ProductosLlevados(models.Model):
