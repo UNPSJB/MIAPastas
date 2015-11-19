@@ -117,6 +117,9 @@ def prueba3(request):
 def login(request):
     return render(request, "login.html", {},context_instance=RequestContext(request))
 
+@login_required()
+def usuario(request):
+    return render(request, "usuario.html", {})
 
 
 def signup(request):

@@ -3,6 +3,7 @@ from django.contrib import admin
 # Register your models here.
 
 from . import models
+from django.contrib.auth import models as auth_models
 
 class InsumoAdmin(admin.ModelAdmin):
     search_fields = ['nombre', 'descripcion']
@@ -20,7 +21,7 @@ class PedidoClienteDetalleInline(admin.TabularInline):
 class PedidoFijoAdmin(admin.ModelAdmin):
     inlines = [ PedidoClienteDetalleInline ]
 
-
+admin.site.register(auth_models.Permission)
 admin.site.register(models.Insumo, InsumoAdmin)
 admin.site.register(models.Receta, RecetaAdmin)
 admin.site.register(models.PedidoFijo, PedidoFijoAdmin)

@@ -267,6 +267,10 @@ class Cliente(models.Model):
     def __str__(self):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
 
+    class Meta:
+        permissions = (
+            ("ver_clientes_morosos", "Puede listar los clientes morosos"),
+        )
 
 #************************************************************************#
                #     P E D I D O S  D E  C L I E N T E S    #
