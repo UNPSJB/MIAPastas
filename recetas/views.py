@@ -638,11 +638,12 @@ def clientesModificar(request,cliente_id = None):
     if request.method=="POST":
         cliente_form = forms.ClienteForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
+            print "form es valido"
             cliente_form.save()
-        return redirect('clientes')
+            return redirect('clientes')
     else:
         cliente_form = forms.ClienteForm(instance= cliente_instancia)
-        return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+    return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
 
 def clientesAlta(request):
     if request.method == "POST":
@@ -1118,7 +1119,6 @@ def hojaDeRuta(request):
         pedidos_fijos = models.PedidoFijo.objects.all()
         pedidos_ocacionales = models.PedidoOcacional.objects.all()
         pedidos_cambio = models.PedidoCambio.objects.all()
-        #detalles_form = formset_factory(forms.LotesExtraDetalleForm())
         hojaDeRuta_form = forms.HojaDeRutaForm()
         pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
         pedidos_clientes_enviar = []
@@ -1129,7 +1129,6 @@ def hojaDeRuta(request):
             for entrega in entregas:
                 pedidos_ya_cargados.append(entrega.pedido.id)
         for pedido in pedidos_clientes:
-            #print pedido.__class__
             if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
                 pedidos_clientes_enviar.append(pedido)
         choferes = models.Chofer.objects.all()
@@ -1152,19 +1151,20 @@ def hojaDeRutaAlta(request):
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
-        # ahora las entregas
-        entregas_factory_class= formset_factory(forms.EntregaForm)
-        entregas_factory =  entregas_factory_class(request.POST,request.FILES,prefix="entregas")
-        if entregas_factory.is_valid():
-            for entrega_form in entregas_factory:
-                entrega_instancia = entrega_form.save(hoja_ruta_instancia)
-            prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
-            prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
-            if prod_llevados_factory.is_valid():
-                for prod_llevado_form in prod_llevados_factory:
-
-                    prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
-
+        entregas_factory =  forms.EntregaFormsetClass(request.POST,request.FILES,prefix="entregas")
+        prod_llevados_factory = forms.ProductoLlevadoFormsetClass(request.POST,request.FILES,prefix="productos_totales")
+        for p_llevado in prod_llevados_factory:
+            if p_llevado.is_valid():
+                 p_llevado.save(hoja_ruta_instancia)
+            #print "ERRORES ",p_llevado.errors.as_data()
+        if hoja_ruta_instancia.productosllevados_set.all():
+            if  entregas_factory.is_valid():
+                for e in entregas_factory:
+                    e.save(hoja_ruta_instancia)
+        else:
+            hoja_ruta_instancia.delete()
+            messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
+            return redirect("hojaDeRuta")
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
 
 
@@ -1195,29 +1195,32 @@ def generarTotales(request):
 
 
 def rendicionReparto(request,hoja_id=None):
+    print "EN RENDICION", hoja_id
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)    
     prefix_detalles_entregas = "entregas"
     prefix_prod_llevados = "prod_llevados"
-    detalles_factory_form = forms.EntregaDetalleFormset(prefix=prefix_detalles_entregas)
-    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)        
+    detalles_formset = forms.EntregaDetalleFormset(prefix=prefix_detalles_entregas)
+    prod_llevados_formset = forms.ProdLlevadoFormset_class(prefix=prefix_prod_llevados)        
     if request.method == "POST":
+        print "vino post"
         # E n t r e g a s
-        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix_detalles_entregas)
-        if detalles_factory_form.is_valid():
-            for det_form in  detalles_factory_form:
+        detalles_formset = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix_detalles_entregas)
+        if detalles_formset.is_valid():
+            for det_form in  detalles_formset:
                 det_form.save()
             #  P r o d u c t o s   L l e v a d o s
-            prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
+            prod_llevados_forms = forms.ProdLlevadoFormset_class(request.POST,request.FILES,prefix=prefix_prod_llevados)
             if prod_llevados_forms.is_valid():
                 for prod_llevado_form in prod_llevados_forms:
                     prod_llevado_form.save()
                 hoja.rendida = True
                 hoja.save()
+                print "guarde la hgoja"
             return redirect("rendicionDeRepartoMostrar",hoja.id)
     return render(request,"rendicionDeReparto.html",{"hoja":hoja,
-                                                     "detalles_factory":detalles_factory_form,
+                                                     "detalles_factory":detalles_formset,
                                                      "prefix":prefix_detalles_entregas,
-                                                     "prod_llevados_factory":prod_llevados_factory(prefix=prefix_prod_llevados),
+                                                     "prod_llevados_factory":prod_llevados_formset,
                                                      "prefix_prod_llevados":prefix_prod_llevados
                                                      })
 
