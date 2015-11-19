@@ -267,6 +267,11 @@ class Cliente(models.Model):
     def __str__(self):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
 
+    class Meta:
+        permissions = (
+            ("ver_clientes_morosos", "Puede listar los clientes morosos"),
+
+        )
 
     def aumentar_saldo(self,cantidad):
         self.saldo +=  float(cantidad)
@@ -294,7 +299,7 @@ class PedidoCliente(models.Model):
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
     activo = models.BooleanField(default=True)
-    #objects=ManagerActivos()    #si es ocacional o de cambio, cuando hago rendicion hay q haccer la baja, y si es fijo???
+
 
     def esParaHoy(self):
         pass

@@ -40,12 +40,12 @@
             <!-- boton desplegable "Usuario" -->
 			<div class="dropdown" style="float:right;">
               <button class="btn btn-success btn-lg dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-                <span class="glyphicon glyphicon-user" aria-hidden="true">    Usuario    <br> <br/></span>
+                <span class="glyphicon glyphicon-user" aria-hidden="true">    {{user}}    <br> <br/></span>
 
                 <span class="caret"></span>
               </button>
               <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-                <li><a href="#">Ver Informacion</a></li>
+                <li><a href="{% url 'usuario' %}">Ver Informacion</a></li>
                   <li role="separator" class="divider"></li>
                 <li><a href="{% url 'logout' %}">Cerrar Sesion</a></li>
 
@@ -104,6 +104,7 @@
     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
       <ul class="nav navbar-nav">
 
+          {% if perms.recetas.add_receta %}
 <!-- lista desplegable de Recetas -->
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Recetas<span class="caret"></span></a>
@@ -117,8 +118,10 @@
             <li><a href="#">One more separated link</a></li>-->
           </ul>
           </li>
+          {% endif %}
 
 <!-- lista desplegable de Produccion -->
+          {% if perms.recetas.add_lote %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Produccion<span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -131,32 +134,52 @@
             <li><a href="#">One more separated link</a></li>-->
           </ul>
           </li>
+          {% endif %}
+
 
 
 
 <!-- lista desplegable de Clientes y Pedidos -->
+          {% if perms.recetas.add_cliente or perms.recetas.add_pedidocliente or perms.recetas.add_ciudad or perms.recetas.add_zona  %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Clientes<span class="caret"></span></a>
           <ul class="dropdown-menu">
+              {% if perms.recetas.add_cliente %}
             <li><a href="{%url 'clientes'%}">ABM Clientes</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
+              {% if perms.recetas.add_pedidocliente %}
             <li><a href="{%url 'pedidosCliente'%}">ABM Pedidos Clientes</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
+
             <li><a href="{%url 'cobrarCliente'%}">Cobrar a Cliente</a></li>
             <li role="separator" class="divider"></li>
+             
+              {% if perms.recetas.add_ciudad %}
             <li><a href="{%url 'ciudades'%}">ABM Ciudades</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
+              {% if perms.recetas.add_zona %}
             <li><a href="{%url 'zonas'%}">ABM Zonas</a></li>
+              {% endif %}
+
           </ul>
           </li>
+          {% endif %}
+
 
 <!-- lista desplegable de Productos terminados -->
         <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Productos Terminados<span class="caret"></span></a>
           <ul class="dropdown-menu">
+              {% if perms.recetas.add_productoterminado %}
             <li><a href="{%url 'productosTerminados'%}">ABM Productos Terminados</a></li>
-              <li role="separator" class="divider"></li>
-              <li><a href="{%url 'productosTerminadosActualizarPrecio'%}">Modificar Precio</a></li>
+            <li role="separator" class="divider"></li>
+              {% endif %}
+              {% if perms.recetas.change_productoterminado %}
+            <li><a href="{%url 'productosTerminadosActualizarPrecio'%}">Modificar Precio</a></li>
+              {% endif %}
           </ul>
           </li>
 
@@ -164,45 +187,61 @@
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Insumos<span class="caret"></span></a>
           <ul class="dropdown-menu">
+              {% if perms.recetas.add_insumo %}
             <li><a href="{%url 'insumos'%}">ABM Insumos</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
+              {% if perms.recetas.change_insumo %}
             <li><a href= "{%url 'ModificarStockInsumos' %}">Modificar Stock de Insumo</a></li>
+              {% endif %}
           </ul>
           </li>
+
+
 <!-- lista desplegable de Proveedores -->
+          {% if perms.recetas.add_proveedor %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Proveedores<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{%url 'proveedores'%}">ABM Proveedores</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{%url 'pedidosProveedor'%}">ABM Pedidos Proveedores</a></li>
-
-
           </ul>
           </li>
+          {% endif %}
+
+
 <!-- lista desplegable de Choferes-->
+          {% if perms.recetas.add_chofer %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Choferes<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{%url 'choferes'%}">ABM Choferes</a></li>
           </ul>
           </li>
+          {% endif %}
+
+
 <!-- lista desplegable de Reparto -->
+          {% if perms.recetas.add_hojaderuta %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Reparto<span class="caret"></span></a>
           <ul class="dropdown-menu">
             <li><a href="{%url 'hojaDeRuta'%}">Generar Hoja de Ruta</a></li>
             <li role="separator" class="divider"></li>
             <li><a href="{%url 'rendicionHojasDeRutas'%}">Registrar Rendicion del Reparto</a></li>
-
           </ul>
           </li>
+          {% endif %}
+
 <!-- lista desplegable de Listados -->
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Listados<span class="caret"></span></a>
           <ul class="dropdown-menu">
+              {% if perms.recetas.ver_clientes_morosos %}
             <li><a href="{%url 'listadoClientesMorosos'%}">Listado de Clientes Morosos</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
             <li><a href="#">Listado 2</a></li>
           </ul>
           </li>
