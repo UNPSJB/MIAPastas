@@ -11,7 +11,7 @@ from django.template.context import RequestContext
 
 from forms import SignUpForm
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.decorators import permission_required
 
 from recetas import models
 from recetas import views

@@ -270,6 +270,7 @@ class Cliente(models.Model):
     class Meta:
         permissions = (
             ("ver_clientes_morosos", "Puede listar los clientes morosos"),
+
         )
 
 #************************************************************************#
