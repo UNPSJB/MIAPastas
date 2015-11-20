@@ -25,7 +25,6 @@ TIPODIAS = (
       )
 
 # Create your models here.
-#********************************************************#
                #     C H O F E R E S    #
 #********************************************************#
 class Chofer (models.Model):    
@@ -250,7 +249,7 @@ class Cliente(models.Model):
     email = models.CharField(max_length=30,blank=True,null=True) #blank=True indica que puede estar el campo vacio
     es_moroso = models.BooleanField(default=False)
     saldo = models.FloatField(default=0)
-    activo = models.BooleanField(default=True)
+    #activo = models.BooleanField(default=True)
 
     def __str__(self):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
