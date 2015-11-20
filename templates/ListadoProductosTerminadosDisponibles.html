@@ -56,11 +56,11 @@
                                {% for lote in producto.lote_set.all %}
                                 <tr class="renglon select-item" data-id="{{producto.id}}" id="renglon-{{producto.id}}">
                                     <td>{{lote.nro_lote}}</td>
-                                    <td>{{lote.stock_disponible}}</td>
+                                    <td>{{lote.stock_disponible}} Bolsines</td>
                                 </tr>
 
                                 {% endfor %}
-                                <td><font color="red">TOTAL DE BOLSINES: {{producto.stock}}</font></td>
+                                <td><font color="red"><b>TOTAL DE BOLSINES: {{producto.stock}}</b></font></td>
                               </tbody>
                           </table>
                     {% endfor %}
@@ -73,7 +73,7 @@
             <hr/>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label for="totalAdeudado">TOTAL BOLSINES</label>
+                        <label for="totalAdeudado"><font color="green"><b>TOTAL DE BOLSINES</b></font></label>
                         <input type="text" class="form-control"
                                value="{%stock_totales productos_filtrados%}"
                                name="totalAdeudado" id="totalAdeudado" READONLY>
