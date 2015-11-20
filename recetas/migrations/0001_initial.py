@@ -160,7 +160,10 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad_pedida', models.PositiveIntegerField(default=0)),
                 ('cantidad_enviada', models.PositiveIntegerField(default=0)),
+<<<<<<< HEAD
+=======
                 ('precio', models.DecimalField(default=0, max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
+>>>>>>> origin/master
                 ('hoja_de_ruta', models.ForeignKey(to='recetas.HojaDeRuta')),
             ],
         ),

@@ -412,6 +412,14 @@ def listadoClientesMorososExcel(request):
     numero_fila = 2
 
     for index, cliente in enumerate(clientes, 1):
+<<<<<<< HEAD
+        worksheet.write(index, 0, cliente.cuit)
+        worksheet.write(index, 1, cliente.razon_social)
+        worksheet.write(index, 2, cliente.ciudad.nombre)
+        worksheet.write(index, 3, cliente.direccion)
+        worksheet.write(index, 4, cliente.telefono)
+        worksheet.write(index, 5, cliente.saldo)
+=======
         if cliente.saldo!=0:
 
             worksheet.write(numero_fila, 0, cliente.cuit_cuil)
@@ -426,6 +434,7 @@ def listadoClientesMorososExcel(request):
     worksheet.write(numero_fila, 0, 'TOTAL ADEUDADO')
     worksheet.write(numero_fila, 1, cantidad_total_adeudado)
 
+>>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
     workbook.close()
 
     output.seek(0)

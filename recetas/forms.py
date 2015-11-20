@@ -300,20 +300,54 @@ class ZonaForm(forms.ModelForm):
 
 
 
-class ClienteForm(forms.ModelForm):
+class ClienteModificarForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
-        fields = ["cuit_cuil","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
+        fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
 
 
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
+        cuit = self.cleaned_data['cuit']
         razon_social = texto_lindo(razon_social, True)
+<<<<<<< HEAD
+        if models.Cliente.objects.filter(razon_social=razon_social).exists():
+            if models.Cliente.objects.filter(cuit=cuit).exists():
+                raise ValidationError('Ya existe un Cliente con esa Razon Social.')
+        return razon_social
+
+    def clean_nombre_dueno(self):
+        nombre_dueno = self.cleaned_data['nombre_dueno']
+        nombre_dueno = texto_lindo(nombre_dueno, True)
+        return nombre_dueno
+
+    def clean_direccion(self):
+        direccion = self.cleaned_data['direccion']
+        direccion = texto_lindo(direccion, True)
+        return direccion
+
+
+
+class ClienteAltaForm(forms.ModelForm):
+    class Meta:
+        model = models.Cliente
+        fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email"]
+        exclude = ['es_moroso']
+
+    def clean_razon_social(self):
+        razon_social = self.cleaned_data['razon_social']
+        cuit = self.cleaned_data['cuit']
+        razon_social = texto_lindo(razon_social, True)
+        if models.Cliente.objects.filter(razon_social=razon_social).exists():
+            if models.Cliente.objects.filter(cuit=cuit).exists():
+                raise ValidationError('Ya existe un Cliente con esa Razon Social.')
+=======
         
         
         if self.instance is None and  models.Cliente.objects.filter(razon_social=razon_social).exists():            
             raise ValidationError('Ya existe un Cliente con esa Razon Social.')
+>>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
         return razon_social
 
     def clean_nombre_dueno(self):
@@ -330,6 +364,10 @@ class ClienteForm(forms.ModelForm):
         moroso = self.cleaned_data["es_moroso"]
         print "EN CLEAN DE MOROSO: ",moroso
         return moroso
+
+
+
+
 
 class PedidoProveedorAltaForm(forms.ModelForm):
     class Meta:
