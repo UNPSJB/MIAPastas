@@ -43,3 +43,15 @@ def devolver_producto(entrega,prod):
 		if d.producto_terminado == prod:
 			return ""
 	return prod.id
+
+@register.simple_tag
+def saldos_totales(clientes):
+	cant=0.0
+	for c in clientes:
+         cant+=c.saldo
+	return cant
+
+def devolver_len(algo):
+    return len(algo)
+    
+

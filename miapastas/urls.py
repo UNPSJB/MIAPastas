@@ -36,6 +36,7 @@ urlpatterns = [
     url(r'^prueba3$', views.prueba3, name='prueba3'),
     url(r'^login$', login, {'template_name': 'login.html', }, name="login"),
     url(r'^logout$', logout, {'template_name': 'login.html', }, name="logout"),
+    url(r'^usuario$', views.usuario,name="usuario" ),
 
     url(r'^signup$', views.signup, name='signup'),
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
@@ -55,6 +56,9 @@ urlpatterns = [
     url(r'^listadoClientesMorosos$',views.listadoClientesMorosos,name='listadoClientesMorosos'),
     url(r'^listadoClientesMorososFiltros$',views.listadoClientesMorososFiltros,name='listadoClientesMorososFiltros'),
     url(r'^listadoClientesMorososExcel$',views.listadoClientesMorososExcel,name='listadoClientesMorososExcel'),
+
+    url(r'^listadoProductosTerminadosDisponibles$',views.listadoProductosTerminadosDisponibles,name='listadoProductosTerminadosDisponibles'),
+    url(r'^listadoProductosTerminadosDisponiblesFiltros$',views.listadoProductosTerminadosDisponiblesFiltros,name='listadoProductosTerminadosDisponiblesFiltros'),
                     # Hechos en forms
 
 

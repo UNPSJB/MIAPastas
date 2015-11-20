@@ -6,23 +6,24 @@
 
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Clientes Morosos</b></font></p></div>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Productos Terminados Disponibles</b></font></p></div>
             <div class="panel-body">
                  <!--Formulario del FILTRO-->
             <div class="row">
-                 <form method="get" class="form-inline col-md-5" action="{% url 'listadoClientesMorososFiltros' %}">
-                    <div class="form-group">
-                        <label for="saldo">Saldo (Mayor igual)</label>
-                        <input type="number" class="form-control" value="{{filtros.saldo}}" name="saldo" id="saldo" >
-                    </div>
+                 <form method="get" class="form-inline col-md-5" action="{% url 'listadoProductosTerminadosDisponiblesFiltros' %}">
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
+                        </div>
 
 
 
-                    <button type="submit" class="btn btn-default">Filtrar</button>
+
+                        <button type="submit" class="btn btn-default">Filtrar</button>
                                          <p>&nbsp;</p>
 
                   </form>
-                  <form method="get" class="form-inline col-md-1" action="{% url 'listadoClientesMorosos' %}">
+                  <form method="get" class="form-inline col-md-1" action="{% url 'listadoProductosTerminadosDisponibles' %}">
                       <button type="submit" class="btn btn-default">Filtrar Todos</button>
                                          <p>&nbsp;</p>
                   </form>
@@ -30,30 +31,26 @@
             <div class="row">
                 <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
+                    {% for producto in productos %}
+                          <label>{{producto.nombre}}</label>
                           <table class="table table-hover">
                             <thead>
                             <tr>
-                                <th>Cuit</th>
-                                <th>Razon Social</th>
-                                <th>Ciudad</th>
-                                <th>Direccion</th>
-                                <th>Telefono</th>
-                                <th>Monto adeudado</th>
+                                <th>N° Lote</th>
+                                <th>Cantidad</th>
+
                             </tr>
                             </thead>
                               <tbody>
-                                {% for cliente in clientes %}
-                                <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
-                                    <td>{{cliente.cuit_cuil}}</td>
-                                    <td>{{cliente.razon_social}}</td>
-                                    <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
-                                    <td>{{cliente.direccion}}</td>
-                                    <td>{{cliente.telefono}}</td>
-                                    <td>{{cliente.saldo}}</td>
+                               {% for lote in producto.lote_set.all %}
+                                <tr class="renglon select-item" data-id="{{producto.id}}" id="renglon-{{producto.id}}">
+                                    <td>{{lote.nro_lote}}</td>
+                                    <td>{{lote.stock_disponible}}</td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
                           </table>
+                    {% endfor %}
                 </div>
 
            <div class="col-md-2">
@@ -63,9 +60,9 @@
             <hr/>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label for="totalAdeudado">TOTAL ADEUDADO</label>
+                        <label for="totalAdeudado">TOTAL BOLSINES</label>
                         <input type="text" class="form-control"
-                               value="{%saldos_totales clientes%}"
+                               value=""
                                name="totalAdeudado" id="totalAdeudado" READONLY>
 
                     </div>

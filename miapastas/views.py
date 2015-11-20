@@ -11,7 +11,7 @@ from django.template.context import RequestContext
 
 from forms import SignUpForm
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.decorators import permission_required
 
 from recetas import models
 from recetas import views
@@ -117,6 +117,9 @@ def prueba3(request):
 def login(request):
     return render(request, "login.html", {},context_instance=RequestContext(request))
 
+@login_required()
+def usuario(request):
+    return render(request, "usuario.html", {})
 
 
 def signup(request):
@@ -360,6 +363,9 @@ def listadoClientesMorososFiltros(request):
     if request.method == "GET":
         print("Entreee al GETTT")
         filters, mfilters = get_filtros(request.GET, models.Cliente)
+        print(mfilters)
+        if "saldo__gt" not in mfilters or mfilters['saldo__gt'] == "" or float(mfilters['saldo__gt'])<0:
+            mfilters["saldo__gt"] = 0
         clientes = models.Cliente.objects.filter(**mfilters)
         ciudades= models.Ciudad.objects.all()
         return render(request, "listadoClientesMorosos.html",
@@ -393,19 +399,42 @@ def listadoClientesMorososExcel(request):
     output = io.BytesIO()
     workbook = Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()
-    worksheet.write(0, 0, "Cuit")
-    worksheet.write(0, 1, "Razon Social")
-    worksheet.write(0, 2, "Ciudad")
-    worksheet.write(0, 3, "Direccion")
-    worksheet.write(0, 4, "Telefono")
-    worksheet.write(0, 5, "Monto Adeudado")
+    worksheet.write(0, 0, "Listado de Clientes Morosos")
+
+    worksheet.write(1, 0, "Cuit")
+    worksheet.write(1, 1, "Razon Social")
+    worksheet.write(1, 2, "Ciudad")
+    worksheet.write(1, 3, "Direccion")
+    worksheet.write(1, 4, "Telefono")
+    worksheet.write(1, 5, "Monto Adeudado")
+
+    cantidad_total_adeudado = 0
+    numero_fila = 2
+
     for index, cliente in enumerate(clientes, 1):
+<<<<<<< HEAD
         worksheet.write(index, 0, cliente.cuit)
         worksheet.write(index, 1, cliente.razon_social)
         worksheet.write(index, 2, cliente.ciudad.nombre)
         worksheet.write(index, 3, cliente.direccion)
         worksheet.write(index, 4, cliente.telefono)
         worksheet.write(index, 5, cliente.saldo)
+=======
+        if cliente.saldo!=0:
+
+            worksheet.write(numero_fila, 0, cliente.cuit_cuil)
+            worksheet.write(numero_fila, 1, cliente.razon_social)
+            worksheet.write(numero_fila, 2, cliente.ciudad.nombre)
+            worksheet.write(numero_fila, 3, cliente.direccion)
+            worksheet.write(numero_fila, 4, cliente.telefono)
+            worksheet.write(numero_fila, 5, cliente.saldo)
+            cantidad_total_adeudado += cliente.saldo
+            numero_fila+=1
+
+    worksheet.write(numero_fila, 0, 'TOTAL ADEUDADO')
+    worksheet.write(numero_fila, 1, cantidad_total_adeudado)
+
+>>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
     workbook.close()
 
     output.seek(0)
@@ -414,3 +443,40 @@ def listadoClientesMorososExcel(request):
     response['Content-Disposition'] = "attachment; filename=ListadoClientesMorosos.xlsx"
 
     return response
+
+
+
+
+@login_required()
+def listadoProductosTerminadosDisponibles(request):
+    productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+    print("pase por acaaaaaa")
+    print(productos)
+    print("pase por acaaaaaa")
+
+    return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos})
+
+
+@login_required()
+def listadoProductosTerminadosDisponiblesFiltros(request):
+    if request.method == "GET":
+        print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        print("Entreee al GETTT")
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+        filters, mfilters = get_filtros(request.GET, models.ProductoTerminado)
+        print(mfilters)
+        #if "saldo__gt" not in mfilters or mfilters['saldo__gt'] == "" or float(mfilters['saldo__gt'])<0:
+         #   mfilters["saldo__gt"] = 0
+        productos = models.ProductoTerminado.objects.filter(**mfilters)
+
+        return render(request, "listadoProductosTerminadosDisponibles.html",
+                  {"productos": productos,
+                   "filtros": filters,
+                   })
+
+    productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+    print("pase por acaaaaaa")
+    print(productos)
+    print("pase por acaaaaaa")
+
+    return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos})
