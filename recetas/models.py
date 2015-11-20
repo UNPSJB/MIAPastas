@@ -149,7 +149,7 @@ class ProductoTerminado(models.Model):
     nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
     stock = models.PositiveIntegerField(default = 0)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
-    dias_vigencia = models.PositiveIntegerField(default=01)
+    dias_vigencia = models.PositiveIntegerField(default=01)#esto es la fecha de vencimiento
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
     objects=ManagerActivos()
@@ -251,7 +251,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gte']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gt']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)

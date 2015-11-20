@@ -8,13 +8,18 @@ import datetime
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('recetas', '0004_auto_20151116_1358'),
+        ('recetas', '0001_initial'),
     ]
 
     operations = [
         migrations.AlterField(
+            model_name='cliente',
+            name='email',
+            field=models.CharField(max_length=30, null=True, blank=True),
+        ),
+        migrations.AlterField(
             model_name='pedidofijo',
             name='fecha_inicio',
-            field=models.DateField(default=datetime.date(2015, 11, 12)),
+            field=models.DateField(default=datetime.date(2015, 11, 19)),
         ),
     ]
