@@ -311,10 +311,6 @@ class ClienteModificarForm(forms.ModelForm):
         razon_social = self.cleaned_data['razon_social']
         cuit = self.cleaned_data['cuit']
         razon_social = texto_lindo(razon_social, True)
-<<<<<<< HEAD
-        if models.Cliente.objects.filter(razon_social=razon_social).exists():
-            if models.Cliente.objects.filter(cuit=cuit).exists():
-                raise ValidationError('Ya existe un Cliente con esa Razon Social.')
         return razon_social
 
     def clean_nombre_dueno(self):
@@ -342,12 +338,6 @@ class ClienteAltaForm(forms.ModelForm):
         if models.Cliente.objects.filter(razon_social=razon_social).exists():
             if models.Cliente.objects.filter(cuit=cuit).exists():
                 raise ValidationError('Ya existe un Cliente con esa Razon Social.')
-=======
-        
-        
-        if self.instance is None and  models.Cliente.objects.filter(razon_social=razon_social).exists():            
-            raise ValidationError('Ya existe un Cliente con esa Razon Social.')
->>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
         return razon_social
 
     def clean_nombre_dueno(self):

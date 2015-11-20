@@ -649,6 +649,7 @@ def clientesModificar(request,cliente_id = None):
     if request.method=="POST":
         cliente_form = forms.ClienteModificarForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
+<<<<<<< HEAD
             if cliente_instancia.es_moroso and cliente_instancia.saldo==0:
                 print(cliente_instancia.es_moroso)
                 messages.error(request,'El cliente no puede ser moroso ya que no posee saldo deudor')
@@ -667,6 +668,15 @@ def clientesModificar(request,cliente_id = None):
     return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
 >>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
 '''
+=======
+            print "form es valido"
+            cliente_form.save()
+            return redirect('clientes')
+    else:
+        cliente_form = forms.ClienteForm(instance= cliente_instancia)
+    return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+
+>>>>>>> origin/master
 def clientesAlta(request):
     if request.method == "POST":
         cliente_form = forms.ClienteAltaForm(request.POST)
