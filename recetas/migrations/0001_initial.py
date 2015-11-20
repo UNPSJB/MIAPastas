@@ -43,12 +43,15 @@ class Migration(migrations.Migration):
                 ('nombre_dueno', models.CharField(max_length=100)),
                 ('direccion', models.CharField(unique=True, max_length=100)),
                 ('telefono', models.PositiveIntegerField()),
-                ('email', models.CharField(max_length=30, unique=True, null=True, blank=True)),
+                ('email', models.CharField(max_length=30, null=True, blank=True)),
                 ('es_moroso', models.BooleanField(default=False)),
                 ('saldo', models.FloatField(default=0)),
                 ('activo', models.BooleanField(default=True)),
                 ('ciudad', models.ForeignKey(to='recetas.Ciudad')),
             ],
+            options={
+                'permissions': (('ver_clientes_morosos', 'Puede listar los clientes morosos'),),
+            },
         ),
         migrations.CreateModel(
             name='DetallePedidoProveedor',
@@ -157,6 +160,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('cantidad_pedida', models.PositiveIntegerField(default=0)),
                 ('cantidad_enviada', models.PositiveIntegerField(default=0)),
+                ('precio', models.DecimalField(default=0, max_digits=10, decimal_places=2, validators=[django.core.validators.MinValueValidator(0, 0)])),
                 ('hoja_de_ruta', models.ForeignKey(to='recetas.HojaDeRuta')),
             ],
         ),
@@ -248,7 +252,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 17))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 19))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],

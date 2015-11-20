@@ -33,7 +33,6 @@ from decimal import Decimal
 
 
 
-
 #from datetime import date, datetime
 #import time
 
@@ -287,13 +286,10 @@ def recetas(request,receta_id=None):
     # filtros
     filters, mfilters = get_filtros(request.GET, models.Receta)
     recetas = models.Receta.objects.filter(**mfilters)
-
-        # filtrar recetas por productos
-    productos_terminados= models.ProductoTerminado.objects.all()
     return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
                        "filtros": filters,
-                       "productos_terminados":productos_terminados})
+                       "productos_terminados":models.ProductoTerminado.objects.all()})
 
 
 
@@ -312,18 +308,15 @@ def recetasModificar(request,receta_id):
         receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
         if receta_form.is_valid():
             receta_instancia = receta_form.save(commit=False)
-            #DETALLES
+            #Detalles
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
             if detalles_formset.is_valid():
-
                 detalles_formset.save()
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
                 receta_instancia.save()
             return redirect('recetas')
     else:
-        receta_form = forms.RecetaForm(instance= receta_instancia)
-
-        #si el form no es valido, le mando todo al html para que muestre los errores#
+        receta_form = forms.RecetaForm(instance= receta_instancia)        
     pref = "recetadetalle_set"
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
@@ -359,7 +352,6 @@ def recetasAlta(request):
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido registrada correctamente.')
 
                 return redirect('recetas')
-        # se lo paso todo a la pagina para que muestre cuales fueron los errores.
     return render(request, "recetasAlta.html", {
             "insumos":insumos,
             "receta_form": receta_form or forms.RecetaForm(),
@@ -645,11 +637,12 @@ def clientesModificar(request,cliente_id = None):
     if request.method=="POST":
         cliente_form = forms.ClienteForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
+            print "form es valido"
             cliente_form.save()
-        return redirect('clientes')
+            return redirect('clientes')
     else:
         cliente_form = forms.ClienteForm(instance= cliente_instancia)
-        return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+    return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
 
 def clientesAlta(request):
     if request.method == "POST":
@@ -747,8 +740,20 @@ def ciudadesBaja(request,ciudad_id =None):
                #     PEDIDOS CLIENTES   #
 #********************************************************#
 
+def eliminarVencidos():
+    pedidos_fijos = models.PedidoFijo.objects.all()
+    for pedido in pedidos_fijos:
+        if pedido.fecha_cancelacion != None and pedido.fecha_cancelacion<date.today():
+            pedido.activo=False
+            pedido.save()
+            print "en vencidos: ",pedido.id
+    #los de cambio y ocacionales se deben eliminar cuando se hace la rendicion
+
+
+
 
 def pedidosClientes(request,pedido_id=None):
+    eliminarVencidos()
     if pedido_id is not None:
         # consulta
         pedido = models.PedidoCliente.objects.get(pk=pedido_id)
@@ -1116,18 +1121,21 @@ def loteStock(request,lote_id):
     return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
                                                          "lote": lote_instancia,
                                                          "id":lote_id})
+
+
+
+
 #********************************************************#
          #    H O J A   D E  R U T A    #
 #********************************************************#
 def hojaDeRuta(request):
-
+        eliminarVencidos()
         pedidos_clientes = []
         pedidos_fijos = models.PedidoFijo.objects.all()
         pedidos_ocacionales = models.PedidoOcacional.objects.all()
         pedidos_cambio = models.PedidoCambio.objects.all()
-        #detalles_form = formset_factory(forms.LotesExtraDetalleForm())
         hojaDeRuta_form = forms.HojaDeRutaForm()
-        pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
+        pedidos_clientes= chain(models.PedidoFijo.objects.filter(activo=True), models.PedidoOcacional.objects.filter(activo=True),models.PedidoCambio.objects.filter(activo=True))
         pedidos_clientes_enviar = []
         pedidos_ya_cargados = []
         hojas_de_ruta=models.HojaDeRuta.objects.filter(fecha_creacion=date.today())
@@ -1136,9 +1144,9 @@ def hojaDeRuta(request):
             for entrega in entregas:
                 pedidos_ya_cargados.append(entrega.pedido.id)
         for pedido in pedidos_clientes:
-            #print pedido.__class__
             if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
                 pedidos_clientes_enviar.append(pedido)
+        print "peidooooo", pedidos_clientes_enviar
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
@@ -1159,18 +1167,22 @@ def hojaDeRutaAlta(request):
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
-        # ahora las entregas
-        entregas_factory_class= formset_factory(forms.EntregaForm)
-        entregas_factory =  entregas_factory_class(request.POST,request.FILES,prefix="entregas")
-        if entregas_factory.is_valid():
-            for entrega_form in entregas_factory:
-                entrega_instancia = entrega_form.save(hoja_ruta_instancia)
-            prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
-            prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
-            if prod_llevados_factory.is_valid():
-                for prod_llevado_form in prod_llevados_factory:
-
-                    prod_llevados_instancia = prod_llevado_form.save(hoja_ruta_instancia)
+        entregas_factory =  forms.EntregaFormsetClass(request.POST,request.FILES,prefix="entregas")
+        prod_llevados_factory = forms.ProductoLlevadoFormsetClass(request.POST,request.FILES,prefix="productos_totales")
+        for p_llevado in prod_llevados_factory:
+            if p_llevado.is_valid():
+                 p_llevado.save(hoja_ruta_instancia)
+            #print "ERRORES ",p_llevado.errors.as_data()
+        if hoja_ruta_instancia.productosllevados_set.all():
+            if  entregas_factory.is_valid():
+                for e in entregas_factory:
+                    entrega_instancia= e.save(hoja_ruta_instancia)
+                    if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
+                        entrega_instancia.pedido.activo=False #marco como entregado
+        else:
+            hoja_ruta_instancia.delete()
+            messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
+            return redirect("hojaDeRuta")
 
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
 
@@ -1202,29 +1214,32 @@ def generarTotales(request):
 
 
 def rendicionReparto(request,hoja_id=None):
+    print "EN RENDICION", hoja_id
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)    
     prefix_detalles_entregas = "entregas"
     prefix_prod_llevados = "prod_llevados"
-    detalles_factory_form = forms.EntregaDetalleFormset(prefix=prefix_detalles_entregas)
-    prod_llevados_factory = formset_factory(forms.ProdLlevadoDetalleRendirForm)        
+    detalles_formset = forms.EntregaDetalleFormset(prefix=prefix_detalles_entregas)
+    prod_llevados_formset = forms.ProdLlevadoFormset_class(prefix=prefix_prod_llevados)        
     if request.method == "POST":
+        print "vino post"
         # E n t r e g a s
-        detalles_factory_form = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix_detalles_entregas)
-        if detalles_factory_form.is_valid():
-            for det_form in  detalles_factory_form:
+        detalles_formset = forms.EntregaDetalleFormset(request.POST,request.FILES,prefix=prefix_detalles_entregas)
+        if detalles_formset.is_valid():
+            for det_form in  detalles_formset:
                 det_form.save()
             #  P r o d u c t o s   L l e v a d o s
-            prod_llevados_forms = prod_llevados_factory(request.POST,request.FILES,prefix=prefix_prod_llevados)
+            prod_llevados_forms = forms.ProdLlevadoFormset_class(request.POST,request.FILES,prefix=prefix_prod_llevados)
             if prod_llevados_forms.is_valid():
                 for prod_llevado_form in prod_llevados_forms:
                     prod_llevado_form.save()
                 hoja.rendida = True
                 hoja.save()
+                print "guarde la hgoja"
             return redirect("rendicionDeRepartoMostrar",hoja.id)
     return render(request,"rendicionDeReparto.html",{"hoja":hoja,
-                                                     "detalles_factory":detalles_factory_form,
+                                                     "detalles_factory":detalles_formset,
                                                      "prefix":prefix_detalles_entregas,
-                                                     "prod_llevados_factory":prod_llevados_factory(prefix=prefix_prod_llevados),
+                                                     "prod_llevados_factory":prod_llevados_formset,
                                                      "prefix_prod_llevados":prefix_prod_llevados
                                                      })
 
@@ -1260,6 +1275,7 @@ def render_to_pdf(template_src, context_dict):
 
 def HojaDeRutaPdf(request,hoja_id=None):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id) #tengo q buscar la hoja q resiba por parametro
+    print "hoja de ruta a mostrar ",hoja.id
     fecha = hoja.fecha_creacion
     return render_to_pdf('PDFs/HojaDeRutaPdf.html',{'pagesize':'A4',
                                                    'hoja': hoja,
@@ -1280,14 +1296,17 @@ def LotesHojaRutaPdf(request,hoja_id=None):
          #    COBRAR CLIENTE  #
 #********************************************************#
 
+
+
+
 def cobrarClienteFiltrado(request,cliente_id=None):
     entregas_no_facturadas = []
     cliente=models.Cliente.objects.get(pk=(cliente_id))
     entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
     saldo = 0
     for entrega in entregas:
-        print "soy entrega:::",entrega.factura
-        if entrega.factura == None:
+
+        if entrega.factura == None and entrega.monto_total() > 0:
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()
             print entrega.monto_restante()," eerere"
@@ -1364,8 +1383,6 @@ def cobrarClienteFacturar(request):
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
     print "monto factura",monto_factura," monto recibo: ",monto_recibo
     print "monto cliente ",cliente.saldo
-
-
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 
@@ -1377,45 +1394,5 @@ def cobrarClienteMostrarRecibos(request):
         recibos=serializers.serialize('json', recibos)
         return HttpResponse(recibos,content_type='json')
 
-
-
-'''
-    if entregas[0].monto_restante() <= monto:
-        #solicitar carga de numero de factura
-        return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
-    else:
-        #solicitar numero de recibo
-        entregas[0].cobrate(monto)
-
-
-
-
-
-
-pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
-lotes_dict = []
-for pedido in pedidos:
-	for detalle in pedido.pedidoclientedetalle_set.all():
-		producto_buscado = detalle.producto_terminado
-		cantidad_buscada = detalle.cantidad_producto
-		#esta cantidad hay que salir a buscarla a los lotes
-		lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
-		lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
-		for lote in lotes:
-			print "cantidad buscad: " ,cantidad_buscada
-			cantidad_reservada = lote.reservar_stock(cantidad_buscada)
-			cantidad_buscada -=  cantidad_reservada
-			print "RESERVAR SOTKC RETORNO:" ,cantidad_buscada
-			lotes_dict.append = {"lote":lote,"cantidad":cantidad_reservada}
-			if  cantidad_buscada == 0:
-				# si logro cubrir la cantidad buscada con stock disponible en uno o mas lotes
-				# termino el bucle y voy a buscar otro detalle
-				break;
-		if cantidad_buscada > 0:
-			print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
-# al finalizar debo imprimir los lotes y sus cantidades a buscar
-print lotes_dict
-
-'''
 
 

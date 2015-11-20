@@ -11,7 +11,7 @@ from django.template.context import RequestContext
 
 from forms import SignUpForm
 from django.contrib.auth.decorators import login_required
-
+from django.contrib.auth.decorators import permission_required
 
 from recetas import models
 from recetas import views
@@ -117,6 +117,9 @@ def prueba3(request):
 def login(request):
     return render(request, "login.html", {},context_instance=RequestContext(request))
 
+@login_required()
+def usuario(request):
+    return render(request, "usuario.html", {})
 
 
 def signup(request):

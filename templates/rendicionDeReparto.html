@@ -182,9 +182,11 @@ var prefix_entregas = "{{prefix}}"; //este tiene q venir desde la view
 var prefix_prod_llevados = "{{prefix_prod_llevados}}";
 
 function limpiar_diccionario(dic){
+    console.log("en limpiar diccionario");
     for (i in dic){
         dic[i] = 0;
     }
+    console.log("fin");
 
 }
 
@@ -226,32 +228,31 @@ $("#boton-sobrantes-modificar").click(function(){
 
 
     function hay_balance(){
-        console.log("en hay balance");
         var prod_ids = _.keys(listado_productos_totales);
-        console.log(prod_ids);
         var count=0;
-        $(prod_ids).each(function(i,id){
+        var result = _.map(prod_ids, function(id) {
             count = listado_productos_sobrantes[id] + listado_productos_entregados[id];
-            console.log("count es: "+count);
-            console.log("el producto tiene un total: "+listado_productos_totales[id]);
             if (listado_productos_totales[id] < count){
-                alert("Error para el producto "+ id+ " se cargaron de mas!");
-                //return false;
+                var a = count - listado_productos_totales[id];
+                alert("Para el producto "+ id+ " se cargaron "+ a+" unidades  de mas!");
+                return false;
             }else{
                 if (listado_productos_totales[id] > count ){
                     var a = listado_productos_totales[id] - count;
-                    alert("faltan registrar para el producto "+id+" unidades: "+a);
+                    alert("Faltan registrar para el producto "+id+" unidades: "+a);
+                    return false;
                 }
             }
-        })
-        alert("fin balance");
-        return false;
+            return true;
+        });
+        return _.all(result);   
+
     }
 
 
 
     function validacion_final(){
-    console.log("en validacion_final");
+        console.log("en validacion_final");
         var cant_entregadas = $(".input-entregas");
         var diccionario={};
         $(cant_entregadas).each(function(i,val){
@@ -262,11 +263,12 @@ $("#boton-sobrantes-modificar").click(function(){
         console.log("------------------------------");
         console.log(listado_productos_entregados);
         if (hay_balance()){
+            alert("BALANCE positivo");
+            armar_inputs();      
             return true;
         }
-       // limpiar_diccionario(listado_productos_entregados);
-        armar_inputs();
-        return true;
+        limpiar_diccionario(listado_productos_entregados);         
+        return false;
     }
 
 
