@@ -15,8 +15,10 @@
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
              var n=window.location.pathname;
-             var s=n.substring(0,_.size(n)-1);
+             var s=n.substring(1,_.size(n)-1);
              console.log(s);
+             s = s.replace("/","_");
+             s = "/"+s;
              frame = $("#frameDocumentacion");
              frame.attr("src",url+s+".html");
              $("#modalDocumentacion").modal("show");
@@ -248,13 +250,15 @@
           {% endif %}
 
 <!-- lista desplegable de Listados -->
-          {% if perms.recetas.ver_clientes_morosos %}
+          {% if perms.recetas.ver_clientes_morosos or perms.recetas.ver_productos_terminados_disponibles %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Listados<span class="caret"></span></a>
           <ul class="dropdown-menu">
               {% if perms.recetas.ver_clientes_morosos %}
             <li><a href="{%url 'listadoClientesMorosos'%}">Listado de Clientes Morosos</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
+              {% if perms.recetas.ver_productos_terminados_disponibles %}
             <li><a href="{%url 'listadoProductosTerminadosDisponibles'%}">Listado de Productos Terminados Disponibles</a></li>
             <li role="separator" class="divider"></li>
               {% endif %}

@@ -24,9 +24,9 @@ html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#sys.path.insert(0, os.path.abspath('.'))
-#sys.path.append(os.path.abspath('.')) ANTES
-sys.path.append(os.path.abspath('D:\FACULTAD 2015\Desarrollo de software\proyectos python\MIAPastas\recetas'))
+PROJECT_PATH = os.path.abspath('../..')
+sys.path.insert(0, PROJECT_PATH)
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "miapastas.settings")
 
 # -- General configuration ------------------------------------------------
 
@@ -38,6 +38,8 @@ sys.path.append(os.path.abspath('D:\FACULTAD 2015\Desarrollo de software\proyect
 # ones.
 extensions = [
     'sphinx.ext.viewcode',
+    'sphinx.ext.autodoc',
+    'sphinx.ext.autosummary'
 ]
 
 # Add any paths that contain templates here, relative to this directory.

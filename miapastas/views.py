@@ -441,11 +441,13 @@ def listadoClientesMorososExcel(request):
 @login_required()
 def listadoProductosTerminadosDisponibles(request):
     productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+
     print("pase por acaaaaaa")
     print(productos)
+
     print("pase por acaaaaaa")
 
-    return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos})
+    return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos,"productos_filtrados":productos})
 
 
 @login_required()
@@ -458,10 +460,11 @@ def listadoProductosTerminadosDisponiblesFiltros(request):
         print(mfilters)
         #if "saldo__gt" not in mfilters or mfilters['saldo__gt'] == "" or float(mfilters['saldo__gt'])<0:
          #   mfilters["saldo__gt"] = 0
-        productos = models.ProductoTerminado.objects.filter(**mfilters)
+        productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+        productos_filtrados = models.ProductoTerminado.objects.filter(**mfilters)
 
         return render(request, "listadoProductosTerminadosDisponibles.html",
-                  {"productos": productos,
+                  {"productos": productos,"productos_filtrados":productos_filtrados,
                    "filtros": filters,
                    })
 

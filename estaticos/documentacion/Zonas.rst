@@ -7,7 +7,7 @@ Para poder filtrar todas las zonas el nombre deberá estar vacío y presionamos 
 .. toctree::
    :maxdepth: 1
    
-   zonas alta
-   Modificar Zona
-   Eliminar Zona
+   Zonas_alta
+   Zonas_modificar
+   Zonas_eliminar
 
