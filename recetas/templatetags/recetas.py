@@ -43,3 +43,8 @@ def devolver_producto(entrega,prod):
 		if d.producto_terminado == prod:
 			return ""
 	return prod.id
+
+@register.simple_tag
+def devolver_len(algo):
+    return len(algo)
+    
