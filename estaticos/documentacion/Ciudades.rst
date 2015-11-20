@@ -3,7 +3,7 @@
 .. toctree::
    :maxdepth: 1
    
-   Alta Ciudad
-   Modificar Ciudad
-   Eliminar Ciudad
+   Ciudad_alta
+   Ciudad_modificar
+   Ciudad_eliminar
 

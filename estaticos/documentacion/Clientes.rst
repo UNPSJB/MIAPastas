@@ -4,7 +4,7 @@
 .. toctree::
    :maxdepth: 1
    
-   Alta Cliente
-   Modificar Cliente
-   Eliminar Cliente
+   Clientes_alta
+   Clientes_modificar
+   Clientes_Eliminar
 
