@@ -55,3 +55,11 @@ def devolver_len(algo):
     return len(algo)
     
 
+@register.simple_tag
+def stock_totales(productos):
+	cant=0.0
+	for p in productos:
+         cant+=p.stock
+	return cant
+
+
