@@ -1157,7 +1157,8 @@ def hojaDeRuta(request):
             if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
                 pedidos_clientes_enviar.append(pedido)
         print "peidooooo", pedidos_clientes_enviar
-        choferes = models.Chofer.objects.all()
+        choferes = models.Chofer.objects.filter(activo=True)
+        choferes = models.Chofer.objects.filter(disponible=True)
         productos = models.ProductoTerminado.objects.filter(activo=True)
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
         entregas_factory_class = formset_factory(forms.EntregaForm)
@@ -1189,6 +1190,10 @@ def hojaDeRutaAlta(request):
                     entrega_instancia= e.save(hoja_ruta_instancia)
                     if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
                         entrega_instancia.pedido.activo=False #marco como entregado
+            chofer = models.Chofer.objects.filter(pk=hoja_ruta_instancia.chofer.id)    #verificar que ande
+            chofer=chofer[0]
+            chofer.disponible=False 
+            chofer.save()
         else:
             hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
@@ -1243,7 +1248,10 @@ def rendicionReparto(request,hoja_id=None):
                 for prod_llevado_form in prod_llevados_forms:
                     prod_llevado_form.save()
                 hoja.rendida = True
-                hoja.save()
+                chofer = models.Chofer.objects.filter(pk=hoja.chofer.id)
+                chofer=chofer[0]
+                chofer.disponible=True
+                chofer.save()
                 print "guarde la hgoja"
             return redirect("rendicionDeRepartoMostrar",hoja.id)
     return render(request,"rendicionDeReparto.html",{"hoja":hoja,

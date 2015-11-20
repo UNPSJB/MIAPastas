@@ -36,6 +36,7 @@ class Chofer (models.Model):
     telefono=models.PositiveIntegerField()
     e_mail=models.CharField(max_length=100)
     activo = models.BooleanField(default=True)
+    disponible = models.BooleanField(default=True)
     def __str__(self):
         return "%s" % (self.nombre)
 
@@ -450,34 +451,7 @@ class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
-<<<<<<< HEAD
 
-    #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
-
-    def generar_rendicion(self): # E S T E   M E T O D O   N O   V A    M A S
-        # aca tengo que generar TODOS los detalles de las entregas.
-        # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.
-        tiene_prod = False
-        for entrega in self.entrega_set.all():
-            if len(entrega.entregadetalle_set.all())>0:
-                raise "ya tengo rendicion"
-            for prod_llevado in self.productosllevados_set.all():
-                for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():
-                    if detalle_pedido.producto_terminado == prod_llevado.producto_terminado:
-                        tiene_prod=True
-                        break
-                if not tiene_prod:
-                    entrega.generar_detalle(None, prod_llevado.producto_terminado)
-                else:
-                    entrega.generar_detalle(detalle_pedido, None)
-                tiene_prod=False
-
-
-    def balance(self):  # NO    V A    M A S 
-        return "nada"
-=======
-    #objects = ManagerActivosHojasRutas()
-    
     def balance(self):
         totales=[]
         for p in self.productosllevados_set.all():
@@ -485,7 +459,6 @@ class HojaDeRuta(models.Model):
                             "cantidad_enviada":p.cantidad_enviada,
                             "cantidad_pedida":p.cantidad_pedida}) 
         return totales
->>>>>>> origin/master
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
@@ -627,3 +600,40 @@ class Recibo(models.Model):
 
 
 
+
+
+
+
+
+'''
+
+
+
+    #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
+
+    def generar_rendicion(self): # E S T E   M E T O D O   N O   V A    M A S
+        # aca tengo que generar TODOS los detalles de las entregas.
+        # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.
+        tiene_prod = False
+        for entrega in self.entrega_set.all():
+            if len(entrega.entregadetalle_set.all())>0:
+                raise "ya tengo rendicion"
+            for prod_llevado in self.productosllevados_set.all():
+                for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():
+                    if detalle_pedido.producto_terminado == prod_llevado.producto_terminado:
+                        tiene_prod=True
+                        break
+                if not tiene_prod:
+                    entrega.generar_detalle(None, prod_llevado.producto_terminado)
+                else:
+                    entrega.generar_detalle(detalle_pedido, None)
+                tiene_prod=False
+
+
+    def balance(self):  # NO    V A    M A S 
+        return "nada"
+
+
+    #objects = ManagerActivosHojasRutas()
+    
+'''
