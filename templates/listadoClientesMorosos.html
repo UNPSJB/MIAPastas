@@ -44,7 +44,7 @@
                               <tbody>
                                 {% for cliente in clientes %}
                                 <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
-                                    <td>{{cliente.cuit_cuil}}</td>
+                                    <td>{{cliente.cuit}}</td>
                                     <td>{{cliente.razon_social}}</td>
                                     <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
                                     <td>{{cliente.direccion}}</td>

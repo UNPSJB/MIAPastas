@@ -659,7 +659,12 @@ def clientesModificar(request,cliente_id = None):
     else:
         cliente_form = forms.ClienteModificarForm(instance= cliente_instancia)
         return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+<<<<<<< HEAD
   
+=======
+
+
+>>>>>>> origin/master
 def clientesAlta(request):
     if request.method == "POST":
         cliente_form = forms.ClienteAltaForm(request.POST)

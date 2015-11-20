@@ -57,7 +57,7 @@
 
                 <tbody>
                     {% for pedido in pedidos %}
-                    <tr class="renglon select-item cliente-{{pedido.cliente.cuit_cuil}}" data-cliente="{{pedido.cliente.cuit_cuil}}" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                    <tr class="renglon select-item cliente-{{pedido.cliente.cuit}}" data-cliente="{{pedido.cliente.cuit}}" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
                         <td>{{pedido.id}}</td>
                         <td>{{pedido.cliente.razon_social}}</td>
                         <td>{{pedido.cliente.ciudad.nombre}}</td>
