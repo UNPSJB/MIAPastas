@@ -1,0 +1,830 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>recetas.models &mdash; miaPastas 1.0.0 documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="miaPastas 1.0.0 documentation" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> miaPastas
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../Tutorial.html">﻿Tutorial</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Proyecto.html">﻿Proyecto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../Codigo.html">Codigo</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">miaPastas</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+    <li>recetas.models</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for recetas.models</h1><div class="highlight"><pre>
+<span class="c"># -*- coding: utf-8 -*-</span>
+<span class="kn">from</span> <span class="nn">django.db</span> <span class="kn">import</span> <span class="n">models</span>
+<span class="kn">from</span> <span class="nn">django.core.validators</span> <span class="kn">import</span> <span class="n">MinValueValidator</span>
+<span class="kn">from</span> <span class="nn">datetime</span> <span class="kn">import</span> <span class="n">date</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">multiselectfield</span> <span class="kn">import</span> <span class="n">MultiSelectField</span>
+<span class="kn">from</span> <span class="nn">django.utils</span> <span class="kn">import</span> <span class="n">timezone</span>
+
+<span class="c">#clase para redefinir objects y obtener solo instancias activas</span>
+
+<span class="k">class</span> <span class="nc">ManagerActivos</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ManagerActivos</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">activo</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="k">class</span> <span class="nc">ManagerActivosHojasRutas</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Manager</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">get_queryset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">(</span><span class="n">ManagerActivosHojasRutas</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">get_queryset</span><span class="p">()</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">rendida</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+<span class="n">TIPODIAS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;lunes&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;martes&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">&quot;miercoles&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">4</span><span class="p">,</span><span class="s">&quot;jueves&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="s">&quot;viernes&quot;</span><span class="p">)</span>
+      <span class="p">)</span>
+
+<span class="c"># Create your models here.</span>
+               <span class="c">#     C H O F E R E S    #</span>
+<span class="c">#********************************************************#</span>
+<div class="viewcode-block" id="Chofer"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Chofer">[docs]</a><span class="k">class</span> <span class="nc">Chofer</span> <span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>    
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cuit_icontains&#39;</span><span class="p">,</span> <span class="s">&#39;nombre_icontains&#39;</span><span class="p">]</span>
+    <span class="n">cuit</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">nombre</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">direccion</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">telefono</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">e_mail</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">disponible</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">)</span>
+
+
+<span class="c">#********************************************************#</span>
+               <span class="c">#     I N S U M O     #</span>
+<span class="c">#********************************************************#</span></div>
+<span class="k">def</span> <span class="nf">stock_litros_kg</span><span class="p">(</span><span class="n">cant</span><span class="p">):</span>
+    <span class="n">cant</span><span class="o">=</span> <span class="n">cant</span> <span class="o">*</span> <span class="mi">1000</span>
+    <span class="k">return</span> <span class="n">cant</span>
+
+<span class="k">def</span> <span class="nf">stock_unidad</span><span class="p">(</span><span class="n">cant</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">cant</span>
+
+<span class="k">def</span> <span class="nf">stock_docena</span><span class="p">(</span><span class="n">cant</span><span class="p">):</span>
+    <span class="n">cant</span> <span class="o">=</span> <span class="n">cant</span> <span class="o">*</span> <span class="mi">12</span>
+    <span class="k">return</span> <span class="n">cant</span>
+
+
+
+<div class="viewcode-block" id="Insumo"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Insumo">[docs]</a><span class="k">class</span> <span class="nc">Insumo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span> <span class="s">&#39;stock__lte&#39;</span><span class="p">]</span>
+
+
+
+    <span class="n">NONE</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">GRAMO</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">CM3</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">UNIDAD</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">KG</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">LITRO</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">DOCENA</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">MAPLE</span> <span class="o">=</span> <span class="mi">7</span>
+    <span class="n">TUPLAS</span> <span class="o">=</span> <span class="p">[(</span><span class="n">GRAMO</span><span class="p">,</span><span class="n">KG</span><span class="p">),</span>
+              <span class="p">(</span><span class="n">CM3</span><span class="p">,</span><span class="n">LITRO</span><span class="p">),</span>
+              <span class="p">(</span><span class="n">UNIDAD</span><span class="p">,</span><span class="n">DOCENA</span><span class="p">,</span><span class="n">MAPLE</span><span class="p">)]</span>
+
+    <span class="n">UNIDADES_BASICAS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">GRAMO</span><span class="p">,</span> <span class="s">&quot;g&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">CM3</span><span class="p">,</span> <span class="s">&quot;cm3&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">UNIDAD</span><span class="p">,</span> <span class="s">&quot;unidad&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">UNIDADES_DERIVADAS</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="n">KG</span><span class="p">,</span> <span class="s">&quot;kg&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">LITRO</span><span class="p">,</span> <span class="s">&quot;litro&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">DOCENA</span><span class="p">,</span> <span class="s">&quot;docena&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="n">MAPLE</span><span class="p">,</span> <span class="s">&quot;maple&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+
+    <span class="n">UNIDADES</span> <span class="o">=</span> <span class="n">UNIDADES_BASICAS</span> <span class="o">+</span> <span class="n">UNIDADES_DERIVADAS</span>
+
+    <span class="n">CONVERT</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">NONE</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span><span class="p">,</span>
+        <span class="n">GRAMO</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span><span class="p">,</span>
+        <span class="n">CM3</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span><span class="p">,</span>
+        <span class="n">UNIDAD</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span><span class="p">,</span>
+        <span class="n">KG</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">LITRO</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span> <span class="o">*</span> <span class="mi">1000</span><span class="p">,</span>
+        <span class="n">DOCENA</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span> <span class="o">*</span> <span class="mi">12</span><span class="p">,</span>
+        <span class="n">MAPLE</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="n">cantidad</span> <span class="o">*</span> <span class="mi">30</span>
+    <span class="p">}</span>
+
+    <span class="n">FORMAT</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="n">GRAMO</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s"> kg&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cantidad</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">cantidad</span> <span class="o">%</span> <span class="mi">1000</span><span class="p">),</span>
+        <span class="n">CM3</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">.</span><span class="si">%s</span><span class="s"> litros&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cantidad</span> <span class="o">//</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">cantidad</span> <span class="o">%</span> <span class="mi">1000</span><span class="p">),</span>
+        <span class="n">UNIDAD</span><span class="p">:</span> <span class="k">lambda</span> <span class="n">cantidad</span><span class="p">:</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> docenas y </span><span class="si">%s</span><span class="s"> unidades&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">cantidad</span> <span class="o">//</span> <span class="mi">12</span><span class="p">,</span> <span class="n">cantidad</span> <span class="o">%</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="p">}</span>
+
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">help_text</span><span class="o">=</span><span class="s">&quot;El nombre del insumo&quot;</span><span class="p">)</span>
+    <span class="n">descripcion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="s">&quot;Descripcón&quot;</span><span class="p">)</span>
+    <span class="n">stock</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">IntegerField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">unidad_medida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveSmallIntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">UNIDADES_BASICAS</span><span class="p">)</span>
+    <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    
+    <span class="c"># Control de stock</span>
+    <span class="k">def</span> <span class="nf">incrementar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cantidad</span><span class="p">,</span> <span class="n">unidad</span><span class="o">=</span><span class="n">NONE</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONVERT</span><span class="p">[</span><span class="n">unidad</span><span class="p">](</span><span class="n">cantidad</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">decrementar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cantidad</span><span class="p">,</span> <span class="n">unidad</span><span class="o">=</span><span class="n">NONE</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;voy a decrementar del insumo &quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span> <span class="s">&quot;la cantidad: &quot;</span><span class="p">,</span><span class="n">cantidad</span><span class="p">,</span> <span class="s">&quot;unidad medida: &quot;</span><span class="p">,</span><span class="n">unidad</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">CONVERT</span><span class="p">[</span><span class="n">unidad</span><span class="p">](</span><span class="n">cantidad</span><span class="p">)</span>
+
+    <span class="n">modificar_stock</span> <span class="o">=</span> <span class="n">incrementar</span>
+
+    <span class="k">def</span> <span class="nf">get_stock_humano</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">FORMAT</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">unidad_medida</span><span class="p">](</span><span class="bp">self</span><span class="o">.</span><span class="n">stock</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_unidad_medida_display</span><span class="p">())</span>
+
+
+<span class="c">#********************************************************#</span>
+            <span class="c">#     P R O D U C T O S     #</span>
+<span class="c">#********************************************************#</span>
+</div>
+<div class="viewcode-block" id="ProductoTerminado"><a class="viewcode-back" href="../../Recetas.html#recetas.models.ProductoTerminado">[docs]</a><span class="k">class</span> <span class="nc">ProductoTerminado</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span><span class="s">&#39;stock__lte&#39;</span><span class="p">]</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">help_text</span><span class="o">=</span><span class="s">&quot;El nombre del producto&quot;</span><span class="p">)</span>
+    <span class="n">stock</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span> <span class="o">=</span> <span class="mi">0</span><span class="p">)</span>
+    <span class="n">precio</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)])</span>
+    <span class="n">dias_vigencia</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mo">01</span><span class="p">)</span><span class="c">#esto es la fecha de vencimiento</span>
+    <span class="c">#http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/</span>
+    <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">nombre</span>
+
+
+
+<span class="c">#********************************************************#</span>
+               <span class="c">#     R E C E T A S    #</span>
+<span class="c">#********************************************************#</span>
+
+</div>
+<div class="viewcode-block" id="Receta"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Receta">[docs]</a><span class="k">class</span> <span class="nc">Receta</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span><span class="s">&#39;producto_terminado&#39;</span><span class="p">]</span>
+    <span class="n">fecha_creacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">help_text</span><span class="o">=</span><span class="s">&quot;El nombre de la receta&quot;</span><span class="p">)</span>
+    <span class="n">descripcion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">()</span>
+    <span class="n">cant_prod_terminado</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">producto_terminado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">)</span>
+    <span class="n">insumos</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Insumo</span><span class="p">,</span> <span class="n">through</span><span class="o">=</span><span class="s">&quot;RecetaDetalle&quot;</span><span class="p">)</span>
+    <span class="c">#activo = models.BooleanField(default=True)</span>
+    <span class="c">#objects=ManagerActivos()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (</span><span class="si">%d</span><span class="s">) Bolsines&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cant_prod_terminado</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="RecetaDetalle"><a class="viewcode-back" href="../../Recetas.html#recetas.models.RecetaDetalle">[docs]</a><span class="k">class</span> <span class="nc">RecetaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">cantidad_insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Insumo</span><span class="p">)</span>
+    <span class="n">receta</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Receta</span><span class="p">)</span>
+
+
+<span class="c">#********************************************************#</span>
+            <span class="c">#     P R O V E E D O R E S    #</span>
+<span class="c">#********************************************************#</span>
+</div>
+<div class="viewcode-block" id="Proveedor"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Proveedor">[docs]</a><span class="k">class</span> <span class="nc">Proveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cuit__icontains&#39;</span><span class="p">,</span><span class="s">&#39;razon_social__icontains&#39;</span><span class="p">,</span><span class="s">&#39;localidad__icontains&#39;</span><span class="p">]</span>
+    <span class="n">razon_social</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">nombre_dueno</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">direccion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c">#blank=True indica que puede estar el campo vacio</span>
+    <span class="n">localidad</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">numero_cuenta</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">provincia</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">telefono</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">cuit</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">insumos</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Insumo</span><span class="p">,</span><span class="n">related_name</span><span class="o">=</span><span class="s">&#39;proveedores&#39;</span><span class="p">)</span><span class="c">#con related_name=&#39;proveedores&#39; los objetos insumos puede llamar a sus proveedores por &quot;proveedores&quot;</span>
+<span class="c">#RELACION UNO A MUCHOS CON pedidosProveedor</span>
+    <span class="c">#activo = models.BooleanField(default=True)</span>
+    <span class="c">#objects=ManagerActivos()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (</span><span class="si">%d</span><span class="s"> </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">razon_social</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">telefono</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cuit</span><span class="p">)</span>
+
+
+<span class="c">#********************************************************#</span>
+               <span class="c">#     Z O N A S    #</span>
+<span class="c">#********************************************************#</span>
+</div>
+<div class="viewcode-block" id="Zona"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Zona">[docs]</a><span class="k">class</span> <span class="nc">Zona</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">]</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c">#el campo &quot;activo&quot; es para las bajas logicas</span>
+    <span class="c">#activo = models.BooleanField(default=True)</span>
+    <span class="c">#objects=ManagerActivos()</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">)</span>
+
+
+
+<span class="c">#********************************************************#</span>
+               <span class="c">#     C I U D A D E S    #</span>
+<span class="c">#********************************************************#</span></div>
+<div class="viewcode-block" id="Ciudad"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Ciudad">[docs]</a><span class="k">class</span> <span class="nc">Ciudad</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span><span class="s">&#39;codigo_postal__icontains&#39;</span><span class="p">,</span><span class="s">&#39;zona&#39;</span><span class="p">]</span>
+    <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">codigo_postal</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">zona</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Zona</span><span class="p">,</span><span class="n">related_name</span><span class="o">=</span><span class="s">&quot;ciudades&quot;</span><span class="p">)</span>
+    <span class="c">#activo = models.BooleanField(default=True)</span>
+    <span class="c">#objects=ManagerActivos()</span>
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (</span><span class="si">%d</span><span class="s"> </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">codigo_postal</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">zona</span><span class="p">)</span>
+
+
+
+
+
+<span class="c">#********************************************************#</span>
+               <span class="c">#     C L I E N T E S    #</span>
+<span class="c">#********************************************************#</span></div>
+<div class="viewcode-block" id="Cliente"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Cliente">[docs]</a><span class="k">class</span> <span class="nc">Cliente</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cuit__icontains&#39;</span><span class="p">,</span><span class="s">&#39;razon_social__icontains&#39;</span><span class="p">,</span><span class="s">&#39;ciudad&#39;</span><span class="p">,</span><span class="s">&#39;es_moroso&#39;</span><span class="p">,</span><span class="s">&#39;saldo__gt&#39;</span><span class="p">]</span><span class="c">#&#39;zona_icontains&#39;</span>
+    <span class="n">cuit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">razon_social</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">nombre_dueno</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">ciudad</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Ciudad</span><span class="p">)</span><span class="c">#----&gt; problema para filtrar</span>
+    <span class="n">direccion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">telefono</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">30</span><span class="p">,</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c">#blank=True indica que puede estar el campo vacio</span>
+    <span class="n">es_moroso</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+    <span class="n">saldo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">FloatField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c">#activo = models.BooleanField(default=True)</span>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (</span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cuit</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">razon_social</span><span class="p">)</span>
+
+    <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
+        <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="p">(</span><span class="s">&quot;ver_clientes_morosos&quot;</span><span class="p">,</span> <span class="s">&quot;Puede listar los clientes morosos&quot;</span><span class="p">),</span>
+
+        <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">aumentar_saldo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cantidad</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saldo</span> <span class="o">+=</span>  <span class="nb">float</span><span class="p">(</span><span class="n">cantidad</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">decrementar_saldo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cantidad</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">saldo</span> <span class="o">-=</span>  <span class="nb">float</span><span class="p">(</span><span class="n">cantidad</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+
+<span class="c">#************************************************************************#</span>
+               <span class="c">#     P E D I D O S  D E  C L I E N T E S    #</span>
+<span class="c">#************************************************************************#</span>
+
+</div>
+<div class="viewcode-block" id="PedidoCliente"><a class="viewcode-back" href="../../Recetas.html#recetas.models.PedidoCliente">[docs]</a><span class="k">class</span> <span class="nc">PedidoCliente</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;fecha_creacion__gte&#39;</span><span class="p">,</span><span class="s">&#39;tipo_pedido&#39;</span><span class="p">,</span><span class="s">&#39;cliente&#39;</span> <span class="p">]</span> <span class="c">#,&#39;tipo_pedido__&#39; como hacer para filtrar</span>
+    <span class="n">TIPOPEDIDO</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Pedido Fijo&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;Pedido Ocasional&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="s">&quot;Pedido de Cambio&quot;</span><span class="p">)</span>
+    <span class="p">)</span>
+    <span class="n">fecha_creacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">tipo_pedido</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveSmallIntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">TIPOPEDIDO</span><span class="p">)</span>
+    <span class="n">productos</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">,</span> <span class="n">through</span><span class="o">=</span><span class="s">&quot;PedidoClienteDetalle&quot;</span><span class="p">)</span>
+    <span class="n">cliente</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Cliente</span><span class="p">)</span>
+    <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;soy padreeeeee&quot;</span>
+
+    
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> ( </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cliente</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tipo_pedido_display</span><span class="p">())</span>
+</div>
+<div class="viewcode-block" id="PedidoClienteDetalle"><a class="viewcode-back" href="../../Recetas.html#recetas.models.PedidoClienteDetalle">[docs]</a><span class="k">class</span> <span class="nc">PedidoClienteDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">cantidad_producto</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">producto_terminado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">)</span>   <span class="c">#como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo</span>
+
+    <span class="n">pedido_cliente</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">)</span>
+
+</div>
+<div class="viewcode-block" id="PedidoFijo"><a class="viewcode-back" href="../../Recetas.html#recetas.models.PedidoFijo">[docs]</a><span class="k">class</span> <span class="nc">PedidoFijo</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
+    <span class="n">fecha_inicio</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">())</span>
+    <span class="c">#fecha_inicio = models.DateField(default=timezone.now())</span>
+    <span class="n">fecha_cancelacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">dias</span> <span class="o">=</span> <span class="n">MultiSelectField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">TIPODIAS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">num_dia</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span><span class="o">.</span><span class="n">weekday</span><span class="p">()</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">dias</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+        <span class="k">if</span> <span class="nb">str</span><span class="p">(</span><span class="n">num_dia</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">dias</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+</div>
+<div class="viewcode-block" id="PedidoCambio"><a class="viewcode-back" href="../../Recetas.html#recetas.models.PedidoCambio">[docs]</a><span class="k">class</span> <span class="nc">PedidoCambio</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
+    <span class="n">fecha_entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">fecha_entrega</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+</div>
+<div class="viewcode-block" id="PedidoOcacional"><a class="viewcode-back" href="../../Recetas.html#recetas.models.PedidoOcacional">[docs]</a><span class="k">class</span> <span class="nc">PedidoOcacional</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
+    <span class="n">fecha_entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">d</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">fecha_entrega</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">False</span>
+
+<span class="c">#********************************************************#</span>
+         <span class="c">#   P E D I D O S   A  P R O V E E D O R   #</span>
+<span class="c">#********************************************************#</span></div>
+<div class="viewcode-block" id="PedidoProveedor"><a class="viewcode-back" href="../../Recetas.html#recetas.models.PedidoProveedor">[docs]</a><span class="k">class</span> <span class="nc">PedidoProveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;fecha_desde&#39;</span><span class="p">,</span><span class="s">&#39;fecha_hasta&#39;</span><span class="p">,</span><span class="s">&#39;proveedor&#39;</span><span class="p">,</span><span class="s">&#39;estado_pedido&#39;</span><span class="p">]</span>
+    <span class="n">FILTROS_MAPPER</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s">&#39;fecha_desde&#39;</span><span class="p">:</span> <span class="s">&#39;fecha_realizacion__gte&#39;</span><span class="p">,</span>
+        <span class="s">&#39;fecha_hasta&#39;</span><span class="p">:</span> <span class="s">&#39;fecha_realizacion__lte&#39;</span>
+    <span class="p">}</span>
+    <span class="n">ESTADO</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s">&quot;Pendiente&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="s">&quot;Recibido&quot;</span><span class="p">),</span>
+        <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="s">&quot;Cancelado&quot;</span><span class="p">),</span>
+    <span class="p">)</span>
+    <span class="n">fecha_realizacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">fecha_de_entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">proveedor</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Proveedor</span><span class="p">)</span>
+    <span class="n">estado_pedido</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveSmallIntegerField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">ESTADO</span><span class="p">,</span><span class="n">default</span><span class="o">=</span><span class="s">&quot;1&quot;</span><span class="p">)</span>
+    <span class="n">insumos</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ManyToManyField</span><span class="p">(</span><span class="n">Insumo</span><span class="p">,</span> <span class="n">through</span><span class="o">=</span><span class="s">&quot;DetallePedidoProveedor&quot;</span><span class="p">)</span>
+    <span class="n">descripcion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">TextField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">fecha_cancelacion</span> <span class="o">=</span>  <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="c">#relacion con proveedor</span>
+    <span class="c">#relacion con</span>
+    <span class="c">#https://jqueryui.com/datepicker/</span>
+    <span class="c">#fecha_realizacion__gte</span>
+
+    <span class="c">#detalle de pedido</span>
+
+
+    <span class="c">#detalle de pedido</span>
+    <span class="c">#auto_now_add = True</span>
+
+</div>
+<div class="viewcode-block" id="DetallePedidoProveedor"><a class="viewcode-back" href="../../Recetas.html#recetas.models.DetallePedidoProveedor">[docs]</a><span class="k">class</span> <span class="nc">DetallePedidoProveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">cantidad_insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Insumo</span><span class="p">)</span>
+    <span class="n">pedido_proveedor</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PedidoProveedor</span><span class="p">)</span>
+
+
+<span class="c">#********************************************************#</span>
+         <span class="c">#   L O T E S   P R O D U C C I O N #</span>
+<span class="c">#********************************************************#</span></div>
+<div class="viewcode-block" id="Lote"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Lote">[docs]</a><span class="k">class</span> <span class="nc">Lote</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;producto_terminado&#39;</span><span class="p">]</span>
+
+    <span class="n">nro_lote</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">AutoField</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># Field name made lowercase.</span>
+    <span class="n">fecha_produccion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">fecha_vencimiento</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
+    <span class="n">cantidad_producida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">stock_disponible</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">stock_reservado</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">producto_terminado</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">)</span>
+
+
+
+<div class="viewcode-block" id="Lote.reservar_stock"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Lote.reservar_stock">[docs]</a>    <span class="k">def</span> <span class="nf">reservar_stock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cantidad</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; Resibe la cantidad de stock que se necesita reservar.</span>
+<span class="sd">            Si stock disponible alcanza a cubrirla, se aumenta el stock reservado en esa cantidad</span>
+<span class="sd">            Si stock disponible no alcanza a cubrirla, se aumenta el stock reservado con stock disponible</span>
+<span class="sd">            Este metodo retorna la cantidad que LOGRO reservar</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">puede_reservar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stock_disponible</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">stock_reservado</span>
+        <span class="k">if</span> <span class="n">cantidad</span> <span class="o">&lt;=</span> <span class="n">puede_reservar</span><span class="p">:</span>
+            <span class="n">reservar</span> <span class="o">=</span> <span class="n">cantidad</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">reservar</span> <span class="o">=</span> <span class="n">puede_reservar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock_reservado</span> <span class="o">+=</span> <span class="n">reservar</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">reservar</span>
+
+        <span class="c">#    E N   C O N S T R U C C I O N  necesitamos rendicion.</span></div>
+    <span class="k">def</span> <span class="nf">reservar_stock_2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cantidad</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;en reservar stock 2, el stock disponible es:&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">stock_disponible</span>
+        <span class="c">#tengo q recorrer loteEntregaDetalle y DetalleProdExtra</span>
+        <span class="n">cantidad_total_reservada</span><span class="o">=</span><span class="mi">0</span>
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">loteentregadetalle_set</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">d</span><span class="o">.</span><span class="n">cantidad_entregada</span> <span class="o">==</span> <span class="bp">None</span><span class="p">:</span>
+                <span class="n">cantidad_total_reservada</span> <span class="o">+=</span> <span class="n">d</span><span class="o">.</span><span class="n">cantidad</span>
+        <span class="c"># falta recorrer los detalles de productos EXTRAS!</span>
+        <span class="k">return</span> <span class="n">cantidad_total_reservada</span>
+
+    <span class="k">def</span> <span class="nf">decrementar_stock_reservado</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cant</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock_reservado</span> <span class="o">-=</span> <span class="n">cant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">decrementar_stock_disponible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cant</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">stock_disponible</span> <span class="o">-=</span> <span class="n">cant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+
+
+</div>
+<div class="viewcode-block" id="Factura"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Factura">[docs]</a><span class="k">class</span> <span class="nc">Factura</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">numero</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>  <span class="c">#es el numero de la factura en papel</span>
+    <span class="n">monto_pagado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)])</span>
+
+
+<span class="c">#********************************************************#</span>
+         <span class="c">#    HOJA DE RUTA   #</span>
+<span class="c">#********************************************************#</span>
+
+</div>
+<div class="viewcode-block" id="HojaDeRuta"><a class="viewcode-back" href="../../Recetas.html#recetas.models.HojaDeRuta">[docs]</a><span class="k">class</span> <span class="nc">HojaDeRuta</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">fecha_creacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">chofer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Chofer</span><span class="p">)</span>
+    <span class="n">rendida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">balance</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">totales</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">productosllevados_set</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">totales</span><span class="o">.</span><span class="n">append</span><span class="p">({</span><span class="s">&quot;producto_terminado&quot;</span><span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">producto_terminado</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span>
+                            <span class="s">&quot;cantidad_enviada&quot;</span><span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">cantidad_enviada</span><span class="p">,</span>
+                            <span class="s">&quot;cantidad_pedida&quot;</span><span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">cantidad_pedida</span><span class="p">})</span> 
+        <span class="k">return</span> <span class="n">totales</span>
+</div>
+<div class="viewcode-block" id="ProductosLlevados"><a class="viewcode-back" href="../../Recetas.html#recetas.models.ProductosLlevados">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevados</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">cantidad_pedida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">cantidad_enviada</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">producto_terminado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">)</span>
+    <span class="n">hoja_de_ruta</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">HojaDeRuta</span><span class="p">)</span>
+    <span class="n">precio</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)],</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="ProductosLlevados.generar_detalles"><a class="viewcode-back" href="../../Recetas.html#recetas.models.ProductosLlevados.generar_detalles">[docs]</a>    <span class="k">def</span> <span class="nf">generar_detalles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot; En base al producto y a la cantidad pedida, sale a buscarlo en los lotes</span>
+<span class="sd">            por cada lote que se necesite para satisfacer la cantidad pedida se crea un detalle asociado a el</span>
+<span class="sd">            junto con la cantidad que pudo sacarle a ese lote.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">cantidad_buscada</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cantidad_pedida</span>
+        <span class="k">for</span> <span class="n">lote</span> <span class="ow">in</span> <span class="n">Lote</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">producto_terminado</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">producto_terminado</span><span class="p">,</span>
+                                        <span class="n">fecha_vencimiento__gte</span><span class="o">=</span><span class="n">datetime</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span>
+                                        <span class="n">stock_disponible__gte</span> <span class="o">=</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">cantidad_reservada</span> <span class="o">=</span> <span class="n">lote</span><span class="o">.</span><span class="n">reservar_stock</span><span class="p">(</span><span class="n">cantidad_buscada</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cantidad_reservada</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span>
+            <span class="n">cantidad_buscada</span> <span class="o">-=</span><span class="n">cantidad_reservada</span>
+            <span class="n">ProductosLlevadosDetalle</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">cantidad</span> <span class="o">=</span> <span class="n">cantidad_reservada</span><span class="p">,</span>
+                                                    <span class="n">lote</span><span class="o">=</span><span class="n">lote</span><span class="p">,</span>
+                                                    <span class="n">producto_llevado</span> <span class="o">=</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">cantidad_buscada</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">if</span> <span class="n">cantidad_buscada</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">print</span> <span class="s">&quot;Faltaron &quot;</span><span class="p">,</span><span class="n">cantidad_buscada</span><span class="p">,</span> <span class="s">&quot;unidades para el producto: &quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">producto_terminado</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cantidad_enviada</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cantidad_pedida</span> <span class="o">-</span> <span class="n">cantidad_buscada</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+
+
+</div></div>
+<div class="viewcode-block" id="ProductosLlevadosDetalle"><a class="viewcode-back" href="../../Recetas.html#recetas.models.ProductosLlevadosDetalle">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevadosDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">cantidad</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+    <span class="n">lote</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Lote</span><span class="p">)</span>
+    <span class="n">producto_llevado</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductosLlevados</span><span class="p">)</span>
+    <span class="n">cantidad_sobrante</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+</div>
+<div class="viewcode-block" id="Entrega"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Entrega">[docs]</a><span class="k">class</span> <span class="nc">Entrega</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">hoja_de_ruta</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">HojaDeRuta</span><span class="p">)</span>
+    <span class="n">pedido</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">)</span>
+    <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">factura</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Factura</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="c">#cliente = getCliente()</span>
+
+    <span class="k">def</span> <span class="nf">generar_detalles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">entregadetalle_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="s">&quot;Ya tengo detalles para el pedido </span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">pedido</span>
+
+        <span class="k">for</span> <span class="n">detalle_pedido</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">pedido</span><span class="o">.</span><span class="n">pedidoclientedetalle_set</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="c"># creo detalle de entrega asociada al detalle del pedido</span>
+            <span class="n">entrega_detalle</span> <span class="o">=</span> <span class="n">EntregaDetalle</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">entrega</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                                                   <span class="n">precio</span><span class="o">=</span><span class="p">(</span><span class="n">detalle_pedido</span><span class="o">.</span><span class="n">producto_terminado</span><span class="o">.</span><span class="n">precio</span> <span class="o">*</span><span class="n">detalle_pedido</span><span class="o">.</span><span class="n">cantidad_producto</span><span class="p">),</span>
+                                                                   <span class="n">cantidad_entregada</span> <span class="o">=</span> <span class="bp">None</span><span class="p">,</span>
+                                                                   <span class="n">pedido_cliente_detalle</span><span class="o">=</span><span class="n">detalle_pedido</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">getCliente</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="p">(</span><span class="s">&quot;soy clienteeeee&quot;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">pedido</span><span class="o">.</span><span class="n">cliente</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pedido</span><span class="o">.</span><span class="n">cliente</span>
+
+
+    <span class="k">def</span> <span class="nf">monto_ya_abonado</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">recibos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recibo_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">recibo</span> <span class="ow">in</span> <span class="n">recibos</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">+=</span> <span class="n">recibo</span><span class="o">.</span><span class="n">monto_pagado</span>
+        <span class="k">return</span> <span class="n">total</span>
+
+    <span class="k">def</span> <span class="nf">monto_total</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">detalles</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">entregadetalle_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">detalle</span> <span class="ow">in</span> <span class="n">detalles</span><span class="p">:</span>
+            <span class="n">total</span> <span class="o">+=</span> <span class="n">detalle</span><span class="o">.</span><span class="n">precio</span>
+        <span class="k">return</span> <span class="n">total</span>
+
+    <span class="k">def</span> <span class="nf">monto_restante</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="c"># sirve solo para entregas no facturadas, si esta facturada nunca se deberia llamar, no tendria sentido</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">monto_total</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">monto_ya_abonado</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">cobrar_con_factura</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">monto</span><span class="p">,</span><span class="n">numero_factura</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">factura</span><span class="o">=</span><span class="n">Factura</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">filter</span><span class="p">(</span><span class="n">numero</span><span class="o">=</span><span class="n">numero_factura</span><span class="p">)</span>   <span class="c">#devuelve una lista!!!!</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">factura</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="n">factura</span><span class="o">=</span><span class="n">Factura</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">numero</span><span class="o">=</span><span class="n">numero_factura</span><span class="p">,</span><span class="n">fecha</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span><span class="n">monto_pagado</span><span class="o">=</span><span class="n">monto</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">factura</span><span class="o">=</span><span class="n">factura</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">factura</span><span class="o">=</span><span class="n">factura</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">cobrar_con_recibo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">monto</span><span class="p">,</span><span class="n">numero_recibo</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="n">recibo</span> <span class="o">=</span> <span class="n">Recibo</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">entrega</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span><span class="n">fecha</span><span class="o">=</span><span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">(),</span><span class="n">numero</span><span class="o">=</span><span class="n">numero_recibo</span><span class="p">,</span><span class="n">monto_pagado</span><span class="o">=</span><span class="n">monto</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">generar_detalle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">detalle_pedido</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">prod_terminado</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;EN GENERAR DETALLE:&quot;</span>
+
+        <span class="k">if</span> <span class="n">detalle_pedido</span><span class="p">:</span>
+            <span class="n">precio</span> <span class="o">=</span> <span class="n">detalle_pedido</span><span class="o">.</span><span class="n">producto_terminado</span><span class="o">.</span><span class="n">precio</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">precio</span> <span class="o">=</span> <span class="n">prod_terminado</span><span class="o">.</span><span class="n">precio</span>
+
+        <span class="n">detalle</span> <span class="o">=</span> <span class="n">EntregaDetalle</span><span class="o">.</span><span class="n">objects</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="n">entrega</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span>
+                                    <span class="n">pedido_cliente_detalle</span> <span class="o">=</span> <span class="n">detalle_pedido</span><span class="p">,</span>
+                                    <span class="n">producto_terminado</span> <span class="o">=</span> <span class="n">prod_terminado</span><span class="p">,</span>
+                                    <span class="n">cantidad_entregada</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span>
+                                    <span class="n">precio</span> <span class="o">=</span> <span class="n">precio</span><span class="p">)</span>
+
+        <span class="k">print</span> <span class="s">&quot;PRECIO PAPAAAA:&quot;</span><span class="p">,</span> <span class="n">detalle</span><span class="o">.</span><span class="n">precio</span>
+        <span class="n">detalle</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
+        <span class="k">print</span> <span class="s">&quot;guarde detalle nuevo&quot;</span>
+</div>
+<div class="viewcode-block" id="EntregaDetalle"><a class="viewcode-back" href="../../Recetas.html#recetas.models.EntregaDetalle">[docs]</a><span class="k">class</span> <span class="nc">EntregaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Entrega</span><span class="p">)</span>
+    <span class="n">cantidad_enviada</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c">#no va</span>
+    <span class="n">cantidad_entregada</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">precio</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)])</span>
+    <span class="n">pedido_cliente_detalle</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PedidoClienteDetalle</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+    <span class="n">producto_terminado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">get_producto_terminado</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">producto_terminado</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">producto_terminado</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pedido_cliente_detalle</span><span class="o">.</span><span class="n">producto_terminado</span></div>
+<div class="viewcode-block" id="LoteEntregaDetalle"><a class="viewcode-back" href="../../Recetas.html#recetas.models.LoteEntregaDetalle">[docs]</a><span class="k">class</span> <span class="nc">LoteEntregaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">entrega_detalle</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">EntregaDetalle</span><span class="p">)</span>
+    <span class="n">lote</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Lote</span><span class="p">)</span>
+    <span class="n">cantidad</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
+
+</div>
+<span class="n">entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Entrega</span><span class="p">)</span>
+
+
+
+
+
+<div class="viewcode-block" id="Recibo"><a class="viewcode-back" href="../../Recetas.html#recetas.models.Recibo">[docs]</a><span class="k">class</span> <span class="nc">Recibo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+    <span class="n">entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Entrega</span><span class="p">)</span>
+    <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
+    <span class="n">numero</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>  <span class="c">#es el numero del recibo en papel</span>
+    <span class="n">monto_pagado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)])</span>
+
+
+
+
+
+
+
+</div>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+
+<span class="sd">    #lote_extra = models.ManyToManyField(Lote, through=&quot;LotesExtraDetalle&quot;,null=True)</span>
+
+<span class="sd">    def generar_rendicion(self): # E S T E   M E T O D O   N O   V A    M A S</span>
+<span class="sd">        # aca tengo que generar TODOS los detalles de las entregas.</span>
+<span class="sd">        # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.</span>
+<span class="sd">        tiene_prod = False</span>
+<span class="sd">        for entrega in self.entrega_set.all():</span>
+<span class="sd">            if len(entrega.entregadetalle_set.all())&gt;0:</span>
+<span class="sd">                raise &quot;ya tengo rendicion&quot;</span>
+<span class="sd">            for prod_llevado in self.productosllevados_set.all():</span>
+<span class="sd">                for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():</span>
+<span class="sd">                    if detalle_pedido.producto_terminado == prod_llevado.producto_terminado:</span>
+<span class="sd">                        tiene_prod=True</span>
+<span class="sd">                        break</span>
+<span class="sd">                if not tiene_prod:</span>
+<span class="sd">                    entrega.generar_detalle(None, prod_llevado.producto_terminado)</span>
+<span class="sd">                else:</span>
+<span class="sd">                    entrega.generar_detalle(detalle_pedido, None)</span>
+<span class="sd">                tiene_prod=False</span>
+
+
+<span class="sd">    def balance(self):  # NO    V A    M A S </span>
+<span class="sd">        return &quot;nada&quot;</span>
+
+
+<span class="sd">    #objects = ManagerActivosHojasRutas()</span>
+<span class="sd">    </span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, James Lecuna Gomez Parra.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1.0.0',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

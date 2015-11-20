@@ -32,7 +32,7 @@
   
     <link rel="top" title="miaPastas 1.0.0 documentation" href="index.html"/>
         <link rel="up" title="﻿Tutorial" href="Tutorial.html"/>
-        <link rel="next" title="﻿Eliminar Receta" href="Eliminar Receta.html"/>
+        <link rel="next" title="﻿Alta Receta" href="Recetas_alta.html"/>
         <link rel="prev" title="&lt;no title&gt;" href="Proveedor.html"/> 
 
   
@@ -86,7 +86,11 @@
 <li class="toctree-l1 current"><a class="reference internal" href="Tutorial.html">﻿Tutorial</a><ul class="current">
 <li class="toctree-l2"><a class="reference internal" href="Clientes.html">﻿Clientes</a></li>
 <li class="toctree-l2 current"><a class="current reference internal" href="">﻿Recetas</a><ul>
-<li class="toctree-l3"><a class="reference internal" href="Eliminar Receta.html">﻿Eliminar Receta</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-recetas.models">Documentation for the Code</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="Recetas_alta.html">﻿Alta Receta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="Receta_eliminar.html">﻿Eliminar Receta</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -144,11 +148,157 @@
 <p>&#8216;-&#8216;Pantalla principal de recetas
 Se verá el nombre y producto del cual se podrá filtrar
 Debajo se encontrará una lista de las recetas que se encuentran almacenadas con la descripción del producto terminado y la canidad</p>
+<div class="section" id="module-recetas.models">
+<span id="documentation-for-the-code"></span><h2>Documentation for the Code<a class="headerlink" href="#module-recetas.models" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt id="recetas.models.Chofer">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Chofer</code><span class="sig-paren">(</span><em>id</em>, <em>cuit</em>, <em>nombre</em>, <em>direccion</em>, <em>telefono</em>, <em>e_mail</em>, <em>activo</em>, <em>disponible</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Chofer"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Chofer" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Ciudad">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Ciudad</code><span class="sig-paren">(</span><em>id</em>, <em>nombre</em>, <em>codigo_postal</em>, <em>zona</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Ciudad"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Ciudad" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Cliente">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Cliente</code><span class="sig-paren">(</span><em>id</em>, <em>cuit</em>, <em>razon_social</em>, <em>nombre_dueno</em>, <em>ciudad</em>, <em>direccion</em>, <em>telefono</em>, <em>email</em>, <em>es_moroso</em>, <em>saldo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Cliente"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Cliente" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.DetallePedidoProveedor">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">DetallePedidoProveedor</code><span class="sig-paren">(</span><em>id</em>, <em>cantidad_insumo</em>, <em>insumo</em>, <em>pedido_proveedor</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#DetallePedidoProveedor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.DetallePedidoProveedor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Entrega">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Entrega</code><span class="sig-paren">(</span><em>id</em>, <em>hoja_de_ruta</em>, <em>pedido</em>, <em>fecha</em>, <em>factura</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Entrega"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Entrega" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.EntregaDetalle">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">EntregaDetalle</code><span class="sig-paren">(</span><em>id</em>, <em>entrega</em>, <em>cantidad_enviada</em>, <em>cantidad_entregada</em>, <em>precio</em>, <em>pedido_cliente_detalle</em>, <em>producto_terminado</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#EntregaDetalle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.EntregaDetalle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Factura">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Factura</code><span class="sig-paren">(</span><em>id</em>, <em>fecha</em>, <em>numero</em>, <em>monto_pagado</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Factura"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Factura" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.HojaDeRuta">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">HojaDeRuta</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_creacion</em>, <em>chofer</em>, <em>rendida</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#HojaDeRuta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.HojaDeRuta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Insumo">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Insumo</code><span class="sig-paren">(</span><em>id</em>, <em>nombre</em>, <em>descripcion</em>, <em>stock</em>, <em>unidad_medida</em>, <em>activo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Insumo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Insumo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Lote">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Lote</code><span class="sig-paren">(</span><em>nro_lote</em>, <em>fecha_produccion</em>, <em>fecha_vencimiento</em>, <em>cantidad_producida</em>, <em>stock_disponible</em>, <em>stock_reservado</em>, <em>producto_terminado</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Lote"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Lote" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="recetas.models.Lote.reservar_stock">
+<code class="descname">reservar_stock</code><span class="sig-paren">(</span><em>cantidad</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Lote.reservar_stock"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Lote.reservar_stock" title="Permalink to this definition">¶</a></dt>
+<dd><p>Resibe la cantidad de stock que se necesita reservar.
+Si stock disponible alcanza a cubrirla, se aumenta el stock reservado en esa cantidad
+Si stock disponible no alcanza a cubrirla, se aumenta el stock reservado con stock disponible
+Este metodo retorna la cantidad que LOGRO reservar</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.LoteEntregaDetalle">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">LoteEntregaDetalle</code><span class="sig-paren">(</span><em>id</em>, <em>entrega_detalle</em>, <em>lote</em>, <em>cantidad</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#LoteEntregaDetalle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.LoteEntregaDetalle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.PedidoCambio">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">PedidoCambio</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_creacion</em>, <em>tipo_pedido</em>, <em>cliente</em>, <em>activo</em>, <em>pedidocliente_ptr</em>, <em>fecha_entrega</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#PedidoCambio"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.PedidoCambio" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.PedidoCliente">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">PedidoCliente</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_creacion</em>, <em>tipo_pedido</em>, <em>cliente</em>, <em>activo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#PedidoCliente"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.PedidoCliente" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.PedidoClienteDetalle">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">PedidoClienteDetalle</code><span class="sig-paren">(</span><em>id</em>, <em>cantidad_producto</em>, <em>producto_terminado</em>, <em>pedido_cliente</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#PedidoClienteDetalle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.PedidoClienteDetalle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.PedidoFijo">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">PedidoFijo</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_creacion</em>, <em>tipo_pedido</em>, <em>cliente</em>, <em>activo</em>, <em>pedidocliente_ptr</em>, <em>fecha_inicio</em>, <em>fecha_cancelacion</em>, <em>dias</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#PedidoFijo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.PedidoFijo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.PedidoOcacional">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">PedidoOcacional</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_creacion</em>, <em>tipo_pedido</em>, <em>cliente</em>, <em>activo</em>, <em>pedidocliente_ptr</em>, <em>fecha_entrega</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#PedidoOcacional"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.PedidoOcacional" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.PedidoProveedor">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">PedidoProveedor</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_realizacion</em>, <em>fecha_de_entrega</em>, <em>proveedor</em>, <em>estado_pedido</em>, <em>descripcion</em>, <em>fecha_cancelacion</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#PedidoProveedor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.PedidoProveedor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.ProductoTerminado">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">ProductoTerminado</code><span class="sig-paren">(</span><em>id</em>, <em>nombre</em>, <em>stock</em>, <em>precio</em>, <em>dias_vigencia</em>, <em>activo</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#ProductoTerminado"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.ProductoTerminado" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.ProductosLlevados">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">ProductosLlevados</code><span class="sig-paren">(</span><em>id</em>, <em>cantidad_pedida</em>, <em>cantidad_enviada</em>, <em>producto_terminado</em>, <em>hoja_de_ruta</em>, <em>precio</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#ProductosLlevados"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.ProductosLlevados" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="recetas.models.ProductosLlevados.generar_detalles">
+<code class="descname">generar_detalles</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#ProductosLlevados.generar_detalles"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.ProductosLlevados.generar_detalles" title="Permalink to this definition">¶</a></dt>
+<dd><p>En base al producto y a la cantidad pedida, sale a buscarlo en los lotes
+por cada lote que se necesite para satisfacer la cantidad pedida se crea un detalle asociado a el
+junto con la cantidad que pudo sacarle a ese lote.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.ProductosLlevadosDetalle">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">ProductosLlevadosDetalle</code><span class="sig-paren">(</span><em>id</em>, <em>cantidad</em>, <em>lote</em>, <em>producto_llevado</em>, <em>cantidad_sobrante</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#ProductosLlevadosDetalle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.ProductosLlevadosDetalle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Proveedor">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Proveedor</code><span class="sig-paren">(</span><em>id</em>, <em>razon_social</em>, <em>nombre_dueno</em>, <em>direccion</em>, <em>email</em>, <em>localidad</em>, <em>numero_cuenta</em>, <em>provincia</em>, <em>telefono</em>, <em>cuit</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Proveedor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Proveedor" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Receta">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Receta</code><span class="sig-paren">(</span><em>id</em>, <em>fecha_creacion</em>, <em>nombre</em>, <em>descripcion</em>, <em>cant_prod_terminado</em>, <em>producto_terminado</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Receta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Receta" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.RecetaDetalle">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">RecetaDetalle</code><span class="sig-paren">(</span><em>id</em>, <em>cantidad_insumo</em>, <em>insumo</em>, <em>receta</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#RecetaDetalle"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.RecetaDetalle" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Recibo">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Recibo</code><span class="sig-paren">(</span><em>id</em>, <em>entrega</em>, <em>fecha</em>, <em>numero</em>, <em>monto_pagado</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Recibo"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Recibo" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="class">
+<dt id="recetas.models.Zona">
+<em class="property">class </em><code class="descclassname">recetas.models.</code><code class="descname">Zona</code><span class="sig-paren">(</span><em>id</em>, <em>nombre</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/recetas/models.html#Zona"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#recetas.models.Zona" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
 <img alt="_images/rece_ini.jpg" src="_images/rece_ini.jpg" />
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="Eliminar Receta.html">﻿Eliminar Receta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Recetas_alta.html">﻿Alta Receta</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Receta_eliminar.html">﻿Eliminar Receta</a></li>
 </ul>
+</div>
 </div>
 </div>
 
@@ -159,7 +309,7 @@ Debajo se encontrará una lista de las recetas que se encuentran almacenadas con
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="Eliminar Receta.html" class="btn btn-neutral float-right" title="﻿Eliminar Receta" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="Recetas_alta.html" class="btn btn-neutral float-right" title="﻿Alta Receta" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="Proveedor.html" class="btn btn-neutral" title="&lt;no title&gt;" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -15,8 +15,10 @@
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
              var n=window.location.pathname;
-             var s=n.substring(0,_.size(n)-1);
+             var s=n.substring(1,_.size(n)-1);
              console.log(s);
+             s = s.replace("/","_");
+             s = "/"+s;
              frame = $("#frameDocumentacion");
              frame.attr("src",url+s+".html");
              $("#modalDocumentacion").modal("show");
