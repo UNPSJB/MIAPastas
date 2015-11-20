@@ -52,7 +52,7 @@ INSERT INTO `recetas_pedidocambio` VALUES (8,'2001-12-12');
 CREATE TABLE "recetas_insumo" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nombre" varchar(100) NOT NULL UNIQUE, "descripcion" text NOT NULL, "stock" integer unsigned NULL, "unidad_medida" smallint unsigned NOT NULL);
 INSERT INTO `recetas_insumo` VALUES (4,'nahari','sdfasdf',44,3);
 INSERT INTO `recetas_insumo` VALUES (6,'Pan rallado','sdfsf',345,5);
-CREATE TABLE "recetas_cliente" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "cuit_cuil" integer unsigned NOT NULL UNIQUE, "razon_social" varchar(100) NOT NULL UNIQUE, "nombre_dueno" varchar(100) NOT NULL, "direccion" varchar(100) NOT NULL UNIQUE, "telefono" integer unsigned NOT NULL, "email" varchar(30) NULL UNIQUE, "es_moroso" bool NOT NULL, "ciudad_id" integer NOT NULL REFERENCES "recetas_ciudad" ("id"));
+CREATE TABLE "recetas_cliente" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "cuit" integer unsigned NOT NULL UNIQUE, "razon_social" varchar(100) NOT NULL UNIQUE, "nombre_dueno" varchar(100) NOT NULL, "direccion" varchar(100) NOT NULL UNIQUE, "telefono" integer unsigned NOT NULL, "email" varchar(30) NULL UNIQUE, "es_moroso" bool NOT NULL, "ciudad_id" integer NOT NULL REFERENCES "recetas_ciudad" ("id"));
 INSERT INTO `recetas_cliente` VALUES (7,345345,'jg','gjgjhg','svd',534,'dfvd',0,6);
 INSERT INTO `recetas_cliente` VALUES (8,4444,'kjhkjh','kjhkjh','sdfsdf',98786,'kjbhbh',0,7);
 CREATE TABLE "recetas_ciudad" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "nombre" varchar(100) NOT NULL UNIQUE, "zona_id" integer NOT NULL REFERENCES "recetas_zona" ("id"), "codigo_postal" integer unsigned NOT NULL UNIQUE);

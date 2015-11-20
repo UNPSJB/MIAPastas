@@ -38,7 +38,7 @@ class Migration(migrations.Migration):
             name='Cliente',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('cuit_cuil', models.PositiveIntegerField(unique=True)),
+                ('cuit', models.PositiveIntegerField(unique=True)),
                 ('razon_social', models.CharField(unique=True, max_length=100)),
                 ('nombre_dueno', models.CharField(max_length=100)),
                 ('direccion', models.CharField(unique=True, max_length=100)),
