@@ -59,6 +59,7 @@ urlpatterns = [
 
     url(r'^listadoProductosTerminadosDisponibles$',views.listadoProductosTerminadosDisponibles,name='listadoProductosTerminadosDisponibles'),
     url(r'^listadoProductosTerminadosDisponiblesFiltros$',views.listadoProductosTerminadosDisponiblesFiltros,name='listadoProductosTerminadosDisponiblesFiltros'),
+    url(r'^listadoProductosTerminadosDisponiblesExcel$',views.listadoProductosTerminadosDisponiblesExcel,name='listadoProductosTerminadosDisponiblesExcel'),
                     # Hechos en forms
 
 
