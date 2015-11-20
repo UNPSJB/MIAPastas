@@ -239,13 +239,8 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-<<<<<<< HEAD
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gte']#'zona_icontains'
-    cuit = models.PositiveIntegerField()
-=======
     FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gt']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
->>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
