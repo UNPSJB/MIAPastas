@@ -268,7 +268,7 @@ class CiudadForm(forms.ModelForm):
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
-        if models.Zona.objects.filter(nombre=nombre).exists():
+        if models.Ciudad.objects.filter(nombre=nombre).exists():
             raise ValidationError('Ya existe una Ciudad con ese nombre.')
         return nombre
 
@@ -300,16 +300,21 @@ class ZonaForm(forms.ModelForm):
 
 
 
-class ClienteForm(forms.ModelForm):
+class ClienteModificarForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
-        fields = ["cuit_cuil","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
+        fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
+
+
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
+        cuit = self.cleaned_data['cuit']
         razon_social = texto_lindo(razon_social, True)
+<<<<<<< HEAD
         if models.Cliente.objects.filter(razon_social=razon_social).exists():
-            raise ValidationError('Ya existe una Ciudad con esa Razon Social.')
+            if models.Cliente.objects.filter(cuit=cuit).exists():
+                raise ValidationError('Ya existe un Cliente con esa Razon Social.')
         return razon_social
 
     def clean_nombre_dueno(self):
@@ -321,6 +326,47 @@ class ClienteForm(forms.ModelForm):
         direccion = self.cleaned_data['direccion']
         direccion = texto_lindo(direccion, True)
         return direccion
+
+
+
+class ClienteAltaForm(forms.ModelForm):
+    class Meta:
+        model = models.Cliente
+        fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email"]
+        exclude = ['es_moroso']
+
+    def clean_razon_social(self):
+        razon_social = self.cleaned_data['razon_social']
+        cuit = self.cleaned_data['cuit']
+        razon_social = texto_lindo(razon_social, True)
+        if models.Cliente.objects.filter(razon_social=razon_social).exists():
+            if models.Cliente.objects.filter(cuit=cuit).exists():
+                raise ValidationError('Ya existe un Cliente con esa Razon Social.')
+=======
+        
+        
+        if self.instance is None and  models.Cliente.objects.filter(razon_social=razon_social).exists():            
+            raise ValidationError('Ya existe un Cliente con esa Razon Social.')
+>>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
+        return razon_social
+
+    def clean_nombre_dueno(self):
+        nombre_dueno = self.cleaned_data['nombre_dueno']
+        nombre_dueno = texto_lindo(nombre_dueno, True)
+        return nombre_dueno
+
+    def clean_direccion(self):
+        direccion = self.cleaned_data['direccion']
+        direccion = texto_lindo(direccion, True)
+        return direccion
+
+    def clean_es_moroso(self):
+        moroso = self.cleaned_data["es_moroso"]
+        print "EN CLEAN DE MOROSO: ",moroso
+        return moroso
+
+
+
 
 
 class PedidoProveedorAltaForm(forms.ModelForm):
@@ -528,10 +574,6 @@ class LoteForm(forms.ModelForm):
         lote.save()
         return lote
 
-
-
-
-
     def clean_fecha_vencimiento(self):
         print "cleanb fecha vencimiento"
         fecha = self.cleaned_data['fecha_vencimiento']
@@ -557,7 +599,6 @@ class HojaDeRutaForm(forms.ModelForm):
         model = models.HojaDeRuta
         fields = ["chofer"]
     
-
 class EntregaForm(forms.ModelForm):
     class Meta:
         model = models.Entrega
@@ -569,21 +610,36 @@ class EntregaForm(forms.ModelForm):
         entrega.save()
         return entrega
 
+class BaseEntregaFormset(BaseFormSet):
+    def clean(self):
+        print "en clean de base de entregaFormset"
+
+EntregaFormsetClass = formset_factory(EntregaForm,formset=BaseEntregaFormset,extra=0)
+
 class EntregaDetalleForm(forms.ModelForm):
     class Meta:
         model = models.EntregaDetalle
         fields = ["cantidad_entregada","entrega","pedido_cliente_detalle","producto_terminado"]
 
     def save(self):
+        # tengo que aumentar el saldo del cliente
         det = super(EntregaDetalleForm, self).save(commit=False)
-        det.precio = det.get_producto_terminado().precio
+        if det.pedido_cliente_detalle is None and det.cantidad_entregada == 0:
+            return 
+        for p in self.cleaned_data["entrega"].hoja_de_ruta.productosllevados_set.all():
+            if p.producto_terminado == det.get_producto_terminado():
+                det.precio = p.precio
+                break
         det.save()
-
+        n = det.precio * det.cantidad_entregada
+        det.entrega.pedido.cliente.aumentar_saldo(n)
+        
 
 class BaseEntregaDetalleFormset(BaseFormSet):
     def clean(self):        
         print "en clean principal base"
-        cant_enviada = 0
+       
+        """ cant_enviada = 0
         hoja = None
         productos={}
         for form in self.forms:
@@ -606,25 +662,47 @@ class BaseEntregaDetalleFormset(BaseFormSet):
             if cant_entregada > cant_enviada:
                 print "cantidad entregada es mayor a la enviada, todo mal."
                 raise ValidationError("Cantidad entregada es mayor a la cantidad enviada")
-                
+          """      
 
 EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)
-EntregaDetalleInlineFormset = inlineformset_factory(models.Entrega, models.EntregaDetalle,fields=("cantidad_entregada",))
 
 
   ############### TOTALES PARA BUSCAR EN LOTES ####################
+
 class ProductosLlevadosForm(forms.ModelForm):
     class Meta:
         model = models.ProductosLlevados
         fields = ["cantidad_pedida","producto_terminado"]
 
-
-    # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
     def save(self, hoja_de_ruta):
-        productos_llevados= super(ProductosLlevadosForm, self).save(commit=False)
-        productos_llevados.hoja_de_ruta = hoja_de_ruta
-        productos_llevados.save()
-        productos_llevados.generar_detalles()
+        producto_llevado= super(ProductosLlevadosForm, self).save(commit=False)
+        producto_llevado.hoja_de_ruta = hoja_de_ruta
+        producto_llevado.precio = producto_llevado.producto_terminado.precio
+        producto_llevado.save()
+        producto_llevado.generar_detalles()
+         # si no tengo stock para el producto pedido, no lo LLEVO 
+        #if producto_llevado.cantidad_enviada == 0:
+         #   producto_llevado.delete()
+          #  return None
+        return producto_llevado
+
+    def clean(self):
+        clean_data = super(ProductosLlevadosForm,self).clean()
+        print(clean_data)
+        p = clean_data["producto_terminado"]
+        if p.stock == 0:
+            raise ValidationError("Para producto",p.nombre," no hay stock")
+        return clean_data
+        
+
+
+class BaseProductoLlevadoFormset(BaseFormSet):
+    def clean(self):
+        print "en clean de base de prod llevado formset"
+    # EN ESTE FORMULARIO TENGO Q RECORRER LOTES Y CREAR LAS INSTANCIAS DE LOTES LLEVADOS (PRODEXTRAS)
+    
+
+ProductoLlevadoFormsetClass = formset_factory(ProductosLlevadosForm,formset=BaseEntregaDetalleFormset,extra=0)
 
 class ProdLlevadoDetalleRendirForm(forms.Form):
     detalle_id = forms.ModelChoiceField(models.ProductosLlevadosDetalle.objects.all())
@@ -640,7 +718,7 @@ class ProdLlevadoDetalleRendirForm(forms.Form):
         det.lote.decrementar_stock_disponible(cant_vendida)
         det.save()
 
-
+ProdLlevadoFormset_class = formset_factory(ProdLlevadoDetalleRendirForm)
 
   ############### COBRAR A CLIENTE ####################
 
