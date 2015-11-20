@@ -401,7 +401,7 @@ def proveedores(request,proveedor_id=None):
 
 def proveedoresAlta(request):
     proveedores_form = forms.ProveedorForm()
-    insumos = models.Insumo.objects.filters(activo=True)
+    insumos = models.Insumo.objects.filter(activo=True)
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
@@ -659,12 +659,8 @@ def clientesModificar(request,cliente_id = None):
     else:
         cliente_form = forms.ClienteModificarForm(instance= cliente_instancia)
         return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
-<<<<<<< HEAD
-  
-=======
 
 
->>>>>>> origin/master
 def clientesAlta(request):
     if request.method == "POST":
         cliente_form = forms.ClienteAltaForm(request.POST)
@@ -945,7 +941,7 @@ def pedidosProveedorAlta(request):
     detalles_form_class = formset_factory(forms.DetallePedidoProveedorForm)
     detalles_form = None
     pedido_proveedor_form = None
-    insumos = models.Insumo.objects.filters(activo=True)
+    insumos = models.Insumo.objects.filter(activo=True)
     if request.method == "POST":
         pedido_proveedor_form = forms.PedidoProveedorAltaForm(request.POST) #crea formulario de pedido con los datos del post
         if pedido_proveedor_form.is_valid():

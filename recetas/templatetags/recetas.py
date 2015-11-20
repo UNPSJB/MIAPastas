@@ -50,7 +50,8 @@ def saldos_totales(clientes):
 	for c in clientes:
          cant+=c.saldo
 	return cant
-
+    
+@register.simple_tag
 def devolver_len(algo):
     return len(algo)
     
