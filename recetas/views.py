@@ -647,25 +647,12 @@ def clientesModificar(request,cliente_id = None):
     if request.method=="POST":
         cliente_form = forms.ClienteModificarForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
-<<<<<<< HEAD
-            if cliente_instancia.es_moroso and cliente_instancia.saldo==0:
-                print(cliente_instancia.es_moroso)
-                messages.error(request,'El cliente no puede ser moroso ya que no posee saldo deudor')
-                cliente_form = forms.ClienteModificarForm(initial={'cuit':cliente_instancia.cuit,'razon_social':cliente_instancia.razon_social,'nombre_dueno':cliente_instancia.nombre_dueno,'ciudad':cliente_instancia.ciudad,'direccion':cliente_instancia.direccion,'telefono':cliente_instancia.telefono,'email':cliente_instancia.email,'es_moroso':cliente_instancia.es_moroso})
-                return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
-=======
             print "form es valido"
->>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
             cliente_form.save()
             return redirect('clientes')
     else:
-<<<<<<< HEAD
-        cliente_form = forms.ClienteModificarForm(instance= cliente_instancia)
-        return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
-=======
         cliente_form = forms.ClienteForm(instance= cliente_instancia)
     return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
->>>>>>> 4447a499649995a40c9295c22ae6d78ac66d6d3e
 
 def clientesAlta(request):
     if request.method == "POST":
