@@ -15,14 +15,36 @@
 
 
                     <!-- Debe mostrar los datos del usuario y dar la posivilidad de modificar los que correspondan-->
+                    <div class="form-group">
+                        <label>Usuario:</label>
+                        <input type="text" class="form-control" value="{{user.username}}" name="username" id="username" readonly>
+                    </div>
 
+                    <div class="form-group">
+                        <label>Nombre:</label>
+                        <input type="text" class="form-control" value="{{user.first_name}}" name="username" id="first_name" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Apellido:</label>
+                        <input type="text" class="form-control" value="{{user.last_name}}" name="username" id="last_name" readonly>
+                    </div>
+
+                    <div class="form-group">
+                        <label>e-mail:</label>
+                        <input type="text" class="form-control" value="{{user.email}}" name="username" id="email" readonly>
+                    </div>
 
 
                     <p>&nbsp;</p>
                         {% buttons %}
                             <button type="submit" class="btn btn-primary" >
-                                {% bootstrap_icon "star" %} Editar
+                                {% bootstrap_icon "pencil" %} Editar
                             </button>
+                            <button type="submit" class="btn btn-primary" >
+                                {% bootstrap_icon "lock" %} Cambiar clave
+                            </button>
+
       <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
                         {% endbuttons %}
                  </form>
