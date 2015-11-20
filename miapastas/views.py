@@ -414,7 +414,7 @@ def listadoClientesMorososExcel(request):
     for index, cliente in enumerate(clientes, 1):
         if cliente.saldo!=0:
 
-            worksheet.write(numero_fila, 0, cliente.cuit_cuil)
+            worksheet.write(numero_fila, 0, cliente.cuit)
             worksheet.write(numero_fila, 1, cliente.razon_social)
             worksheet.write(numero_fila, 2, cliente.ciudad.nombre)
             worksheet.write(numero_fila, 3, cliente.direccion)
