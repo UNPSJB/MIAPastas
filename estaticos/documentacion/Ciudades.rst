@@ -1,9 +1,9 @@
-Clientes
+﻿Ciudades
 ====================================
 .. toctree::
    :maxdepth: 1
    
-   Alta Cliente
-   Modificar Cliente
-   Eliminar Cliente
+   Alta Ciudad
+   Modificar Ciudad
+   Eliminar Ciudad
 
