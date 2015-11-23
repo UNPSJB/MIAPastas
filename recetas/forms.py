@@ -211,7 +211,7 @@ class LoteStockForm(forms.ModelForm):
     class Meta:
         model = models.Lote
         fields = ["stock_disponible", "cantidad_producida"]
-    cantidad = forms.PositiveIntegerField(label = "Cantidad (*)")
+    cantidad = forms.IntegerField(label = "Cantidad (*)")
 
     def __init__(self, *args, **kwargs):
         super(LoteStockForm, self).__init__(*args, **kwargs)
