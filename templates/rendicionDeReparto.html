@@ -130,8 +130,6 @@
                     <p>&nbsp;</p>
                     <p>&nbsp;</p>
 
-
-
                     <div id="hidden-entregas"></div>
 
                     {% buttons %}
@@ -146,12 +144,9 @@
             </div>
     </div>
 </div>
-
 {% endblock %}
-
 {% block javascript %}
 <script>
-
     var listado_entregas = [
         {% for entrega in hoja.entrega_set.all %}
             {% for detalle_entrega in entrega.entregadetalle_set.all%}
@@ -161,7 +156,6 @@
             {% endfor%}
         {%endfor%}
     ];
-
 
 var listado_productos_totales={};
 var listado_productos_sobrantes={};
@@ -174,30 +168,19 @@ var listado_productos_entregados={};
             {%endfor%}
         {% endfor%}
 
-
-console.log("TOTALES PRODUCTOS");
-console.log(listado_productos_totales);
-console.log(listado_productos_sobrantes);
 var prefix_entregas = "{{prefix}}"; //este tiene q venir desde la view
 var prefix_prod_llevados = "{{prefix_prod_llevados}}";
 
 function limpiar_diccionario(dic){
-    console.log("en limpiar diccionario");
     for (i in dic){
         dic[i] = 0;
     }
-    console.log("fin");
-
 }
 
 
 $("#boton-sobrantes-aceptar").click(function(){
-
-
-    console.log("EN SOBRANTES");
     var sobrantes = $(".input-sobrantes");
-    if (imputs_llenos(sobrantes) == true){
-        console.log("todos llenos");
+    if (imputs_llenos(sobrantes) == true){        
         $(sobrantes).each(function(i,val){
             prod_id = val.getAttribute("producto_id");
             enviado = parseInt(val.getAttribute("cant_enviada"));
@@ -211,7 +194,7 @@ $("#boton-sobrantes-aceptar").click(function(){
                 }
         });
     }
-    console.log(listado_productos_sobrantes);
+    console.log("sobrantes: "+listado_productos_sobrantes);
 });
 
 $("#boton-sobrantes-modificar").click(function(){
@@ -223,9 +206,8 @@ $("#boton-sobrantes-modificar").click(function(){
         });
         $(this).prop('readonly',false);
     });
-    console.log(listado_productos_sobrantes);
+    console.log("sobrantes "+listado_productos_sobrantes);
 });
-
 
     function hay_balance(){
         var prod_ids = _.keys(listado_productos_totales);
@@ -246,7 +228,6 @@ $("#boton-sobrantes-modificar").click(function(){
             return true;
         });
         return _.all(result);   
-
     }
 
 

@@ -241,12 +241,14 @@ class LoteStockForm(forms.ModelForm):
         print "clean_cantidad "
         c =self.cleaned_data['cantidad']
         cantidad_producida = self.cleaned_data['cantidad_producida']
-        nueva_cantidad = self.cleaned_data['stock_disponible'] + c
-        if nueva_cantidad > cantidad_producida:
+        nueva_cantidad = self.cleaned_data['stock_disponible'] - c
+        if c < 0:
             print "lanzo error"
-            raise ValidationError("El stock disponible no debe superar la cantidad producida")
+            raise ValidationError("La cantidad a decrementar debe estar expresado en positivo.")
         elif nueva_cantidad < 0:
+
             raise ValidationError("El stock disponible no puede ser Negativo")
+
 
         return self.cleaned_data['cantidad']
 

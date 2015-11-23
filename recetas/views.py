@@ -76,7 +76,7 @@ def get_filtros(get, modelo):
             # Es un valor booleano
             filtros[attr] = ""
             filtros_modelo[filtro] = True
-    print(filtros, filtros_modelo)
+    print "soy fltrooooooo",(filtros, filtros_modelo)
     return filtros, filtros_modelo
 
 #********************************************************#
@@ -401,7 +401,7 @@ def proveedores(request,proveedor_id=None):
 
 def proveedoresAlta(request):
     proveedores_form = forms.ProveedorForm()
-    insumos = models.Insumo.objects.filters(activo=True)
+    insumos = models.Insumo.objects.filter(activo=True)
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
@@ -410,9 +410,12 @@ def proveedoresAlta(request):
         return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
     return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
 
+
+
+
+
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):
-    print "estoy en bajaaa"
     p = models.Proveedor.objects.get(pk=proveedor_id)
     p.delete()
     #p.activo=False
@@ -641,7 +644,6 @@ def clientes(request,cliente_id=None):
 
 
 
-
 def clientesModificar(request,cliente_id = None):
     cliente_instancia = get_object_or_404(models.Cliente, pk=cliente_id)
     if request.method=="POST":
@@ -776,7 +778,10 @@ def pedidosClientes(request,pedido_id=None):
         return render(request, "pedidosClienteConsulta.html",{"pedido": pedido,"productos":productos})
     elif request.method == 'GET':
         # filtros
+        print "GET ",request.GET
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
+
+
         pedidos = models.PedidoCliente.objects.filter(**mfilters)
         clientes = models.Cliente.objects.all()
         totales=dict()
@@ -939,7 +944,7 @@ def pedidosProveedorAlta(request):
     detalles_form_class = formset_factory(forms.DetallePedidoProveedorForm)
     detalles_form = None
     pedido_proveedor_form = None
-    insumos = models.Insumo.objects.filters(activo=True)
+    insumos = models.Insumo.objects.filter(activo=True)
     if request.method == "POST":
         pedido_proveedor_form = forms.PedidoProveedorAltaForm(request.POST) #crea formulario de pedido con los datos del post
         if pedido_proveedor_form.is_valid():
@@ -1413,12 +1418,16 @@ def cobrarClienteFacturar(request):
 
 
 def cobrarClienteMostrarRecibos(request):
-        entrega_id = re.findall("\d+",request.GET['entrega_id'])
-        entrega = models.Entrega.objects.get(pk=entrega_id[0])
-        recibos = models.Recibo.objects.filter(entrega=entrega)
-        print recibos," estos son los recibos"
-        recibos=serializers.serialize('json', recibos)
-        return HttpResponse(recibos,content_type='json')
+    entrega_id = re.findall("\d+",request.GET['entrega_id'])
+    entrega = models.Entrega.objects.get(pk=entrega_id[0])
+    recibos = models.Recibo.objects.filter(entrega=entrega)
+    print recibos," estos son los recibos"
+    recibos=serializers.serialize('json', recibos)
+    return HttpResponse(recibos, content_type='json')
 
-
-
+def productosMasVendidos(request):
+    import os
+    path = os.path.abspath(".")
+    print(path)
+    img = open(os.path.join(path, "estaticos/images/avatar.png"), 'r')
+    return HttpResponse(img.read(), content_type="image/png")

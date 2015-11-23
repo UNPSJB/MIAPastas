@@ -39,6 +39,11 @@ urlpatterns = [
     url(r'^usuario$', views.usuario,name="usuario" ),
 
     url(r'^signup$', views.signup, name='signup'),
+    url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
+    url(r'^usuarios/admin/modificar/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminModificar,name='usuariosAdminModificar'),
+    url(r'^usuarios/admin/baja/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminBaja,name='usuariosAdminBaja'),
+
+
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 
 
@@ -214,6 +219,7 @@ urlpatterns = [
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
+    url(r'^productos_mas_vendidos.png$',recetasviews.productosMasVendidos,name='productosMasVendidos'),
 
 
 
