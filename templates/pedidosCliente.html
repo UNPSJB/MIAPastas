@@ -4,9 +4,6 @@
 {% block contenido %}
 
 
-
-
-
 <!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
@@ -15,7 +12,6 @@
       <!-- formulario -->
 
 
- SE VERIFICA LA FECHA DE CANCELACCION NO SEA MENOR A LA FECHA DESDE, Y QUE LA FECHA INICIO NO SEA MAYOR A FECHA HASTA (PARA FIJOS) 
       <form class="form-inline" method="get">
             <div class="form-group col-md-12">
                         <label for="fecha_creacion">Fecha Creacion (Mayor o igual)</label>
@@ -92,8 +88,9 @@
               <button id="modal-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
                 </div>
                   </div>
-              </div>
-              <div class="col-md-3" style="pull-right;">
+          </div>
+          <div class="col-md-5" >
+          <div class="col-md-12">
               <p></p>
               <a href="{% url 'pedidosClientesAlta' 1 %}" ><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido Fijo</span></b></font></button></a>
 
@@ -101,12 +98,11 @@
 
               <a href="{% url 'pedidosClientesAlta' 3 %}"><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido de Cambio</span></b></font></button></a>
 
-          </div>
-
-          <div class="col-md-5">
+           </div>     
+          <div >
 
               <div>
-
+              <p>&nbsp;</p>
 
               <h3>Totales de los pedidos</h3><table class="table table-hover">
             <thead>
@@ -137,6 +133,10 @@
 
 
           </div>
+
+
+          </div>
+
 
 
           </div>

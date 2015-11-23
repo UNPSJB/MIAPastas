@@ -9,7 +9,7 @@ from django.db.models import Q
 
 
 #clase para redefinir objects y obtener solo instancias activas
-
+'''
 class ManagerActivos(models.Manager):
     def get_queryset(self):
         return super(ManagerActivos, self).get_queryset().filter(activo=True)
@@ -17,7 +17,7 @@ class ManagerActivos(models.Manager):
 class ManagerActivosHojasRutas(models.Manager):
     def get_queryset(self):
         return super(ManagerActivosHojasRutas, self).get_queryset().filter(rendida=False)
-
+'''
 TIPODIAS = (
         (1, "lunes"),
         (2, "martes"),
@@ -283,32 +283,35 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente','fecha_desde','fecha_hasta' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),
-        (3,"Pedido de Cambio")
+        (3, "Pedido de Cambio")
     )
-
+    '''
     fecha_entrega = Q('pedidoocacional__fecha_entrega__gte')
     fecha_centrega = Q('pedidocambio__fecha_entrega__gte')
-    fecha_fijo = Q('pedidofijo__fecha_inicio__gte')
+    fecha_fijo = Q('pedidofijo__fecha_cancelacion__gte')
     fechas = fecha_entrega | fecha_centrega | fecha_fijo
 
-
-    FILTROS_MAPPER = {
-        'fecha_desde': fechas,
-        'fecha_hasta': 'pedidofijo__fecha_cancelacion__lte'
-    }
-
-
+    #para fecha hasta:
+    fecha_entrega_hasta = Q('pedidoocacional__fecha_entrega__lte')
+    fecha_centrega_hasta = Q('pedidocambio__fecha_entrega__lte')
+    fecha_fijo_hasta = Q('pedidofijo__fecha_inicio__lte')
+    fechas_hasta = fecha_entrega | fecha_centrega | fecha_fijo
+     '''
     fecha_creacion = models.DateField(auto_now_add = True)
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
     activo = models.BooleanField(default=True)
-
-
+    '''
+    FILTROS_MAPPER = {
+        'fecha_desde': fechas,  
+        'fecha_hasta': fechas_hasta
+    }
+    '''
     def esParaHoy(self):
         pass
 
@@ -326,6 +329,7 @@ class PedidoClienteDetalle(models.Model):
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 class PedidoFijo(PedidoCliente):
+    FILTROS = ['fecha_hasta','fecha_desde']
     FILTROS_MAPPER = {
         'fecha_desde': 'pedidofijo__fecha_cancelacion__gte',
         'fecha_hasta': 'pedidofijo__fecha_inicio__lte'
@@ -345,6 +349,8 @@ class PedidoFijo(PedidoCliente):
             return False
 
 class PedidoCambio(PedidoCliente):
+    FILTROS = ['fecha_hasta','fecha_desde']
+
     FILTROS_MAPPER = {
         'fecha_desde': 'pedidocambio__fecha_entrega__gte',
         'fecha_hasta': 'pedidocambio__fecha_entrega__lte'
@@ -361,6 +367,8 @@ class PedidoCambio(PedidoCliente):
 
 
 class PedidoOcacional(PedidoCliente):
+    FILTROS = ['fecha_hasta','fecha_desde']
+
     FILTROS_MAPPER = {
         'fecha_desde': 'pedidoocacional__fecha_entrega__gte',
         'fecha_hasta': 'pedidoocacional__fecha_entrega__lte'
