@@ -40,7 +40,9 @@ urlpatterns = [
 
     url(r'^signup$', views.signup, name='signup'),
     url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
-    url(r'^usuariosAdminModificar$', views.usuariosAdminModificar, name='usuariosAdminModificar'),
+    url(r'^usuarios/admin/modificar/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminModificar,name='usuariosAdminModificar'),
+    url(r'^usuarios/admin/baja/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminBaja,name='usuariosAdminBaja'),
+
 
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 

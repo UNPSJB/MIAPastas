@@ -1,5 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
+from django.contrib.auth import models as auth_models
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 
@@ -148,14 +149,30 @@ def signup(request):
     }
     return render_to_response('signup.html', data, context_instance=RequestContext(request))
 
+
+
 @login_required()
 def usuariosAdmin(request):
-    return render(request, "usuariosAdmin.html", {})
+    usuarios = auth_models.User.objects.all()
+    return render(request, "usuariosAdmin.html", {"usuarios":usuarios})
+
 
 
 @login_required()
-def usuariosAdminModificar(request):
+def usuariosAdminModificar(request,usuario_id):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
     return render(request, "usuariosAdminModificar.html", {})
+
+
+
+@login_required()
+def usuariosAdminBaja(request,usuario_id):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    messages.success(request, 'El usuario: ' + usuario.username + ', ha sido eliminado correctamente.')
+    usuario.delete()
+    return redirect('usuariosAdmin')
+
+
 
 
 @login_required()
