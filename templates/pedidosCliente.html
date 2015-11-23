@@ -14,6 +14,8 @@
   <div class="panel-body">
       <!-- formulario -->
 
+
+ SE VERIFICA LA FECHA DE CANCELACCION NO SEA MENOR A LA FECHA DESDE, Y QUE LA FECHA INICIO NO SEA MAYOR A FECHA HASTA (PARA FIJOS) 
       <form class="form-inline" method="get">
             <div class="form-group col-md-12">
                         <label for="fecha_creacion">Fecha Creacion (Mayor o igual)</label>
@@ -42,7 +44,14 @@
 
               </select>
 
-
+              <div class="form-group">
+                        <label for="fecha_desde">Fecha Desde</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
+                  </div>
+                  <div class="form-group">
+                        <label for="fecha_hasta">Fecha Hasta</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
+                  </div>
 
           </div>
             <button type="submit" class="btn btn-default">Filtrar</button>

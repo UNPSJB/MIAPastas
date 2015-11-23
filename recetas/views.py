@@ -778,7 +778,13 @@ def pedidosClientes(request,pedido_id=None):
         return render(request, "pedidosClienteConsulta.html",{"pedido": pedido,"productos":productos})
     elif request.method == 'GET':
         # filtros
+        
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
+
+
+
+
+
         pedidos = models.PedidoCliente.objects.filter(**mfilters)
         clientes = models.Cliente.objects.all()
         totales=dict()

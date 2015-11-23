@@ -5,6 +5,8 @@ from datetime import date
 import datetime
 from multiselectfield import MultiSelectField
 from django.utils import timezone
+from django.db.models import Q
+
 
 #clase para redefinir objects y obtener solo instancias activas
 
@@ -275,12 +277,25 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente','fecha_desde','fecha_hasta' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),
         (3,"Pedido de Cambio")
     )
+
+    fecha_entrega = Q('pedidoocacional__fecha_entrega__gte')
+    fecha_centrega = Q('pedidocambio__fecha_entrega__gte')
+    fecha_fijo = Q('pedidofijo__fecha_inicio__gte')
+    fechas = fecha_entrega | fecha_centrega | fecha_fijo
+
+
+    FILTROS_MAPPER = {
+        'fecha_desde': fechas,
+        'fecha_hasta': 'pedidofijo__fecha_cancelacion__lte'
+    }
+
+
     fecha_creacion = models.DateField(auto_now_add = True)
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
@@ -304,8 +319,11 @@ class PedidoClienteDetalle(models.Model):
 
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
-
 class PedidoFijo(PedidoCliente):
+    FILTROS_MAPPER = {
+        'fecha_desde': 'pedidofijo__fecha_cancelacion__gte',
+        'fecha_hasta': 'pedidofijo__fecha_inicio__lte'
+    }#SE VERIFICA LA FECHA DE CANCELACCION NO SEA MENOR A LA FECHA DESDE, Y QUE LA FECHA INICIO NO SEA MAYOR A FECHA HASTA 
     fecha_inicio = models.DateField(default=date.today())
     #fecha_inicio = models.DateField(default=timezone.now())
     fecha_cancelacion = models.DateField(blank=True,null=True)
@@ -321,6 +339,10 @@ class PedidoFijo(PedidoCliente):
             return False
 
 class PedidoCambio(PedidoCliente):
+    FILTROS_MAPPER = {
+        'fecha_desde': 'pedidocambio__fecha_entrega__gte',
+        'fecha_hasta': 'pedidocambio__fecha_entrega__lte'
+    }
     fecha_entrega = models.DateField()
 
     def esParaHoy(self):
@@ -331,9 +353,14 @@ class PedidoCambio(PedidoCliente):
             return False
 
 
-class PedidoOcacional(PedidoCliente):
-    fecha_entrega = models.DateField()
 
+class PedidoOcacional(PedidoCliente):
+    FILTROS_MAPPER = {
+        'fecha_desde': 'pedidoocacional__fecha_entrega__gte',
+        'fecha_hasta': 'pedidoocacional__fecha_entrega__lte'
+    }
+
+    fecha_entrega = models.DateField()
     def esParaHoy(self):
         d = date.today()
         if d == self.fecha_entrega:
