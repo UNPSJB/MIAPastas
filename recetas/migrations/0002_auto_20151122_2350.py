@@ -13,6 +13,10 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
+        migrations.AlterModelOptions(
+            name='productoterminado',
+            options={'permissions': (('ver_productos_terminados_disponibles', 'Puede listar los productos disponibles'),)},
+        ),
         migrations.RemoveField(
             model_name='ciudad',
             name='activo',
@@ -46,6 +50,6 @@ class Migration(migrations.Migration):
         migrations.AlterField(
             model_name='pedidofijo',
             name='fecha_inicio',
-            field=models.DateField(default=datetime.date(2015, 11, 20)),
+            field=models.DateField(default=datetime.date(2015, 11, 22)),
         ),
     ]

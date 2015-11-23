@@ -206,6 +206,13 @@ class ProductoTerminadoForm(forms.ModelForm):
         return nombre
 
 
+class PerdidaStockLoteForm(forms.ModelForm):
+    class Meta:
+        model = models.PerdidaStockLote
+        exclude = ["fecha"]
+
+
+
 class LoteStockForm(forms.ModelForm):
 
     class Meta:
@@ -219,32 +226,16 @@ class LoteStockForm(forms.ModelForm):
         self.fields['cantidad_producida'].label = "producida(*)"
         self.fields['cantidad'].label = "Cantidad ( * )"
 
-
-
     def save(self, *args, **kwargs):
         lote= super(LoteStockForm, self).save(*args, **kwargs)
-        print "cantuidad a modificar: ",self.cleaned_data['cantidad']
         lote.stock_disponible += self.cleaned_data['cantidad']
-        print "stock final es: ",lote.stock_disponible
         lote.save()
         lote.producto_terminado.stock += self.cleaned_data['cantidad']
         lote.producto_terminado.save()
         return lote
 
 
-    def clean(self):
-        print "CLEAN POSTA"
-        cleaned_data = super(LoteStockForm, self).clean()
-        return cleaned_data
 
-
-    def clean_cantidad_producida(self):
-        print "clean_cantidad_producida "
-        return self.cleaned_data["cantidad_producida"]
-
-    def clean_stock_disponible(self):
-        print "clean_stock_disponible "
-        return self.cleaned_data["stock_disponible"]
 
     def clean_cantidad(self):
         print "clean_cantidad "
@@ -256,7 +247,6 @@ class LoteStockForm(forms.ModelForm):
             raise ValidationError("El stock disponible no debe superar la cantidad producida")
         elif nueva_cantidad < 0:
             raise ValidationError("El stock disponible no puede ser Negativo")
-
 
         return self.cleaned_data['cantidad']
 

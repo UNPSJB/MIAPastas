@@ -1133,9 +1133,12 @@ def loteStock(request,lote_id):
             return redirect("lotes")
     else:
         lote_form = forms.LoteStockForm(instance = lote_instancia)
+
+    f = forms.PerdidaStockLoteForm()
     return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
                                                          "lote": lote_instancia,
-                                                         "id":lote_id})
+                                                         "id":lote_id,
+                                                         "perdida_stock_form":f})
 
 
 
@@ -1197,7 +1200,7 @@ def hojaDeRutaAlta(request):
                         entrega_instancia.pedido.activo=False #marco como entregado
             chofer = models.Chofer.objects.filter(pk=hoja_ruta_instancia.chofer.id)    #verificar que ande
             chofer=chofer[0]
-            chofer.disponible=False 
+            chofer.disponible=False
             chofer.save()
         else:
             hoja_ruta_instancia.delete()
