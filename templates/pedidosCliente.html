@@ -4,15 +4,13 @@
 {% block contenido %}
 
 
-
-
-
 <!-- Este es el formulario de recetas -->
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Pedidos de Cliente</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
+
 
       <form class="form-inline" method="get">
             <div class="form-group col-md-12">
@@ -42,7 +40,14 @@
 
               </select>
 
-
+              <div class="form-group">
+                        <label for="fecha_desde">Fecha Desde</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
+                  </div>
+                  <div class="form-group">
+                        <label for="fecha_hasta">Fecha Hasta</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
+                  </div>
 
           </div>
             <button type="submit" class="btn btn-default">Filtrar</button>
@@ -83,8 +88,9 @@
               <button id="modal-eliminar" type="button" class="btn btn-danger "><span class="glyphicon glyphicon-trash" aria-hidden="true">    </span></button>
                 </div>
                   </div>
-              </div>
-              <div class="col-md-3" style="pull-right;">
+          </div>
+          <div class="col-md-5" >
+          <div class="col-md-12">
               <p></p>
               <a href="{% url 'pedidosClientesAlta' 1 %}" ><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido Fijo</span></b></font></button></a>
 
@@ -92,12 +98,11 @@
 
               <a href="{% url 'pedidosClientesAlta' 3 %}"><button class="btn" ><font face="tahoma" size="2" color="green"><b><span  class="glyphicon glyphicon-ok" aria-hidden="true"> Agregar Pedido de Cambio</span></b></font></button></a>
 
-          </div>
-
-          <div class="col-md-5">
+           </div>     
+          <div >
 
               <div>
-
+              <p>&nbsp;</p>
 
               <h3>Totales de los pedidos</h3><table class="table table-hover">
             <thead>
@@ -128,6 +133,10 @@
 
 
           </div>
+
+
+          </div>
+
 
 
           </div>
