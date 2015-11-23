@@ -39,6 +39,9 @@ urlpatterns = [
     url(r'^usuario$', views.usuario,name="usuario" ),
 
     url(r'^signup$', views.signup, name='signup'),
+    url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
+    url(r'^usuariosAdminModificar$', views.usuariosAdminModificar, name='usuariosAdminModificar'),
+
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 
 

@@ -262,6 +262,7 @@ class Cliente(models.Model):
     class Meta:
         permissions = (
             ("ver_clientes_morosos", "Puede listar los clientes morosos"),
+            ("cobrar_a_cliente", "Puede cobrar a los clientes"),
 
         )
 

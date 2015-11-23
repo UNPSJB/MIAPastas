@@ -121,7 +121,7 @@ def login(request):
 def usuario(request):
     return render(request, "usuario.html", {})
 
-
+@login_required()
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -148,10 +148,20 @@ def signup(request):
     }
     return render_to_response('signup.html', data, context_instance=RequestContext(request))
 
+@login_required()
+def usuariosAdmin(request):
+    return render(request, "usuariosAdmin.html", {})
+
+
+@login_required()
+def usuariosAdminModificar(request):
+    return render(request, "usuariosAdminModificar.html", {})
+
 
 @login_required()
 def recetasConsulta(request):
     return render(request, "recetasConsulta.html", {})
+
 
 
 @login_required()
