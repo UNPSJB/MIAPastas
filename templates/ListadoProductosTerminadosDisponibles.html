@@ -11,10 +11,20 @@
                  <!--Formulario del FILTRO-->
             <div class="row">
                  <form method="get" class="form-inline col-md-5" action="{% url 'listadoProductosTerminadosDisponiblesFiltros' %}">
-                        <div class="form-group">
+                       <!-- <div class="form-group">
                             <label for="nombre">Nombre</label>
                             <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
-                        </div>
+                        </div>-->
+                        <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <select class="form-control" id="nombre" name="nombre" title="">
+                                <option value="" selected="selected">---------</option>
+                                {% for p in productos %}
+                                    <option value="{{p.nombre}}">{{p.nombre}}</option>
+                                    <!--<input type="hidden" value="{{filtros.nombre}}">-->
+                                {% endfor %}
+                            </select>
+                      </div>
 
 
 
@@ -31,8 +41,8 @@
             <div class="row">
                 <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
-                    {% for producto in productos %}
-                          <label>{{producto.nombre}}</label>
+                    {% for producto in productos_filtrados %}
+                          <label>{{producto.nombre}}:</label>
                           <table class="table table-hover">
                             <thead>
                             <tr>
@@ -42,27 +52,30 @@
                             </tr>
                             </thead>
                               <tbody>
+
                                {% for lote in producto.lote_set.all %}
                                 <tr class="renglon select-item" data-id="{{producto.id}}" id="renglon-{{producto.id}}">
                                     <td>{{lote.nro_lote}}</td>
-                                    <td>{{lote.stock_disponible}}</td>
+                                    <td>{{lote.stock_disponible}} Bolsines</td>
                                 </tr>
+
                                 {% endfor %}
+                                <td><font color="red"><b>TOTAL DE BOLSINES: {{producto.stock}}</b></font></td>
                               </tbody>
                           </table>
                     {% endfor %}
                 </div>
 
            <div class="col-md-2">
-               <a href="{% url 'listadoClientesMorososExcel' %}?saldo={{filtros.saldo}}" class="btn btn-default">Exportar a Excel</a>
+               <a href="{% url 'listadoProductosTerminadosDisponiblesExcel' %}?nombre={{filtros.nombre}}" class="btn btn-default">Exportar a Excel</a>
            </div>
             </div>
             <hr/>
                 <div class="col-md-2">
                     <div class="form-group">
-                        <label for="totalAdeudado">TOTAL BOLSINES</label>
+                        <label for="totalAdeudado"><font color="green"><b>TOTAL DE BOLSINES</b></font></label>
                         <input type="text" class="form-control"
-                               value=""
+                               value="{%stock_totales productos_filtrados%}"
                                name="totalAdeudado" id="totalAdeudado" READONLY>
 
                     </div>

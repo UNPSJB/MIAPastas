@@ -39,6 +39,9 @@ urlpatterns = [
     url(r'^usuario$', views.usuario,name="usuario" ),
 
     url(r'^signup$', views.signup, name='signup'),
+    url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
+    url(r'^usuariosAdminModificar$', views.usuariosAdminModificar, name='usuariosAdminModificar'),
+
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
 
 
@@ -59,6 +62,7 @@ urlpatterns = [
 
     url(r'^listadoProductosTerminadosDisponibles$',views.listadoProductosTerminadosDisponibles,name='listadoProductosTerminadosDisponibles'),
     url(r'^listadoProductosTerminadosDisponiblesFiltros$',views.listadoProductosTerminadosDisponiblesFiltros,name='listadoProductosTerminadosDisponiblesFiltros'),
+    url(r'^listadoProductosTerminadosDisponiblesExcel$',views.listadoProductosTerminadosDisponiblesExcel,name='listadoProductosTerminadosDisponiblesExcel'),
                     # Hechos en forms
 
 

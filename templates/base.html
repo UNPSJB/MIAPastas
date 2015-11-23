@@ -72,7 +72,7 @@
             </div>
         <!-- boton "Home" va a la pagina principal-->
             <div style="float:right;">
-            <a href="index" class="btn btn-success btn-lg" type="button">
+            <a href="{%url 'index'%}" class="btn btn-success btn-lg" type="button">
                 <span class="glyphicon glyphicon-home" aria-hidden="true">    Home    <br> <br/></span>
 
 
@@ -143,7 +143,7 @@
 
 
 <!-- lista desplegable de Clientes y Pedidos -->
-          {% if perms.recetas.add_cliente or perms.recetas.add_pedidocliente or perms.recetas.add_ciudad or perms.recetas.add_zona or perms.recetas.add_facturas  %}
+          {% if perms.recetas.add_cliente or perms.recetas.add_pedidocliente or perms.recetas.add_ciudad or perms.recetas.add_zona or perms.recetas.cobrar_a_cliente  %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Clientes<span class="caret"></span></a>
           <ul class="dropdown-menu">
@@ -155,7 +155,7 @@
             <li><a href="{%url 'pedidosCliente'%}">ABM Pedidos Clientes</a></li>
             <li role="separator" class="divider"></li>
               {% endif %}
-              {% if perms.recetas.add_factura %}
+              {% if perms.recetas.cobrar_a_cliente %}
             <li><a href="{%url 'cobrarCliente'%}">Cobrar a Cliente</a></li>
             <li role="separator" class="divider"></li>
               {% endif %}
@@ -250,13 +250,15 @@
           {% endif %}
 
 <!-- lista desplegable de Listados -->
-          {% if perms.recetas.ver_clientes_morosos %}
+          {% if perms.recetas.ver_clientes_morosos or perms.recetas.ver_productos_terminados_disponibles %}
           <li class="dropdown">
           <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Listados<span class="caret"></span></a>
           <ul class="dropdown-menu">
               {% if perms.recetas.ver_clientes_morosos %}
             <li><a href="{%url 'listadoClientesMorosos'%}">Listado de Clientes Morosos</a></li>
             <li role="separator" class="divider"></li>
+              {% endif %}
+              {% if perms.recetas.ver_productos_terminados_disponibles %}
             <li><a href="{%url 'listadoProductosTerminadosDisponibles'%}">Listado de Productos Terminados Disponibles</a></li>
             <li role="separator" class="divider"></li>
               {% endif %}
@@ -265,7 +267,15 @@
           </li>
           {% endif %}
 
-
+<!-- lista desplegable de Usuarios-->
+          {% if perms.recetas.add_user %}
+          <li class="dropdown">
+          <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Usuarios<span class="caret"></span></a>
+          <ul class="dropdown-menu">
+            <li><a href="{%url 'usuariosAdmin'%}">Administrar</a></li>
+          </ul>
+          </li>
+          {% endif %}
 
 
       </ul>

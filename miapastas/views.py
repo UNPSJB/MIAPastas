@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.contrib import messages
 from django.shortcuts import render_to_response
 from django.template.context import RequestContext
@@ -121,7 +121,7 @@ def login(request):
 def usuario(request):
     return render(request, "usuario.html", {})
 
-
+@login_required()
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -148,10 +148,20 @@ def signup(request):
     }
     return render_to_response('signup.html', data, context_instance=RequestContext(request))
 
+@login_required()
+def usuariosAdmin(request):
+    return render(request, "usuariosAdmin.html", {})
+
+
+@login_required()
+def usuariosAdminModificar(request):
+    return render(request, "usuariosAdminModificar.html", {})
+
 
 @login_required()
 def recetasConsulta(request):
     return render(request, "recetasConsulta.html", {})
+
 
 
 @login_required()
@@ -441,11 +451,13 @@ def listadoClientesMorososExcel(request):
 @login_required()
 def listadoProductosTerminadosDisponibles(request):
     productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+
     print("pase por acaaaaaa")
     print(productos)
+
     print("pase por acaaaaaa")
 
-    return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos})
+    return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos,"productos_filtrados":productos})
 
 
 @login_required()
@@ -458,10 +470,11 @@ def listadoProductosTerminadosDisponiblesFiltros(request):
         print(mfilters)
         #if "saldo__gt" not in mfilters or mfilters['saldo__gt'] == "" or float(mfilters['saldo__gt'])<0:
          #   mfilters["saldo__gt"] = 0
-        productos = models.ProductoTerminado.objects.filter(**mfilters)
+        productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+        productos_filtrados = models.ProductoTerminado.objects.filter(**mfilters)
 
         return render(request, "listadoProductosTerminadosDisponibles.html",
-                  {"productos": productos,
+                  {"productos": productos,"productos_filtrados":productos_filtrados,
                    "filtros": filters,
                    })
 
@@ -471,3 +484,61 @@ def listadoProductosTerminadosDisponiblesFiltros(request):
     print("pase por acaaaaaa")
 
     return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos})
+
+
+@login_required()
+def listadoProductosTerminadosDisponiblesExcel(request):
+    #para poner el total adeudado, recorrer los clientes
+    #hacer la validacion con un message.error cuando clientes=None
+
+    #OBTENIENDO LOS CLIENTES A TRAVES DEL ATRIBUTO FILTERS
+    filters, mfilters = get_filtros(request.GET, models.ProductoTerminado)
+    print(mfilters)
+    productos = models.ProductoTerminado.objects.filter(**mfilters)
+
+    print("comienzo..............")
+    print(productos)
+    print("fin...................")
+
+
+    #VERIFICANDO QUE HAYA CLIENTES
+    if not productos.exists():
+        return HttpResponseNotFound('No hay productos terminados disponibles para exportar a Excel')
+
+    #ARMANDO EL ARCHIVO EXCEL
+    output = io.BytesIO()
+    workbook = Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+    worksheet.write(0, 0, "Listado de Productos Terminados Disponibles")
+    fila = 1
+    total_stock = 0
+    for producto in productos:
+        worksheet.write(fila, 0, "Tipo de Fideo")
+        worksheet.write(fila, 1, producto.nombre)
+        fila = fila + 1
+        worksheet.write(fila, 1, "N de Lote")
+        worksheet.write(fila, 2, "Cantidad")
+        fila = fila + 1
+        for lote in producto.lote_set.all():
+            worksheet.write(fila, 1, lote.nro_lote)
+            worksheet.write(fila, 2, lote.cantidad_producida)
+            fila = fila + 1
+
+        total_stock = total_stock + producto.stock
+        worksheet.write(fila, 1, "Total")
+        worksheet.write(fila, 2, producto.stock)
+        fila = fila + 1
+
+    fila = fila + 1
+    worksheet.write(fila, 1, "Total BOLSINES")
+    worksheet.write(fila, 2, total_stock)
+
+
+    workbook.close()
+
+    output.seek(0)
+
+    response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response['Content-Disposition'] = "attachment; filename=ListadoProductosTerminados.xlsx"
+
+    return response
