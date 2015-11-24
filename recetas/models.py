@@ -465,6 +465,7 @@ class Lote(models.Model):
         self.producto_terminado.stock -= cant
         self.producto_terminado.save()
         self.save()
+        
 
 
 
@@ -533,11 +534,6 @@ class ProductosLlevadosDetalle(models.Model):
     cantidad_sobrante = models.PositiveIntegerField(null=True)
 
 class Entrega(models.Model):
-    FILTROS = ['fecha_desde','fecha_hasta']
-    FILTROS_MAPPER = {
-        'fecha_desde': 'fecha__gte',
-        'fecha_hasta': 'fecha__lte'
-    }
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
     pedido = models.ForeignKey(PedidoCliente)
     fecha = models.DateField(auto_now_add = True)

@@ -572,13 +572,7 @@ def listadoProductosMasVendidos(request):
             except:
                 prod[d.get_producto_terminado().nombre]=0
                 prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
-
-    print("pase por acaaaaaa")
-    print(entregas)
-    print(prod)
-    print("pase por acaaaaaa")
-    #for a,b in prod.items
-     #   print
+    
     return render(request, "listadoProductosMasVendidos.html", {"prod": prod})
 
 
