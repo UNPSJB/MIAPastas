@@ -33,7 +33,6 @@ from decimal import Decimal
 
 
 
-
 #from datetime import date, datetime
 #import time
 
@@ -747,8 +746,20 @@ def ciudadesBaja(request,ciudad_id =None):
                #     PEDIDOS CLIENTES   #
 #********************************************************#
 
+def eliminarVencidos():
+    pedidos_fijos = models.PedidoFijo.objects.all()
+    for pedido in pedidos_fijos:
+        if pedido.fecha_cancelacion != None and pedido.fecha_cancelacion<date.today():
+            pedido.activo=False
+            pedido.save()
+            print "en vencidos: ",pedido.id
+    #los de cambio y ocacionales se deben eliminar cuando se hace la rendicion
+
+
+
 
 def pedidosClientes(request,pedido_id=None):
+    eliminarVencidos()
     if pedido_id is not None:
         # consulta
         pedido = models.PedidoCliente.objects.get(pk=pedido_id)
@@ -1116,18 +1127,18 @@ def loteStock(request,lote_id):
     return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
                                                          "lote": lote_instancia,
                                                          "id":lote_id})
+
+
+
+
 #********************************************************#
          #    H O J A   D E  R U T A    #
 #********************************************************#
 def hojaDeRuta(request):
-
+        eliminarVencidos()
         pedidos_clientes = []
-        pedidos_fijos = models.PedidoFijo.objects.all()
-        pedidos_ocacionales = models.PedidoOcacional.objects.all()
-        pedidos_cambio = models.PedidoCambio.objects.all()
-        #detalles_form = formset_factory(forms.LotesExtraDetalleForm())
         hojaDeRuta_form = forms.HojaDeRutaForm()
-        pedidos_clientes= chain(models.PedidoFijo.objects.all(), models.PedidoOcacional.objects.all(),models.PedidoCambio.objects.all())
+        pedidos_clientes= chain(models.PedidoFijo.objects.filter(activo=True), models.PedidoOcacional.objects.filter(activo=True),models.PedidoCambio.objects.filter(activo=True))
         pedidos_clientes_enviar = []
         pedidos_ya_cargados = []
         hojas_de_ruta=models.HojaDeRuta.objects.filter(fecha_creacion=date.today())
@@ -1139,6 +1150,7 @@ def hojaDeRuta(request):
             #print pedido.__class__
             if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
                 pedidos_clientes_enviar.append(pedido)
+        print "peidooooo", pedidos_clientes_enviar
         choferes = models.Chofer.objects.all()
         productos = models.ProductoTerminado.objects.all()
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
@@ -1165,6 +1177,8 @@ def hojaDeRutaAlta(request):
         if entregas_factory.is_valid():
             for entrega_form in entregas_factory:
                 entrega_instancia = entrega_form.save(hoja_ruta_instancia)
+                if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
+                    entrega_instancia.pedido.activo=False #marco como entregado
             prod_llevados_factory_class = formset_factory(forms.ProductosLlevadosForm)
             prod_llevados_factory = prod_llevados_factory_class(request.POST,request.FILES,prefix="productos_totales")
             if prod_llevados_factory.is_valid():
@@ -1260,6 +1274,7 @@ def render_to_pdf(template_src, context_dict):
 
 def HojaDeRutaPdf(request,hoja_id=None):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id) #tengo q buscar la hoja q resiba por parametro
+    print "hoja de ruta a mostrar ",hoja.id
     fecha = hoja.fecha_creacion
     return render_to_pdf('PDFs/HojaDeRutaPdf.html',{'pagesize':'A4',
                                                    'hoja': hoja,
@@ -1280,14 +1295,17 @@ def LotesHojaRutaPdf(request,hoja_id=None):
          #    COBRAR CLIENTE  #
 #********************************************************#
 
+
+
+
 def cobrarClienteFiltrado(request,cliente_id=None):
     entregas_no_facturadas = []
     cliente=models.Cliente.objects.get(pk=(cliente_id))
     entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
     saldo = 0
     for entrega in entregas:
-        print "soy entrega:::",entrega.factura
-        if entrega.factura == None:
+
+        if entrega.factura == None and entrega.monto_total() > 0:
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()
             print entrega.monto_restante()," eerere"
@@ -1364,8 +1382,6 @@ def cobrarClienteFacturar(request):
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
     print "monto factura",monto_factura," monto recibo: ",monto_recibo
     print "monto cliente ",cliente.saldo
-
-
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 
@@ -1377,45 +1393,5 @@ def cobrarClienteMostrarRecibos(request):
         recibos=serializers.serialize('json', recibos)
         return HttpResponse(recibos,content_type='json')
 
-
-
-'''
-    if entregas[0].monto_restante() <= monto:
-        #solicitar carga de numero de factura
-        return HttpResponse(json.dumps({ "totales": totales, "datos": nombres   }),content_type='json')
-    else:
-        #solicitar numero de recibo
-        entregas[0].cobrate(monto)
-
-
-
-
-
-
-pedidos = models.PedidoCliente.objects.all() #estos son los pedidos obtenidos del ajax
-lotes_dict = []
-for pedido in pedidos:
-	for detalle in pedido.pedidoclientedetalle_set.all():
-		producto_buscado = detalle.producto_terminado
-		cantidad_buscada = detalle.cantidad_producto
-		#esta cantidad hay que salir a buscarla a los lotes
-		lotes = models.Lote.objects.filter(producto_terminado = producto_buscado) #falta filtrar por no vencidos
-		lotes = lotes.order_by("fecha_produccion") # ordenamos de los mas viejos a mas nuevos.
-		for lote in lotes:
-			print "cantidad buscad: " ,cantidad_buscada
-			cantidad_reservada = lote.reservar_stock(cantidad_buscada)
-			cantidad_buscada -=  cantidad_reservada
-			print "RESERVAR SOTKC RETORNO:" ,cantidad_buscada
-			lotes_dict.append = {"lote":lote,"cantidad":cantidad_reservada}
-			if  cantidad_buscada == 0:
-				# si logro cubrir la cantidad buscada con stock disponible en uno o mas lotes
-				# termino el bucle y voy a buscar otro detalle
-				break;
-		if cantidad_buscada > 0:
-			print "no alcance a cubrir la cantidad: ", cantidad_buscada, "para el producto: ",producto_buscado
-# al finalizar debo imprimir los lotes y sus cantidades a buscar
-print lotes_dict
-
-'''
 
 

@@ -268,7 +268,7 @@ class CiudadForm(forms.ModelForm):
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
-        if models.Zona.objects.filter(nombre=nombre).exists():
+        if models.Ciudad.objects.filter(nombre=nombre).exists():
             raise ValidationError('Ya existe una Ciudad con ese nombre.')
         return nombre
 
@@ -304,6 +304,12 @@ class ClienteForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
         fields = ["cuit_cuil","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
+
+    def clean(self):
+        cleaned_data = super(ClienteForm, self).clean()
+        print cleaned_data["es_moroso"], "POSTTTTTTTTTTTTTTT"
+        return cleaned_data
+
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']

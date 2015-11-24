@@ -1,10 +1,10 @@
 <!DOCTYPE HTML PUBLIC>
 <html>
     <head>
-        <title>Listado de estancias</title>
+        <title>Hoja de Ruta</title>
         <style type="text/css">
             @page {
-                size: letter;
+                size: a4 landscape;
                 margin: 2cm;
                 @frame footer {
                     -pdf-frame-content: footerContent;
@@ -12,58 +12,85 @@
                     margin-left: 9cm;
                     margin-right: 9cm;
                     height: 1cm;
-
                 }
-
             }
-            @page land{
-                   size:landscape;
-                   }
+            
         </style>
     </head>
     <body>
         <div>
-            <h4 style="text-align:middle;"> <font size = "6"color = "#0101DF">Hoja De Ruta</font></h4>
-            <h4 style="text-align:right;"> <font size = "4" color = "000000"> Fecha:</font> {{date}}</h4>
-   
+                    <p>&nbsp;</p>
+            <h1 style="text-align:middle;" > <font size="7" color = "#424242" >Hoja de ruta</font></h1>
+            <h4 style="text-align:left;"> <font size = "4" color = "000000" > &nbsp;
+Fecha:</font> {{date}}</h4>
+            <h4 style="text-align:left;"> <font size = "4" color = "000000" >   &nbsp;
+ Chofer:</font> {{hoja.chofer}}</h4>
+<div class="panel panel-default">
             <h4 class="panel-title pull-left" style="padding-top: 10.5px;"> <font size = "6"color = "#424242">Listado de Entregas</font></h4>
+            </div>
             </div>
 
             <div class="panel-body">
                 <table  class="table table-striped table-bordered table-condensed" cellpadding="5px" cellspacing="5px" border="1" id="tableLote">
                     <thead>
                         <tr>
-                            <th style="text-align:center;" width="15%" font size = "6">Pedido</th>
-                            <th style="text-align:center;" width="15%" font size = "6">Cliente</th>
-                            <th style="text-align:center;" width="15%" font size = "6">
-                                <table style="border-collapse: collapse;">
-                                    <tr style=" border-bottom-style:solid; border-bottom-color:black; border-bottom-width:1px;">
-                                        <td colspan="3">Productos Llevados</td>
-                                    </tr>
-                                    <tr style="padding-top:5px;">
-                                        <td style="border-right-style:solid; border-right-color:black; border-right-width:1px;">asd</td>
-                                        <td style="border-right-style:solid; border-right-color:black; border-right-width:1px;">sa</td>
-                                        <td >as</td>
-                                    </tr>
+                            <th style="text-align:center;" width="10%" font size = "6" rowspan="2">Pedido</th>
+                            <th style="text-align:center;" width="10%" font size = "6" rowspan="2">Cliente</th>
+                             <th style="text-align:center;" width="10%" font size = "6" rowspan="2">Direccion</th>
 
-
-                                </table>
+                            <th style="text-align:center;" width="15%" font size = "6" colspan="3">
+                                Productos Pedidos
                             </th>
-                            <th style="text-align:center;" width="10%" font size = "6">Direccion</th>
-                            <th style="text-align:center;" width="22%" font size = "6">Productos Entregados</th>
-                            <th style="text-align:center;" width="22%" font size = "6">Cobros</th>
+                            <th style="text-align:center;" width="15%" font size = "6" colspan="3">
+                                Productos Entregados
+
+
+                            </th>
+                            <th style="text-align:center;" width="10%" size= "6" colspan="2">Cobros</th>
+                            <th style="text-align:center;" width="20%" rowspan="2">Observaciones</th>
                         </tr>
-                        {% for entrega in hoja.entrega_set.all %}
+
                         <tr>
+                        
+                                <th>fideo 1</th>
+                                <th>fideo 2</th>
+                                <th>fideo 3</th>
+
+                                <th>fideo 1</th>
+                                <th>fideo 2</th>
+                                <th>fideo 3</th>
+                            <th>Total</th>
+                            <th>Pagado</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entrega in hoja.entrega_set.all %}
+                     <tr>
                             <td style="text-align:center;" width="15%" size = "6">{{entrega.pedido.get_tipo_pedido_display}}</td>
                             <td style="text-align:center;" width="15%" size = "6">Cuit-{{entrega.pedido.cliente.cuit_cuil}}</td>
-                            <td style="text-align:center;" width="15%" size = "6">{{Provincia}}</td>
-                            <td style="text-align:center;" width="15%" size = "6">{{Provincia}}</td>
                             <td style="text-align:center;" width="10%" size = "6">{{entrega.pedido.cliente.direccion}}</td>
-                            <td style="text-align:center;" width="22%" size = "6">{{dato.Representante}}</td>
-                            <td style="text-align:center;" width="22%" size = "6">{{dato.Productor}}</td>
+                            <!--
+                            <td style="text-align:center;" width="15%" size = "6" ><td>77</td><td>79</td><td>88</td></td>
+                            <td style="text-align:center;" width="15%" size = "6"><table><td>77</td><td>79</td><td>88</td></table></td>
+                            -->
+                            <td>1111</td>
+                            <td>222</td>
+                            <td>333</td>
+                            <td>44</td>
+                            <td style="text-align:center;" width="10%" size = "6">1111</td>
+                            <td style="text-align:center;" width="10%" size = "6">2222</td>
+                            <td>3333</td>
+                            <td>2423</td>
+                            <td>Cliente ortiva</td>
+
                         </tr>
                         {% endfor %}
+                    </tbody>
+                </table>
+
+
+
         </div>
         
         <div id="footerContent">
