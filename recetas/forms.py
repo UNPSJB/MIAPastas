@@ -252,14 +252,17 @@ class LoteStockForm(forms.ModelForm):
         lote= super(LoteStockForm, self).save(*args, **kwargs)
         print lote.stock_disponible, "ID de lote"
         print "cantuidad a modificar: ",self.cleaned_data['cantidad']
-        lote.stock_disponible -= self.cleaned_data['cantidad']
+       # lote.stock_disponible -= self.cleaned_data['cantidad']
         print "stock final es: ",lote.stock_disponible
+        lote.decrementar_stock_disponible(self.cleaned_data['cantidad'])
 
+        '''
         lote.save()
         lote.producto_terminado.stock -= self.cleaned_data['cantidad']
         lote.producto_terminado.save()
         perdida_instancia = models.PerdidaStock.objects.create(cantidad_perdida= self.cleaned_data['cantidad'],descripcion = self.cleaned_data['descripcion'],lote=lote,causas=self.cleaned_data['select_causas'])
         perdida_instancia.save()
+        '''
         return lote
 
 

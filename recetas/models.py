@@ -450,11 +450,7 @@ class Lote(models.Model):
 
     def decrementar_stock_disponible(self,cant):
         self.stock_disponible -= cant
-<<<<<<< HEAD
         self.producto_terminado.stock -=cant
-=======
-        self.producto_terminado.stock -= cant
->>>>>>> origin/master
         self.producto_terminado.save()
         self.save()
 
