@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response
@@ -153,6 +154,9 @@ def signup(request):
 
 @login_required()
 def usuariosAdmin(request):
+
+
+
     usuarios = auth_models.User.objects.all()
     return render(request, "usuariosAdmin.html", {"usuarios":usuarios})
 
@@ -161,7 +165,33 @@ def usuariosAdmin(request):
 @login_required()
 def usuariosAdminModificar(request,usuario_id):
     usuario = auth_models.User.objects.get(pk=usuario_id)
-    return render(request, "usuariosAdminModificar.html", {})
+    grupos_usuario = usuario.groups.all()
+    grupos = []
+    for u in auth_models.Group.objects.all():
+        if not (u in grupos_usuario):
+            grupos.append(u)
+    return render(request, "usuariosAdminModificar.html", {"usuario":usuario,"id":usuario_id,
+                                                           "grupos":grupos, "grupos_usuario":grupos_usuario
+                                                          })
+@login_required()
+def usuariosAdminModificarAgregarGrupo(request,usuario_id,grupo_id):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    grupo = auth_models.Group.objects.get(pk=grupo_id)
+    messages.success(request, 'El grupo: ' + grupo + ', ha sido Agregado correctamente.')
+    usuario.groups.add(grupo)
+    usuario.save()
+    return redirect('usuariosAdminModificar')
+
+
+@login_required()
+def usuariosAdminModificarQuitarGrupo(request,usuario_id,grupo_id):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    grupo = auth_models.Group.objects.get(pk=grupo_id)
+    messages.success(request, 'El grupo: ' + grupo + ', ha sido removido correctamente.')
+    usuario.groups.remove(grupo)
+    usuario.save()
+    return redirect('usuariosAdminModificar')
+
 
 
 
