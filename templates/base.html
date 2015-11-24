@@ -179,11 +179,8 @@
           <ul class="dropdown-menu">
               {% if perms.recetas.add_productoterminado %}
             <li><a href="{%url 'productosTerminados'%}">ABM Productos Terminados</a></li>
-            <li role="separator" class="divider"></li>
               {% endif %}
-              {% if perms.recetas.change_productoterminado %}
-            <li><a href="{%url 'productosTerminadosActualizarPrecio'%}">Modificar Precio</a></li>
-              {% endif %}
+              
           </ul>
         </li>
         {% endif %}
@@ -262,7 +259,7 @@
             <li><a href="{%url 'listadoProductosTerminadosDisponibles'%}">Listado de Productos Terminados Disponibles</a></li>
             <li role="separator" class="divider"></li>
               {% endif %}
-            <li><a href="#">Listado 2</a></li>
+            <li><a href="{%url 'perdidaStock' %}">Listado de decrementos de Stock por perdida</a></li>
           </ul>
           </li>
           {% endif %}

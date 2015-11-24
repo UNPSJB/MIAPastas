@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+
+{% block contenido %}
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Perdidas de Stock en Lotes</b></font></p></div>
+  <div class="panel-body">
+      <!-- formulario -->
+           <form class="form-inline" method="get">
+                  <!-- Filtro de Fecha de Realizacion del Pedido a Proveedor -->
+                  <div class="form-group">
+                        <label for="fecha_desde">Fecha Desde</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
+                  </div>
+                  <div class="form-group">
+                        <label for="fecha_hasta">Fecha Hasta</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
+                  </div>
+                  <!-- Filtro de Proveedor del Pedido a Proveedor 
+                  <div class="form-group">
+                        <label for="proveedor">Proveedor</label>
+                        <select class="form-control" id="proveedor" name="proveedor" title="">
+                            <option value="" selected="selected">---------</option>
+                            {% for p in proveedores %}
+                                <option value="{{p.id}}">{{p}}</option>
+                            {% endfor %}
+                        </select>
+                  </div> -->
+                  <p>&nbsp;</p>
+                  <!-- Filtro de Fecha Probable de Entrega del Pedido a Proveedor -->
+                  <div class="form-group">
+                        <label for="causas">Causa: </label>
+                        <select class="form-control" id="causas" name="causas" title="">
+                            <option value="" selected="selected">---------</option>
+                            <option value="{{1}}">Vencimiento</option>
+                            <option value="{{2}}">Rotura</option>
+                            <option value="{{3}}">Otros</option>
+                            <!-- PREGUNTA: conviene meter el ESTADO en una clase a parte?? clase EstadoPedido?? -->
+                        </select>
+                  </div>
+                  <label>
+                  </label>
+                  <button type="submit" class="btn btn-default">Filtrar</button>
+          </form>
+          <p>&nbsp;</p>
+
+      <!-- Tabla que Muestra los Resultados del Filtro -->
+      <div class="row">
+          <div class="col-md-10">
+              <table class="table table-hover" id="datatables" class="display">
+                    <thead>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Lote</th>
+                            <th>Tipo</th>
+                     <!--   <th>Fecha de Entrega</th> -->
+                            <th>Cantidad perdida</th>
+                            <th>Fecha</th>
+                            <th>Descripcion</th>
+
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for perdida in perdidas %}
+                        <tr>
+                            <td>{{perdida.lote.producto_terminado.nombre}}</td>
+                            <td>{{perdida.lote.nro_lote}}</td>
+                            <td>{% if perdida.causas == 1 %}
+                                    Vencimiento
+                                {% else %}
+                                  {% if perdida.causas == 2 %}
+                                      Rotura
+                                {% else %}
+                                      Otros
+                                    {% endif %}
+                                {% endif %}
+                            </td>
+                            <td>{{perdida.cantidad_perdida}}</td>
+                            <td>{{perdida.fecha}}</td>
+                            <td>{{perdida.descripcion}}</td>
+
+
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+              </table>
+          </div>
+          <!-- Botones para agregar, consultar, modificar y eliminar -->
+         
+      </div>
+  </div>
+</div>
+
+
+
+ <!-- Este es el fin del formulario de recetas -->
+
+
+{% endblock %}
+

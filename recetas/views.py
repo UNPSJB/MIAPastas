@@ -7,6 +7,7 @@ from django.forms.models import BaseModelFormSet
 from django.forms.models import modelformset_factory
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib import messages
+from django.db.models import Q
 from django.http import HttpResponseRedirect
 from django.contrib.messages import get_messages
 import json
@@ -76,7 +77,6 @@ def get_filtros(get, modelo):
             # Es un valor booleano
             filtros[attr] = ""
             filtros_modelo[filtro] = True
-    print "soy fltrooooooo",(filtros, filtros_modelo)
     return filtros, filtros_modelo
 
 #********************************************************#
@@ -518,6 +518,15 @@ def productosTerminadosModificar(request,producto_id = None):
 def productosTerminadosBaja(request, producto_id=None):
     print "estoy en bajaaa"
     p = models.ProductoTerminado.objects.get(pk=producto_id)
+    '''
+    try:
+        lotes_disponibles = len(p.lote_set.filter(stock_disponible>0)
+    except:
+        lotes_disponibles = 1      
+        #para que lo pueda aliminar
+    finally:
+        pass
+    '''
     if len(p.pedidocliente_set.filter(activo=True))> 0:
         messages.success(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
     elif len(p.lote_set.filter(stock_disponible>0)>0):
@@ -780,9 +789,15 @@ def pedidosClientes(request,pedido_id=None):
         # filtros
         print "GET ",request.GET
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
+        pobj = Q(**mfilters)
+        filters, mfilters = get_filtros(request.GET, models.PedidoFijo)
+        qobj = Q(**mfilters)
+        filters, mfilters = get_filtros(request.GET, models.PedidoOcacional)
+        qobj |= Q(**mfilters)
+        filters, mfilters = get_filtros(request.GET, models.PedidoCambio)
+        qobj |= Q(**mfilters)
 
-
-        pedidos = models.PedidoCliente.objects.filter(**mfilters)
+        pedidos = models.PedidoCliente.objects.filter(pobj & qobj)
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
@@ -1134,7 +1149,7 @@ def loteStock(request,lote_id):
     if request.method == "POST":
         lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
         if lote_form.is_valid():
-            lote_form.save()
+            lote_form.save(lote_instancia)
             return redirect("lotes")
     else:
         lote_form = forms.LoteStockForm(instance = lote_instancia)
@@ -1168,7 +1183,7 @@ def hojaDeRuta(request):
                 pedidos_clientes_enviar.append(pedido)
         print "peidooooo", pedidos_clientes_enviar
         choferes = models.Chofer.objects.filter(activo=True)
-        choferes = models.Chofer.objects.filter(disponible=True)
+        #choferes = models.Chofer.objects.filter(disponible=True)
         productos = models.ProductoTerminado.objects.filter(activo=True)
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
         entregas_factory_class = formset_factory(forms.EntregaForm)
@@ -1202,7 +1217,7 @@ def hojaDeRutaAlta(request):
                         entrega_instancia.pedido.activo=False #marco como entregado
             chofer = models.Chofer.objects.filter(pk=hoja_ruta_instancia.chofer.id)    #verificar que ande
             chofer=chofer[0]
-            chofer.disponible=False 
+            #chofer.disponible=False 
             chofer.save()
         else:
             hoja_ruta_instancia.delete()
@@ -1260,7 +1275,7 @@ def rendicionReparto(request,hoja_id=None):
                 hoja.rendida = True
                 chofer = models.Chofer.objects.filter(pk=hoja.chofer.id)
                 chofer=chofer[0]
-                chofer.disponible=True
+                #chofer.disponible=True
                 chofer.save()
                 print "guarde la hgoja"
             return redirect("rendicionDeRepartoMostrar",hoja.id)
@@ -1422,5 +1437,11 @@ def cobrarClienteMostrarRecibos(request):
         recibos=serializers.serialize('json', recibos)
         return HttpResponse(recibos,content_type='json')
 
+
+
+def perdidasStockLotes(request):
+    filters, mfilters = get_filtros(request.GET, models.PerdidaStock)
+    perdidas = models.PerdidaStock.objects.filter(**mfilters)
+    return render(request, "perdidasStockLotes.html", {"perdidas":perdidas})
 
 

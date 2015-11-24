@@ -10,35 +10,37 @@
              <form class="form-horizontal">
                 <div class=" form-group">
                     <label class="col-sm-2 control-label">Producto</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" style="padding:7px;">
                       {{lote.producto_terminado}}
                     </div>
                 </div>
                 <div class=" form-group">
                     <label class="col-sm-2 control-label">Fecha de Produccion</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" style="padding:7px;">
                       {{lote.fecha_produccion}}
                     </div>
                 </div>
                 <div class=" form-group">
                     <label class="col-sm-2 control-label">Fecha de Vencimiento</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" style="padding:7px;">
                       {{lote.fecha_vencimiento}}
                     </div>
                 </div>
                  <div class=" form-group">
                     <label class="col-sm-2 control-label">Cantidad Producida</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" style="padding:7px;">
                       {{lote.cantidad_producida}} Bolsines
                     </div>
                 </div>
 
                 <div class=" form-group">
                     <label class="col-sm-2 control-label">Stock Disponible</label>
-                    <div class="col-sm-10">
+                    <div class="col-sm-10" style="padding:7px;">
                       {{lote.stock_disponible}} Bolsines
                     </div>
                 </div>
+
+                
              </form>
                 <form action="{% url 'productosTerminadosActualizarStock' id %}" method="post" class="form-horizontal" >
 
@@ -47,15 +49,29 @@
                     {% endif %}
 
                     {% if lote_form.cantidad.errors%}
-                        Stock disponible no puede superar cantidad producida ni ser menor a 0
+                        Stock disponible no puede superar cantidad producida ni ser menor a 0.
                     {% endif %}
                     {% csrf_token %}
                     <div id="fields_hidden"></div>
 
                     <div class=" form-group">
                         <label class="col-sm-2 control-label">Cantidad a decrementar(*)</label>
-                        <div class="col-sm-10">
+                        <div class="col-sm-10" style="padding:11px;">
                             {{ lote_form.cantidad}}
+                        </div>
+                    </div>
+
+                    <div class=" form-group">
+                    <label class="col-sm-2 control-label">Causa (*):</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{lote_form.select_causas}} 
+                    </div>
+                    </div>
+
+                    <div class=" form-group">
+                        <label class="col-sm-2 control-label">Descripcion de la perdida</label>
+                        <div class="col-sm-10" style="padding:7px;">
+                            {{ lote_form.descripcion}}
                         </div>
                     </div>
                     <p>&nbsp;</p>
