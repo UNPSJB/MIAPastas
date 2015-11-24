@@ -518,7 +518,7 @@ def listadoProductosTerminadosDisponiblesExcel(request):
     print("fin...................")
 
 
-    #VERIFICANDO QUE HAYA CLIENTES
+    #VERIFICANDO QUE HAYA PRODUCTOS
     if not productos.exists():
         return HttpResponseNotFound('No hay productos terminados disponibles para exportar a Excel')
 
@@ -557,5 +557,144 @@ def listadoProductosTerminadosDisponiblesExcel(request):
 
     response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
     response['Content-Disposition'] = "attachment; filename=ListadoProductosTerminados.xlsx"
+
+    return response
+
+
+@login_required()
+def listadoProductosMasVendidos(request):
+    entregas = models.Entrega.objects.all()
+    prod = {}
+    for entrega in entregas:
+        for d in entrega.entregadetalle_set.all():
+            try:
+                prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+            except:
+                prod[d.get_producto_terminado().nombre]=0
+                prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+
+    print("pase por acaaaaaa")
+    print(entregas)
+    print(prod)
+    print("pase por acaaaaaa")
+    #for a,b in prod.items
+     #   print
+    return render(request, "listadoProductosMasVendidos.html", {"prod": prod})
+
+
+@login_required()
+def listadoProductosMasVendidosFiltros(request):
+    if request.method == "GET":
+        print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
+        print("Entreee al GETTT")
+        print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
+
+
+
+        filters, mfilters = get_filtros(request.GET, models.Entrega)
+        entregas = models.Entrega.objects.filter(**mfilters)
+
+
+
+        print(mfilters)
+
+
+        prod = {}
+        for entrega in entregas:
+            for d in entrega.entregadetalle_set.all():
+                try:
+                    prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+                except:
+                    prod[d.get_producto_terminado().nombre]=0
+                    prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+
+
+        return render(request, "listadoProductosMasVendidos.html",
+                  {"prod": prod,
+                   "filtros": filters,
+                   })
+
+
+    print("<<<<<<<<< HUBO UN ERROR...NO PUDO ENTRAR AL GET >>>>>>>>>>>")
+    return render(request, "listadoProductosTerminadosDisponibles.html", {})
+
+
+
+
+
+@login_required()
+def listadoProductosMasVendidosExcel(request):
+    #OBTENIENDO LAS FECHAS
+    try:
+        fecha_desde = request.GET['fecha_desde']
+        fecha_hasta = request.GET['fecha_hasta']
+    except:
+        print('ENTREEEEE EN LA EXCEPCION!!!')
+        fecha_desde = datetime.datetime.today()
+        fecha_hasta = datetime.datetime.today()
+
+    if not fecha_desde:
+        fecha_desde = datetime.datetime.today()
+        fecha_desde = fecha_desde.strftime("%d/%m/%Y")
+
+
+    if not fecha_hasta:
+        fecha_hasta = datetime.datetime.today()
+        fecha_hasta = fecha_hasta.strftime("%d/%m/%Y")
+
+    print(fecha_desde)
+    print(fecha_hasta)
+    #OBTENIENDO LOS CLIENTES A TRAVES DEL ATRIBUTO FILTERS
+    filters, mfilters = get_filtros(request.GET, models.Entrega)
+    print(mfilters)
+    entregas = models.Entrega.objects.filter(**mfilters)
+
+    print("comienzo..............")
+    print(entregas)
+    print("fin...................")
+
+
+    #VERIFICANDO QUE HAYA PRODUCTOS
+    if not entregas.exists():
+        return HttpResponseNotFound('No hay productos terminados vendidos.')
+
+    #ARMANDO EL ARCHIVO EXCEL
+    output = io.BytesIO()
+    workbook = Workbook(output, {'in_memory': True})
+    worksheet = workbook.add_worksheet()
+    worksheet.write(0, 0, "Listado de Productos Terminados Mas Vendidos")
+
+    worksheet.write(1, 0, "Fecha Desde: ")
+    worksheet.write(1, 1, fecha_desde)
+
+    worksheet.write(2, 0, "Fecha Hasta: ")
+    worksheet.write(2, 1, fecha_hasta)
+
+    worksheet.write(3, 0, "Producto Terminado")
+    worksheet.write(3, 1, "Cantidad Vendida")
+
+    numero_fila = 4
+
+    prod = {}
+    for entrega in entregas:
+        for d in entrega.entregadetalle_set.all():
+                try:
+                    prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+                except:
+                    prod[d.get_producto_terminado().nombre]=0
+                    prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+
+
+    for nombre,cantidad in prod.items():
+        worksheet.write(numero_fila, 0, nombre)
+        worksheet.write(numero_fila, 1, cantidad)
+        numero_fila = numero_fila + 1
+
+    workbook.close()
+
+    output.seek(0)
+
+    response = HttpResponse(output.read(), content_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+    response['Content-Disposition'] = "attachment; filename=ListadoPDVendidos.xlsx"
 
     return response

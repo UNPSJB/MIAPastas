@@ -1153,9 +1153,12 @@ def loteStock(request,lote_id):
             return redirect("lotes")
     else:
         lote_form = forms.LoteStockForm(instance = lote_instancia)
+
+    f = forms.PerdidaStockLoteForm()
     return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
                                                          "lote": lote_instancia,
-                                                         "id":lote_id})
+                                                         "id":lote_id,
+                                                         "perdida_stock_form":f})
 
 
 
@@ -1217,7 +1220,11 @@ def hojaDeRutaAlta(request):
                         entrega_instancia.pedido.activo=False #marco como entregado
             chofer = models.Chofer.objects.filter(pk=hoja_ruta_instancia.chofer.id)    #verificar que ande
             chofer=chofer[0]
+<<<<<<< HEAD
             #chofer.disponible=False 
+=======
+            chofer.disponible=False
+>>>>>>> origin/master
             chofer.save()
         else:
             hoja_ruta_instancia.delete()
@@ -1430,6 +1437,7 @@ def cobrarClienteFacturar(request):
 
 
 def cobrarClienteMostrarRecibos(request):
+<<<<<<< HEAD
         entrega_id = re.findall("\d+",request.GET['entrega_id'])
         entrega = models.Entrega.objects.get(pk=entrega_id[0])
         recibos = models.Recibo.objects.filter(entrega=entrega)
@@ -1445,3 +1453,18 @@ def perdidasStockLotes(request):
     return render(request, "perdidasStockLotes.html", {"perdidas":perdidas})
 
 
+=======
+    entrega_id = re.findall("\d+",request.GET['entrega_id'])
+    entrega = models.Entrega.objects.get(pk=entrega_id[0])
+    recibos = models.Recibo.objects.filter(entrega=entrega)
+    print recibos," estos son los recibos"
+    recibos=serializers.serialize('json', recibos)
+    return HttpResponse(recibos, content_type='json')
+
+def productosMasVendidos(request):
+    import os
+    path = os.path.abspath(".")
+    print(path)
+    img = open(os.path.join(path, "estaticos/images/avatar.png"), 'r')
+    return HttpResponse(img.read(), content_type="image/png")
+>>>>>>> origin/master

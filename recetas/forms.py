@@ -224,6 +224,13 @@ class PerdidaStockForm(forms.ModelForm):
 
 
 
+class PerdidaStockLoteForm(forms.ModelForm):
+    class Meta:
+        model = models.PerdidaStockLote
+        exclude = ["fecha"]
+
+
+
 class LoteStockForm(forms.ModelForm):
 
     class Meta:
@@ -234,13 +241,12 @@ class LoteStockForm(forms.ModelForm):
     select_causas = forms.ChoiceField(widget=forms.RadioSelect, choices=models.CAUSAS_DECREMENTO_STOCK)
 
 
+
     def __init__(self, *args, **kwargs):
         super(LoteStockForm, self).__init__(*args, **kwargs)
         self.fields['stock_disponible'].label = "Stock (*)"
         self.fields['cantidad_producida'].label = "producida(*)"
         self.fields['cantidad'].label = "Cantidad ( * )"
-
-
 
     def save(self, *args, **kwargs):
         lote= super(LoteStockForm, self).save(*args, **kwargs)
@@ -248,6 +254,7 @@ class LoteStockForm(forms.ModelForm):
         print "cantuidad a modificar: ",self.cleaned_data['cantidad']
         lote.stock_disponible -= self.cleaned_data['cantidad']
         print "stock final es: ",lote.stock_disponible
+
         lote.save()
         lote.producto_terminado.stock -= self.cleaned_data['cantidad']
         lote.producto_terminado.save()
@@ -266,9 +273,7 @@ class LoteStockForm(forms.ModelForm):
         print "clean_cantidad_producida ",
         return self.cleaned_data["cantidad_producida"]
 
-    def clean_stock_disponible(self):
-        print "clean_stock_disponible "
-        return self.cleaned_data["stock_disponible"]
+
 
     def clean_cantidad(self):
         print "clean_cantidddddad ",self.cleaned_data['cantidad_producida']

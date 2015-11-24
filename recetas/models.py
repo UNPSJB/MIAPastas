@@ -442,16 +442,7 @@ class Lote(models.Model):
         self.save()
         return reservar
 
-        #    E N   C O N S T R U C C I O N  necesitamos rendicion.
-    def reservar_stock_2(self,cantidad):
-        print "en reservar stock 2, el stock disponible es:", self.stock_disponible
-        #tengo q recorrer loteEntregaDetalle y DetalleProdExtra
-        cantidad_total_reservada=0
-        for d in self.loteentregadetalle_set.all():
-            if d.cantidad_entregada == None:
-                cantidad_total_reservada += d.cantidad
-        # falta recorrer los detalles de productos EXTRAS!
-        return cantidad_total_reservada
+ 
 
     def decrementar_stock_reservado(self,cant):
         self.stock_reservado -= cant
@@ -459,7 +450,11 @@ class Lote(models.Model):
 
     def decrementar_stock_disponible(self,cant):
         self.stock_disponible -= cant
+<<<<<<< HEAD
         self.producto_terminado.stock -=cant
+=======
+        self.producto_terminado.stock -= cant
+>>>>>>> origin/master
         self.producto_terminado.save()
         self.save()
 
@@ -544,6 +539,11 @@ class ProductosLlevadosDetalle(models.Model):
     cantidad_sobrante = models.PositiveIntegerField(null=True)
 
 class Entrega(models.Model):
+    FILTROS = ['fecha_desde','fecha_hasta']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha__gte',
+        'fecha_hasta': 'fecha__lte'
+    }
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
     pedido = models.ForeignKey(PedidoCliente)
     fecha = models.DateField(auto_now_add = True)
@@ -624,15 +624,16 @@ class EntregaDetalle(models.Model):
         if self.producto_terminado is not None:
             return self.producto_terminado
         return self.pedido_cliente_detalle.producto_terminado
-class LoteEntregaDetalle(models.Model):
-    entrega_detalle = models.ForeignKey(EntregaDetalle)
+
+
+
+class PerdidaStockLote(models.Model):
+    cantidad_perdida = models.PositiveIntegerField()
     lote = models.ForeignKey(Lote)
-    cantidad = models.PositiveIntegerField()
-
-
-entrega = models.ForeignKey(Entrega)
-
-
+    motivo = models.CharField(max_length=100)
+    fecha = models.DateField(auto_now_add=True)
+     # si se rompio / perdio un prod en un recorrido, ingreso nro de hoja de ruta 
+    hoja_de_ruta = models.ForeignKey(HojaDeRuta,null=True,blank=True) 
 
 
 

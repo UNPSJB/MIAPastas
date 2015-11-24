@@ -65,6 +65,11 @@ urlpatterns = [
     url(r'^listadoProductosTerminadosDisponibles$',views.listadoProductosTerminadosDisponibles,name='listadoProductosTerminadosDisponibles'),
     url(r'^listadoProductosTerminadosDisponiblesFiltros$',views.listadoProductosTerminadosDisponiblesFiltros,name='listadoProductosTerminadosDisponiblesFiltros'),
     url(r'^listadoProductosTerminadosDisponiblesExcel$',views.listadoProductosTerminadosDisponiblesExcel,name='listadoProductosTerminadosDisponiblesExcel'),
+
+    url(r'^listadoProductosMasVendidos$',views.listadoProductosMasVendidos,name='listadoProductosMasVendidos'),
+    url(r'^listadoProductosMasVendidosFiltros$',views.listadoProductosMasVendidosFiltros,name='listadoProductosMasVendidosFiltros'),
+    url(r'^listadoProductosMasVendidosExcel$',views.listadoProductosMasVendidosExcel,name='listadoProductosMasVendidosExcel'),
+
                     # Hechos en forms
 
 
@@ -220,6 +225,7 @@ urlpatterns = [
     #url(r'^productosTerminadosAlta$',views.productosTerminadosAlta,name='productosTerminadosAlta'),
     url(r'^productosTerminadosModificar$',views.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminadosActualizarPrecio$',views.productosTerminadosActualizarPrecio,name='productosTerminadosActualizarPrecio'),
+    url(r'^productos_mas_vendidos.png$',recetasviews.productosMasVendidos,name='productosMasVendidos'),
 
 
 

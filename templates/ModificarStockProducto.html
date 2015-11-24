@@ -80,6 +80,9 @@
                             {% bootstrap_icon "star" %} Aceptar
                         </button>
                     {% endbuttons %}
+
+                    {% bootstrap_form perdida_stock_form layout='horizontal' %}
+
       <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
 
                 </form>
@@ -94,9 +97,7 @@
 
 <script>
 var html="";
-html = html + armar_hidden_comun({{lote.cantidad_producida}},"cantidad_producida");
-html = html + armar_hidden_comun({{lote.stock_disponible}},"stock_disponible");
-$('#fields_hidden').html(html);
+
 </script>
 
 {% endblock %}
