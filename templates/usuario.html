@@ -37,17 +37,34 @@
 
 
                     <p>&nbsp;</p>
-                        {% buttons %}
-                            <button type="submit" class="btn btn-primary" >
-                                {% bootstrap_icon "pencil" %} Editar
-                            </button>
-                            <button type="submit" class="btn btn-primary" >
-                                {% bootstrap_icon "lock" %} Cambiar clave
-                            </button>
+                    {% buttons %}
+                    <button id = "editar-usuario"  class="btn btn-primary" ><span class="glyphicon glyphicon-pencil" aria-hidden="true">  Editar  </span></button>
 
-      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-                        {% endbuttons %}
+                    <button id ="cambiar-clave" class="btn btn-primary" ><span class="glyphicon glyphicon-lock" aria-hidden="true">  Cambiar clave </span></button>
+
+                    {% endbuttons %}
+
                  </form>
     </div>
 </div>
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id = {{user}};
+
+        function editar(){
+            window.open('/usuario/editar/'+id+'',"_self")
+        }}
+
+        function cambiar_clave(){
+            window.open('/usuario/clave/'+id+'',"_self")
+        }}
+
+        $("#editar-usuario").click(editar);
+        $("#cambiar-clave").click(cambiar_clave);
+
+    });
+</script>
+
 {% endblock %}
