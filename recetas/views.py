@@ -28,6 +28,8 @@ from django.core.context_processors import csrf
 import StringIO
 from django.template import Context
 from decimal import Decimal
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import permission_required
 
 
 
@@ -82,6 +84,8 @@ def get_filtros(get, modelo):
 #********************************************************#
                #     C H O F E R E S    #
 #********************************************************#
+@login_required()
+@permission_required('recetas.add_chofer')
 def choferes(request,chofer_id=None):
     """
         Permite buscar choferes con caracteristicas espesificas dentro de un grupo de choferes y obtener la informacion detallada de un chofer
@@ -99,6 +103,8 @@ def choferes(request,chofer_id=None):
                    "filtros": filters})
 
 
+@login_required()
+@permission_required('recetas.add_chofer')
 def choferesAlta(request):
     """
     Recibe una peticion de dar de alta un chofer. Verifica que el nuevo chofer sea valido y de serlo lo da de alta
@@ -118,6 +124,8 @@ def choferesAlta(request):
 
 
 
+@login_required()
+@permission_required('recetas.change_chofer')
 def choferesModificar(request,chofer_id =None):
     """
         Recibe una peticion de modificar datos de un chofer. Modifica los datos correspondientes del chofer
@@ -135,7 +143,10 @@ def choferesModificar(request,chofer_id =None):
     return render(request,"choferesModificar.html",{"chofer_form":chofer_form,"id":chofer_id})
 
 
+
+@login_required()
 @csrf_exempt
+@permission_required('recetas.delete_chofer')
 def choferesBaja(request,chofer_id=None):
     """
         Recibe una peticion de dar de baja un chofer. Da de baja el chofer espedificado.
@@ -159,6 +170,8 @@ def choferesBaja(request,chofer_id=None):
                #     I N S U M O S    #
 #********************************************************#
 
+@login_required()
+@permission_required('recetas.add_insumo')
 def insumos(request,insumo_id=None):
     """
         Permite buscar insumos con caracteristicas espesificas dentro de un grupo de insumos y obtener la informacion detallada de un insumo particular
@@ -179,6 +192,9 @@ def insumos(request,insumo_id=None):
                    "filtros": filters})
 
 
+
+@login_required()
+@permission_required('recetas.add_insumo')
 def insumosAlta(request):
     """
         Recibe una peticion de dar de alta un insumo. Da de alta el insumo
@@ -196,6 +212,9 @@ def insumosAlta(request):
     return render(request, "insumosAlta.html", {"insumo_form":insumo_form})
 
 
+
+@login_required()
+@permission_required('recetas.change_insumo')
 def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
     """
         Recibe una peticion de modificar datos de un insumo. Modifica los datos correspondientes del insumo
@@ -214,6 +233,9 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
         return render(request,"insumosModificar.html",{"insumo_form":insumo_form,"id":insumo_id})
 
 
+
+@login_required()
+@permission_required('recetas.delete_insumo')
 def insumosBaja(request,insumo_id):
     """
         Recibe una peticion de dar de baja un insumo. Da de baja el insumo espedificado. Si posee recetas asociadas, tambien las elimina
@@ -239,6 +261,8 @@ def insumosBaja(request,insumo_id):
 
 
 
+
+@login_required()
 def datosInsumo(request,insumo_id= None):
     insumo= models.Insumo.objects.get( pk= insumo_id)
     insumo_data = serializers.serialize('json', [insumo,])
@@ -256,6 +280,8 @@ def datosInsumo(request,insumo_id= None):
 
 
 
+@login_required()
+@permission_required('recetas.change_insumo')
 def insumosModificarStock(request):
     if request.method == 'POST':
         insumo_form = forms.ModificarStockInsumoForm(request.POST)
@@ -277,7 +303,8 @@ def insumosModificarStock(request):
 #********************************************************#
                #     R E C E T A S    #
 #********************************************************#
-
+@login_required()
+@permission_required('recetas.add_receta')
 def recetas(request,receta_id=None):
     """
         Permite buscar recetas con caracteristicas espesificas dentro de un grupo de recetas y obtener la informacion detallada de una receta particular
@@ -298,6 +325,9 @@ def recetas(request,receta_id=None):
 
 
 
+
+@login_required()
+@permission_required('recetas.change_receta')
 def recetasModificar(request,receta_id):
     """
         Recibe una peticion de modificar datos de una receta. Modifica los datos correspondientes de la receta
@@ -332,6 +362,9 @@ def recetasModificar(request,receta_id):
                                                    })
 
 
+
+@login_required()
+@permission_required('recetas.add_receta')
 def recetasAlta(request):
     """
        Recibe una peticion de dar de alta una receta. Verifica que la nueva receta sea valida y de serlo la da de alta
@@ -364,6 +397,10 @@ def recetasAlta(request):
             "prefix":"form"})
 
 
+
+
+@login_required()
+@permission_required('recetas.delete_receta')
 def recetasBaja(request,receta_id):
     """
         Recibe una peticion de dar de baja una receta. Da de baja la receta espedificada.
@@ -381,7 +418,8 @@ def recetasBaja(request,receta_id):
                #     P R O V E E D O R E S   #
 #********************************************************#
 
-
+@login_required()
+@permission_required('recetas.add_proveedor')
 def proveedores(request,proveedor_id=None):
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
@@ -399,6 +437,10 @@ def proveedores(request,proveedor_id=None):
     return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
 
 
+
+
+@login_required()
+@permission_required('recetas.add_proveedor')
 def proveedoresAlta(request):
     proveedores_form = forms.ProveedorForm()
     insumos = models.Insumo.objects.filter(activo=True)
@@ -414,6 +456,8 @@ def proveedoresAlta(request):
 
 
 
+@login_required()
+@permission_required('recetas.delete_proveedor')
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):
     p = models.Proveedor.objects.get(pk=proveedor_id)
@@ -424,6 +468,9 @@ def proveedoresBaja(request,proveedor_id =None):
     
 
 
+
+@login_required()
+@permission_required('recetas.change_proveedor')
 def proveedoresModificar(request,proveedor_id =None):
     proveedor_instancia = get_object_or_404(models.Proveedor, pk=proveedor_id)
     
@@ -444,7 +491,8 @@ def proveedoresModificar(request,proveedor_id =None):
                #     P R O D U C T O S   #
 #********************************************************#
 
-
+@login_required()
+@permission_required('recetas.add_productoterminado')
 def productosTerminados(request,producto_id=None):
     if producto_id is not None:
         # consulta
@@ -462,6 +510,9 @@ def productosTerminados(request,producto_id=None):
                    "filtros": filters})
 
 
+
+@login_required()
+@permission_required('recetas.add_productoterminado')
 def productosTerminadosAlta(request):
     if request.method == "POST":
         producto_form = forms.ProductoTerminadoForm(request.POST)
@@ -494,6 +545,9 @@ def productosTerminadosAlta(request):
 """
 
 
+
+@login_required()
+@permission_required('recetas.change_productoterminado')
 def productosTerminadosModificar(request,producto_id = None):
     producto_instancia = get_object_or_404(models.ProductoTerminado, pk = producto_id)
     print(producto_instancia.nombre)
@@ -516,6 +570,8 @@ def productosTerminadosModificar(request,producto_id = None):
 
 
 
+@login_required()
+@permission_required('recetas.delete_productoterminado')
 @csrf_exempt
 def productosTerminadosBaja(request, producto_id=None):
     print "estoy en bajaaa"
@@ -556,7 +612,8 @@ def productosTerminadosBaja(request, producto_id=None):
 #********************************************************#
               #     Z O N A S    #
 #********************************************************#
-
+@login_required()
+@permission_required('recetas.add_zona')
 def zonas(request,zona_id=None):
     """
         Permite buscar zonas con caracteristicas espesificas dentro de un grupo de zonas y obtener informacion detallada de una zona particular
@@ -575,6 +632,10 @@ def zonas(request,zona_id=None):
                    "filtros": filters})
 
 
+
+
+@login_required()
+@permission_required('recetas.add_zona')
 def zonasAlta(request):
     """
         Recibe una peticion de dar de alta una zona. Verifica que la nueva zona sea valida y de serlo la da de alta
@@ -591,6 +652,9 @@ def zonasAlta(request):
     return render(request, "zonasAlta.html", {"zona_form":zona_form})
 
 
+
+@login_required()
+@permission_required('recetas.change_zona')
 def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
     """
         Recibe una peticion de modificar datos de una zona. Modifica los datos correspondientes de la zona
@@ -608,6 +672,9 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
         return render(request,"zonasModificar.html",{"zona_form":zona_form,"id":zona_id})
 
 
+
+@login_required()
+@permission_required('recetas.delete_zona')
 @csrf_exempt
 def zonasBaja(request,zona_id =None):
     """
@@ -634,7 +701,8 @@ def zonasBaja(request,zona_id =None):
 #********************************************************#
               #     C L I E N T E S    #
 #********************************************************#
-
+@login_required()
+@permission_required('recetas.add_cliente')
 def clientes(request,cliente_id=None):
     if cliente_id is not None:
         # consulta
@@ -655,6 +723,10 @@ def clientes(request,cliente_id=None):
 
 
 
+
+
+@login_required()
+@permission_required('recetas.change_cliente')
 def clientesModificar(request,cliente_id = None):
     cliente_instancia = get_object_or_404(models.Cliente, pk=cliente_id)
     if request.method=="POST":
@@ -672,6 +744,9 @@ def clientesModificar(request,cliente_id = None):
         return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
 
 
+
+@login_required()
+@permission_required('recetas.add_cliente')
 def clientesAlta(request):
     if request.method == "POST":
         cliente_form = forms.ClienteAltaForm(request.POST)
@@ -684,6 +759,9 @@ def clientesAlta(request):
 
 
 
+
+@login_required()
+@permission_required('recetas.delete_cliente')
 @csrf_exempt
 def clientesBaja(request,cliente_id =None):
     p = models.Cliente.objects.get(pk=cliente_id)
@@ -699,6 +777,8 @@ def clientesBaja(request,cliente_id =None):
 #********************************************************#
                #     C I U D A D E S   #
 #********************************************************#
+@login_required()
+@permission_required('recetas.add_ciudad')
 def ciudades(request,ciudad_id=None):
     """
         Permite buscar ciudades con caracteristicas espesificas dentro de un grupo de ciudades y obtener informacion detallada de una ciudad particular
@@ -716,6 +796,9 @@ def ciudades(request,ciudad_id=None):
 
 
 
+
+@login_required()
+@permission_required('recetas.add_ciudad')
 def ciudadesAlta(request):
     """
         Recibe una peticion de dar de alta una ciudad. Verifica que la nueva ciudad sea valida y de serlo la da de alta
@@ -732,6 +815,9 @@ def ciudadesAlta(request):
     return render(request, "ciudadesAlta.html", {"ciudad_form":ciudad_form})
 
 
+
+@login_required()
+@permission_required('recetas.change_ciudad')
 def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
     """
         Recibe una peticion de modificar datos de una ciudad. Modifica los datos correspondientes de la ciudad
@@ -749,6 +835,10 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
         return render(request,"ciudadesModificar.html",{"ciudad_form":ciudad_form,"id":ciudad_id})
 
 
+
+
+@login_required()
+@permission_required('recetas.delete_ciudad')
 @csrf_exempt
 def ciudadesBaja(request,ciudad_id =None):
     """
@@ -767,7 +857,8 @@ def ciudadesBaja(request,ciudad_id =None):
 #********************************************************#
                #     PEDIDOS CLIENTES   #
 #********************************************************#
-
+@login_required()
+@permission_required('recetas.change_pedidocliente')
 def eliminarVencidos():
     pedidos_fijos = models.PedidoFijo.objects.all()
     for pedido in pedidos_fijos:
@@ -780,6 +871,8 @@ def eliminarVencidos():
 
 
 
+@login_required()
+@permission_required('recetas.add_pedidocliente')
 def pedidosClientes(request,pedido_id=None):
     eliminarVencidos()
     if pedido_id is not None:
@@ -818,6 +911,9 @@ def pedidosClientes(request,pedido_id=None):
 
 
 
+
+@login_required()
+@permission_required('recetas.add_pedidocliente')
 def pedidosClientesAlta(request, tipo_pedido_id):
     detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
     detalles_form = None
@@ -858,6 +954,10 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
 
 
+
+
+@login_required()
+@permission_required('recetas.delete_pedidocliente')
 def pedidosClienteBaja(request,pedido_id):
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
     #messages.success(request, 'El pedido: de "+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
@@ -867,6 +967,11 @@ def pedidosClienteBaja(request,pedido_id):
     return redirect('pedidosCliente')
 
 
+
+
+
+@login_required()
+@permission_required('recetas.change_pedidocliente')
 def pedidosClienteModificar(request, pedido_id):
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
     if pedido_instancia.tipo_pedido == 1:
@@ -939,7 +1044,8 @@ def pedidosClienteModificar(request, pedido_id):
 #********************************************************#
          #    P E D I D O S   A   P R O V E E D O R   #
 #********************************************************#
-
+@login_required()
+@permission_required('recetas.add_pedidoproveedor')
 def pedidosProveedor(request,pedido_id=None):
     if pedido_id is not None:
         # consulta
@@ -957,6 +1063,9 @@ def pedidosProveedor(request,pedido_id=None):
 
 
 
+
+@login_required()
+@permission_required('recetas.add_pedidoproveedor')
 def pedidosProveedorAlta(request):
     detalles_form_class = formset_factory(forms.DetallePedidoProveedorForm)
     detalles_form = None
@@ -1006,6 +1115,11 @@ def pedidosProveedorAlta(request):
 
 
 
+
+
+
+@login_required()
+@permission_required('recetas.change_pedidoproveedor')
 def pedidosProveedorModificar(request,pedido_id):
     pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
     detalles_instancias = models.DetallePedidoProveedor.objects.filter(pedido_proveedor = pedido_proveedor_instancia)
@@ -1041,6 +1155,11 @@ def pedidosProveedorModificar(request,pedido_id):
                                                    })
 
 
+
+
+
+@login_required()
+@permission_required('recetas.change_pedidoproveedor')
 def pedidosProveedorRecepcionar(request,pedido_id):
     pedido_proveedor_instancia = get_object_or_404(models.PedidoProveedor, pk=pedido_id)
     proveedor = models.Proveedor.objects.get(pk=pedido_proveedor_instancia.proveedor.id)
@@ -1074,6 +1193,10 @@ def pedidosProveedorRecepcionar(request,pedido_id):
 
 
 
+
+
+@login_required()
+@permission_required('recetas.add_pedidoproveedor')
 @csrf_exempt
 def pedidosProveedorBaja(request,pedido_id =None):
     print "estoy en bajaaa"
@@ -1084,6 +1207,11 @@ def pedidosProveedorBaja(request,pedido_id =None):
 
 
 
+
+
+
+@login_required()
+@permission_required('recetas.change_pedidoproveedor')
 def pedidosProveedorCancelar(request,pedido_id =None):
     print "estoy en cancelar pedido..."
     p = models.PedidoProveedor.objects.get(pk=pedido_id)
@@ -1098,6 +1226,8 @@ def pedidosProveedorCancelar(request,pedido_id =None):
 #********************************************************#
          #    L O T E S   #
 #********************************************************#
+@login_required()
+@permission_required('recetas.add_lote')
 def lotes(request,lote_id=None):
     if lote_id is not None:
         #consulta
@@ -1112,11 +1242,24 @@ def lotes(request,lote_id=None):
     productos = models.ProductoTerminado.objects.filter(activo=True)
     return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
 
+
+
+
+
+@login_required()
+@permission_required('recetas.change_lote')
 def lotesModificar(request,lote_id=None):
     lote_instancia = models.Lote.objects.get(pk=lote_id)
     return render(request,"lotesModificar.html",{"lote_form_modificar":forms.LoteForm() ,"lote_instancia":lote_instancia,"id":lote_id})
 
 
+
+
+
+
+
+@login_required()
+@permission_required('recetas.add_lote')
 def lotesAlta(request):
     if request.method == "POST":
         lote_form = forms.LoteForm(request.POST)
@@ -1146,6 +1289,11 @@ def lotesAlta(request):
     return render(request,"lotesAlta.html",{"lote_form":lote_form})
 
 
+
+
+
+
+@login_required()
 def loteStock(request,lote_id):
     lote_instancia = models.Lote.objects.get(pk = lote_id)
     if request.method == "POST":
@@ -1168,6 +1316,7 @@ def loteStock(request,lote_id):
 #********************************************************#
          #    H O J A   D E  R U T A    #
 #********************************************************#
+@login_required()
 def hojaDeRuta(request):
         eliminarVencidos()
         pedidos_clientes = []
@@ -1204,6 +1353,10 @@ def hojaDeRuta(request):
 
 
 
+
+
+@login_required()
+@permission_required('recetas.add_hojaderuta')
 def hojaDeRutaAlta(request):
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
@@ -1228,11 +1381,21 @@ def hojaDeRutaAlta(request):
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
 
 
+
+
+
+
+
+@login_required()
 def HojaDeRutaMostrar(request,hoja_id):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
     return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja})
 
 
+
+
+
+@login_required()
 def generarTotales(request):
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
     totales={}
@@ -1254,6 +1417,10 @@ def generarTotales(request):
 
 
 
+
+
+
+@login_required()
 def rendicionReparto(request,hoja_id=None):
     print "EN RENDICION", hoja_id
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)    
@@ -1287,16 +1454,25 @@ def rendicionReparto(request,hoja_id=None):
                                                      "prefix_prod_llevados":prefix_prod_llevados
                                                      })
 
+
+
+
+@login_required()
 def RendicionDeRepartoMostrar(request,hoja_id):
     hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
     totales = hoja.balance()
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja_ruta":hoja,"totales":totales})
 
 
+
+
+@login_required()
 def rendicionHojasDeRutas(request):
     hojas = models.HojaDeRuta.objects.filter(rendida=False) #a futuro filtrar por hojas de rutas no rendidas
     print hojas
     return render(request,"rendicionHojasDeRutas.html",{"hojas":hojas})
+
+
 
 
 
@@ -1316,7 +1492,7 @@ def render_to_pdf(template_src, context_dict):
 
 
 
-
+@login_required()
 def HojaDeRutaPdf(request,hoja_id=None):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id) #tengo q buscar la hoja q resiba por parametro
     print "hoja de ruta a mostrar ",hoja.id
@@ -1327,6 +1503,9 @@ def HojaDeRutaPdf(request,hoja_id=None):
             }
         )
 
+
+
+@login_required()
 def LotesHojaRutaPdf(request,hoja_id=None):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
     return render_to_pdf('PDFs/LoteHojaRutaPdf.html',{'pagesize':'A4',
@@ -1342,7 +1521,7 @@ def LotesHojaRutaPdf(request,hoja_id=None):
 
 
 
-
+@login_required()
 def cobrarClienteFiltrado(request,cliente_id=None):
     entregas_no_facturadas = []
     cliente=models.Cliente.objects.get(pk=(cliente_id))
@@ -1360,12 +1539,19 @@ def cobrarClienteFiltrado(request,cliente_id=None):
     return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"clientes":clientes,"saldo":saldo})
 
 
+
+
+
+@login_required()
 def cobrarCliente(request):
     clientes = models.Cliente.objects.all()
     return render(request, "cobrarCliente.html", {"entregas":[],"clientes":clientes,"saldo":-1})
 
 
 
+
+
+@login_required()
 def cobrarClienteSaldo(request):
     entregas = re.findall("\d+",request.GET['entregas'])
     mont = re.findall("\S+",request.GET['monto'])
@@ -1389,6 +1575,11 @@ def cobrarClienteSaldo(request):
     print "monto_", monto_recibo
     return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
 
+
+
+
+
+@login_required()
 def cobrarClienteFacturar(request):
     para_factura = re.findall("\d+",request.GET['para_facturas'])
     para_recibo = re.findall("\d+",request.GET['para_recibo'])
@@ -1430,6 +1621,11 @@ def cobrarClienteFacturar(request):
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 
+
+
+
+
+@login_required()
 def cobrarClienteMostrarRecibos(request):
         entrega_id = re.findall("\d+",request.GET['entrega_id'])
         entrega = models.Entrega.objects.get(pk=entrega_id[0])
@@ -1440,12 +1636,17 @@ def cobrarClienteMostrarRecibos(request):
 
 
 
+
+
+@login_required()
 def perdidasStockLotes(request):
     filters, mfilters = get_filtros(request.GET, models.PerdidaStock)
     perdidas = models.PerdidaStock.objects.filter(**mfilters)
     return render(request, "perdidasStockLotes.html", {"perdidas":perdidas})
 
 
+
+@login_required()
 def productosMasVendidos(request):
     import os
     path = os.path.abspath(".")
