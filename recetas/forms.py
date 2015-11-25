@@ -151,8 +151,47 @@ class ProveedorForm(forms.ModelForm):
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
         razon_social = texto_lindo(razon_social, True)
-        if models.Cliente.objects.filter(razon_social=razon_social).exists():
-            raise ValidationError('Ya existe una Ciudad con esa Razon Social.')
+        if models.Proveedor.objects.filter(razon_social=razon_social).exists():
+            raise ValidationError('Ya existe un Proveedor con esa Razon Social.')
+        return razon_social
+
+    def clean_nombre_dueno(self):
+        nombre_dueno = self.cleaned_data['nombre_dueno']
+        nombre_dueno = texto_lindo(nombre_dueno, True)
+        return nombre_dueno
+
+    def clean_direccion(self):
+        direccion = self.cleaned_data['direccion']
+        direccion = texto_lindo(direccion, True)
+        return direccion
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        email = texto_lindo(email, True)
+        return email
+
+    def clean_localidad(self):
+        localidad = self.cleaned_data['localidad']
+        localidad = texto_lindo(localidad, True)
+        return localidad
+
+    def clean_provincia(self):
+        provincia = self.cleaned_data['provincia']
+        provincia = texto_lindo(provincia, True)
+        return provincia
+
+class ProveedorModificarForm(forms.ModelForm):
+    class Meta:
+        model = models.Proveedor
+        fields = ["cuit", "razon_social", "localidad","nombre_dueno","direccion","email","numero_cuenta","provincia","telefono","insumos" ]
+
+    def __init__(self, *args, **kwargs):
+        super(ProveedorModificarForm, self).__init__(*args, **kwargs)
+        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+
+    def clean_razon_social(self):
+        razon_social = self.cleaned_data['razon_social']
+        razon_social = texto_lindo(razon_social, True)
         return razon_social
 
     def clean_nombre_dueno(self):
@@ -239,7 +278,6 @@ class LoteStockForm(forms.ModelForm):
     cantidad = forms.IntegerField(min_value=0, max_value=99999999)
     descripcion = forms.CharField(max_length=200,required=False,widget=forms.Textarea)
     select_causas = forms.ChoiceField(widget=forms.RadioSelect, choices=models.CAUSAS_DECREMENTO_STOCK)
-
 
 
     def __init__(self, *args, **kwargs):
