@@ -138,7 +138,7 @@ class ProductoTerminado(models.Model):
     nombre = models.CharField(max_length=100,unique=True,help_text="El nombre del producto")
     stock = models.PositiveIntegerField(default = 0)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
-    dias_vigencia = models.PositiveIntegerField(default=01)
+    dias_vigencia = models.PositiveIntegerField(default=01)#esto es la fecha de vencimiento
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
 
@@ -239,7 +239,7 @@ class Ciudad(models.Model):
 #********************************************************#
 class Cliente(models.Model):
 
-    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gte']#'zona_icontains'
+    FILTROS = ['cuit_cuil__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gt']#'zona_icontains'
     cuit_cuil = models.PositiveIntegerField(unique=True)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
@@ -260,6 +260,15 @@ class Cliente(models.Model):
 
         )
 
+    def aumentar_saldo(self,cantidad):
+        self.saldo +=  float(cantidad)
+        self.save()
+
+    def decrementar_saldo(self,cantidad):
+        self.saldo -=  float(cantidad)
+        self.save()
+
+
 #************************************************************************#
                #     P E D I D O S  D E  C L I E N T E S    #
 #************************************************************************#
@@ -277,7 +286,7 @@ class PedidoCliente(models.Model):
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
     activo = models.BooleanField(default=True)
-    
+
 
     def esParaHoy(self):
         pass
@@ -441,6 +450,7 @@ class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
+<<<<<<< HEAD
 
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 
@@ -465,13 +475,24 @@ class HojaDeRuta(models.Model):
 
     def balance(self):  # NO    V A    M A S 
         return "nada"
+=======
+    #objects = ManagerActivosHojasRutas()
+    
+    def balance(self):
+        totales=[]
+        for p in self.productosllevados_set.all():
+            totales.append({"producto_terminado":p.producto_terminado.nombre,
+                            "cantidad_enviada":p.cantidad_enviada,
+                            "cantidad_pedida":p.cantidad_pedida}) 
+        return totales
+>>>>>>> origin/master
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
     cantidad_enviada = models.PositiveIntegerField(default=0)
     producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
-
+    precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)],default=0)
 
     def generar_detalles(self):
         """ En base al producto y a la cantidad pedida, sale a buscarlo en los lotes
@@ -566,8 +587,8 @@ class Entrega(models.Model):
 
         detalle = EntregaDetalle.objects.create(entrega=self,
                                     pedido_cliente_detalle = detalle_pedido,
-                                      producto_terminado = prod_terminado,
-                                        cantidad_entregada=0,
+                                    producto_terminado = prod_terminado,
+                                    cantidad_entregada=0,
                                     precio = precio)
 
         print "PRECIO PAPAAAA:", detalle.precio
@@ -605,94 +626,4 @@ class Recibo(models.Model):
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
 
 
-
-
-
-
-'''
-#********************************************************#
-         #    ENTREGA PEDIDO   #
-#********************************************************#
-
-
-class EntregaPedido(models.Model):
-    fecha_entrega = models.DateField(auto_now_add = True)
-    pedido = models.ForeignKey(PedidoCliente)
-    lotes = models.ManyToManyField(Lote, through="EntregaPedidoDetalle")
-    hoja_de_ruta = models.ForeignKey(HojaDeRuta)
-    #falta recibo, factura
-    def __str__(self):
-        return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
-
-class EntregaPedidoDetalle(models.Model):
-    cantidad_entregada = models.FloatField()    #poner integer
-    cantidad_enviada = models.FloatField()
-    precio = models.FloatField()
-    detalle_pedido = models.ForeignKey(PedidoClienteDetalle)    #porque
-    lote = models.ManyToManyField(Lote)
-    entrega_pedido = models.ForeignKey(EntregaPedido)
-
-
-
-
-
-
-
-
-
-
-class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
-    fecha_creacion = models.DateField(auto_now_add = True)
-    productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
-    cliente = models.ForeignKey(Cliente)
-    TIPOS = {}
-
-
-    def __str__(self):
-        return "%s " % (self.cliente)
-
-class PedidoClienteDetalle(models.Model):
-    cantidad_producto = models.FloatField()
-    producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
-    pedido_cliente = models.ForeignKey(PedidoCliente)
-
-class PedidoFijo(PedidoCliente):
-    fecha_inicio = models.DateField(default=date.today())
-    fecha_cancelacion = models.DateField(blank=True,null=True)
-    dias = MultiSelectField(choices=TIPODIAS)
-    NOMBRE = "Pedido Fijo"
-    TIPO = 1
-
-    def esParaHoy(self):
-        d = date.today()
-        if d.day in self.dias:
-            return True
-        else:
-            return False
-PedidoCliente.TIPOS[PedidoFijo.TIPO] = PedidoFijo
-
-class PedidoCambio(PedidoCliente):
-    fecha_entrega = models.DateField()
-    TIPO = 3
-    def esParaHoy(self):
-        d = date.today()
-        if d in self.fecha_entrega:
-            return True
-        else:
-            return False
-PedidoCliente.TIPOS[PedidoCambio.TIPO] = PedidoCambio
-
-class PedidoOcacional(PedidoCliente):
-    fecha_entrega = models.DateField()
-    TIPO = 2
-    def esParaHoy(self):
-        d = date.today()
-        if d in self.fecha_entrega:
-            return True
-        else:
-            return False
-PedidoCliente.TIPOS[PedidoOcacional.TIPO] = PedidoOcacional
-
-'''
 
