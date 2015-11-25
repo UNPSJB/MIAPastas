@@ -6,10 +6,6 @@ import datetime
 from multiselectfield import MultiSelectField
 from django.utils import timezone
 
-
-
-
-
 #clase para redefinir objects y obtener solo instancias activas
 
 class ManagerActivos(models.Manager):
@@ -19,10 +15,6 @@ class ManagerActivos(models.Manager):
 class ManagerActivosHojasRutas(models.Manager):
     def get_queryset(self):
         return super(ManagerActivosHojasRutas, self).get_queryset().filter(rendida=False)
-
-
-
-
 
 TIPODIAS = (
         (1, "lunes"),
@@ -44,8 +36,6 @@ class Chofer (models.Model):
     telefono=models.PositiveIntegerField()
     e_mail=models.CharField(max_length=100)
     activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
-
     def __str__(self):
         return "%s" % (self.nombre)
 
@@ -120,7 +110,6 @@ class Insumo(models.Model):
     stock = models.IntegerField(blank=True, null=True, default=0)
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
     activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
     
     # Control de stock
     def incrementar(self, cantidad, unidad=NONE):
@@ -152,7 +141,6 @@ class ProductoTerminado(models.Model):
     dias_vigencia = models.PositiveIntegerField(default=01)
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
 
     def __str__(self):
         return "%s"% self.nombre
@@ -173,8 +161,8 @@ class Receta(models.Model):
     cant_prod_terminado= models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)
     insumos = models.ManyToManyField(Insumo, through="RecetaDetalle")
-    activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
+    #activo = models.BooleanField(default=True)
+    #objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%d) Bolsines" % (self.nombre, self.cant_prod_terminado)
@@ -204,8 +192,8 @@ class Proveedor(models.Model):
     cuit= models.PositiveIntegerField(unique=True)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
 #RELACION UNO A MUCHOS CON pedidosProveedor
-    activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
+    #activo = models.BooleanField(default=True)
+    #objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%d %s)" % (self.razon_social, self.telefono, self.cuit)
@@ -220,8 +208,8 @@ class Zona(models.Model):
     FILTROS = ['nombre__icontains']
     nombre = models.CharField(max_length=100, unique=True)
     #el campo "activo" es para las bajas logicas
-    activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
+    #activo = models.BooleanField(default=True)
+    #objects=ManagerActivos()
 
     def __str__(self):
         return (self.nombre)
@@ -237,8 +225,8 @@ class Ciudad(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     codigo_postal = models.PositiveIntegerField(unique=True)
     zona = models.ForeignKey(Zona,related_name="ciudades")
-    activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
+    #activo = models.BooleanField(default=True)
+    #objects=ManagerActivos()
     def __str__(self):
         return "%s (%d %s)" % (self.nombre, self.codigo_postal, self.zona)
 
@@ -262,7 +250,6 @@ class Cliente(models.Model):
     es_moroso = models.BooleanField(default=False)
     saldo = models.FloatField(default=0)
     activo = models.BooleanField(default=True)
-    objects=ManagerActivos()
 
     def __str__(self):
         return "%s (%s)" % (self.cuit_cuil, self.razon_social)
@@ -454,7 +441,6 @@ class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
-    objects=ManagerActivosHojasRutas()
 
     #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
 

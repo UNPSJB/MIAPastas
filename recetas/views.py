@@ -173,6 +173,7 @@ def insumos(request,insumo_id=None):
         # filtros
         filters, mfilters = get_filtros(request.GET, models.Insumo)
         insumos = models.Insumo.objects.filter(**mfilters)
+        insumos = [i for i in insumos if i.activo == True]
         return render(request, "recetas/insumos.html",
                   {"insumos": insumos,
                    "filtros": filters})
@@ -221,7 +222,9 @@ def insumosBaja(request,insumo_id):
     """
 
     insumo = models.Insumo.objects.get(pk=insumo_id)
-    # HAY Q HACER VALIDACIONES.
+    if len(insumo.pedidoproveedor_set.all())>0:
+        messages.success(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene pedidos a proveedores pendientes.')
+        return redirect('insumos')
     if insumo.receta_set.exists():
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in insumo.receta_set.all()]
@@ -288,7 +291,7 @@ def recetas(request,receta_id=None):
     recetas = models.Receta.objects.filter(**mfilters)
 
         # filtrar recetas por productos
-    productos_terminados= models.ProductoTerminado.objects.all()
+    productos_terminados= models.ProductoTerminado.objects.filter(activo=True)
     return render(request, "recetas/recetas.html",
                       {"recetas": recetas,
                        "filtros": filters,
@@ -304,7 +307,7 @@ def recetasModificar(request,receta_id):
     """
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
-    insumos = models.Insumo.objects.all() #para detalles
+    insumos = models.Insumo.objects.filter(activo=True) #para detalles
     detalles_inlinefactory = inlineformset_factory(models.Receta,models.RecetaDetalle,fields=('cantidad_insumo','insumo','receta'))
 
     if request.method=="POST":
@@ -342,7 +345,7 @@ def recetasAlta(request):
     detalles_form_class = formset_factory(forms.RecetaDetalleForm)
     detalles_form = None
     receta_form = None
-    insumos = models.Insumo.objects.all()
+    insumos = models.Insumo.objects.filter(activo=True)
     if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
         if receta_form.is_valid():
@@ -374,9 +377,9 @@ def recetasBaja(request,receta_id):
     """
     receta = models.Receta.objects.get(pk=receta_id)
     messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
-    #receta.delete()
-    receta.activo=False
-    receta.save()
+    receta.delete()
+    #receta.activo=False
+    #receta.save()
     return redirect('recetas')
 
 #********************************************************#
@@ -403,7 +406,7 @@ def proveedores(request,proveedor_id=None):
 
 def proveedoresAlta(request):
     proveedores_form = forms.ProveedorForm()
-    insumos = models.Insumo.objects.all()
+    insumos = models.Insumo.objects.filters(activo=True)
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
@@ -416,9 +419,9 @@ def proveedoresAlta(request):
 def proveedoresBaja(request,proveedor_id =None):
     print "estoy en bajaaa"
     p = models.Proveedor.objects.get(pk=proveedor_id)
-    #p.delete()
-    p.activo=False
-    p.save()
+    p.delete()
+    #p.activo=False
+    #p.save()
     return redirect('proveedores')
     
 
@@ -452,6 +455,8 @@ def productosTerminados(request,producto_id=None):
         # filtros
         filters, mfilters = get_filtros(request.GET, models.ProductoTerminado)
         productos = models.ProductoTerminado.objects.filter(**mfilters)
+        productos = [i for i in productos if i.activo == True]
+
         return render(request, "recetas/productosTerminados.html",
                   {"productos": productos,
                    "filtros": filters})
@@ -515,17 +520,20 @@ def productosTerminadosModificar(request,producto_id = None):
 def productosTerminadosBaja(request, producto_id=None):
     print "estoy en bajaaa"
     p = models.ProductoTerminado.objects.get(pk=producto_id)
-    if p.receta_set.exists():
+    if len(p.pedidocliente_set.filter(activo=True))> 0:
+        messages.success(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
+    elif len(p.lote_set.filter(stock_disponible>0)>0):
+        messages.success(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene lotes con stock disponible.')
+    elif p.receta_set.exists():
         messages.success(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in p.receta_set.all()]
         ))
-        #p.delete()
+        p.activo=False
+        p.save()
     else:
         messages.success(request, 'El Producto: ' + p.nombre + ', ha sido eliminado correctamente.')
-        #p.delete()
-    p.activo=False
-    p.save()
-
+        p.activo=False
+        p.save()
     return redirect('productosTerminados')
 
 
@@ -606,9 +614,9 @@ def zonasBaja(request,zona_id =None):
 
     else:
         messages.success(request, 'La zona: ' + p.nombre + ', ha sido eliminado correctamente.')
-        #p.delete()
-        p.activo=False
-        p.save()
+        p.delete()
+        #p.activo=False
+        #p.save()
 
     return redirect('zonas')
 
@@ -791,7 +799,7 @@ def pedidosClientesAlta(request, tipo_pedido_id):
     detalles_form_class = formset_factory(forms.PedidoClienteDetalleForm)
     detalles_form = None
     pedidosClientes_form = None
-    productosTerminados = models.ProductoTerminado.objects.all()
+    productosTerminados = models.ProductoTerminado.objects.filter(activo=True)
     if tipo_pedido_id == "1":
         pedidosClientes_form = forms.PedidoClienteFijoForm
     elif tipo_pedido_id == "2":
@@ -854,7 +862,7 @@ def pedidosClienteModificar(request, pedido_id):
 
     detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
     pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
-    productos = models.ProductoTerminado.objects.all() #para detalles
+    productos = models.ProductoTerminado.objects.filter(activo=True) #para detalles
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
@@ -930,7 +938,7 @@ def pedidosProveedorAlta(request):
     detalles_form_class = formset_factory(forms.DetallePedidoProveedorForm)
     detalles_form = None
     pedido_proveedor_form = None
-    insumos = models.Insumo.objects.all()
+    insumos = models.Insumo.objects.filters(activo=True)
     if request.method == "POST":
         pedido_proveedor_form = forms.PedidoProveedorAltaForm(request.POST) #crea formulario de pedido con los datos del post
         if pedido_proveedor_form.is_valid():
@@ -1078,7 +1086,7 @@ def lotes(request,lote_id=None):
         print "por aplicar filtros",filters,mfilters
 
         lotes= models.Lote.objects.filter(**mfilters)
-    productos = models.ProductoTerminado.objects.all()
+    productos = models.ProductoTerminado.objects.filter(activo=True)
     return render(request,"recetas/lotes.html",{"lotes":lotes,"productos":productos})
 
 def lotesModificar(request,lote_id=None):
@@ -1152,7 +1160,7 @@ def hojaDeRuta(request):
                 pedidos_clientes_enviar.append(pedido)
         print "peidooooo", pedidos_clientes_enviar
         choferes = models.Chofer.objects.all()
-        productos = models.ProductoTerminado.objects.all()
+        productos = models.ProductoTerminado.objects.filter(activo=True)
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
         entregas_factory_class = formset_factory(forms.EntregaForm)
         return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
