@@ -44,7 +44,7 @@
                     </div>
 
                     <label for="id_grupo">Grupo</label>
-                    <select class="form-control" id="id_grupo" name="id_grupo" title="">
+                    <select class="form-control" id="id_grupo" name="id_grupo" title="" onchange="refrescar">
                     <option value="" selected="selected">---------</option>
                          {% for i in grupos %}
                              <option value="{{i.id}}">{{i}}</option>
@@ -89,7 +89,9 @@ $(function(){
             $(_renglon).addClass("danger");
         }
 
-
+        function refrescar(){
+            console.log("entre")
+        }
 
         function quitar(){
             if(id_grupo_usuario == undefined){
@@ -104,6 +106,7 @@ $(function(){
                                 dialogRef.close();
                 }}]});
             }else{
+                alert("eliminado");
                 // window.open('/usuarios/admin/modificar/quitar/grupo/'+id+'',"_self")
                 //window.open('/usuarios/admin/modificar/quitar/grupo/'+id_usuario+','+id_grupo_usuario+'',"_self")
         }}
@@ -122,12 +125,16 @@ $(function(){
                                 dialogRef.close();
                  }}]});
             }else{
-                alert("wwerwer");
+                alert("agregado");
                 //window.open('/usuarios/admin/modificar/agregar/grupo/'+id+'',"_self")
                 //window.open('/usuarios/admin/modificar/agregar/grupo/'+id_ususario+','+id_grupo+'',"_self")
         }}
 
 
+
+
+
+        $("#refrescar").click(refrescar);
         $(".select-item").click(obtenerId);
         $("#quitar-grupo").click(quitar);
         $("#agregar-grupo").click(agregar);

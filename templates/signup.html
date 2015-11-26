@@ -17,13 +17,12 @@
                     {% csrf_token %}
                     <input placeholder="Nombre de usuario" class="form-control" type="text"  id="username"  name="username" tabindex="1" required autofocus>
                     <input placeholder="Contraseña" class="form-control" type="password"  id="password" name="password" tabindex="2" required>
-                    <input placeholder="Repetir contraseña" class="form-control" type="password"  id="password2" name="password2" tabindex="3" required>
                     <input placeholder="e-mail" class="form-control" type="email"  id="e-mail" name="e-mail" tabindex="4" required>
-                    <input placeholder="Nombre" class="form-control" type="text"  id="nombre" name="e-mail" tabindex="5" required>
-                    <input placeholder="Apellido" class="form-control" type="text"  id="apellido" name="e-mail" tabindex="6" required>
+                    <input placeholder="Nombre" class="form-control" type="text"  id="nombre" name="nombre" tabindex="5" required>
+                    <input placeholder="Apellido" class="form-control" type="text"  id="apellido" name="apellido" tabindex="6" required>
 
 
-                    <input class="btn btn-lg btn-success btn-block" type="submit" value="login"/><input type="hidden" name="next" value="/signup/" />
+                    <input id="crear_usuario" class="btn btn-lg btn-success btn-block" type="submit" value="Crear"/><input type="hidden" name="next" value="/signup/" />
                 </form>
 
             </div>
@@ -31,5 +30,5 @@
     </div>
 </div>
 
-
 {% endblock %}
+
