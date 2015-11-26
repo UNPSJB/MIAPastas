@@ -426,6 +426,7 @@ def proveedoresBaja(request,proveedor_id =None):
 
 def proveedoresModificar(request,proveedor_id =None):
     proveedor_instancia = get_object_or_404(models.Proveedor, pk=proveedor_id)
+    insumos = models.Insumo.objects.all()
     if request.method=="POST":
         proveedor_form = forms.ProveedorForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
@@ -434,7 +435,9 @@ def proveedoresModificar(request,proveedor_id =None):
         return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
     else:
         proveedor_form = forms.ProveedorForm(instance= proveedor_instancia)
-        return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
+        return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,
+                                                            "id":proveedor_id,
+                                                            "insumos_instancias":insumos})
 
 
 #********************************************************#

@@ -81,7 +81,9 @@
 
 <script>
 var html="";
-
+html = html + armar_hidden_comun({{lote.cantidad_producida}},"cantidad_producida");
+html = html + armar_hidden_comun({{lote.stock_disponible}},"stock_disponible");
+$('#fields_hidden').html(html);
 </script>
 
 {% endblock %}

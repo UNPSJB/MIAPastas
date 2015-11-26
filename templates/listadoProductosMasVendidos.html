@@ -69,8 +69,9 @@
 
                <a href="{% url 'listadoProductosMasVendidosExcel' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Exportar a Excel</a>
 
-               <button type="submit" id="btn-dibujo" class="btn btn-default" 
-                        value="_dibujo" name="_dibujo">Ver Grafico</button>
+               
+               <a href="{% url 'ListadoProductosMasVendidosGrafico' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Grafico Torta</a>
+               
            </div>
             </div>
             <hr/>

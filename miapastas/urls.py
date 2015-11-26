@@ -69,6 +69,7 @@ urlpatterns = [
     url(r'^listadoProductosMasVendidos$',views.listadoProductosMasVendidos,name='listadoProductosMasVendidos'),
     url(r'^listadoProductosMasVendidosFiltros$',views.listadoProductosMasVendidosFiltros,name='listadoProductosMasVendidosFiltros'),
     url(r'^listadoProductosMasVendidosExcel$',views.listadoProductosMasVendidosExcel,name='listadoProductosMasVendidosExcel'),
+    url(r'^listadoProductosMasVendidosGrafico$',views.ListadoProductosMasVendidosGrafico,name='ListadoProductosMasVendidosGrafico'),
 
                     # Hechos en forms
 

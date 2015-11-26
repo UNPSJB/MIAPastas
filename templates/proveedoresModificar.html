@@ -27,5 +27,21 @@
 </div>
 
     <!-- Este es el fin del formulario de recetas -->
+{% endblock %}    
+{% block javascript %}
+<script>
+    var prod_cargados = [
+        {% for i in proveedor_form.instance.insumos.all%}
+            {"insumo_id":{{i.id}},"nombre":"{{i.nombre}}"},
+        {%endfor%}
+    ];
 
-    {% endblock %}
+    var prod = [
+        {% for d in insumos_instancias %}
+            {"insumo_id":{{d.id}},"nombre":"{{d.nombre}}"},
+        {%endfor%}
+    ];
+    console.log(prod_cargados);
+    console.log(prod);
+</script>
+{% endblock %}
