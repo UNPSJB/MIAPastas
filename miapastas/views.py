@@ -145,7 +145,6 @@ def usuarioEditar(request ,usuario_id):
 
 
 @login_required()
-@permission_required('auth.change_user')
 def usuarioCambiarClave(request):
     return render(request, "usuarioCambiarClave.html", {})
 
@@ -154,9 +153,6 @@ def usuarioCambiarClave(request):
 @login_required()
 @permission_required('auth.change_user')
 def usuariosAdmin(request):
-
-
-
     usuarios = auth_models.User.objects.all()
     return render(request, "usuariosAdmin.html", {"usuarios":usuarios})
 
@@ -181,23 +177,21 @@ def usuariosAdminModificar(request,usuario_id):
 def usuariosAdminModificarAgregarGrupo(request,usuario_id,grupo_id):
     usuario = auth_models.User.objects.get(pk=usuario_id)
     grupo = auth_models.Group.objects.get(pk=grupo_id)
-    messages.success(request, 'El grupo: ' + grupo + ', ha sido Agregado correctamente.')
     usuario.groups.add(grupo)
     usuario.save()
-    return redirect('usuariosAdminModificar')
+    return HttpResponse('Ok')
 
 
 
 
 @login_required()
 @permission_required('auth.change_user')
-def usuariosAdminModificarQuitarGrupo(request,usuario_id,grupo_usuario_id):
+def usuariosAdminModificarQuitarGrupo(request, usuario_id, grupo_usuario_id):
     usuario = auth_models.User.objects.get(pk=usuario_id)
     grupo = auth_models.Group.objects.get(pk=grupo_usuario_id)
-    messages.success(request, 'El grupo: ' + grupo + ', ha sido removido correctamente.')
     usuario.groups.remove(grupo)
     usuario.save()
-    return redirect('usuariosAdminModificar')
+    return HttpResponse('Ok')
 
 
 

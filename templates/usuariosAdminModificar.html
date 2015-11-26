@@ -7,7 +7,7 @@
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Asignar grupos</b></font></p></div>
             <div class="row">
-                <form method="get" class="form-inline col-md-12">
+                <div  class="form-inline col-md-12">
                     <div class="form-group">
                         <label>Usuario:</label>
                         <input type="text" class="form-control" value="{{usuario.username}}" name="user" id="user" readonly>
@@ -18,7 +18,7 @@
                         <label>e-mail:</label>
                         <input type="text" class="form-control" value="{{usuario.email}}" name="email" id="email" readonly>
                     </div>
-                </form>
+                </div>
             </div>
             <p>&nbsp;</p>
 
@@ -35,7 +35,7 @@
                                   <tbody>
                                     {% for grupo in grupos_usuario %}
 
-                                    <tr class="renglon select-item" data-id="{{grupos_usuario.id}}" id="renglon-{{grupos_usuario.id}}"  >
+                                    <tr class="renglon select-item" data-id="{{grupo.id}}" id="renglon-{{grupo.id}}"  >
                                         <td>{{grupo}}</td>
                                     </tr>
                                     {% endfor %}
@@ -44,7 +44,7 @@
                     </div>
 
                     <label for="id_grupo">Grupo</label>
-                    <select class="form-control" id="id_grupo" name="id_grupo" title="" onchange="refrescar">
+                    <select class="form-control" id="id_grupo" name="id_grupo" title="" >
                     <option value="" selected="selected">---------</option>
                          {% for i in grupos %}
                              <option value="{{i.id}}">{{i}}</option>
@@ -54,11 +54,13 @@
 
                     <p>&nbsp;</p>
                 </form>
-                {% buttons %}
-                <button id="agregar-grupo"  class="btn btn-primary" ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true">  Agregar  </span></button>
-                <p></p>
-                <button id="quitar-grupo" class="btn btn-danger" ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true">  Quitar </span></button>
-                {% endbuttons %}
+                <div align="right"class="form-inline col-md-7">
+                    {% buttons %}
+                    <button id="agregar-grupo"  class="btn btn-primary" ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true">Agregar</span></button>
+                    <p></p>
+                    <button id="quitar-grupo" class="btn btn-danger" ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true">Quitar</span></button>
+                    {% endbuttons %}
+                </div>
             </div>
         </div>
     </div>
@@ -73,10 +75,14 @@
 {% block javascript %}
 <script>
 $(function(){
-        var id_usuario = {{usuario.id}};                      //el ususario con que estoy trabajando
+        var id_usuario = {{usuario.pk}};                      //el ususario con que estoy trabajando
         var id_grupo_usuario;                                //grupo del usuario que seleccionado para quitar al usuario
-        var id_grupo = Number($("#id_grupo").val());         ///grupo seleccionado para agregar al usurio
+        var id_grupo = 0;                                   ///grupo seleccionado para agregar al usurio
         var id;
+
+       $("#id_grupo").on("change", function() {
+          id_grupo = $("#id_grupo").val();
+       });
 
        function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
@@ -85,13 +91,10 @@ $(function(){
             $el.addClass("danger");
             var _renglon = "";
             _renglon= "#renglon-"+id_grupo_usuario;
-            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(".select-item").removeClass("danger");
             $(_renglon).addClass("danger");
         }
 
-        function refrescar(){
-            console.log("entre")
-        }
 
         function quitar(){
             if(id_grupo_usuario == undefined){
@@ -106,10 +109,14 @@ $(function(){
                                 dialogRef.close();
                 }}]});
             }else{
-                alert("eliminado");
-                // window.open('/usuarios/admin/modificar/quitar/grupo/'+id+'',"_self")
-                //window.open('/usuarios/admin/modificar/quitar/grupo/'+id_usuario+','+id_grupo_usuario+'',"_self")
-        }}
+               $.ajax({
+                    method: "GET",
+                    url:'/usuarios/admin/modificar/quitar/grupo/{{usuario.pk}}/'+id_grupo_usuario,
+                    success: function() {
+                        location.reload();
+               }});
+            }
+        }
 
 
         function agregar(){
@@ -125,16 +132,17 @@ $(function(){
                                 dialogRef.close();
                  }}]});
             }else{
-                alert("agregado");
-                //window.open('/usuarios/admin/modificar/agregar/grupo/'+id+'',"_self")
-                //window.open('/usuarios/admin/modificar/agregar/grupo/'+id_ususario+','+id_grupo+'',"_self")
-        }}
+               $.ajax({
+                    method: "GET",
+                    url:'/usuarios/admin/modificar/agregar/grupo/{{usuario.pk}}/'+id_grupo,
+                    success: function() {
+                        location.reload();
+               }});
+            }
+        }
 
 
 
-
-
-        $("#refrescar").click(refrescar);
         $(".select-item").click(obtenerId);
         $("#quitar-grupo").click(quitar);
         $("#agregar-grupo").click(agregar);

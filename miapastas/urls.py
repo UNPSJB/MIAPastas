@@ -39,8 +39,8 @@ urlpatterns = [
     url(r'^usuarioCambiarClave$', views.usuarioCambiarClave, name='usuarioCambiarClave'),
     url(r'^usuarios/admin/modificar/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminModificar,name='usuariosAdminModificar'),
     url(r'^usuarios/admin/baja/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminBaja,name='usuariosAdminBaja'),
-    url(r'^usuarios/admin/modificar/quitar/grupo/(?P<usuario_id>[0-9]+),(?P<grupo_usuario_id>[0-9]+)/$',views.usuariosAdminModificarQuitarGrupo,name='usuariosAdminModificarQuitarGrupo'),
-    url(r'^usuarios/admin/modificar/agregar/grupo/(?P<usuario_id>[0-9]+),(?P<grupo_id>[0-9]+)/$',views.usuariosAdminModificarAgregarGrupo,name='usuariosAdminModificarAgregarGrupo'),
+    url(r'^usuarios/admin/modificar/quitar/grupo/(?P<usuario_id>[0-9]+)/(?P<grupo_usuario_id>[0-9]+)/$',views.usuariosAdminModificarQuitarGrupo,name='usuariosAdminModificarQuitarGrupo'),
+    url(r'^usuarios/admin/modificar/agregar/grupo/(?P<usuario_id>[0-9]+)/(?P<grupo_id>[0-9]+)/$',views.usuariosAdminModificarAgregarGrupo,name='usuariosAdminModificarAgregarGrupo'),
 
 
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
