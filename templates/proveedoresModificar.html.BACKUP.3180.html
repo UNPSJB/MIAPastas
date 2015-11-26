@@ -72,7 +72,13 @@
 </div>
 
     <!-- Este es el fin del formulario de recetas -->
-
+<<<<<<< HEAD
+{% endblock %}    
+{% block javascript %}
+<script>
+    var prod_cargados = [
+        {% for i in proveedor_form.instance.insumos.all%}
+=======
 
     {% endblock %}
 
@@ -86,6 +92,7 @@ var detalle_insumo_imput_tpl;
 var detalles = [];
 var insumos_cargados = [
         {% for i in proveedor_form.instance.insumos.all %}
+>>>>>>> origin/master
             {"insumo_id":{{i.id}},"nombre":"{{i.nombre}}"},
         {%endfor%}
     ];
@@ -95,7 +102,12 @@ var insumos_cargados = [
             {"insumo_id":{{d.id}},"nombre":"{{d.nombre}}"},
         {%endfor%}
     ];
-
+<<<<<<< HEAD
+    console.log(prod_cargados);
+    console.log(prod);
+</script>
+{% endblock %}
+=======
 
     console.log(insumos_cargados);
     console.log(prod);

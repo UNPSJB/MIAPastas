@@ -5,12 +5,14 @@ from django.shortcuts import render_to_response
 from django.template.context import RequestContext
 
 from django.contrib.auth.models import User
+from django.contrib.auth.models import Group
 from django.core.urlresolvers import reverse
 from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response
+from django.shortcuts import get_object_or_404
 from django.template.context import RequestContext
 
-from forms import SignUpForm
+from forms import SignUpForm, UsuarioEditarForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
 
@@ -86,33 +88,10 @@ def get_filtros(get, modelo):
 def index(request):
     return render_to_response('index.html', {'user': request.user}, context_instance=RequestContext(request))
 
-#def index(request):
-#   messages.success(request, 'Hola usuario.')
-#   return render(request, "index.html", {})
-
-@login_required()
-def cacho(request):
-    return render(request, "cacho.html", {})
 
 @login_required()
 def ayuda(request):
     return render(request, "ayuda.html", {})
-
-@login_required()
-def probando(request):
-    return render(request, "probando.html", {})
-
-@login_required()
-def prueba(request):
-    return render(request, "prueba.html", {})
-
-@login_required()
-def prueba2(request):
-    return render(request, "prueba2.html", {})
-
-@login_required()
-def prueba3(request):
-    return render(request, "prueba3.html", {})
 
 
 def login(request):
@@ -123,6 +102,7 @@ def usuario(request):
     return render(request, "usuario.html", {})
 
 @login_required()
+@permission_required('auth.add_user')
 def signup(request):
     if request.method == 'POST':
         form = SignUpForm(request.POST)
@@ -140,7 +120,7 @@ def signup(request):
 
             user.save()
 
-            return HttpResponseRedirect(reverse('login'))
+            return HttpResponseRedirect(reverse('usuariosAdmin'))
     else:
         form = SignUpForm()
 
@@ -152,20 +132,78 @@ def signup(request):
 
 
 @login_required()
+@permission_required('auth.change_user')
+def usuarioEditar(request ,usuario_id):
+    usuario_instancia = get_object_or_404(auth_models.User, pk = usuario_id)
+    if request.method == 'POST':
+        form = UsuarioEditarForm(request.POST,instance= usuario_instancia)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('usuario'))
+
+    return render(request, "usuarioEditar.html", {})
+
+
+@login_required()
+@permission_required('auth.change_user')
+def usuarioCambiarClave(request):
+    return render(request, "usuarioCambiarClave.html", {})
+
+
+
+@login_required()
+@permission_required('auth.change_user')
 def usuariosAdmin(request):
+
+
+
     usuarios = auth_models.User.objects.all()
     return render(request, "usuariosAdmin.html", {"usuarios":usuarios})
 
 
 
 @login_required()
+@permission_required('auth.change_user')
 def usuariosAdminModificar(request,usuario_id):
     usuario = auth_models.User.objects.get(pk=usuario_id)
-    return render(request, "usuariosAdminModificar.html", {})
+    grupos_usuario = usuario.groups.all()
+    grupos = []
+    for u in auth_models.Group.objects.all():
+        if not (u in grupos_usuario):
+            grupos.append(u)
+    return render(request, "usuariosAdminModificar.html", {"usuario":usuario,"id":usuario_id,
+                                                           "grupos":grupos, "grupos_usuario":grupos_usuario
+                                                          })
+
+
+@login_required()
+@permission_required('auth.change_user')
+def usuariosAdminModificarAgregarGrupo(request,usuario_id,grupo_id):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    grupo = auth_models.Group.objects.get(pk=grupo_id)
+    messages.success(request, 'El grupo: ' + grupo + ', ha sido Agregado correctamente.')
+    usuario.groups.add(grupo)
+    usuario.save()
+    return redirect('usuariosAdminModificar')
+
 
 
 
 @login_required()
+@permission_required('auth.change_user')
+def usuariosAdminModificarQuitarGrupo(request,usuario_id,grupo_usuario_id):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    grupo = auth_models.Group.objects.get(pk=grupo_usuario_id)
+    messages.success(request, 'El grupo: ' + grupo + ', ha sido removido correctamente.')
+    usuario.groups.remove(grupo)
+    usuario.save()
+    return redirect('usuariosAdminModificar')
+
+
+
+
+@login_required()
+@permission_required('auth.delete_user')
 def usuariosAdminBaja(request,usuario_id):
     usuario = auth_models.User.objects.get(pk=usuario_id)
     messages.success(request, 'El usuario: ' + usuario.username + ', ha sido eliminado correctamente.')

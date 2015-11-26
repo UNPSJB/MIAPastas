@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+
+
+
+
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar Proveedor</b></font></p></div>
+           <p>&nbsp;</p>
+                <form action="{% url 'proveedoresModificar' id %}" method="post" class="form">
+                    {% csrf_token %}
+                    {% bootstrap_form proveedor_form layout='horizontal' %}
+                    <p>&nbsp;</p>
+                        {% buttons %}
+                            <button type="submit" class="btn btn-primary">
+                                {% bootstrap_icon "star" %} Agregar
+                            </button>
+                        {% endbuttons %}
+                 </form>
+              <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
+    </div>
+</div>
+
+    <!-- Este es el fin del formulario de recetas -->
+{% endblock %}    
+{% block javascript %}
+<script>
+    var prod_cargados = [
+        {% for i in proveedor_form.instance.insumos.all%}
+            {"insumo_id":{{i.id}},"nombre":"{{i.nombre}}"},
+        {%endfor%}
+    ];
+
+    var prod = [
+        {% for d in insumos_instancias %}
+            {"insumo_id":{{d.id}},"nombre":"{{d.nombre}}"},
+        {%endfor%}
+    ];
+    console.log(prod_cargados);
+    console.log(prod);
+</script>
+{% endblock %}

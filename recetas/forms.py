@@ -63,8 +63,8 @@ class ChoferForm(forms.ModelForm):
 class ModificarStockInsumoForm(forms.Form):
     insumo = forms.ModelChoiceField(queryset=models.Insumo.objects.all(), empty_label="(----)")
     cantidad = forms.IntegerField()
-    #unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
-    #unidad_medida.empty_label="(----)"
+    unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
+    unidad_medida.empty_label="(----)"
     def save(self):
         insumo = self.cleaned_data["insumo"]
         cantidad = self.cleaned_data["cantidad"]
@@ -151,8 +151,47 @@ class ProveedorForm(forms.ModelForm):
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
         razon_social = texto_lindo(razon_social, True)
-        if models.Cliente.objects.filter(razon_social=razon_social).exists():
-            raise ValidationError('Ya existe una Ciudad con esa Razon Social.')
+        if models.Proveedor.objects.filter(razon_social=razon_social).exists():
+            raise ValidationError('Ya existe un Proveedor con esa Razon Social.')
+        return razon_social
+
+    def clean_nombre_dueno(self):
+        nombre_dueno = self.cleaned_data['nombre_dueno']
+        nombre_dueno = texto_lindo(nombre_dueno, True)
+        return nombre_dueno
+
+    def clean_direccion(self):
+        direccion = self.cleaned_data['direccion']
+        direccion = texto_lindo(direccion, True)
+        return direccion
+
+    def clean_email(self):
+        email = self.cleaned_data['email']
+        email = texto_lindo(email, True)
+        return email
+
+    def clean_localidad(self):
+        localidad = self.cleaned_data['localidad']
+        localidad = texto_lindo(localidad, True)
+        return localidad
+
+    def clean_provincia(self):
+        provincia = self.cleaned_data['provincia']
+        provincia = texto_lindo(provincia, True)
+        return provincia
+
+class ProveedorModificarForm(forms.ModelForm):
+    class Meta:
+        model = models.Proveedor
+        fields = ["cuit", "razon_social", "localidad","nombre_dueno","direccion","email","numero_cuenta","provincia","telefono","insumos" ]
+
+    def __init__(self, *args, **kwargs):
+        super(ProveedorModificarForm, self).__init__(*args, **kwargs)
+        #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+
+    def clean_razon_social(self):
+        razon_social = self.cleaned_data['razon_social']
+        razon_social = texto_lindo(razon_social, True)
         return razon_social
 
     def clean_nombre_dueno(self):
@@ -205,6 +244,24 @@ class ProductoTerminadoForm(forms.ModelForm):
             raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
         return nombre
 
+'''
+
+class PerdidaStockForm(forms.ModelForm):
+    class Meta:
+        model = models.PerdidaStock
+        fields = ["cantidad_perdida","descripcion"]
+
+    def clean_cantidad(self):
+        print "clean_cantidad "
+        c =self.cleaned_data['cantidad']
+        cantidad_producida = self.cleaned_data['cantidad_producida']
+        nueva_cantidad = self.cleaned_data['stock_disponible'] - c
+        if nueva_cantidad < 0:
+            raise ValidationError("El stock disponible no puede ser Negativo.")
+        return self.cleaned_data['cantidad']
+'''
+
+
 
 class PerdidaStockLoteForm(forms.ModelForm):
     class Meta:
@@ -218,7 +275,10 @@ class LoteStockForm(forms.ModelForm):
     class Meta:
         model = models.Lote
         fields = ["stock_disponible", "cantidad_producida"]
-    cantidad = forms.IntegerField(label = "Cantidad (*)")
+    cantidad = forms.IntegerField(min_value=0, max_value=99999999)
+    descripcion = forms.CharField(max_length=200,required=False,widget=forms.Textarea)
+    select_causas = forms.ChoiceField(widget=forms.RadioSelect, choices=models.CAUSAS_DECREMENTO_STOCK)
+
 
     def __init__(self, *args, **kwargs):
         super(LoteStockForm, self).__init__(*args, **kwargs)
@@ -228,28 +288,44 @@ class LoteStockForm(forms.ModelForm):
 
     def save(self, *args, **kwargs):
         lote= super(LoteStockForm, self).save(*args, **kwargs)
-        lote.stock_disponible += self.cleaned_data['cantidad']
+        print lote.stock_disponible, "ID de lote"
+        print "cantuidad a modificar: ",self.cleaned_data['cantidad']
+       # lote.stock_disponible -= self.cleaned_data['cantidad']
+        print "stock final es: ",lote.stock_disponible
+        lote.decrementar_stock_disponible(self.cleaned_data['cantidad'])
+
+        '''
         lote.save()
-        lote.producto_terminado.stock += self.cleaned_data['cantidad']
+        lote.producto_terminado.stock -= self.cleaned_data['cantidad']
         lote.producto_terminado.save()
+        perdida_instancia = models.PerdidaStock.objects.create(cantidad_perdida= self.cleaned_data['cantidad'],descripcion = self.cleaned_data['descripcion'],lote=lote,causas=self.cleaned_data['select_causas'])
+        perdida_instancia.save()
+        '''
         return lote
 
+
+    def clean(self):
+        print "CLEAN POSTA"
+        cleaned_data = super(LoteStockForm, self).clean()
+        return cleaned_data
+
+
+    def clean_cantidad_producida(self):
+        print "clean_cantidad_producida ",
+        return self.cleaned_data["cantidad_producida"]
 
 
 
     def clean_cantidad(self):
-        print "clean_cantidad "
+        print "clean_cantidddddad ",self.cleaned_data['cantidad_producida']
         c =self.cleaned_data['cantidad']
         cantidad_producida = self.cleaned_data['cantidad_producida']
         nueva_cantidad = self.cleaned_data['stock_disponible'] - c
-        if c < 0:
-            print "lanzo error"
-            raise ValidationError("La cantidad a decrementar debe estar expresado en positivo.")
-        elif nueva_cantidad < 0:
-
-            raise ValidationError("El stock disponible no puede ser Negativo")
-
-
+        print "final ",self.cleaned_data['stock_disponible'] + c 
+        if nueva_cantidad < 0:
+            raise ValidationError("El stock disponible no puede ser Negativo.")
+        elif c == 0:
+            raise ValidationError("La cantidad debe ser mayor a 0.")
         return self.cleaned_data['cantidad']
 
 class CiudadForm(forms.ModelForm):

@@ -26,6 +26,13 @@ TIPODIAS = (
         (5,"viernes")
       )
 
+CAUSAS_DECREMENTO_STOCK = (
+        (1, "Vencimiento"),
+        (2, "Rotura"),
+        (3,"Otros")
+    )
+
+
 # Create your models here.
                #     C H O F E R E S    #
 #********************************************************#
@@ -147,6 +154,8 @@ class ProductoTerminado(models.Model):
     class Meta:
         permissions = (
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
+            ("ver_perdida_stock", "Puede listar la cantidad productos perdidos"),
+            ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
 
     def __str__(self):
@@ -289,29 +298,12 @@ class PedidoCliente(models.Model):
         (2, "Pedido Ocasional"),
         (3, "Pedido de Cambio")
     )
-    '''
-    fecha_entrega = Q('pedidoocacional__fecha_entrega__gte')
-    fecha_centrega = Q('pedidocambio__fecha_entrega__gte')
-    fecha_fijo = Q('pedidofijo__fecha_cancelacion__gte')
-    fechas = fecha_entrega | fecha_centrega | fecha_fijo
-
-    #para fecha hasta:
-    fecha_entrega_hasta = Q('pedidoocacional__fecha_entrega__lte')
-    fecha_centrega_hasta = Q('pedidocambio__fecha_entrega__lte')
-    fecha_fijo_hasta = Q('pedidofijo__fecha_inicio__lte')
-    fechas_hasta = fecha_entrega | fecha_centrega | fecha_fijo
-     '''
     fecha_creacion = models.DateField(auto_now_add = True)
     tipo_pedido = models.PositiveSmallIntegerField(choices=TIPOPEDIDO)
     productos = models.ManyToManyField(ProductoTerminado, through="PedidoClienteDetalle")
     cliente = models.ForeignKey(Cliente)
     activo = models.BooleanField(default=True)
-    '''
-    FILTROS_MAPPER = {
-        'fecha_desde': fechas,  
-        'fecha_hasta': fechas_hasta
-    }
-    '''
+    
     def esParaHoy(self):
         pass
 
@@ -437,8 +429,6 @@ class Lote(models.Model):
     stock_reservado= models.PositiveIntegerField(default=0)
     producto_terminado=models.ForeignKey(ProductoTerminado)
 
-
-
     def reservar_stock(self,cantidad):
         """ Resibe la cantidad de stock que se necesita reservar.
             Si stock disponible alcanza a cubrirla, se aumenta el stock reservado en esa cantidad
@@ -462,11 +452,10 @@ class Lote(models.Model):
 
     def decrementar_stock_disponible(self,cant):
         self.stock_disponible -= cant
-        self.producto_terminado.stock -= cant
+        self.producto_terminado.stock -=cant
         self.producto_terminado.save()
         self.save()
         
-
 
 
 
@@ -474,6 +463,21 @@ class Factura(models.Model):
     fecha = models.DateField(auto_now_add = True)
     numero = models.PositiveIntegerField()  #es el numero de la factura en papel
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
+
+
+
+
+class PerdidaStock(models.Model):
+    FILTROS = ['fecha_desde','fecha_hasta','causas']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha__gte',
+        'fecha_hasta': 'fecha__lte'
+    }
+    cantidad_perdida = models.PositiveIntegerField()
+    descripcion = models.CharField(max_length=200)
+    lote = models.ForeignKey(Lote)
+    fecha = models.DateField(auto_now_add=True)
+    causas = models.PositiveSmallIntegerField(choices=CAUSAS_DECREMENTO_STOCK, default="1")
 
 
 #********************************************************#
