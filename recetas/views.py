@@ -428,9 +428,9 @@ def proveedoresModificar(request,proveedor_id =None):
     proveedor_instancia = get_object_or_404(models.Proveedor, pk=proveedor_id)
     
     if request.method=="POST":
+        print request.POST, "pssttttttttttttt"
         proveedor_form = forms.ProveedorModificarForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
-            print "eeeeeeeeee"
             proveedor_form.save()
             return redirect('proveedores')
         return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
