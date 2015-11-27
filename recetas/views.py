@@ -859,6 +859,7 @@ def ciudadesBaja(request,ciudad_id =None):
 #********************************************************#
 #@login_required()
 #@permission_required('recetas.change_pedidocliente')
+'''
 def eliminarVencidos():
     pedidos_fijos = models.PedidoFijo.objects.all()
     for pedido in pedidos_fijos:
@@ -867,14 +868,14 @@ def eliminarVencidos():
             pedido.save()
             print "en vencidos: ",pedido.id
     #los de cambio y ocacionales se deben eliminar cuando se hace la rendicion
-
+'''
 
 
 
 @login_required()
 @permission_required('recetas.add_pedidocliente')
 def pedidosClientes(request,pedido_id=None):
-    eliminarVencidos()
+    #eliminarVencidos()
     if pedido_id is not None:
         # consulta
         pedido = models.PedidoCliente.objects.get(pk=pedido_id)
@@ -883,6 +884,7 @@ def pedidosClientes(request,pedido_id=None):
     elif request.method == 'GET':
         # filtros
         print "GET ",request.GET
+        #filtros para filtrar por rango de fechas de entrega, varia para cada tipo
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
         pobj = Q(**mfilters)
         filters, mfilters = get_filtros(request.GET, models.PedidoFijo)
@@ -974,20 +976,16 @@ def pedidosClienteBaja(request,pedido_id):
 @permission_required('recetas.change_pedidocliente')
 def pedidosClienteModificar(request, pedido_id):
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
+    detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
-        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
         pedidosClientes_form = forms.PedidoClienteFijoModificarForm
-
     elif pedido_instancia.tipo_pedido == 2:
         pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
-        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
         pedidosClientes_form = forms.PedidoClienteOcacionalForm
     else:
         pedido_instancia = get_object_or_404(models.PedidoCambio, pk=pedido_id)
-        detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
         pedidosClientes_form = forms.PedidoClienteCambioForm
-
     detalles_instancias = models.PedidoClienteDetalle.objects.filter(pedido_cliente = pedido_instancia)
     pedidosClientes_form = pedidosClientes_form(instance= pedido_instancia)
     productos = models.ProductoTerminado.objects.filter(activo=True) #para detalles
@@ -1015,7 +1013,7 @@ def pedidosClienteModificar(request, pedido_id):
                     if pedido_instancia.fecha_inicio < datetime.date.today():
                         pedido_instancia.fecha_inicio = fecha_posta
                         pedido_instancia.save()
-                        messages.error(request, 'fecha inicio mal')
+                        messages.error(request, 'La fecha inicio no puede ser anterior al dia actual')
                         return redirect('/pedidosCliente/Modificar/'+pedido_id)
             #DETALLES
             detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
@@ -1299,16 +1297,15 @@ def loteStock(request,lote_id):
     if request.method == "POST":
         lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
         if lote_form.is_valid():
+            print "es vlidooo"
             lote_form.save(lote_instancia)
             return redirect("lotes")
     else:
         lote_form = forms.LoteStockForm(instance = lote_instancia)
 
-    f = forms.PerdidaStockLoteForm()
     return render(request,"ModificarStockProducto.html",{"lote_form":lote_form,
                                                          "lote": lote_instancia,
-                                                         "id":lote_id,
-                                                         "perdida_stock_form":f})
+                                                         "id":lote_id})
 
 
 
@@ -1318,7 +1315,7 @@ def loteStock(request,lote_id):
 #********************************************************#
 @login_required()
 def hojaDeRuta(request):
-        eliminarVencidos()
+        #eliminarVencidos()
         pedidos_clientes = []
         pedidos_fijos = models.PedidoFijo.objects.all()
         pedidos_ocacionales = models.PedidoOcacional.objects.all()
@@ -1445,6 +1442,7 @@ def rendicionReparto(request,hoja_id=None):
                 chofer=chofer[0]
                 #chofer.disponible=True
                 chofer.save()
+                hoja.save()
                 print "guarde la hgoja"
             return redirect("rendicionDeRepartoMostrar",hoja.id)
     return render(request,"rendicionDeReparto.html",{"hoja":hoja,

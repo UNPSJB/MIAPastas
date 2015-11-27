@@ -154,8 +154,6 @@ class ProductoTerminado(models.Model):
     class Meta:
         permissions = (
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
-            ("ver_perdida_stock", "Puede listar la cantidad productos perdidos"),
-            ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
 
     def __str__(self):
@@ -332,6 +330,10 @@ class PedidoFijo(PedidoCliente):
     dias = MultiSelectField(choices=TIPODIAS)
 
     def esParaHoy(self):
+        if self.fecha_cancelacion != None and self.fecha_cancelacion<date.today():
+            self.activo=False
+            self.save()
+            return False
         num_dia = date.today().weekday()
         if self.dias == None:
             return False
@@ -640,10 +642,6 @@ class Recibo(models.Model):
     fecha = models.DateField(auto_now_add = True)
     numero = models.PositiveIntegerField()  #es el numero del recibo en papel
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
-
-
-
-
 
 
 
