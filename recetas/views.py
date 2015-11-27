@@ -855,8 +855,7 @@ def ciudadesBaja(request,ciudad_id =None):
 #********************************************************#
                #     PEDIDOS CLIENTES   #
 #********************************************************#
-@login_required()
-@permission_required('recetas.change_pedidocliente')
+
 def eliminarVencidos():
     pedidos_fijos = models.PedidoFijo.objects.all()
     for pedido in pedidos_fijos:
