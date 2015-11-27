@@ -11,7 +11,7 @@
            <p>&nbsp;</p>
             <div class="panel-body">
 
-                <form action="{% url 'proveedoresModificar' id %}" method="post" class="form">
+                <form action="{% url 'proveedoresModificar' id %}" method="post" class="form" onsubmit="return validarForm()">
                     {% if proveedor_form.errors %}
                       {% bootstrap_form_errors proveedor_form %}
                         {% endif %}
@@ -217,5 +217,9 @@ $(function() {
 </script>
 {% endblock %}
 
+<<<<<<< HEAD
 
+>>>>>>> origin/master
+=======
+    
 >>>>>>> origin/master

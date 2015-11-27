@@ -8,6 +8,12 @@
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar stock Lote</b></font></p></div>
             <div class="panel-body">
              <form class="form-horizontal">
+
+             {% if lote_form.errors %}
+                      {% bootstrap_form_errors lote_form %}
+                        {% endif %}
+
+                PRGUNTAR PORQUE NO SE MUESTRAN LOS VALIDATIONERRORS
                 <div class=" form-group">
                     <label class="col-sm-2 control-label">Producto</label>
                     <div class="col-sm-10" style="padding:7px;">
@@ -44,13 +50,7 @@
              </form>
                 <form action="{% url 'productosTerminadosActualizarStock' id %}" method="post" class="form-horizontal" >
 
-                    {% if lote_form.errors%}
-                        {% bootstrap_form_errors lote_form %}
-                    {% endif %}
-
-                    {% if lote_form.cantidad.errors%}
-                        Stock disponible no puede superar cantidad producida ni ser menor a 0.
-                    {% endif %}
+                    
                     {% csrf_token %}
                     <div id="fields_hidden"></div>
 
@@ -98,6 +98,8 @@
 var html="";
 html = html + armar_hidden_comun({{lote.cantidad_producida}},"cantidad_producida");
 html = html + armar_hidden_comun({{lote.stock_disponible}},"stock_disponible");
+html = html + armar_hidden_comun({{lote.stock_reservado}},"stock_reservado");
+
 $('#fields_hidden').html(html);
 </script>
 

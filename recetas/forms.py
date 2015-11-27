@@ -180,6 +180,8 @@ class ProveedorForm(forms.ModelForm):
         provincia = texto_lindo(provincia, True)
         return provincia
 
+
+
 class ProveedorModificarForm(forms.ModelForm):
     class Meta:
         model = models.Proveedor
@@ -262,19 +264,11 @@ class PerdidaStockForm(forms.ModelForm):
 '''
 
 
-
-class PerdidaStockLoteForm(forms.ModelForm):
-    class Meta:
-        model = models.PerdidaStockLote
-        exclude = ["fecha"]
-
-
-
 class LoteStockForm(forms.ModelForm):
 
     class Meta:
         model = models.Lote
-        fields = ["stock_disponible", "cantidad_producida"]
+        fields = ["stock_disponible", "cantidad_producida","stock_reservado"]
     cantidad = forms.IntegerField(min_value=0, max_value=99999999)
     descripcion = forms.CharField(max_length=200,required=False,widget=forms.Textarea)
     select_causas = forms.ChoiceField(widget=forms.RadioSelect, choices=models.CAUSAS_DECREMENTO_STOCK)
@@ -287,51 +281,41 @@ class LoteStockForm(forms.ModelForm):
         self.fields['cantidad'].label = "Cantidad ( * )"
 
     def save(self, *args, **kwargs):
+        print "en save"
         lote= super(LoteStockForm, self).save(*args, **kwargs)
-        print lote.stock_disponible, "ID de lote"
-        print "cantuidad a modificar: ",self.cleaned_data['cantidad']
-       # lote.stock_disponible -= self.cleaned_data['cantidad']
-        print "stock final es: ",lote.stock_disponible
         lote.decrementar_stock_disponible(self.cleaned_data['cantidad'])
-
-        '''
-        lote.save()
-        lote.producto_terminado.stock -= self.cleaned_data['cantidad']
-        lote.producto_terminado.save()
         perdida_instancia = models.PerdidaStock.objects.create(cantidad_perdida= self.cleaned_data['cantidad'],descripcion = self.cleaned_data['descripcion'],lote=lote,causas=self.cleaned_data['select_causas'])
         perdida_instancia.save()
-        '''
         return lote
-
 
     def clean(self):
         print "CLEAN POSTA"
+        #if self._errors:
         cleaned_data = super(LoteStockForm, self).clean()
         return cleaned_data
 
-
     def clean_cantidad_producida(self):
-        print "clean_cantidad_producida ",
+        print "clean_cantidad_producida "
         return self.cleaned_data["cantidad_producida"]
 
-
-
     def clean_cantidad(self):
-        print "clean_cantidddddad ",self.cleaned_data['cantidad_producida']
+        print "holis"
+        print self.cleaned_data['stock_reservado']
         c =self.cleaned_data['cantidad']
-        cantidad_producida = self.cleaned_data['cantidad_producida']
         nueva_cantidad = self.cleaned_data['stock_disponible'] - c
-        print "final ",self.cleaned_data['stock_disponible'] + c 
         if nueva_cantidad < 0:
             raise ValidationError("El stock disponible no puede ser Negativo.")
         elif c == 0:
             raise ValidationError("La cantidad debe ser mayor a 0.")
+        elif self.cleaned_data['cantidad'] > (self.cleaned_data['stock_disponible'] - self.cleaned_data['stock_reservado']):
+            raise ValidationError("No se puede decrementar esa cantidad. Debe rendir las hojas de ruta enviadas.")
         return self.cleaned_data['cantidad']
+
 
 class CiudadForm(forms.ModelForm):
     class Meta:
         model = models.Ciudad
-        fields = ["nombre","codigo_postal","zona"]
+        fields = ["nombre","codigo_postal","zona"]  
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -422,8 +406,6 @@ class ClienteAltaForm(forms.ModelForm):
         moroso = self.cleaned_data["es_moroso"]
         print "EN CLEAN DE MOROSO: ",moroso
         return moroso
-
-
 
 
 
@@ -527,9 +509,6 @@ class PedidoClienteDetalleForm(forms.ModelForm):
         exclude = ['pedido_cliente'] #setea todos campos menos pedido
 
 
-
-
-
 class PedidoClienteOcacionalForm(forms.ModelForm):
 
     class Meta:
@@ -539,6 +518,7 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
     
     def clean(self):
+        #se verifica que no tenga pedidos para ese mismo dia
         cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
         if not self.errors:
             cliente = cleaned_data["cliente"]
@@ -547,14 +527,18 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             for pedido in pedidos:
                 if pedido.tipo_pedido == 2:
                     fecha =pedido.pedidoocacional.fecha_entrega
-                    if (dia == fecha) and pedido.id != int(self.my_arg):
+                    try:
+                        id_pedido_instancia_existente = int(self.my_arg)
+                    except:
+                        id_pedido_instancia_existente = 0 #porque el id 0 no existe nunca asi no tiene problemas en el if para el alta
+                    if (dia == fecha) and pedido.id != id_pedido_instancia_existente:
                         id = str(pedido.id)
                         raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today() and self.my_arg == None:
+        if fecha < datetime.date.today(): #and self.my_arg == None:
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
@@ -582,14 +566,18 @@ class PedidoClienteCambioForm(forms.ModelForm):
                 for pedido in pedidos:
                     if pedido.tipo_pedido == 3:
                         fecha =pedido.pedidocambio.fecha_entrega
-                        if (dia == fecha) and pedido.id != int(self.my_arg):
+                        try:
+                            id_pedido_instancia_existente = int(self.my_arg)
+                        except:
+                            id_pedido_instancia_existente = 0 #porque el id 0 no existe nunca asi no tiene problemas en el if para el alta
+                        if (dia == fecha) and pedido.id != id_pedido_instancia_existente:
                             id = str(pedido.id)
                             raise forms.ValidationError(((mark_safe('Ya existe un pedido de este cliente para ese mismo dia. Modifique ese pedido. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
 
     def clean_fecha_entrega(self):
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today() and self.my_arg == None:
+        if fecha < datetime.date.today(): # and self.my_arg == None:
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
@@ -600,13 +588,8 @@ class PedidoClienteCambioForm(forms.ModelForm):
         super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
         
 
-
-
-
-
 #############################################################################
 ############################################################################
-
 
 
 class LoteForm(forms.ModelForm):
@@ -686,12 +669,14 @@ class EntregaDetalleForm(forms.ModelForm):
             return 
         for p in self.cleaned_data["entrega"].hoja_de_ruta.productosllevados_set.all():
             if p.producto_terminado == det.get_producto_terminado():
-                det.precio = p.precio
+                
+                det.precio = p.precio * det.cantidad_entregada 
                 break
         det.save()
-        n = det.precio * det.cantidad_entregada
-        det.entrega.pedido.cliente.aumentar_saldo(n)
-        
+        if det.entrega.pedido.tipo_pedido != 3: # de cambio no toca el saldo
+            
+            det.entrega.pedido.cliente.aumentar_saldo(det.precio)
+            
 
 class BaseEntregaDetalleFormset(BaseFormSet):
     def clean(self):        
@@ -740,17 +725,11 @@ class ProductosLlevadosForm(forms.ModelForm):
         producto_llevado.generar_detalles()
          # si no tengo stock para el producto pedido, no lo LLEVO 
         #if producto_llevado.cantidad_enviada == 0:
-         #   producto_llevado.delete()
-          #  return None
+        #    producto_llevado.delete()
+        #    return None
         return producto_llevado
 
-    def clean(self):
-        clean_data = super(ProductosLlevadosForm,self).clean()
-        print(clean_data)
-        p = clean_data["producto_terminado"]
-        if p.stock == 0:
-            raise ValidationError("Para producto",p.nombre," no hay stock")
-        return clean_data
+
         
 
 

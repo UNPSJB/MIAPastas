@@ -1,82 +1,70 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-
 {% load bootstrap3 %}
-
 {% block contenido %}
-
-
-
 <div class="container">
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Cliente</b></font></p></div>
   <div class="panel-body">
-      <!-- formulario -->
-
-
-
-
-      <form role="form">
-                  <div class="form-group">
-                    <label for="cuit">Cuit</label>
-                    <input type="text" value="{{cliente.cuit}}"  class="form-control" id="cuit" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="razon_social">Razón Social</label>
-                    <input type="text" value ="{{cliente.razon_social}}" class="form-control" id="razon_social" readonly>
-                  </div>
-                 <div class="form-group">
-                    <label for="nombre_dueño">Nombre del Dueño</label>
-                    <input type="text" value ="{{cliente.nombre_dueno}}" class="form-control" id="nombre_dueño" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="tipo_cliente">Tipo de Cliente</label>
-                    <input type="text" value ="{{cliente.get_tipo_cliente_display}}" class="form-control" id="tipo_cliente" readonly>
+      <form class="form-horizontal">
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Razon Social:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.razon_social}}
+                    </div>
                   </div>
 
-
-                  <div class="form-group">
-                    <label for="ciudad">Ciudad</label>
-                    <input type="text" value ="{{cliente.ciudad}}" class="form-control" id="ciudad" readonly>
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Dueño:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.nombre_dueno}}
+                    </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="direccion">Dirección</label>
-                    <input type="text" value ="{{cliente.direccion}}" class="form-control" id="direccion" readonly>
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Ciudad:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.ciudad}}
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label for="telefono">Teléfono</label>
-                    <input type="text" value ="{{cliente.telefono}}" class="form-control" id="telefono" readonly>
+                 
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Direccion:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.direccion}}
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" value ="{{cliente.email}}" class="form-control" id="email" readonly>
+                  
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Telefono:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.telefono}}
+                    </div>
                   </div>
-                  <div class="form-group">
-                    <label for="es_moroso">Es moroso</label>
-                    <input type="text" value ="{{cliente.es_moroso}}" class="form-control" id="es_moroso" readonly>
+
+                  
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">E-Mail:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.email}}
+                    </div>
                   </div>
-                   <div class="form-group">
-                    <label for="saldo">Saldo</label>
-                    <input type="text" value ="{{cliente.saldo}}" class="form-control" id="saldo" readonly>
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Saldo:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{cliente.saldo}}
+                    </div>
                   </div>
+
+                  {%if cliente.es_moroso%}
+                  <h1>
+                      El cliente es Moroso
+                  </h1>  
+                     {%endif%}                                    
         </form>
       <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-
-
-
-
-
-
   </div>
-
 </div>
 </div>
-
-    <!-- Este es el fin del formulario de recetas -->
-
-
-
-
-
-    {% endblock %}
+{% endblock %}
