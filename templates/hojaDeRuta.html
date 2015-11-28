@@ -6,11 +6,11 @@
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta</b></font></p></div>
   <div class="panel-body">
-
            <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return validar()" method="post">
                      {% csrf_token %}
                      {{ extras_form_factory.management_form }}
-                     {{ entregas_form_factory.management_form }}
+                     {{ entregas_form_factory.management_form }}                
+
 
             <div class=" form-group">
                 <label  class="col-sm-2 control-label">Fecha:</label>
@@ -30,11 +30,9 @@
                          </div>
                    </div>
                <tr>
-
           <p>&nbsp;</p>
       <div class="row">
           <div class="col-md-6" style="overflow-y:scroll; max-height:450px;">
-
           <table class="table table-hover" id="datatables" class="display">
                 <thead>
                     <h1>Pedidos para el día</h1>
@@ -45,10 +43,11 @@
                         <th>Zona</th>
                     </tr>
                 </thead>
-
                 <tbody>
                     {% for pedido in pedidos %}
-                    <tr class="renglon select-item cliente-{{pedido.cliente.cuit}}" data-cliente="{{pedido.cliente.cuit}}" data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
+                    <tr class="renglon select-item cliente-{{pedido.cliente.cuit}}" 
+                        data-cliente="{{pedido.cliente.cuit}}" 
+                        data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
                         <td>{{pedido.id}}</td>
                         <td>{{pedido.cliente.razon_social}}</td>
                         <td>{{pedido.cliente.ciudad.nombre}}</td>
@@ -57,9 +56,10 @@
                     </tr>
                     {% endfor %}
                 </tbody>
-          </table>
-          </div>
+          </table>    
 
+
+          </div>
           <div class="col-md-1">
               <div class="btn background-position:top center" role="group" aria-label="..." >
               <button type="button" onclick="agregarHojaDeRuta()" class="btn btn-success pull-right"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
@@ -67,8 +67,6 @@
           </div>
           <p></p>
           </div>
-
-
           <div class="col-md-5">
               <table id="tablaPedidosAsignados" class="table table-hover">
                     <thead>
@@ -79,9 +77,6 @@
                         </tr>
                     </thead>
                     <tbody id="cuerpoPedidosAsignados" class="asignados">
-
-
-
                     </tbody>
               </table>
           </div>
@@ -89,17 +84,16 @@
           </div>
       <div class="row">
           <div class="col-md-7">
-
+          
           </div>
-
-
           <div class="col-md-5">
               <div>
                     <!-- Trigger the modal with a button -->
-              <button type="button" class=" glyphicon glyphicon-shopping-cart pull-right btn btn-info hola" data-toggle="modal" data-target="#ModalProductosExtra"> Agregar extras</button>
+              <button type="button" class=" glyphicon glyphicon-shopping-cart pull-right btn btn-info hola" 
+                      data-toggle="modal" data-target="#ModalProductosExtra"> Agregar extras</button>
 
 
-              <table class="table table-hover">
+            <table class="table table-hover">
             <thead>
             <h1>Totales para envio</h1>
             <tr>
@@ -118,28 +112,22 @@
             <input type="text" class="form-control" id="bolsines_total" readonly>
           </div>
                   </row>
-
           </div>
 
       </div>
-       <div>
-            <!-- cuando se hace clic en imprimir se debe guardar en la BD la hoja de ruta, y actualizar los stock disponible y recerbado-->
-            <button type="button" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-eye-open" aria-hidden="true"> Ver </span></button>
+       <div>         
                <div id="pedidos_hidden"></div>
                {% buttons %}
-                    <button id = "btn-submit" type="submit" class="btn btn-primary">
+                    <button id = "btn-submit" type="submit" class="btn btn-primary pull-right">
                         {% bootstrap_icon "star" %} Crear Hoja
                     </button>
                 {% endbuttons %}
-
            </form>
-
 
 
            <!-- Modal de PRODUCTOS EXTRAS -->
             <div id="ModalProductosExtra" class="modal fade" role="dialog">
               <div class="modal-dialog">
-
                 <!-- Modal content-->
                 <div class="modal-content">
                   <div class="modal-header">
@@ -149,7 +137,6 @@
                   <div class="modal-body">
                     <div class="form-group col-md-5">
                         <label for="select_productos">Producto Terminado</label>
-
                           <select class="form-control" id="select_productos">
                               <option>--------</option>
                               {% for producto in productos %}
@@ -217,7 +204,6 @@ var totales_cantidades=[];
 var totales_datos=[];
 
 
-console.log("prefix extras:" +prefix_extras)
 
         $(function() {
 
@@ -254,7 +240,6 @@ console.log("prefix extras:" +prefix_extras)
         }
 
        });
-
 
         function agregarHojaDeRutaMismoCliente(){
             var nro_pedido;
@@ -310,15 +295,13 @@ console.log("prefix extras:" +prefix_extras)
             cliente_show= $el_asignado.data()["cliente"];
             var clase=$el_asignado.data()["clase"];
             $('.cliente-'+clase+'').remove();
-
             $el_asignado=null;
             $('.cliente-'+cliente_show+'').show();
             generarTotales();
        }
 
 
-       function generarHoja(){
-       console.log ("EN GENERAR HOJA");
+       function generarHoja(){       
            pedidosAsignados = [];
            $('#cuerpoPedidosAsignados').find('tr').each(function(){
                 var cont = 0;
@@ -329,7 +312,6 @@ console.log("prefix extras:" +prefix_extras)
                     cont=1;
                 }
                 )
-
            });
 
 
@@ -337,7 +319,6 @@ console.log("prefix extras:" +prefix_extras)
 
 
         function generarTotales(){
-            console.log("EN GENERAR TOTALES");
             generarHoja();
             console.log(pedidosAsignados);
             totales = {};
@@ -346,19 +327,15 @@ console.log("prefix extras:" +prefix_extras)
             console.log("json a enviar: "+myJsonString);
             $.ajax({
                 type: 'get',
-                data : {
-                     't': 'titleeeee',
-                     'b': 'bodyyyyyyy',
+                data : {                     
                      'pedidos': myJsonString
                  },
                 dataType: 'json',
-                url: 'hojaDeRuta/generarTotales',        //nico: como se hace para q el value sea siempre el id del insumo??
+                url: 'hojaDeRuta/generarTotales',
                 success: function(json){
-                    console.log(json.totales);
                     totales_productos = _.keys(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
                     totales_cantidades = _.values(json.totales);
                     totales_datos = _.values(json.datos);
-                    console.log("soy totales de productos",totales_productos,"sot datos: ",totales_datos);
                     agregar_extra_totales();
                     mostrarTotales();
                     }
@@ -417,9 +394,7 @@ console.log("prefix extras:" +prefix_extras)
                         $('#tabla_extras').append('<tr id="'+id_prod+'"><td style="display:none;">'+id_prod+'</td><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad(this)"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
                         productos_extras.push({"producto":document.getElementById('select_productos').value,"cantidad":document.getElementById('cantidad_producto').value});
                         det = productos_extras[0];
-                        console.log(det);
                         d = det.cantidad;
-                        console.log(d);
                      }
                 }
             }
@@ -439,11 +414,9 @@ console.log("prefix extras:" +prefix_extras)
       }
 
         function altaHojaRuta(){
-             console.log("EN DAR DE ALTA LA HOJA DE RUTA");
              var html="";
              $(pedidosAsignados).each(function(i,val){
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
-
              });
             // $("#pedidos_hidden").html(html);
             console.log("cantiddddd ",totales_cantidades);

@@ -457,6 +457,7 @@ class Lote(models.Model):
         self.producto_terminado.stock -=cant
         self.producto_terminado.save()
         self.save()
+        
 
 
 

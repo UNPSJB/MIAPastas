@@ -98,8 +98,9 @@
                                         <table   border="2">
                                             <th>Producto</th>
                                             <th>Cantidad Pedida</th>
-                                            <th>Cantidad Entregado</th>
-                                            {%for p_llevado in hoja.productosllevados_set.all %}
+                                            <th>Cantidad Entregada</th>
+                                            {% if  entrega.pedido.tipo_pedido != 3%}
+                                                {%for p_llevado in hoja.productosllevados_set.all %}
                                                  <tr>    
                                                      <td>{{ p_llevado.producto_terminado.id }}
                                                          {{ p_llevado.producto_terminado.nombre }} </td>
@@ -114,7 +115,24 @@
                                         </td>
                                                  </tr>
 
-                                            {% endfor %}
+                                                {% endfor %}
+                                            {%else%}
+                                                {%for d in entrega.pedido.pedidoclientedetalle_set.all%}
+                                                    <tr>    
+                                                     <td>{{ d.producto_terminado.id }}
+                                                         {{ d.producto_terminado.nombre }} </td>
+                                                     <td>{{ d.cantidad_producto }}</td>
+                                 <td> <input entrega_id="{{entrega.id}}" 
+                                             type="text" class="input-entregas"
+                        producto_hidden_id = "{{ d.producto_terminado.id}}"
+                        detalle_pedido_id = "{{d.id}}"
+                        producto_id = "{{d.producto_terminado.id}}"
+                                            placeholder="Cantidad "
+                                            value="0">
+                                        </td>
+                                                 </tr>
+                                                {%endfor%}
+                                            {% endif %}
                                             </table>
                                     </td>
                                </tr>

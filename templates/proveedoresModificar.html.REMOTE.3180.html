@@ -11,7 +11,7 @@
            <p>&nbsp;</p>
             <div class="panel-body">
 
-                <form action="{% url 'proveedoresModificar' id %}" method="post" class="form" onsubmit="return validarForm()">
+                <form action="{% url 'proveedoresModificar' id %}" method="post" class="form">
                     {% if proveedor_form.errors %}
                       {% bootstrap_form_errors proveedor_form %}
                         {% endif %}
@@ -73,7 +73,6 @@
 
     <!-- Este es el fin del formulario de recetas -->
 
-
     {% endblock %}
 
 {% block javascript %}
@@ -95,7 +94,6 @@ var insumos_cargados = [
             {"insumo_id":{{d.id}},"nombre":"{{d.nombre}}"},
         {%endfor%}
     ];
-
 
     console.log(insumos_cargados);
     console.log(prod);
@@ -217,9 +215,4 @@ $(function() {
 </script>
 {% endblock %}
 
-<<<<<<< HEAD
 
->>>>>>> origin/master
-=======
-    
->>>>>>> origin/master

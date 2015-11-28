@@ -603,14 +603,7 @@ def listadoProductosMasVendidos(request):
                 prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
             except:
                 prod[d.get_producto_terminado().nombre]=0
-                prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
-
-    print("pase por acaaaaaa")
-    print(entregas)
-    print(prod)
-    print("pase por acaaaaaa")
-    #for a,b in prod.items
-     #   print
+                prod[d.get_producto_terminado().nombre] += d.cantidad_entregada    
     return render(request, "listadoProductosMasVendidos.html", {"prod": prod})
 
 
@@ -620,17 +613,9 @@ def listadoProductosMasVendidosFiltros(request):
         print("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<")
         print("Entreee al GETTT")
         print(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")
-
-
-
         filters, mfilters = get_filtros(request.GET, models.Entrega)
         entregas = models.Entrega.objects.filter(**mfilters)
-
-
-
         print(mfilters)
-
-
         prod = {}
         for entrega in entregas:
             for d in entrega.entregadetalle_set.all():
@@ -646,13 +631,49 @@ def listadoProductosMasVendidosFiltros(request):
                    "filtros": filters,
                    })
 
-
     print("<<<<<<<<< HUBO UN ERROR...NO PUDO ENTRAR AL GET >>>>>>>>>>>")
     return render(request, "listadoProductosTerminadosDisponibles.html", {})
 
 
 
+def GraficoTorta(request,productos):
+    from pylab import *    
+    #  I M A G E N
+    figure(1, figsize=(7,7))# tamanio de figura
+    ax = axes([0, 0, 0.9, 0.9])# donde esta la figura ancho alto etc..
+    title('Productos Mas Vendidos', bbox={'facecolor':'0.8', 'pad':5})
+    labels = []
+    fracs = []
+    print "+"*20
+    print "productos: ",productos
+    for p in productos:
+        labels.append(p)
+        fracs.append(productos[p])
+    pie(fracs,labels=labels, autopct='%10.0f%%', shadow=True)
+    legend()    
+    #savefig("a.png")
+    response = HttpResponse(content_type='image/png')
+    savefig(response,format='PNG')
 
+    return response
+
+
+
+@login_required()
+def ListadoProductosMasVendidosGrafico(request):
+    filters, mfilters = get_filtros(request.GET, models.Entrega)
+    entregas = models.Entrega.objects.filter(**mfilters)
+    if not entregas.exists():
+        return HttpResponseNotFound('No hay productos terminados vendidos.')
+    prod = {}
+    for entrega in entregas:
+        for d in entrega.entregadetalle_set.all():
+                try:
+                    prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+                except:
+                    prod[d.get_producto_terminado().nombre]=0
+                    prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+    return GraficoTorta(request,prod)
 
 @login_required()
 def listadoProductosMasVendidosExcel(request):

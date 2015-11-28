@@ -669,12 +669,14 @@ class EntregaDetalleForm(forms.ModelForm):
             return 
         for p in self.cleaned_data["entrega"].hoja_de_ruta.productosllevados_set.all():
             if p.producto_terminado == det.get_producto_terminado():
-                det.precio = p.precio
+                
+                det.precio = p.precio * det.cantidad_entregada 
                 break
         det.save()
-        n = det.precio * det.cantidad_entregada
-        det.entrega.pedido.cliente.aumentar_saldo(n)
-        
+        if det.entrega.pedido.tipo_pedido != 3: # de cambio no toca el saldo
+            
+            det.entrega.pedido.cliente.aumentar_saldo(det.precio)
+            
 
 class BaseEntregaDetalleFormset(BaseFormSet):
     def clean(self):        
@@ -723,17 +725,11 @@ class ProductosLlevadosForm(forms.ModelForm):
         producto_llevado.generar_detalles()
          # si no tengo stock para el producto pedido, no lo LLEVO 
         #if producto_llevado.cantidad_enviada == 0:
-         #   producto_llevado.delete()
-          #  return None
+        #    producto_llevado.delete()
+        #    return None
         return producto_llevado
 
-    def clean(self):
-        clean_data = super(ProductosLlevadosForm,self).clean()
-        print(clean_data)
-        p = clean_data["producto_terminado"]
-        if p.stock == 0:
-            raise ValidationError("Para producto",p.nombre," no hay stock")
-        return clean_data
+
         
 
 

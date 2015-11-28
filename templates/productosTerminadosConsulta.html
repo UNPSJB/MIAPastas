@@ -8,19 +8,26 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Producto Terminado</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
-      <form role="form">
-                  <div class="form-group">
-                    <label for="nombre">Nombre</label>
-                    <input value="{{producto.nombre}}" type="text" class="form-control" id="nombre" name ="nombre" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="stock">Stock</label>
-                    <input value="{{producto.stock}}" type="text" class="form-control" id="stock" readonly>
+       <form class="form-horizontal">
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Nombre:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{producto.nombre}}
+                    </div>
                   </div>
 
-                  <div class="form-group">
-                    <label for="precio">Precio</label>
-                    <input value="{{producto.precio}}" type="text" class="form-control" id="precio" readonly>
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Stock:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{producto.stock}}
+                    </div>
+                  </div>
+                  
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label">Precio:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                       {{producto.precio}}
+                    </div>
                   </div>
         </form>
       <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>

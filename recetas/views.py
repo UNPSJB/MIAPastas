@@ -486,7 +486,6 @@ def proveedoresModificar(request,proveedor_id =None):
         insumos_instancias = models.Insumo.objects.filter(activo=True)
         return render(request,"proveedoresModificar.html",{"insumos_instancias":insumos_instancias,"proveedor_form":proveedor_form,"id":proveedor_id})
 
-
 #********************************************************#
                #     P R O D U C T O S   #
 #********************************************************#
@@ -857,9 +856,11 @@ def ciudadesBaja(request,ciudad_id =None):
 #********************************************************#
                #     PEDIDOS CLIENTES   #
 #********************************************************#
+
 #@login_required()
 #@permission_required('recetas.change_pedidocliente')
 '''
+>>>>>>> origin/master
 def eliminarVencidos():
     pedidos_fijos = models.PedidoFijo.objects.all()
     for pedido in pedidos_fijos:
@@ -1355,6 +1356,7 @@ def hojaDeRuta(request):
 @login_required()
 @permission_required('recetas.add_hojaderuta')
 def hojaDeRutaAlta(request):
+     
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
@@ -1647,7 +1649,18 @@ def perdidasStockLotes(request):
 @login_required()
 def productosMasVendidos(request):
     import os
-    path = os.path.abspath(".")
-    print(path)
-    img = open(os.path.join(path, "estaticos/images/avatar.png"), 'r')
-    return HttpResponse(img.read(), content_type="image/png")
+    from pylab import *    
+    #  I M A G E N
+    figure(1, figsize=(8,8))# tamanio de figura
+    ax = axes([0, 0, 0.9, 0.9])# donde esta la figura ancho alto etc..
+    labels = 'Fideo Verde ', 'Fideo Negro'
+    fracs = [12,33]#datos a graficar
+    explode=(0, 0.1)#exposicion de uno de los datos segun donde se encuentra 
+    pie(fracs, explode=explode,labels=labels, autopct='%10.0f%%', shadow=True)
+    legend()
+    title('Productos Mas Vendidos', bbox={'facecolor':'0.8', 'pad':5})
+    savefig("a.png")
+    response = HttpResponse(content_type='image/png')
+    savefig(response,format='PNG')
+    return response
+
