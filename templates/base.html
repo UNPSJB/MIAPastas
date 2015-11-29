@@ -15,14 +15,16 @@
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
              var n=window.location.pathname;
-             var s=n.substring(1,_.size(n)-1);
-             console.log(s);
+             console.log(n);
+             var patron= /\/\w+(\/\w+)\//;
+             var res=patron.exec(n);
+             res=res[0];
+             var s=res.substring(1,_.size(res)-1);
              s = s.replace("/","_");
              s = "/"+s;
              frame = $("#frameDocumentacion");
              frame.attr("src",url+s+".html");
-             $("#modalDocumentacion").modal("show");
-
+             $("#modalDocumentacion").modal("show");s
              }
         </script>
     </head>
