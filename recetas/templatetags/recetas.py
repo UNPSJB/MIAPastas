@@ -25,10 +25,27 @@ def producto_cantidad(detalle):
 
 @register.simple_tag
 def devolver_cantidad_pedida(entrega,prod):
+    """ metodo que resiba una Entrega y un producto
+        se recorre los detalles del pedido que apunta la entrega buscando el Producto resibido
+        Si lo encuentra devuelve la cantidad pedida que indica el detalle de pedido
+        Si no lo encuentra devuelve 0 
+    """
     for d in entrega.pedido.pedidoclientedetalle_set.all():
     	if d.producto_terminado == prod:
     		return d.cantidad_producto
     return 0
+
+@register.simple_tag
+def devolver_cantidad_pedida(detalle):
+    """ metodo resibe un detalle de entrega.
+        si este detalle tiene asociado un detalle de pedido, devuelve cantidad pedida que indica el detalle de pedido
+        si este detalle no tiene asociado un detalle de pedido, devuelve 0
+    """
+    if detalle.producto_terminado is not None:
+        return 0
+    else:
+        return detalle.pedido_cliente_detalle.cantidad_producto
+
 
 @register.simple_tag
 def devolver_detalle(entrega,prod):

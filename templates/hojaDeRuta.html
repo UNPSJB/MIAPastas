@@ -9,7 +9,7 @@
            <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return validar()" method="post">
                      {% csrf_token %}
                      {{ extras_form_factory.management_form }}
-                     {{ entregas_form_factory.management_form }}                
+                     {{ entregas_form_factory.management_form }}         
 
 
             <div class=" form-group">
@@ -202,6 +202,7 @@ var prefix_entregas = "{{prefix_entregas}}";
 var totales_productos=[];
 var totales_cantidades=[];
 var totales_datos=[];
+
 
 
 
@@ -424,6 +425,12 @@ var totales_datos=[];
              $(totales_cantidades).each(function(i,val){
                 html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad_pedida",i);
                 html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
+                console.log("------------------------");
+                var aux = _.find(productos_extras,function(v){
+                                return v.producto == totales_productos[i];
+                });
+                console.log("auxxxxxxx");
+                console.log(aux);
              });
             $("#pedidos_hidden").html(html);
             console.log(_.size(totales_cantidades));
@@ -431,10 +438,11 @@ var totales_datos=[];
             document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);
 
              console.log($("#pedidos_hidden"));
-
+             alert("BANCA");
         }
 
         function validar(){
+
             if(pedidosAsignados.length == 0){
                 BootstrapDialog.show({
                     title: "Error",

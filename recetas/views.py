@@ -1279,6 +1279,10 @@ def lotesAlta(request):
                     detalle_receta.insumo.decrementar(cant_decrementar)
                     if detalle_receta.insumo.stock < 0:
                         messages.error(request, 'El insumo %s quedo con stock %d '%(detalle_receta.insumo,detalle_receta.insumo.stock))
+                    else:
+                        messages.success(request, 'Se decrementaron %d %s de %s '%(cant_decrementar,
+                                                                                            detalle_receta.insumo.get_unidad_medida_display(),
+                                                                                            detalle_receta.insumo.nombre))
                     detalle_receta.insumo.save()
             except:
                 messages.success(request, 'No se actualizo stock de insumos ya que no hay receta asociada al Producto')
@@ -1461,7 +1465,7 @@ def rendicionReparto(request,hoja_id=None):
 def RendicionDeRepartoMostrar(request,hoja_id):
     hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
     totales = hoja.balance()
-    return render(request,"rendicionDeRepartoMostrar.html",{"hoja_ruta":hoja,"totales":totales})
+    return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,"totales":totales})
 
 
 

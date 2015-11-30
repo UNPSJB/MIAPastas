@@ -1,0 +1,1013 @@
+[
+{
+  "fields": {
+    "name": "Encargado de Produccion",
+    "permissions": [
+      [
+        "add_chofer",
+        "recetas",
+        "chofer"
+      ],
+      [
+        "change_detallepedidoproveedor",
+        "recetas",
+        "detallepedidoproveedor"
+      ],
+      [
+        "delete_detallepedidoproveedor",
+        "recetas",
+        "detallepedidoproveedor"
+      ],
+      [
+        "change_entrega",
+        "recetas",
+        "entrega"
+      ],
+      [
+        "delete_entrega",
+        "recetas",
+        "entrega"
+      ],
+      [
+        "add_entregadetalle",
+        "recetas",
+        "entregadetalle"
+      ],
+      [
+        "add_lote",
+        "recetas",
+        "lote"
+      ],
+      [
+        "change_perdidastocklote",
+        "recetas",
+        "perdidastocklote"
+      ],
+      [
+        "change_productoterminado",
+        "recetas",
+        "productoterminado"
+      ],
+      [
+        "ver_productos_terminados_disponibles",
+        "recetas",
+        "productoterminado"
+      ],
+      [
+        "add_receta",
+        "recetas",
+        "receta"
+      ],
+      [
+        "change_receta",
+        "recetas",
+        "receta"
+      ],
+      [
+        "delete_receta",
+        "recetas",
+        "receta"
+      ],
+      [
+        "add_recetadetalle",
+        "recetas",
+        "recetadetalle"
+      ],
+      [
+        "change_recetadetalle",
+        "recetas",
+        "recetadetalle"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 1
+},
+{
+  "fields": {
+    "name": "Administrador de Usuarios",
+    "permissions": [
+      [
+        "add_user",
+        "auth",
+        "user"
+      ],
+      [
+        "change_user",
+        "auth",
+        "user"
+      ],
+      [
+        "delete_user",
+        "auth",
+        "user"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 2
+},
+{
+  "fields": {
+    "name": "Encargado de Ventas",
+    "permissions": [
+      [
+        "add_ciudad",
+        "recetas",
+        "ciudad"
+      ],
+      [
+        "change_ciudad",
+        "recetas",
+        "ciudad"
+      ],
+      [
+        "delete_ciudad",
+        "recetas",
+        "ciudad"
+      ],
+      [
+        "add_cliente",
+        "recetas",
+        "cliente"
+      ],
+      [
+        "change_cliente",
+        "recetas",
+        "cliente"
+      ],
+      [
+        "cobrar_a_cliente",
+        "recetas",
+        "cliente"
+      ],
+      [
+        "ver_clientes_morosos",
+        "recetas",
+        "cliente"
+      ],
+      [
+        "add_pedidocambio",
+        "recetas",
+        "pedidocambio"
+      ],
+      [
+        "change_pedidocambio",
+        "recetas",
+        "pedidocambio"
+      ],
+      [
+        "delete_pedidocambio",
+        "recetas",
+        "pedidocambio"
+      ],
+      [
+        "add_pedidocliente",
+        "recetas",
+        "pedidocliente"
+      ],
+      [
+        "change_pedidocliente",
+        "recetas",
+        "pedidocliente"
+      ],
+      [
+        "delete_pedidocliente",
+        "recetas",
+        "pedidocliente"
+      ],
+      [
+        "add_pedidoclientedetalle",
+        "recetas",
+        "pedidoclientedetalle"
+      ],
+      [
+        "change_pedidoclientedetalle",
+        "recetas",
+        "pedidoclientedetalle"
+      ],
+      [
+        "delete_pedidoclientedetalle",
+        "recetas",
+        "pedidoclientedetalle"
+      ],
+      [
+        "add_pedidofijo",
+        "recetas",
+        "pedidofijo"
+      ],
+      [
+        "change_pedidofijo",
+        "recetas",
+        "pedidofijo"
+      ],
+      [
+        "delete_pedidofijo",
+        "recetas",
+        "pedidofijo"
+      ],
+      [
+        "add_pedidoocacional",
+        "recetas",
+        "pedidoocacional"
+      ],
+      [
+        "delete_proveedor",
+        "recetas",
+        "proveedor"
+      ],
+      [
+        "add_zona",
+        "recetas",
+        "zona"
+      ],
+      [
+        "change_zona",
+        "recetas",
+        "zona"
+      ],
+      [
+        "delete_zona",
+        "recetas",
+        "zona"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 3
+},
+{
+  "fields": {
+    "name": "Encargado de Compras",
+    "permissions": [
+      [
+        "add_detallepedidoproveedor",
+        "recetas",
+        "detallepedidoproveedor"
+      ],
+      [
+        "add_insumo",
+        "recetas",
+        "insumo"
+      ],
+      [
+        "change_insumo",
+        "recetas",
+        "insumo"
+      ],
+      [
+        "delete_insumo",
+        "recetas",
+        "insumo"
+      ],
+      [
+        "change_pedidoocacional",
+        "recetas",
+        "pedidoocacional"
+      ],
+      [
+        "delete_pedidoocacional",
+        "recetas",
+        "pedidoocacional"
+      ],
+      [
+        "add_pedidoproveedor",
+        "recetas",
+        "pedidoproveedor"
+      ],
+      [
+        "change_pedidoproveedor",
+        "recetas",
+        "pedidoproveedor"
+      ],
+      [
+        "delete_pedidoproveedor",
+        "recetas",
+        "pedidoproveedor"
+      ],
+      [
+        "add_proveedor",
+        "recetas",
+        "proveedor"
+      ],
+      [
+        "change_proveedor",
+        "recetas",
+        "proveedor"
+      ],
+      [
+        "delete_recetadetalle",
+        "recetas",
+        "recetadetalle"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 4
+},
+{
+  "fields": {
+    "name": "Encargado de Reparto",
+    "permissions": [
+      [
+        "add_chofer",
+        "recetas",
+        "chofer"
+      ],
+      [
+        "change_chofer",
+        "recetas",
+        "chofer"
+      ],
+      [
+        "delete_chofer",
+        "recetas",
+        "chofer"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 5
+},
+{
+  "fields": {
+    "name": "Encargado de Cobros",
+    "permissions": [
+      [
+        "delete_cliente",
+        "recetas",
+        "cliente"
+      ],
+      [
+        "delete_perdidastocklote",
+        "recetas",
+        "perdidastocklote"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 6
+},
+{
+  "fields": {
+    "name": "Encargado de Stock",
+    "permissions": [
+      [
+        "delete_detallepedidoproveedor",
+        "recetas",
+        "detallepedidoproveedor"
+      ],
+      [
+        "add_entrega",
+        "recetas",
+        "entrega"
+      ],
+      [
+        "change_entrega",
+        "recetas",
+        "entrega"
+      ],
+      [
+        "delete_entrega",
+        "recetas",
+        "entrega"
+      ],
+      [
+        "add_entregadetalle",
+        "recetas",
+        "entregadetalle"
+      ],
+      [
+        "change_factura",
+        "recetas",
+        "factura"
+      ],
+      [
+        "delete_factura",
+        "recetas",
+        "factura"
+      ],
+      [
+        "add_perdidastock",
+        "recetas",
+        "perdidastock"
+      ],
+      [
+        "change_productosllevados",
+        "recetas",
+        "productosllevados"
+      ],
+      [
+        "delete_productosllevados",
+        "recetas",
+        "productosllevados"
+      ],
+      [
+        "add_productosllevadosdetalle",
+        "recetas",
+        "productosllevadosdetalle"
+      ],
+      [
+        "change_productosllevadosdetalle",
+        "recetas",
+        "productosllevadosdetalle"
+      ],
+      [
+        "delete_productosllevadosdetalle",
+        "recetas",
+        "productosllevadosdetalle"
+      ],
+      [
+        "change_productoterminado",
+        "recetas",
+        "productoterminado"
+      ]
+    ]
+  },
+  "model": "auth.group",
+  "pk": 7
+},
+{
+  "fields": {
+    "username": "kevin",
+    "first_name": "Kevin Leandro",
+    "last_name": "James",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2015-11-26T13:51:28.544Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$uepY8qb0Ekq8$0P0TDcJqUeg0cRe7GYDfEto0Pm2zlfZaDw51XivQPgw=",
+    "email": "kevin1293@gmail.com",
+    "date_joined": "2015-11-20T18:58:04Z"
+  },
+  "model": "auth.user",
+  "pk": 1
+},
+{
+  "fields": {
+    "username": "cobros",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-11-25T21:12:35.463Z",
+    "groups": [
+      [
+        "Encargado de Cobros"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$KjR4YnFEBGCh$UzHOenhfcWl3NvwK1Qgi5bvkBSDjN6reAxIgULkScZ8=",
+    "email": "",
+    "date_joined": "2015-11-20T19:26:00Z"
+  },
+  "model": "auth.user",
+  "pk": 2
+},
+{
+  "fields": {
+    "username": "compras",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-11-27T16:08:02.529Z",
+    "groups": [
+      [
+        "Encargado de Compras"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$hlkZAF4kVeNO$Gm1luZ/kvaqLjKHiH817PdcsmpHPQDCGTNEbZA9gfQo=",
+    "email": "",
+    "date_joined": "2015-11-20T19:26:32Z"
+  },
+  "model": "auth.user",
+  "pk": 3
+},
+{
+  "fields": {
+    "username": "produccion",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-11-20T19:53:16.055Z",
+    "groups": [
+      [
+        "Encargado de Produccion"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$1G6sWbWciDrw$ASHUZ+rFkbT21qAVX1iusfYTcNeZvlPDCz8R2d7aYKU=",
+    "email": "",
+    "date_joined": "2015-11-20T19:26:58Z"
+  },
+  "model": "auth.user",
+  "pk": 4
+},
+{
+  "fields": {
+    "username": "reparto",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": null,
+    "groups": [
+      [
+        "Encargado de Reparto"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$FTY4XhvHK0Vc$eWpupUiFWmX/Q0vsty9/hPaiqDWQXqpNDJMN99fy36U=",
+    "email": "",
+    "date_joined": "2015-11-20T19:27:15Z"
+  },
+  "model": "auth.user",
+  "pk": 5
+},
+{
+  "fields": {
+    "username": "stock",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-11-27T16:09:26.246Z",
+    "groups": [
+      [
+        "Encargado de Stock"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$OXBQ1A9ZNTFK$Wy8d3tdbIRfgr6u8eo/zRkq8yEp31otr93SL7dXQQ/M=",
+    "email": "",
+    "date_joined": "2015-11-20T19:27:28Z"
+  },
+  "model": "auth.user",
+  "pk": 6
+},
+{
+  "fields": {
+    "username": "ventas",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": null,
+    "groups": [
+      [
+        "Encargado de Ventas"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$QBv0PJ63JXbB$0kWP9s3Eb3pkBwk+iU5xm9Jp56SUlyAEccDGTh20w5Q=",
+    "email": "",
+    "date_joined": "2015-11-20T19:27:41Z"
+  },
+  "model": "auth.user",
+  "pk": 7
+},
+{
+  "fields": {
+    "username": "ivan",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": null,
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$QJH3yBZi93mk$UhcPiVrTaogrr6NGc7KBCKfFFuP3tr8p1Z+Nu4olDCk=",
+    "email": "",
+    "date_joined": "2015-11-23T20:02:08Z"
+  },
+  "model": "auth.user",
+  "pk": 14
+},
+{
+  "fields": {
+    "username": "facu",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": null,
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$sIw7E6yScrql$mkUkbD/gtQleKh9wrpWUZiNnhMcMEOiDmZDP5wL+B74=",
+    "email": "",
+    "date_joined": "2015-11-23T20:02:21Z"
+  },
+  "model": "auth.user",
+  "pk": 15
+},
+{
+  "fields": {
+    "username": "nico",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": "2015-11-27T16:09:12.210Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$7UHWo1vssIMf$rgkNjOCNzFeXLKz2980sZJJXSV3/9k7wIid+1dFHp+E=",
+    "email": "",
+    "date_joined": "2015-11-23T20:02:33Z"
+  },
+  "model": "auth.user",
+  "pk": 16
+},
+{
+  "fields": {
+    "username": "agustina",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": true,
+    "is_staff": true,
+    "last_login": null,
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$VRPNkIYTbNIc$kbXQ5dachqtRJ2aH8lHYwOfMIJ/Un+md5Qn3L6vFARA=",
+    "email": "",
+    "date_joined": "2015-11-23T20:02:49Z"
+  },
+  "model": "auth.user",
+  "pk": 17
+},
+{
+  "fields": {
+    "username": "administrador",
+    "first_name": "",
+    "last_name": "",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-11-25T21:36:33.225Z",
+    "groups": [
+      [
+        "Administrador de Usuarios"
+      ]
+    ],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$20000$w4y597V9mLiO$T+GeRvpFs41Y1OZteCP+olNyUrCmsAY0F75mfM8Syzw=",
+    "email": "",
+    "date_joined": "2015-11-25T21:09:11Z"
+  },
+  "model": "auth.user",
+  "pk": 21
+},
+{
+  "fields": {
+    "expire_date": "2015-12-11T05:07:52.530Z",
+    "session_data": "MGJmMDdhNmI2NzBjNGFhNWJiM2I5OTE2MmE5MjIxZTdkNzQyZjkyZTp7Il9hdXRoX3VzZXJfaGFzaCI6ImQ0Y2Y1MDAxOGVmMWZhMTAwYzYyM2JmZTc4ZmUwYmE0ZmNhN2Q2YzgiLCJfYXV0aF91c2VyX2lkIjoiMSIsIl9hdXRoX3VzZXJfYmFja2VuZCI6ImRqYW5nby5jb250cmliLmF1dGguYmFja2VuZHMuTW9kZWxCYWNrZW5kIn0="
+  },
+  "model": "sessions.session",
+  "pk": "8s117krdsbrg0y6vmmwgqerr6lwmdxo1"
+},
+{
+  "fields": {
+    "expire_date": "2015-12-11T16:09:26.347Z",
+    "session_data": "ZmYyNmZjNWFlNjZhYWYxN2I2Yjg3ZDE0OGM4YzE1NDJiNWZiMDkzNTp7Il9hdXRoX3VzZXJfaGFzaCI6IjRkODllYzY5NmE0YTUyMDhiZWQ2ODFiNjNhNjViN2Q2YTExZDVlM2YiLCJfYXV0aF91c2VyX2JhY2tlbmQiOiJkamFuZ28uY29udHJpYi5hdXRoLmJhY2tlbmRzLk1vZGVsQmFja2VuZCIsIl9hdXRoX3VzZXJfaWQiOiI2In0="
+  },
+  "model": "sessions.session",
+  "pk": "or88xmw2zuciqeox8rgye38zri3qzwpz"
+},
+{
+  "fields": {
+    "disponible": true,
+    "cuit": "27-29416753-1",
+    "e_mail": "mu\u00f1eco@hotmail.com",
+    "direccion": "12sd1",
+    "activo": true,
+    "nombre": "Marcelo Gallardo",
+    "telefono": 231222
+  },
+  "model": "recetas.chofer",
+  "pk": 1
+},
+{
+  "fields": {
+    "nombre": "Fideo Amarillo",
+    "activo": true,
+    "precio": "40.00",
+    "dias_vigencia": 1000,
+    "stock": 20
+  },
+  "model": "recetas.productoterminado",
+  "pk": 1
+},
+{
+  "fields": {
+    "nombre": "Fideo Verde",
+    "activo": true,
+    "precio": "30.00",
+    "dias_vigencia": 1000,
+    "stock": 350
+  },
+  "model": "recetas.productoterminado",
+  "pk": 2
+},
+{
+  "fields": {
+    "nombre": "Fideo Negro",
+    "activo": true,
+    "precio": "20.00",
+    "dias_vigencia": 1000,
+    "stock": 308
+  },
+  "model": "recetas.productoterminado",
+  "pk": 3
+},
+{
+  "fields": {
+    "nombre": "Alta Zona"
+  },
+  "model": "recetas.zona",
+  "pk": 1
+},
+{
+  "fields": {
+    "codigo_postal": 9100,
+    "nombre": "Trelew",
+    "zona": 1
+  },
+  "model": "recetas.ciudad",
+  "pk": 1
+},
+{
+  "fields": {
+    "cuit": 1423423,
+    "razon_social": "Leonardo Pisculichi",
+    "nombre_dueno": "Enganche",
+    "direccion": "25 De Mayo 29486",
+    "saldo": 3000.0,
+    "ciudad": 1,
+    "es_moroso": false,
+    "telefono": 44032,
+    "email": "piscu@hotmail.com"
+  },
+  "model": "recetas.cliente",
+  "pk": 1
+},
+{
+  "fields": {
+    "cuit": 1232541212,
+    "razon_social": "Matias Kraneviter",
+    "nombre_dueno": "Md",
+    "direccion": "25 De Mayo 2912",
+    "saldo": 560.0,
+    "ciudad": 1,
+    "es_moroso": false,
+    "telefono": 445331,
+    "email": "colo@hotmail.com"
+  },
+  "model": "recetas.cliente",
+  "pk": 2
+},
+{
+  "fields": {
+    "cuit": 12312321,
+    "razon_social": "Barovero",
+    "nombre_dueno": "Asd",
+    "direccion": "1231",
+    "saldo": 0.0,
+    "ciudad": 1,
+    "es_moroso": false,
+    "telefono": 21312,
+    "email": "trapito@hotmail.com"
+  },
+  "model": "recetas.cliente",
+  "pk": 3
+},
+{
+  "fields": {
+    "activo": true,
+    "tipo_pedido": 1,
+    "fecha_creacion": "2015-11-27",
+    "cliente": 1
+  },
+  "model": "recetas.pedidocliente",
+  "pk": 6
+},
+{
+  "fields": {
+    "cantidad_producto": 10,
+    "pedido_cliente": 6,
+    "producto_terminado": 1
+  },
+  "model": "recetas.pedidoclientedetalle",
+  "pk": 13
+},
+{
+  "fields": {
+    "cantidad_producto": 10,
+    "pedido_cliente": 6,
+    "producto_terminado": 2
+  },
+  "model": "recetas.pedidoclientedetalle",
+  "pk": 14
+},
+{
+  "fields": {
+    "cantidad_producto": 10,
+    "pedido_cliente": 6,
+    "producto_terminado": 3
+  },
+  "model": "recetas.pedidoclientedetalle",
+  "pk": 15
+},
+{
+  "fields": {
+    "fecha_inicio": "2015-11-28",
+    "dias": "1,2,3,4,5",
+    "fecha_cancelacion": null
+  },
+  "model": "recetas.pedidofijo",
+  "pk": 6
+},
+{
+  "fields": {
+    "stock_disponible": 0,
+    "stock_reservado": 0,
+    "fecha_vencimiento": "2018-08-23",
+    "cantidad_producida": 1000,
+    "fecha_produccion": "2015-11-27",
+    "producto_terminado": 1
+  },
+  "model": "recetas.lote",
+  "pk": 1
+},
+{
+  "fields": {
+    "stock_disponible": 20,
+    "stock_reservado": 20,
+    "fecha_vencimiento": "2018-08-23",
+    "cantidad_producida": 500,
+    "fecha_produccion": "2015-11-27",
+    "producto_terminado": 1
+  },
+  "model": "recetas.lote",
+  "pk": 2
+},
+{
+  "fields": {
+    "stock_disponible": 350,
+    "stock_reservado": 20,
+    "fecha_vencimiento": "2018-08-23",
+    "cantidad_producida": 500,
+    "fecha_produccion": "2015-11-27",
+    "producto_terminado": 2
+  },
+  "model": "recetas.lote",
+  "pk": 3
+},
+{
+  "fields": {
+    "stock_disponible": 308,
+    "stock_reservado": 20,
+    "fecha_vencimiento": "2018-08-23",
+    "cantidad_producida": 500,
+    "fecha_produccion": "2015-11-27",
+    "producto_terminado": 3
+  },
+  "model": "recetas.lote",
+  "pk": 4
+},
+{
+  "fields": {
+    "fecha": "2015-11-27",
+    "monto_pagado": "90.00",
+    "numero": 12312
+  },
+  "model": "recetas.factura",
+  "pk": 1
+},
+{
+  "fields": {
+    "fecha": "2015-11-27",
+    "monto_pagado": "60.00",
+    "numero": 2
+  },
+  "model": "recetas.factura",
+  "pk": 2
+},
+{
+  "fields": {
+    "descripcion": "Pa probar no mas\r\n",
+    "causas": 3,
+    "cantidad_perdida": 1000,
+    "fecha": "2015-11-27",
+    "lote": 1
+  },
+  "model": "recetas.perdidastock",
+  "pk": 1
+},
+{
+  "fields": {
+    "descripcion": "Probando \r\n",
+    "causas": 2,
+    "cantidad_perdida": 480,
+    "fecha": "2015-11-27",
+    "lote": 2
+  },
+  "model": "recetas.perdidastock",
+  "pk": 2
+},
+{
+  "fields": {
+    "rendida": false,
+    "fecha_creacion": "2015-11-27",
+    "chofer": 1
+  },
+  "model": "recetas.hojaderuta",
+  "pk": 20
+},
+{
+  "fields": {
+    "precio": "40.00",
+    "hoja_de_ruta": 20,
+    "producto_terminado": 1,
+    "cantidad_enviada": 10,
+    "cantidad_pedida": 110
+  },
+  "model": "recetas.productosllevados",
+  "pk": 44
+},
+{
+  "fields": {
+    "precio": "30.00",
+    "hoja_de_ruta": 20,
+    "producto_terminado": 2,
+    "cantidad_enviada": 10,
+    "cantidad_pedida": 10
+  },
+  "model": "recetas.productosllevados",
+  "pk": 45
+},
+{
+  "fields": {
+    "precio": "20.00",
+    "hoja_de_ruta": 20,
+    "producto_terminado": 3,
+    "cantidad_enviada": 10,
+    "cantidad_pedida": 10
+  },
+  "model": "recetas.productosllevados",
+  "pk": 46
+},
+{
+  "fields": {
+    "producto_llevado": 44,
+    "cantidad_sobrante": null,
+    "lote": 2,
+    "cantidad": 10
+  },
+  "model": "recetas.productosllevadosdetalle",
+  "pk": 30
+},
+{
+  "fields": {
+    "producto_llevado": 45,
+    "cantidad_sobrante": null,
+    "lote": 3,
+    "cantidad": 10
+  },
+  "model": "recetas.productosllevadosdetalle",
+  "pk": 31
+},
+{
+  "fields": {
+    "producto_llevado": 46,
+    "cantidad_sobrante": null,
+    "lote": 4,
+    "cantidad": 10
+  },
+  "model": "recetas.productosllevadosdetalle",
+  "pk": 32
+},
+{
+  "fields": {
+    "fecha": "2015-11-27",
+    "factura": null,
+    "pedido": 6,
+    "hoja_de_ruta": 20
+  },
+  "model": "recetas.entrega",
+  "pk": 25
+}
+]
