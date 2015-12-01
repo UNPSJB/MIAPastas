@@ -8,41 +8,46 @@
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja.fecha_creacion}}</b></font></p></div>
             <div class="panel-body">                
                 <form class=" form-horizontal">    
-                <h1> Se Registraron correctamente las entregas</h1>                
-                       
-                        {% for e in hoja.entrega_set.all%}
-                         <div class="bordeado">
-                            <div class=" form-group">
-                                <label class="col-sm-2 control-label" style="text:4px 4px 4px #000;">Cliente</label>
-                                <div class="col-sm-10" style="padding:7px;">
-                                  {{e.pedido.cliente.razon_social}}
-                                </div>
+                <h1><font color="#2E8B57" font-size="20%">Se Registraron correctamente las entregas.</font> </h1>
+                            {% for e in hoja.entrega_set.all%}
+                            <p>&nbsp;</p>
+                            <div>
+                                <span style="text-decoration: underline;font-size: 150%; ">
+                                    <strong>
+                                        Cliente: {{e.pedido.cliente.razon_social}}
+                                    </strong>
+                                </span>
                             </div>
+                            <p>&nbsp;</p>
+                           <div class="bordeado item-page" style=" border-spacing:0 0px;line-height: 10%;border-style: solid;   border-color: white red; ">                            
                             {% for d in e.entregadetalle_set.all %}
-                                <div class=" form-group">
-                                    <label class="col-sm-2 control-label">Producto</label>
-                                    <div class="col-sm-10" style="padding:7px;">
-                                      {{d.get_producto_terminado.nombre}}
-                                    </div>
+                                <p>&nbsp;</p>
+                                <div style="margin-left: 10%;">
+                                <span style="text-decoration: underline; ">
+                                    <strong>
+                                        <font color="blue">Producto: {{d.get_producto_terminado.nombre}}</font>
+                                    </strong>
+                                </span>
                                 </div>
-
-                                <div class=" form-group">
+                                <p>&nbsp;</p>
+                                <p>&nbsp;</p>
+                                <div class=" form-group" style="margin-left: 3%;">
                                     <label class="col-sm-2 control-label">Cantidad Pedida</label>
-                                    <div class="col-sm-10" style="padding:7px;">
+                                    <div class="col-sm-10" style="padding:0.7%;">
                                           {% devolver_cantidad_pedida d %}
                                     </div>
                                 </div>
                                 
-                                <div class=" form-group">
+                                <div class=" form-group" style="margin-left: 3%;">
                                     <label class="col-sm-2 control-label">Cantidad Entregada</label>
-                                    <div class="col-sm-10" style="padding:7px;">
+                                    <div class="col-sm-10" style="padding:0.7%;">
                                         {{d.cantidad_entregada}}
                                     </div>
                                 </div>
 
-                                <div class=" form-group">
+                                <div class=" form-group" style="margin-left: 3%;">
                                     <label class="col-sm-2 control-label">Precio Total</label>
-                                    <div class="col-sm-10" style="padding:7px;">
+                                    <div class="col-sm-10" style="padding:0.7%;">
                                         {{ d.precio }}
                                     </div>
                                 
