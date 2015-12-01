@@ -24,7 +24,7 @@ def producto_cantidad(detalle):
         return detalle.pedido_cliente_detalle.cantidad_producto
 
 @register.simple_tag
-def devolver_cantidad_pedida(entrega,prod):
+def devolver_cantidad_pedida_entrega(entrega,prod):
     """ metodo que resiba una Entrega y un producto
         se recorre los detalles del pedido que apunta la entrega buscando el Producto resibido
         Si lo encuentra devuelve la cantidad pedida que indica el detalle de pedido

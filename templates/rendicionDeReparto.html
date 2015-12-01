@@ -104,7 +104,7 @@
                                                  <tr>    
                                                      <td>{{ p_llevado.producto_terminado.id }}
                                                          {{ p_llevado.producto_terminado.nombre }} </td>
-                                                     <td>{% devolver_cantidad_pedida entrega p_llevado.producto_terminado %}</td>
+                                                     <td>{% devolver_cantidad_pedida_entrega entrega p_llevado.producto_terminado %}</td>
                                  <td> <input entrega_id="{{entrega.id}}" 
                                              type="text" class="input-entregas"
                         producto_hidden_id = "{% devolver_producto entrega p_llevado.producto_terminado %}"
