@@ -35,19 +35,19 @@ Fecha:</font> {{date}}</h4>
                 <table  class="table table-striped table-bordered table-condensed" cellpadding="5px" cellspacing="4px" border="1" id="tableLote">
                     <thead>
                         <tr>
-                            <th style="text-align:center;" width="8%" font size = "6" rowspan="2">Pedido</th>
+                            <th style="text-align:center;" width="5%" font size = "6" rowspan="2">Pedido</th>
                             <th style="text-align:center;" width="8%" font size = "6" rowspan="2">Cliente</th>
-                             <th style="text-align:center;" width="14%" font size = "6" rowspan="2">Direccion</th>
+                             <th style="text-align:center;" width="15%" font size = "6" rowspan="2">Direccion</th>
 
-                            <th style="text-align:center;" width="15%" font size = "6" colspan="{% devolver_len hoja.productosllevados_set.all%}">
+                            <th style="text-align:center;" width="10%" font size = "6" colspan="{% devolver_len hoja.productosllevados_set.all%}">
                                 Productos Pedidos
 
                             </th>
                             <th style="text-align:center;" width="15%" font size = "6" colspan="{% devolver_len hoja.productosllevados_set.all %}">
                                 Productos Entregados
                             </th>
-                            <th style="text-align:center;" width="10%" size= "6" colspan="2">Cobros</th>
-                            <th style="text-align:center;" width="20%" rowspan="2">Observaciones</th>
+                            <th style="text-align:center;" width="5%" size= "6" colspan="2">Cobros</th>
+                            <th style="text-align:center;" width="13%" rowspan="2">Observaciones</th>
                         </tr>
                         <tr>                       
                                 {%for p in hoja.productosllevados_set.all %}                                    
@@ -56,8 +56,8 @@ Fecha:</font> {{date}}</h4>
                                 {%for p in hoja.productosllevados_set.all %}                                    
                                     <th font size = "4" size= "1">{{p.producto_terminado.nombre}}</th>
                                 {%endfor%}
-                            <th>Total</th>
-                            <th>Pagado</th>
+                            <th style="text-align:center;" width="10%" size= "6">Total</th>
+                            <th style="text-align:center;" width="10%" size= "6">Pagado</th>
 
                         </tr>
                     </thead>

@@ -71,7 +71,8 @@
         <tr class="form-row row1 has_original">
             <td><%= d.texto %></td>
             <td class="field-cantidad_insumo">
-                <input class="cantidades_tablas" id="cantidad-<%=i%>" onchange="cambio_cantidad(<%=i%>)"  name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
+                <input class="cantidades_tablas" id="cantidad-<%=i%>" 
+                onchange="cambio_cantidad(<%=i%>)"  name="cantidad-<%=i%>" value="<%=d.cantidad%>" type="text">
             </td>
             <td><button type="button"  data-id="<%= d.insumo%>"  class="btn-modificar" onClick= "modificar(<%=i%>)">Modificar</button></td>
 

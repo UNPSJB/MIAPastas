@@ -1,67 +1,66 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% block contenido %}
+{% load recetas %}
+
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja_ruta.fecha_creacion}}</b></font></p></div>
-            <div class="panel-body">
-                <form class=" form-horizontal">
-                    <h1>{{totales.productos_llevados}}</h1>
-                            {% for key,value in totales.items %}
-                                {{ key }} {{ value }}
-                            {% endfor %}
-                        <div class=" form-group">
-                            <label  class="col-sm-2 control-label">Hoja de Ruta {{hoja_ruta.id}}</label>
-                        </div>
-
-                        <div class=" form-group">
-                            <label class="col-sm-2 control-label">Chofer</label>
-                            <div class="col-sm-10">
-                                {{hoja_ruta.chofer}}
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja.fecha_creacion}}</b></font></p></div>
+            <div class="panel-body">                
+                <form class=" form-horizontal">    
+                <h1> Se Registraron correctamente las entregas</h1>                
+                       
+                        {% for e in hoja.entrega_set.all%}
+                         <div class="bordeado">
+                            <div class=" form-group">
+                                <label class="col-sm-2 control-label" style="text:4px 4px 4px #000;">Cliente</label>
+                                <div class="col-sm-10" style="padding:7px;">
+                                  {{e.pedido.cliente.razon_social}}
+                                </div>
                             </div>
-                            <button type="button" onclick="imprimirHojaRuta()" class="btn btn-primary active pull-right"><span  class="glyphicon glyphicon-print" aria-hidden="true"> Imprimir </span></button>
-                        </div>
-                        <table class="table table-hover">
-                             <thead>
-                                <tr>
-                                   <th>Llevado</th>
-                                   <th>Entregado</th>
-                                   <th>Sobrantes</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% for key,value in totales.items %}
-                            <tr>
-                                    {% for k,v in value.items %}
-                                    <td>{{k}} {{v}}</td>
-                                   {% endfor %}
-                                    </td>
-                                </tr>
-                                                {% endfor %}
+                            {% for d in e.entregadetalle_set.all %}
+                                <div class=" form-group">
+                                    <label class="col-sm-2 control-label">Producto</label>
+                                    <div class="col-sm-10" style="padding:7px;">
+                                      {{d.get_producto_terminado.nombre}}
+                                    </div>
+                                </div>
 
-                            </tbody>
-                         </table>
+                                <div class=" form-group">
+                                    <label class="col-sm-2 control-label">Cantidad Pedida</label>
+                                    <div class="col-sm-10" style="padding:7px;">
+                                          {% devolver_cantidad_pedida d %}
+                                    </div>
+                                </div>
+                                
+                                <div class=" form-group">
+                                    <label class="col-sm-2 control-label">Cantidad Entregada</label>
+                                    <div class="col-sm-10" style="padding:7px;">
+                                        {{d.cantidad_entregada}}
+                                    </div>
+                                </div>
 
+                                <div class=" form-group">
+                                    <label class="col-sm-2 control-label">Precio Total</label>
+                                    <div class="col-sm-10" style="padding:7px;">
+                                        {{ d.precio }}
+                                    </div>
+                                
+                                </div>
+                            
+                            {% endfor %}
+                            </div>
+
+                        {% endfor %}                     
                 </form>
 
             </div>
         </div>
-
             <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
-
 </div>
 </div>
-
 {% endblock %}
-
-
 {% block javascript %}
 <script>
-
-
-
-
-
-
 </script>
 {% endblock %}
