@@ -1301,6 +1301,7 @@ def loteStock(request,lote_id):
     lote_instancia = models.Lote.objects.get(pk = lote_id)
     if request.method == "POST":
         lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
+        print "casi es vlaido"
         if lote_form.is_valid():
             print "es vlidooo"
             lote_form.save(lote_instancia)
