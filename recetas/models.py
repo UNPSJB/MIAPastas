@@ -154,6 +154,7 @@ class ProductoTerminado(models.Model):
     class Meta:
         permissions = (
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
+            ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
 
     def __str__(self):
@@ -481,6 +482,11 @@ class PerdidaStock(models.Model):
     lote = models.ForeignKey(Lote)
     fecha = models.DateField(auto_now_add=True)
     causas = models.PositiveSmallIntegerField(choices=CAUSAS_DECREMENTO_STOCK, default="1")
+
+    class Meta:
+        permissions = (
+            ("ver_perdida_stock", "Puede listar las perdidas de stock"),
+        )
 
 
 #********************************************************#
