@@ -1,0 +1,6 @@
+BAJAR
+python manage.py dumpdata -e contenttypes -e admin -e auth.Permission --natural-foreign --indent=2 > VER.json
+
+SUBIR:
+-python manage.py loaddata  respaldo_usuarios.json
+

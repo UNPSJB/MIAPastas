@@ -68,7 +68,7 @@ Fecha:</font> {{date}}</h4>
                             <td style="text-align:center;" width="15%" size = "6">Cuit-{{entrega.pedido.cliente.cuit}}</td>
                             <td style="text-align:center;" width="10%" size = "6">{{entrega.pedido.cliente.direccion}}</td>                            
                             {%for p in hoja.productosllevados_set.all %}
-                                    <td>{% devolver_cantidad_pedida entrega p.producto_terminado%}</td>
+                                    <td>{% devolver_cantidad_pedida_entrega entrega p.producto_terminado%}</td>
                             {%endfor%}
                             <td style="text-align:center;"></td>
                             <td style="text-align:center;"></td>
