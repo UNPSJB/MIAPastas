@@ -1,10 +1,45 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title></title>
-</head>
-<body>
+{% extends 'base.html' %}
+{% load staticfiles %}
 
-</body>
-</html>
+{% load bootstrap3 %}
+
+{% block contenido %}
+
+<div class="container">
+
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Cambiar Contraseña</b></font></p></div>
+            <div class="panel-body">
+                <div class="col-sm-6 col-md-4 col-md-offset-4">
+                    <form action="{% url 'usuario'  %}" method="post" class="form">
+
+
+                        <div class="form-group">
+                            <label>Usuario:</label>
+                            <input type="text" class="form-control" value="{{user.username}}" name="username" id="username" readonly>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Contraseña Nueva:</label>
+                            <input type="text" class="form-control" value="{{user.first_name}}" name="first_name" id="first_name" >
+                        </div>
+
+                        <div class="form-group">
+                            <label>Repita la Contraseña:</label>
+                            <input type="text" class="form-control" value="{{user.last_name}}" name="last_name" id="last_name" >
+                        </div>
+
+
+
+                        <p>&nbsp;</p>
+
+                    </form>
+                    {% buttons %}
+                    <a class="btn btn-primary" href = "{% url 'usuarioEditar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-pencil" aria-hidden="true"> Aceptar </span></b></font></a>
+                    <!--<a class="btn btn-primary" href = "{% url 'usuarioCambiarClave' %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>-->
+                    {% endbuttons %}
+                </div>
+            </div>
+    </div>
+</div>
+{% endblock %}
