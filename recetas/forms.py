@@ -246,26 +246,11 @@ class ProductoTerminadoForm(forms.ModelForm):
             raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
         return nombre
 
-'''
-
-class PerdidaStockForm(forms.ModelForm):
-    class Meta:
-        model = models.PerdidaStock
-        fields = ["cantidad_perdida","descripcion"]
-
-    def clean_cantidad(self):
-        print "clean_cantidad "
-        c =self.cleaned_data['cantidad']
-        cantidad_producida = self.cleaned_data['cantidad_producida']
-        nueva_cantidad = self.cleaned_data['stock_disponible'] - c
-        if nueva_cantidad < 0:
-            raise ValidationError("El stock disponible no puede ser Negativo.")
-        return self.cleaned_data['cantidad']
-'''
-
 
 class LoteStockForm(forms.ModelForm):
-
+    ''' 
+    Formulario que se usa para decrementar el stock de un lote debido a una perdida (rotura, vencimiento, otro)
+    '''
     class Meta:
         model = models.Lote
         fields = ["stock_disponible", "cantidad_producida","stock_reservado"]
@@ -282,6 +267,9 @@ class LoteStockForm(forms.ModelForm):
         self.mensaje_error = ""
 
     def save(self, *args, **kwargs):
+        ''' Metodo que decrementa el stock en la cantidad ingresada de la perdida y crea una instancia 
+            de perdida para poder tenes un historial de esos decrementos.
+        '''
         print "en save"
         lote= super(LoteStockForm, self).save(*args, **kwargs)
         lote.decrementar_stock_disponible(self.cleaned_data['cantidad'])
@@ -290,15 +278,24 @@ class LoteStockForm(forms.ModelForm):
         return lote
 
     def clean(self):
+        ''' Metodo que lanza mensajes de errores si lo hubieron en las validaciones del formulario
+        '''
         if len(self.mensaje_error) > 0:
            raise ValidationError(self.mensaje_error)
         cleaned_data = super(LoteStockForm, self).clean()
         return cleaned_data
 
-    def clean_cantidad_producida(self):
-        return self.cleaned_data["cantidad_producida"]
+    #def clean_cantidad_producida(self):
+     #   return self.cleaned_data["cantidad_producida"]
 
     def clean_cantidad(self):
+        ''' Metodo que verifica que:
+                El stock resultante de la decrementacion no sea negativo.
+                La cantidad a decrementar ingresada sea mayor a 0.
+                El stock resultante de la decrementacion no sea mayor al stock que se dispone en el deposito.
+                (lo ultimo se debe a que no se puede dar como perdidos productos que se encuentren reservados porque
+                  fueron cargados en una hoja de ruta y se encuantran en etapa de envio)
+        '''
         c =self.cleaned_data['cantidad']
         nueva_cantidad = self.cleaned_data['stock_disponible'] - c
         if nueva_cantidad < 0:
@@ -306,7 +303,7 @@ class LoteStockForm(forms.ModelForm):
         elif c == 0:
             self.mensaje_error = "ERROR: La cantidad debe ser mayor a 0."
         elif self.cleaned_data['cantidad'] > (self.cleaned_data['stock_disponible'] - self.cleaned_data['stock_reservado']):
-            self.mensaje_error = "ERROR: No puede decrementar esa cantidad. Debe rendir las hojas de ruta primero"
+            self.mensaje_error = "ERROR: No puede decrementar esa cantidad. Primero debe rendir las hojas de ruta creadas"
         return self.cleaned_data['cantidad']
 
 
@@ -444,13 +441,18 @@ class DetallePedidoProveedorForm(forms.ModelForm):
 ##########################################################
 
 class PedidoCliente(forms.ModelForm):
+    ''' Formulario "padre" de los tres tipos de pedidos (Fijo, Ocacional y de Cambio)
+        Se lo usa cuando se quiere manejar a los pedidos de manera general sin importar su tipo.
+    '''
     class Meta:
         model = models.PedidoCliente
         fields = ["tipo_pedido","cliente"]
 
 
 class PedidoClienteFijoForm(forms.ModelForm):
-
+    ''' 
+    Formulario que se utiliza para el alta y modificacion de un pedido Fijo
+    '''
     class Meta:
         model = models.PedidoFijo
         dias = MultipleChoiceField(required=True, widget=CheckboxSelectMultiple, choices=models.TIPODIAS)
@@ -461,6 +463,13 @@ class PedidoClienteFijoForm(forms.ModelForm):
 
                 
     def clean(self):
+        ''' 
+        Metodo que realiza validaciones sobre los campos del Formulario.
+            Validaciones:
+                Que la fecha de cancelacion (si existe) sea mayor a la de inicio y a la fecha actual
+                Que se defina almenos un dia de la semana (lunes a viernes)
+                Que no exista otro pedido fijo de ese mismo cliente para los dias seleccionados.
+        '''
         cleaned_data = super(PedidoClienteFijoForm, self).clean()
         if not self.errors:
             cliente = cleaned_data["cliente"]
@@ -481,13 +490,15 @@ class PedidoClienteFijoForm(forms.ModelForm):
                             id = str(pedido.id)
                             raise forms.ValidationError(((mark_safe('Ya existen pedido/s de este cliente para el/los dias marcados. <a href="/pedidosCliente/Modificar/'+id+'">Modificar el pedido existente</a>'))))
 
-            if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < cleaned_data["fecha_inicio"]):
+            if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] <= cleaned_data["fecha_inicio"]):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la de inicio")
             if (cleaned_data["fecha_cancelacion"] !=None) and (cleaned_data["fecha_cancelacion"] < datetime.date.today()):
                 raise ValidationError("Fecha de cancelacion debe ser mayor a la fecha actual")
         return cleaned_data
 
     def clean_fecha_inicio(self):  #Django agota todas las instancas de validacion, por eso si fecha_inicio tenia error, posteriormente no se lo puede usar para validar porque tiene error
+        ''' Metodo que valida en el alta de un pedido fijo que la fecha de inicio no sea menor a la fecha actual.
+        '''
         fecha = self.cleaned_data['fecha_inicio']
         if fecha < datetime.date.today() and self.my_arg == None:
             raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
@@ -501,13 +512,17 @@ class PedidoClienteFijoForm(forms.ModelForm):
 
 
 class PedidoClienteDetalleForm(forms.ModelForm):
+    ''' 
+    Formulario que se usa para los detalles de los pedidos de cualquier tipo de pedido
+    '''
     class Meta:
         model = models.PedidoClienteDetalle
         exclude = ['pedido_cliente'] #setea todos campos menos pedido
 
 
 class PedidoClienteOcacionalForm(forms.ModelForm):
-
+    ''' Formulario que se utiliza para el alta y modificacion de un pedido Ocacinoal
+    '''
     class Meta:
         model = models.PedidoOcacional
         exclude = ['productos','tipo_pedido','activo']
@@ -515,7 +530,10 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
     
     def clean(self):
-        #se verifica que no tenga pedidos para ese mismo dia
+        ''' Metodo que realiza validaciones sobre los campos del Formulario.
+            Se valida que el cliente no tenga pedidos ocacionales para ese mismo dia      
+        '''
+        
         cleaned_data = super(PedidoClienteOcacionalForm, self).clean()
         if not self.errors:
             cliente = cleaned_data["cliente"]
@@ -534,8 +552,12 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             
 
     def clean_fecha_entrega(self):
+        ''' Metodo que verifica que:
+                La fecha de entrega no sea menor a la actual.
+                El dia seleccionado para la entrega sea de lunes a viernes
+        '''
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today() and self.my_arg == None:
+        if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
@@ -547,6 +569,8 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
 
 
 class PedidoClienteCambioForm(forms.ModelForm):
+    ''' Formulario que se utiliza para el alta y modificacion de un pedido de Cambio
+    '''
     class Meta:
         model = models.PedidoCambio
         widgets = {
@@ -555,6 +579,10 @@ class PedidoClienteCambioForm(forms.ModelForm):
 
 
     def clean(self):
+            ''' 
+                Metodo que realiza validaciones sobre los campos del Formulario.
+                Se valida que el cliente no tenga pedidos de cambio para ese mismo dia      
+            '''
             cleaned_data = super(PedidoClienteCambioForm, self).clean()
             if not self.errors:
                 cliente = cleaned_data["cliente"]
@@ -573,8 +601,12 @@ class PedidoClienteCambioForm(forms.ModelForm):
 
 
     def clean_fecha_entrega(self):
+        ''' Metodo que verifica que:
+                La fecha de entrega no sea menor a la actual.
+                El dia seleccionado para la entrega sea de lunes a viernes
+        '''
         fecha = self.cleaned_data['fecha_entrega']
-        if fecha < datetime.date.today() and self.my_arg == None:
+        if fecha < datetime.date.today():
             raise ValidationError("No se puede registrar un pedido para una fecha anterior a la actual")
         elif fecha.weekday() == 5 or fecha.weekday() == 6:
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")

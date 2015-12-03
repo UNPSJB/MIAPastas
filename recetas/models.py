@@ -264,7 +264,6 @@ class Cliente(models.Model):
     email = models.CharField(max_length=30,blank=True,null=True) #blank=True indica que puede estar el campo vacio
     es_moroso = models.BooleanField(default=False)
     saldo = models.FloatField(default=0)
-    #activo = models.BooleanField(default=True)
 
     def __str__(self):
         return "%s (%s)" % (self.cuit, self.razon_social)
@@ -291,6 +290,8 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
+    ''' Modelo de la clase padre de los pedidos de cliente
+    '''
     FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
@@ -304,6 +305,8 @@ class PedidoCliente(models.Model):
     activo = models.BooleanField(default=True)
     
     def esParaHoy(self):
+        ''' Metodo que los hijos lo redefinen
+        '''
         pass
 
     
@@ -311,12 +314,18 @@ class PedidoCliente(models.Model):
         return "%s ( %s)" % (self.cliente, self.get_tipo_pedido_display())
 
 class PedidoClienteDetalle(models.Model):
+    ''' 
+        Clase que modela los detalles de los pedidos independientemente del tipo (fijo, ocacional o de cambio)
+    '''
     cantidad_producto = models.PositiveIntegerField()
     producto_terminado = models.ForeignKey(ProductoTerminado)   #como hacer para q a un mismo cliente solo pueda haber un producto el mismo tipo
 
     pedido_cliente = models.ForeignKey(PedidoCliente)
 
 class PedidoFijo(PedidoCliente):
+    ''' Clase que modela los pedidos fijos, es hija de PedidoCliente
+        Un pedido fijo tiene fecha inicio, los dias para entregas los productos, y puede tener fecha de cancelacion
+    '''
     FILTROS = ['fecha_hasta','fecha_desde']
     FILTROS_MAPPER = {
         'fecha_desde': 'pedidofijo__fecha_cancelacion__gte',
@@ -328,6 +337,10 @@ class PedidoFijo(PedidoCliente):
     dias = MultiSelectField(choices=TIPODIAS)
 
     def esParaHoy(self):
+        ''' Metodo que verifica si un pedido tiene como fecha de entrega la fecha actual.
+            Se lo utiliza al armar una hoja de ruta.
+            Ademas, realiza una "baja logica" si el pedido fijo ya esta vencido (si se paso la fecha de canceacion). 
+        '''
         if self.fecha_cancelacion != None and self.fecha_cancelacion<date.today():
             self.activo=False
             self.save()
@@ -342,6 +355,9 @@ class PedidoFijo(PedidoCliente):
             return False
 
 class PedidoCambio(PedidoCliente):
+    ''' Clase que modela los pedidos de Cambio, es hija de PedidoCliente
+        Un pedido de cambio tiene fecha de entrega.
+    '''
     FILTROS = ['fecha_hasta','fecha_desde']
 
     FILTROS_MAPPER = {
@@ -351,6 +367,8 @@ class PedidoCambio(PedidoCliente):
     fecha_entrega = models.DateField()
 
     def esParaHoy(self):
+        '''Metodo que verifica si un pedido tiene como fecha de entrega la fecha actual.
+        '''
         d = date.today()
         if d == self.fecha_entrega:
             return True
@@ -360,6 +378,9 @@ class PedidoCambio(PedidoCliente):
 
 
 class PedidoOcacional(PedidoCliente):
+    ''' Clase que modela los pedidos ocacionales, es hija de PedidoCliente
+        Un pedido ocacional tiene fecha de entrega.
+    '''
     FILTROS = ['fecha_hasta','fecha_desde']
 
     FILTROS_MAPPER = {
@@ -369,6 +390,8 @@ class PedidoOcacional(PedidoCliente):
 
     fecha_entrega = models.DateField()
     def esParaHoy(self):
+        '''Metodo que verifica si un pedido tiene como fecha de entrega la fecha actual.
+        '''
         d = date.today()
         if d == self.fecha_entrega:
             return True
@@ -398,17 +421,6 @@ class PedidoProveedor(models.Model):
     descripcion = models.TextField(null=True)
     fecha_cancelacion =  models.DateField(blank=True,null=True)
 
-    #relacion con proveedor
-    #relacion con
-    #https://jqueryui.com/datepicker/
-    #fecha_realizacion__gte
-
-    #detalle de pedido
-
-
-    #detalle de pedido
-    #auto_now_add = True
-
 
 class DetallePedidoProveedor(models.Model):
     cantidad_insumo = models.PositiveIntegerField()
@@ -421,7 +433,6 @@ class DetallePedidoProveedor(models.Model):
 #********************************************************#
 class Lote(models.Model):
     FILTROS = ['producto_terminado']
-
     nro_lote = models.AutoField(primary_key=True) # Field name made lowercase.
     fecha_produccion = models.DateField()
     fecha_vencimiento=models.DateField()
@@ -469,6 +480,8 @@ class Factura(models.Model):
 
 
 class PerdidaStock(models.Model):
+    ''' Clase que modela el suceso de decrementar el stock de un lote debido a una perdida (por rotura, vencimiento u otros)
+    '''
     FILTROS = ['fecha_desde','fecha_hasta','causas']
     FILTROS_MAPPER = {
         'fecha_desde': 'fecha__gte',
@@ -644,15 +657,6 @@ class EntregaDetalle(models.Model):
         self.save()
 
 
-class PerdidaStockLote(models.Model):
-    cantidad_perdida = models.PositiveIntegerField()
-    lote = models.ForeignKey(Lote)
-    motivo = models.CharField(max_length=100)
-    fecha = models.DateField(auto_now_add=True)
-     # si se rompio / perdio un prod en un recorrido, ingreso nro de hoja de ruta 
-    hoja_de_ruta = models.ForeignKey(HojaDeRuta,null=True,blank=True) 
-
-
 
 class Recibo(models.Model):
     entrega = models.ForeignKey(Entrega)
@@ -662,36 +666,3 @@ class Recibo(models.Model):
 
 
 
-
-'''
-
-
-
-    #lote_extra = models.ManyToManyField(Lote, through="LotesExtraDetalle",null=True)
-
-    def generar_rendicion(self): # E S T E   M E T O D O   N O   V A    M A S
-        # aca tengo que generar TODOS los detalles de las entregas.
-        # tengo q lanzar una exception si ya las entregas existen. NO se pude rendir una hoja mas de una vez.
-        tiene_prod = False
-        for entrega in self.entrega_set.all():
-            if len(entrega.entregadetalle_set.all())>0:
-                raise "ya tengo rendicion"
-            for prod_llevado in self.productosllevados_set.all():
-                for detalle_pedido in entrega.pedido.pedidoclientedetalle_set.all():
-                    if detalle_pedido.producto_terminado == prod_llevado.producto_terminado:
-                        tiene_prod=True
-                        break
-                if not tiene_prod:
-                    entrega.generar_detalle(None, prod_llevado.producto_terminado)
-                else:
-                    entrega.generar_detalle(detalle_pedido, None)
-                tiene_prod=False
-
-
-    def balance(self):  # NO    V A    M A S 
-        return "nada"
-
-
-    #objects = ManagerActivosHojasRutas()
-    
-'''
