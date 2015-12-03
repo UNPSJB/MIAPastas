@@ -3,7 +3,10 @@
 .. toctree::
    :maxdepth: 1
    
-   Ciudad_alta
-   Ciudad_modificar
-   Ciudad_eliminar
+   ciudad_alta
+   ciudad_modificar
+   ciudad_eliminar
 
+
+.. automodule:: ciudad.models
+   :members:

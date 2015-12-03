@@ -16,8 +16,8 @@ Contents:
 .. toctree::
    :maxdepth: 3
    
-   Tutorial
-   Proyecto
+   tutorial
+   proyecto
    Codigo
 
 Indices and tables

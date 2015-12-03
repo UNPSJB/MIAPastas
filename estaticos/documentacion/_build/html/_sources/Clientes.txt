@@ -4,7 +4,10 @@
 .. toctree::
    :maxdepth: 1
    
-   Clientes_alta
-   Clientes_modificar
-   Clientes_Eliminar
+   clientes_alta
+   clientes_modificar
+   clientes_Eliminar
 
+
+.. automodule:: cliente.models
+   :members:

@@ -7,14 +7,15 @@ Debajo se encontrará una lista de las recetas que se encuentran almacenadas con
 Documentation for the Code
 **************************
 
-.. automodule:: recetas.models
-   :members:
 
 .. image:: _static/recetas/rece_ini.jpg
 
 .. toctree::
    :maxdepth: 1
    
-   Recetas_alta
-   Receta_modificar
-   Receta_eliminar
+   recetas_alta
+   receta_modificar
+   receta_eliminar
+
+.. automodule:: recetas.models
+   :members:
