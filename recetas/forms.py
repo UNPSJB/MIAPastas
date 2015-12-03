@@ -749,5 +749,29 @@ class ProdLlevadoDetalleRendirForm(forms.Form):
 
 ProdLlevadoFormset_class = formset_factory(ProdLlevadoDetalleRendirForm)
 
-  ############### COBRAR A CLIENTE ####################
+  ############### REGISTRAR PAGOS PARA ENTREGAS EN RENDICION ####################
+
+class CobroEntregaRendir(forms.Form):
+    entrega = forms.ModelChoiceField(models.Entrega.objects.all())
+    cantidad_abonada = forms.FloatField()
+    nro_doc = forms.IntegerField()
+
+    def clean_nro_doc(self):
+        # aca hay que ver que el nro de doc no exista en Facturas y Resivos.
+        return self.cleaned_data["nro_doc"]
+
+    def save(self):
+        """ Si la cantidad abonada es igual al precio total de la Entrega se crea una Factura
+            con nro_doc y se asocia a la Entrega, si cantidad abonada es menor al precio total
+            se crea un resibo"""
+        if self.cleaned_data["cantidad_abonada"]== self.cleaned_data["entrega"].precio_total():
+            print "GENERAR FACTURA"
+        else:
+            print "generar resibo"
+
+
+
+
+  ############### fin ####################
+
 

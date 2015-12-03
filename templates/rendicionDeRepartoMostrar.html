@@ -9,7 +9,8 @@
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja.fecha_creacion}}</b></font></p></div>
             <div class="panel-body">                
                 <form class=" form-horizontal" method = "post" onsubmit = "return validar()">    
-                                     {% csrf_token %}
+                    {% csrf_token %}
+                    {{ cobros_factory.management_form }}
 
                 <h1><font color="#2E8B57" font-size="20%">Se Registraron correctamente las entregas.</font> </h1>
                     {% for e in hoja.entrega_set.all%}
@@ -59,7 +60,7 @@
                                 <label for="monto"> Monto a abonar: $ </label>
                                 <input type="text" class="form-control monto" id="monto"
                                         data-preciototal= "{%devolver_precio_total e%}"
-                                        data-entregaid = "{% e.id %}"
+                                        data-entregaid = "{{ e.id }}"
                                          >
                                 
                                 <label for="nro_doc"> Nro facgtura/remito:  </label>
@@ -87,7 +88,19 @@
 {% endblock %}
 {% block javascript %}
 <script>
+var prefix = "{{prefix_cobros}}";
 
+
+function armar_inputs(){
+    var html = "";
+    var a = $(".monto");
+    for (i=0,i<_.size(a);i++){
+        html = html + armar_hidden(prefix, a[i].value, "cantidad_abonada",i);
+        
+
+    }
+
+}
 
 
 function inputs_validos(m){
@@ -117,6 +130,10 @@ function validar(){
 $(".monto").click(function(){
     $(this).val($(this).data()["preciototal"]);
 });
+
+
+
+
 
 </script>
 {% endblock %}

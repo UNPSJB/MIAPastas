@@ -1464,9 +1464,13 @@ def rendicionReparto(request,hoja_id=None):
 
 @login_required()
 def RendicionDeRepartoMostrar(request,hoja_id):
+    print "EN RENDICION REPARTO MOSTRAR VIEWW"
+    cobros_factory_class = formset_factory(forms.CobroEntregaRendir)
     hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
-    totales = hoja.balance()
-    return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,"totales":totales})
+    
+    return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
+                                                            "cobros_factory":cobros_factory_class(prefix="cobros"),
+                                                            "prefix_cobros":"cobros"})
 
 
 

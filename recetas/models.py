@@ -600,23 +600,12 @@ class Entrega(models.Model):
     def cobrar_con_recibo(self,monto,numero_recibo=None):
         recibo = Recibo.objects.create(entrega=self,fecha=date.today(),numero=numero_recibo,monto_pagado=monto)
 
-    def generar_detalle(self,detalle_pedido=None, prod_terminado=None):
-        print "EN GENERAR DETALLE:"
-
-        if detalle_pedido:
-            precio = detalle_pedido.producto_terminado.precio
-        else:
-            precio = prod_terminado.precio
-
-        detalle = EntregaDetalle.objects.create(entrega=self,
-                                    pedido_cliente_detalle = detalle_pedido,
-                                    producto_terminado = prod_terminado,
-                                    cantidad_entregada=0,
-                                    precio = precio)
-
-        print "PRECIO PAPAAAA:", detalle.precio
-        detalle.save()
-        print "guarde detalle nuevo"
+    def precio_total(self):
+        count = 0
+        for d in self.entregadetalle_set.all():
+            count += d.precio
+        return count
+        
 
 class EntregaDetalle(models.Model):
     entrega = models.ForeignKey(Entrega)
