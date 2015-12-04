@@ -279,6 +279,7 @@ class LoteStockForm(forms.ModelForm):
         self.fields['stock_disponible'].label = "Stock (*)"
         self.fields['cantidad_producida'].label = "producida(*)"
         self.fields['cantidad'].label = "Cantidad ( * )"
+        self.mensaje_error = ""
 
     def save(self, *args, **kwargs):
         print "en save"
@@ -289,26 +290,23 @@ class LoteStockForm(forms.ModelForm):
         return lote
 
     def clean(self):
-        print "CLEAN POSTA"
-        #if self._errors:
+        if len(self.mensaje_error) > 0:
+           raise ValidationError(self.mensaje_error)
         cleaned_data = super(LoteStockForm, self).clean()
         return cleaned_data
 
     def clean_cantidad_producida(self):
-        print "clean_cantidad_producida "
         return self.cleaned_data["cantidad_producida"]
 
     def clean_cantidad(self):
-        print "holis"
-        print self.cleaned_data['stock_reservado']
         c =self.cleaned_data['cantidad']
         nueva_cantidad = self.cleaned_data['stock_disponible'] - c
         if nueva_cantidad < 0:
-            raise ValidationError("El stock disponible no puede ser Negativo.")
+            self.mensaje_error = "ERROR: El stock disponible no puede ser Negativo."
         elif c == 0:
-            raise ValidationError("La cantidad debe ser mayor a 0.")
+            self.mensaje_error = "ERROR: La cantidad debe ser mayor a 0."
         elif self.cleaned_data['cantidad'] > (self.cleaned_data['stock_disponible'] - self.cleaned_data['stock_reservado']):
-            raise ValidationError("No se puede decrementar esa cantidad. Debe rendir las hojas de ruta enviadas.")
+            self.mensaje_error = "ERROR: No puede decrementar esa cantidad. Debe rendir las hojas de ruta primero"
         return self.cleaned_data['cantidad']
 
 
@@ -725,9 +723,6 @@ class ProductosLlevadosForm(forms.ModelForm):
         #    producto_llevado.delete()
         #    return None
         return producto_llevado
-
-
-        
 
 
 class BaseProductoLlevadoFormset(BaseFormSet):

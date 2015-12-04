@@ -154,6 +154,7 @@ class ProductoTerminado(models.Model):
     class Meta:
         permissions = (
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
+            ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
 
     def __str__(self):
@@ -333,6 +334,7 @@ class PedidoFijo(PedidoCliente):
         if self.fecha_cancelacion != None and self.fecha_cancelacion<date.today():
             self.activo=False
             self.save()
+            print "en es para hoyyyy"
             return False
         num_dia = date.today().weekday()
         if self.dias == None:
@@ -481,6 +483,11 @@ class PerdidaStock(models.Model):
     fecha = models.DateField(auto_now_add=True)
     causas = models.PositiveSmallIntegerField(choices=CAUSAS_DECREMENTO_STOCK, default="1")
 
+    class Meta:
+        permissions = (
+            ("ver_perdida_stock", "Puede listar las perdidas de stock"),
+        )
+
 
 #********************************************************#
          #    HOJA DE RUTA   #
@@ -529,8 +536,6 @@ class ProductosLlevados(models.Model):
             print "Faltaron ",cantidad_buscada, "unidades para el producto: ",self.producto_terminado
         self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
         self.save()
-
-
 
 
 class ProductosLlevadosDetalle(models.Model):

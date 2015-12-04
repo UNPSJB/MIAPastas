@@ -200,8 +200,11 @@ def usuariosAdminModificarQuitarGrupo(request, usuario_id, grupo_usuario_id):
 @permission_required('auth.delete_user')
 def usuariosAdminBaja(request,usuario_id):
     usuario = auth_models.User.objects.get(pk=usuario_id)
-    messages.success(request, 'El usuario: ' + usuario.username + ', ha sido eliminado correctamente.')
-    usuario.delete()
+    if not usuario.is_staff:
+        messages.success(request, 'El usuario: ' + usuario.username + ', ha sido eliminado correctamente.')
+        usuario.delete()
+    else:
+        messages.error(request, 'El usuario: ' + usuario.username + ', no puede ser eliminado ya que posee privilegios de superusuaro.')
     return redirect('usuariosAdmin')
 
 
