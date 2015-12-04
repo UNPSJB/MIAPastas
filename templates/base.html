@@ -177,7 +177,7 @@
 
 
 <!-- lista desplegable de Productos terminados -->
-        {% if perms.recetas.add_productoterminado or perms.recetas.change_productoterminado %}
+        {% if perms.recetas.add_productoterminado and perms.recetas.change_productoterminado %}
             <li class="dropdown">
                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Productos Terminados<span class="caret"></span></a>
                 <ul class="dropdown-menu">
