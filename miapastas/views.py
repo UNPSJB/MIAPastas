@@ -36,11 +36,6 @@ from xlsxwriter.workbook import Workbook
 
 
 
-
-
-
-
-
 def get_order(get):
     if "o" in get:
         return get["o"]

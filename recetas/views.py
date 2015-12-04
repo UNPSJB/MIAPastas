@@ -586,7 +586,7 @@ def productosTerminadosBaja(request, producto_id=None):
     '''
     if len(p.pedidocliente_set.filter(activo=True))> 0:
         messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
-    elif len(p.lote_set.filter(stock_disponible>0)>0):
+    elif len(p.lote_set.filter(stock_disponible__gt = 0))>0:
         messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene lotes con stock disponible.')
     elif p.receta_set.exists():
         messages.error(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
@@ -1176,6 +1176,11 @@ def pedidosProveedorRecepcionar(request,pedido_id):
                 "pedido":pedido_proveedor_instancia })
             pedido_proveedor_instancia.estado_pedido = 2
             pedido_proveedor_instancia.save()
+            for detalle in pedido_proveedor_instancia.detallepedidoproveedor_set.all():
+                print detalle.insumo.stock, "ANTES"
+                detalle.insumo.stock -=detalle.cantidad_insumo
+                detalle.insumo.save()
+                print detalle.insumo.stock
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
     else:
