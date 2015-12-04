@@ -57,18 +57,27 @@ function imputs_llenos(inputs){
 }
 
 function esFloatPositivo(num){
-    var esFloat = /^[0-9]+(.[0-9]+)?$/;
+    /*
+    var esFloat = /^[0-9]+(.[0-9]+)?/;
     if (esFloat.test(num) && (num>0)){
         return true}
     return false
+    '''
+*/
 }
 
 function esEnteroPositivo(num){
-    var isInt = /^[0-9]+$/;
-    if (isInt.test(num) && (num>0)){
-        return true}
-    return false
-
+  
+  //  var isInt = /^[0-9]+/;
+  //  if (isInt.test(num) && (num>0)){
+     //   return true}
+    //return false
+    
+    if (num % 1 == 0){
+      alert("CSM");
+      return true;
+    }
+    return false;
 }
 
 

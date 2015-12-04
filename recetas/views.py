@@ -896,6 +896,7 @@ def pedidosClientes(request,pedido_id=None):
         qobj |= Q(**mfilters)
 
         pedidos = models.PedidoCliente.objects.filter(pobj & qobj)
+        #pedidos = pedidos.filter(activo=True)
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
@@ -1467,7 +1468,17 @@ def RendicionDeRepartoMostrar(request,hoja_id):
     print "EN RENDICION REPARTO MOSTRAR VIEWW"
     cobros_factory_class = formset_factory(forms.CobroEntregaRendir)
     hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
-    
+    if request.method == "POST":
+        cobros_form = cobros_factory_class(request.POST,request.FILES,prefix="cobros")
+        if cobros_form.is_valid():
+            print "COBROS FORM SON VALIDOS"
+            for form in cobros_form:
+                if form.is_valid():
+                    form.save()
+                else:
+                    print "el formulario solo no es valido"
+        else:
+            print "el factoruy no es valido"
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_factory_class(prefix="cobros"),
                                                             "prefix_cobros":"cobros"})

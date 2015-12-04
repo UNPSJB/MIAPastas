@@ -291,7 +291,7 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente','activo' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),
@@ -468,7 +468,8 @@ class Factura(models.Model):
     numero = models.PositiveIntegerField()  #es el numero de la factura en papel
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
 
-
+    def __str__(self):
+        return "%s" % ("Factura")
 
 
 class PerdidaStock(models.Model):
@@ -589,6 +590,10 @@ class Entrega(models.Model):
         return self.monto_total()-self.monto_ya_abonado()
 
     def cobrar_con_factura(self,monto,numero_factura=None):
+        """ recibe monto que debe coincidir con el precio total de la entrega
+            si resiba un nro de factura, asocia esa factura a la entrega.
+            si no recibe nro de factura, crea nueva factura y la asocia a la entrega  
+        """
         factura=Factura.objects.filter(numero=numero_factura)   #devuelve una lista!!!!
         if (len(factura) == 0):
             factura=Factura.objects.create(numero=numero_factura,fecha=date.today(),monto_pagado=monto)
@@ -652,7 +657,8 @@ class Recibo(models.Model):
     numero = models.PositiveIntegerField()  #es el numero del recibo en papel
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
 
-
+    def __str__(self):
+        return "%s" % ("Resibo")
 
 
 '''

@@ -55,19 +55,19 @@
                                     </div>                                
                                 </div>                            
                             {% endfor %}
-                            <div class="form-inline ocultos" style="margin-left: 3%;">                            
+                            {% if e.pedido.tipo_pedido != 3%}                            
+                            <div class="form-inline pagos" style="margin-left: 3%;">                            
                                 <h1 style="margin-left: 5%;"><font color="black" size="5%">Pagos </font> </h1>
                                 <label for="monto"> Monto a abonar: $ </label>
                                 <input type="text" class="form-control monto" id="monto"
                                         data-preciototal= "{%devolver_precio_total e%}"
                                         data-entregaid = "{{ e.id }}"
-                                         >
-                                
-                                <label for="nro_doc"> Nro facgtura/remito:  </label>
-                                <input type="text" class="form-control" id="nro_doc" >
-                                
+                                         >                                
+                                <label for="nro_doc"> Nro factura/remito:  </label>
+                                <input type="text" class="form-control documento" id="nro-{{ e.id }}" >                                
                                 <button type="button" id="pagar" onclick="" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
                             </div>
+                            {% endif%}
                             </div>
 
                              
@@ -77,7 +77,8 @@
                         <button id = "btn-submit" type="submit" class="btn btn-primary">
                             {% bootstrap_icon "star" %} Registrar Pagos
                         </button>
-                    {% endbuttons %}                 
+                    {% endbuttons %}    
+                    <div id="hiddens_cobros"></div>             
                 </form>
 
             </div>
@@ -94,11 +95,17 @@ var prefix = "{{prefix_cobros}}";
 function armar_inputs(){
     var html = "";
     var a = $(".monto");
-    for (i=0,i<_.size(a);i++){
-        html = html + armar_hidden(prefix, a[i].value, "cantidad_abonada",i);
-        
-
+    for (i=0;i<_.size(a);i++){
+        html = html + armar_hidden(prefix, a[i].value, "cantidad_abonada",i);        
+        id_num = "#nro-"+a[i].getAttribute("data-entregaid"); 
+        numero_doc = $(id_num).val();
+        html = html + armar_hidden(prefix, numero_doc, "nro_doc",i);
+        html = html + armar_hidden(prefix, a[i].getAttribute("data-entregaid"), "entrega",i);      
     }
+    $("#hiddens_cobros").html(html);
+    alert(_.size(a));
+    document.getElementById("id_"+prefix+"-TOTAL_FORMS").value = _.size(a);
+
 
 }
 
@@ -107,23 +114,51 @@ function inputs_validos(m){
     var total = 0;
     var valor = 0;
     var diferencia = 0;
-    $(m).each(function(i,val){
-        total = parseFloat(val.getAttribute("data-preciototal"));
-        valor = parseFloat(val.value);            
+    for(i=0; i<_.size(m);i++){
+        total = parseFloat(m[i].getAttribute("data-preciototal"));
+        valor = parseFloat(m[i].value);  
+        id_entrega = m[i].getAttribute("data-entregaid"); 
+        id_num = "#nro-"+id_entrega; 
+        numero_doc = $(id_num).val();
         if (valor > total){
             diferencia = valor - total; 
-            alert("Se pagaton "+diferencia+" pesos de mas para la entrega");
-        }      
-    });
-    alert("todo legal");
-    return false;
+            alert("Se pagaton "+diferencia+" pesos de mas para la entrega con id "+id_entrega);
+            return false;
+        } 
+        if  (esFloatPositivo(valor)== false){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe ser un numero positivo el monto de la entrega con id "+id_entrega,
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+            return false;
+        }
+                if(numero_doc.length == 0){
+                     if (valor != 0){
+                        alert("Debe ingresar un numero de recibo/factura para la entrega con id "+id_entrega);
+                        return false;
+                }
+               
+            }
+    }
+    
+    return true; 
 }
 
 function validar(){
     var montos_pagados = $(".monto");    
     if (inputs_validos(montos_pagados)){
-        console.log("asd");
-    }
+        console.log("es todo valido hay q mandar true");
+        armar_inputs();
+        return true;
+    }    
     return false;
 }
 

@@ -44,6 +44,7 @@
                                 <th>Cuit</th>
                                 <th>Razón Social</th>
                                 <th>Ciudad</td>
+                                <th>Saldo</td>
                                 <th>Moroso</td>
                             </tr>
                             </thead>
@@ -52,7 +53,9 @@
                                 <tr class="renglon select-item" data-id="{{cliente.id}}" id="renglon-{{cliente.id}}">
                                     <td>{{cliente.cuit}}</td>
                                     <td>{{cliente.razon_social}}</td>
-                                 <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
+                                 <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a>
+                                <td>{{cliente.saldo}}</td>
+                                 </td>
                                     <td>{% if cliente.es_moroso == True %}
                                             <span  class="glyphicon glyphicon-ok" aria-hidden="true"> </span>
                                         {% endif %}

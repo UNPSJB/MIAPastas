@@ -154,6 +154,9 @@ class Migration(migrations.Migration):
                 ('causas', models.PositiveSmallIntegerField(default=b'1', choices=[(1, b'Vencimiento'), (2, b'Rotura'), (3, b'Otros')])),
                 ('lote', models.ForeignKey(to='recetas.Lote')),
             ],
+            options={
+                'permissions': (('ver_perdida_stock', 'Puede listar las perdidas de stock'),),
+            },
         ),
         migrations.CreateModel(
             name='PerdidaStockLote',
@@ -197,7 +200,7 @@ class Migration(migrations.Migration):
                 ('activo', models.BooleanField(default=True)),
             ],
             options={
-                'permissions': (('ver_productos_terminados_disponibles', 'Puede listar los productos disponibles'),),
+                'permissions': (('ver_productos_terminados_disponibles', 'Puede listar los productos disponibles'), ('ver_productos_mas_vendidos', 'Puede listar los productos mas vendidos')),
             },
         ),
         migrations.CreateModel(
@@ -264,7 +267,7 @@ class Migration(migrations.Migration):
             name='PedidoFijo',
             fields=[
                 ('pedidocliente_ptr', models.OneToOneField(parent_link=True, auto_created=True, primary_key=True, serialize=False, to='recetas.PedidoCliente')),
-                ('fecha_inicio', models.DateField(default=datetime.date(2015, 11, 28))),
+                ('fecha_inicio', models.DateField(default=datetime.date(2015, 12, 3))),
                 ('fecha_cancelacion', models.DateField(null=True, blank=True)),
                 ('dias', multiselectfield.db.fields.MultiSelectField(max_length=9, choices=[(1, b'lunes'), (2, b'martes'), (3, b'miercoles'), (4, b'jueves'), (5, b'viernes')])),
             ],

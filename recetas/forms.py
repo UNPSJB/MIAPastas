@@ -677,30 +677,6 @@ class BaseEntregaDetalleFormset(BaseFormSet):
     def clean(self):        
         print "en clean principal base"
        
-        """ cant_enviada = 0
-        hoja = None
-        productos={}
-        for form in self.forms:
-            if hoja is None:
-                hoja = form.cleaned_data["entrega"].hoja_de_ruta
-            p = form.cleaned_data["producto_terminado"] 
-            if p is None:
-                p = form.cleaned_data["pedido_cliente_detalle"].producto_terminado
-            print "producto terminado es: ",p.nombre, p.id
-            try:
-                productos[p.id] += form.cleaned_data["cantidad_entregada"]
-            except:
-                productos[p.id] = 0
-                productos[p.id] += form.cleaned_data["cantidad_entregada"]
-        print "cantidad total enviada:",productos
-        for p_llevado in hoja.productosllevados_set.all():
-            cant_entregada =productos[p_llevado.producto_terminado.id]
-            cant_enviada = p_llevado.cantidad_enviada
-            print "cantidad enviada: ",cant_enviada, "cantidad entregada: ",cant_entregada
-            if cant_entregada > cant_enviada:
-                print "cantidad entregada es mayor a la enviada, todo mal."
-                raise ValidationError("Cantidad entregada es mayor a la cantidad enviada")
-          """      
 
 EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)
 
@@ -756,19 +732,42 @@ class CobroEntregaRendir(forms.Form):
     cantidad_abonada = forms.FloatField()
     nro_doc = forms.IntegerField()
 
-    def clean_nro_doc(self):
-        # aca hay que ver que el nro de doc no exista en Facturas y Resivos.
-        return self.cleaned_data["nro_doc"]
+    def clean(self):
+        cleaned_data = super(CobroEntregaRendir, self).clean()
+        cantidad_abonada = self.cleaned_data["cantidad_abonada"]
+        entrega = self.cleaned_data["entrega"]
+        nro_doc = self.cleaned_data["nro_doc"]        
+        if cantidad_abonada == entrega.precio_total():
+            obj = models.Factura
+        else:
+            obj = models.Recibo
+        try:
+            o = obj.objects.get(pk=nro_doc)
+        except:
+            return cleaned_data
+        if o is not None:
+            raise ValidationError("Para la entrega",entrega.id," se registro un/una ",o,"que ya existe")
+        return cleaned_data
+
+
+
 
     def save(self):
         """ Si la cantidad abonada es igual al precio total de la Entrega se crea una Factura
             con nro_doc y se asocia a la Entrega, si cantidad abonada es menor al precio total
             se crea un resibo"""
-        if self.cleaned_data["cantidad_abonada"]== self.cleaned_data["entrega"].precio_total():
-            print "GENERAR FACTURA"
-        else:
-            print "generar resibo"
+        cantidad_abonada = self.cleaned_data["cantidad_abonada"]
+        entrega = self.cleaned_data["entrega"]
+        nro_doc = self.cleaned_data["nro_doc"]
 
+
+
+        if cantidad_abonada == entrega.precio_total():            
+            entrega.cobrar_con_factura(cantidad_abonada, nro_doc)
+        else:            
+            entrega.cobrar_con_recibo(cantidad_abonada, nro_doc)
+        
+        self.cleaned_data["entrega"].pedido.cliente.decrementar_saldo(self.cleaned_data["cantidad_abonada"])
 
 
 
