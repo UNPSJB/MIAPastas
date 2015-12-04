@@ -65,6 +65,7 @@
                                          >                                
                                 <label for="nro_doc"> Nro factura/remito:  </label>
                                 <input type="text" class="form-control documento" id="nro-{{ e.id }}" >                                
+
                                 <button type="button" id="pagar" onclick="" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
                             </div>
                             {% endif%}
@@ -152,15 +153,18 @@ function inputs_validos(m){
     return true; 
 }
 
+
 function validar(){
     var montos_pagados = $(".monto");    
     if (inputs_validos(montos_pagados)){
         console.log("es todo valido hay q mandar true");
         armar_inputs();
         return true;
-    }    
-    return false;
+    }
+    return false;    
 }
+    
+
 
 $(".monto").click(function(){
     $(this).val($(this).data()["preciototal"]);

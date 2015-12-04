@@ -90,7 +90,6 @@ def devolver_precio_total(entrega):
     count = 0
     for d in entrega.entregadetalle_set.all():
         count += d.precio
-    print "EN DEVOLVER PRECIO TOTAL: ",count
     return count
 
 
