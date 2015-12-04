@@ -80,4 +80,17 @@ def stock_totales(productos):
          cant+=p.stock
 	return cant
 
+@register.simple_tag
+def devolver_precio_total(entrega):
+    """ Resibe un objeto Entrega
+        Recorre sus detalles sumando el precio que tenga cada uno para obtener el precio total
+        detalles deben tener en precio, el precio total (precio prod * cantidad entregada)
+        retorna precio total
+    """
+    count = 0
+    for d in entrega.entregadetalle_set.all():
+        count += d.precio
+    print "EN DEVOLVER PRECIO TOTAL: ",count
+    return count
+
 

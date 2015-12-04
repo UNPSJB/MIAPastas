@@ -662,20 +662,17 @@ class EntregaDetalleForm(forms.ModelForm):
         model = models.EntregaDetalle
         fields = ["cantidad_entregada","entrega","pedido_cliente_detalle","producto_terminado"]
 
-    def save(self):
-        # tengo que aumentar el saldo del cliente
+    def save(self):        
         det = super(EntregaDetalleForm, self).save(commit=False)
         if det.pedido_cliente_detalle is None and det.cantidad_entregada == 0:
-            return 
-        for p in self.cleaned_data["entrega"].hoja_de_ruta.productosllevados_set.all():
-            if p.producto_terminado == det.get_producto_terminado():
-                
-                det.precio = p.precio * det.cantidad_entregada 
-                break
+            return # no sirve para nada
+        #for p in self.cleaned_data["entrega"].hoja_de_ruta.productosllevados_set.all():
+         #   if p.producto_terminado == det.get_producto_terminado():                
+          #      det.precio = p.precio * det.cantidad_entregada 
+           #     break
+        det.set_precio()
         det.save()
-        if det.entrega.pedido.tipo_pedido != 3: # de cambio no toca el saldo
-            
-            det.entrega.pedido.cliente.aumentar_saldo(det.precio)
+        det.entrega.pedido.cliente.aumentar_saldo(det.precio)
             
 
 class BaseEntregaDetalleFormset(BaseFormSet):
