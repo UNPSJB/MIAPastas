@@ -118,10 +118,12 @@
                                                 {% endfor %}
                                             {%else%}
                                                 {%for d in entrega.pedido.pedidoclientedetalle_set.all%}
+                                                    {% if hoja|producto_fue_llevado:d.producto_terminado%}
                                                     <tr>    
                                                      <td>{{ d.producto_terminado.id }}
                                                          {{ d.producto_terminado.nombre }} </td>
                                                      <td>{{ d.cantidad_producto }}</td>
+                                                    }
                                  <td> <input entrega_id="{{entrega.id}}" 
                                              type="text" class="input-entregas"
                         producto_hidden_id = "{{ d.producto_terminado.id}}"
@@ -131,6 +133,7 @@
                                             value="0">
                                         </td>
                                                  </tr>
+                                                    {% endif%}
                                                 {%endfor%}
                                             {% endif %}
                                             </table>

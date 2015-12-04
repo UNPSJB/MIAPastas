@@ -1,5 +1,5 @@
 from django import template
-
+from django.template.defaultfilters import stringfilter
 register = template.Library()
 
 @register.simple_tag
@@ -82,7 +82,7 @@ def stock_totales(productos):
 
 @register.simple_tag
 def devolver_precio_total(entrega):
-    """ Resibe un objeto Entrega
+    """ Recibe un objeto Entrega
         Recorre sus detalles sumando el precio que tenga cada uno para obtener el precio total
         detalles deben tener en precio, el precio total (precio prod * cantidad entregada)
         retorna precio total
@@ -93,3 +93,19 @@ def devolver_precio_total(entrega):
     return count
 
 
+@register.filter
+def producto_fue_llevado(h,p):
+    """ Recibe un producto y lo busca en la hoja.
+        devuelve True si lo encuentra
+        Falso si no lo encuentra
+    """
+    esta = False
+    print "fuer llevado"
+    for c in h.productosllevados_set.all():
+        if c.producto_terminado == p:
+            print "retorn true"
+            esta =  True
+            break
+    print "retorn ",esta
+    return esta
+    return False

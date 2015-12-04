@@ -518,6 +518,17 @@ class HojaDeRuta(models.Model):
                             "cantidad_pedida":p.cantidad_pedida}) 
         return totales
 
+    def tiene_algun_producto(self):
+        print "en tiene algun prod"
+        tiene = False
+        for p in self.productosllevados_set.all():
+            if p.cantidad_enviada > 0:
+                tiene = True
+                break
+        print "retorno : ",tiene
+        return tiene            
+
+
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
     cantidad_enviada = models.PositiveIntegerField(default=0)

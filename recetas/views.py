@@ -1373,7 +1373,7 @@ def hojaDeRutaAlta(request):
             if p_llevado.is_valid():
                  p_llevado.save(hoja_ruta_instancia)
             #print "ERRORES ",p_llevado.errors.as_data()
-        if hoja_ruta_instancia.productosllevados_set.all():
+        if hoja_ruta_instancia.tiene_algun_producto():
             if  entregas_factory.is_valid():
                 for e in entregas_factory:
                     entrega_instancia= e.save(hoja_ruta_instancia)
@@ -1483,7 +1483,7 @@ def RendicionDeRepartoMostrar(request,hoja_id):
             messages.success(request,"Se registraron correctamente los pagos de las entregas")
             return redirect('index')
         else:
-            print "el factoruy no es valido"
+            print "el factory no es valido"
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_form,
                                                             "prefix_cobros":"cobros"})
