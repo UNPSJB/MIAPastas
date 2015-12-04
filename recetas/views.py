@@ -1481,9 +1481,9 @@ def RendicionDeRepartoMostrar(request,hoja_id):
                 else:
                     print "el formulario solo no es valido"
             messages.success(request,"Se registraron correctamente los pagos de las entregas")
+            return redirect('index')
         else:
             print "el factoruy no es valido"
-
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_form,
                                                             "prefix_cobros":"cobros"})
