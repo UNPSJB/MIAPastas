@@ -586,7 +586,7 @@ def productosTerminadosBaja(request, producto_id=None):
     '''
     if len(p.pedidocliente_set.filter(activo=True))> 0:
         messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
-    elif len(p.lote_set.filter(stock_disponible>0)>0):
+    elif len(p.lote_set.filter(stock_disponible__gt = 0))>0:
         messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene lotes con stock disponible.')
     elif p.receta_set.exists():
         messages.error(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
