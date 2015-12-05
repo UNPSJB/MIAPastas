@@ -11,11 +11,10 @@ Documentation for the Code
 .. image:: _static/recetas/rece_ini.jpg
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
-   recetas_alta
-   receta_modificar
-   receta_eliminar
+   recetas alta
+   receta modificar
+   receta eliminar
 
-.. automodule:: recetas.models
-   :members:
+

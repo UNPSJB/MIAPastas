@@ -18,7 +18,8 @@ Contents:
    
    tutorial
    proyecto
-   Codigo
+   codigo
+   ayuda usuario
 
 Indices and tables
 ==================

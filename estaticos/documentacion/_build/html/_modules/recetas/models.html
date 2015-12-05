@@ -83,7 +83,8 @@
                 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">﻿Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../proyecto.html">﻿Proyecto</a></li>
-<li class="toctree-l1"><a class="reference internal" href="../../Codigo.html">Codigo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../codigo.html">Codigo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../ayuda usuario.html">﻿AYUDA DE USUARIO</a></li>
 </ul>
 
             
@@ -167,7 +168,7 @@
 <span class="c"># Create your models here.</span>
                <span class="c">#     C H O F E R E S    #</span>
 <span class="c">#********************************************************#</span>
-<div class="viewcode-block" id="Chofer"><a class="viewcode-back" href="../../recetas.html#recetas.models.Chofer">[docs]</a><span class="k">class</span> <span class="nc">Chofer</span> <span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>    
+<div class="viewcode-block" id="Chofer"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Chofer">[docs]</a><span class="k">class</span> <span class="nc">Chofer</span> <span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>    
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cuit_icontains&#39;</span><span class="p">,</span> <span class="s">&#39;nombre_icontains&#39;</span><span class="p">]</span>
     <span class="n">cuit</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">nombre</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
@@ -196,7 +197,7 @@
 
 
 
-<div class="viewcode-block" id="Insumo"><a class="viewcode-back" href="../../recetas.html#recetas.models.Insumo">[docs]</a><span class="k">class</span> <span class="nc">Insumo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Insumo"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Insumo">[docs]</a><span class="k">class</span> <span class="nc">Insumo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span> <span class="s">&#39;stock__lte&#39;</span><span class="p">]</span>
 
 
@@ -272,7 +273,7 @@
             <span class="c">#     P R O D U C T O S     #</span>
 <span class="c">#********************************************************#</span>
 </div>
-<div class="viewcode-block" id="ProductoTerminado"><a class="viewcode-back" href="../../recetas.html#recetas.models.ProductoTerminado">[docs]</a><span class="k">class</span> <span class="nc">ProductoTerminado</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="ProductoTerminado"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.ProductoTerminado">[docs]</a><span class="k">class</span> <span class="nc">ProductoTerminado</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span><span class="s">&#39;stock__lte&#39;</span><span class="p">]</span>
     <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">help_text</span><span class="o">=</span><span class="s">&quot;El nombre del producto&quot;</span><span class="p">)</span>
@@ -298,7 +299,7 @@
 <span class="c">#********************************************************#</span>
 
 </div>
-<div class="viewcode-block" id="Receta"><a class="viewcode-back" href="../../recetas.html#recetas.models.Receta">[docs]</a><span class="k">class</span> <span class="nc">Receta</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Receta"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Receta">[docs]</a><span class="k">class</span> <span class="nc">Receta</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span><span class="s">&#39;producto_terminado&#39;</span><span class="p">]</span>
     <span class="n">fecha_creacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
@@ -314,7 +315,7 @@
         <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> (</span><span class="si">%d</span><span class="s">) Bolsines&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nombre</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cant_prod_terminado</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="RecetaDetalle"><a class="viewcode-back" href="../../recetas.html#recetas.models.RecetaDetalle">[docs]</a><span class="k">class</span> <span class="nc">RecetaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="RecetaDetalle"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.RecetaDetalle">[docs]</a><span class="k">class</span> <span class="nc">RecetaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">cantidad_insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
     <span class="n">insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Insumo</span><span class="p">)</span>
     <span class="n">receta</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Receta</span><span class="p">)</span>
@@ -324,7 +325,7 @@
             <span class="c">#     P R O V E E D O R E S    #</span>
 <span class="c">#********************************************************#</span>
 </div>
-<div class="viewcode-block" id="Proveedor"><a class="viewcode-back" href="../../recetas.html#recetas.models.Proveedor">[docs]</a><span class="k">class</span> <span class="nc">Proveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Proveedor"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Proveedor">[docs]</a><span class="k">class</span> <span class="nc">Proveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cuit__icontains&#39;</span><span class="p">,</span><span class="s">&#39;razon_social__icontains&#39;</span><span class="p">,</span><span class="s">&#39;localidad__icontains&#39;</span><span class="p">]</span>
     <span class="n">razon_social</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -349,7 +350,7 @@
                <span class="c">#     Z O N A S    #</span>
 <span class="c">#********************************************************#</span>
 </div>
-<div class="viewcode-block" id="Zona"><a class="viewcode-back" href="../../recetas.html#recetas.models.Zona">[docs]</a><span class="k">class</span> <span class="nc">Zona</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Zona"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Zona">[docs]</a><span class="k">class</span> <span class="nc">Zona</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">]</span>
     <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -365,7 +366,7 @@
 <span class="c">#********************************************************#</span>
                <span class="c">#     C I U D A D E S    #</span>
 <span class="c">#********************************************************#</span></div>
-<div class="viewcode-block" id="Ciudad"><a class="viewcode-back" href="../../recetas.html#recetas.models.Ciudad">[docs]</a><span class="k">class</span> <span class="nc">Ciudad</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Ciudad"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Ciudad">[docs]</a><span class="k">class</span> <span class="nc">Ciudad</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;nombre__icontains&#39;</span><span class="p">,</span><span class="s">&#39;codigo_postal__icontains&#39;</span><span class="p">,</span><span class="s">&#39;zona&#39;</span><span class="p">]</span>
     <span class="n">nombre</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -383,7 +384,7 @@
 <span class="c">#********************************************************#</span>
                <span class="c">#     C L I E N T E S    #</span>
 <span class="c">#********************************************************#</span></div>
-<div class="viewcode-block" id="Cliente"><a class="viewcode-back" href="../../recetas.html#recetas.models.Cliente">[docs]</a><span class="k">class</span> <span class="nc">Cliente</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Cliente"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Cliente">[docs]</a><span class="k">class</span> <span class="nc">Cliente</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;cuit__icontains&#39;</span><span class="p">,</span><span class="s">&#39;razon_social__icontains&#39;</span><span class="p">,</span><span class="s">&#39;ciudad&#39;</span><span class="p">,</span><span class="s">&#39;es_moroso&#39;</span><span class="p">,</span><span class="s">&#39;saldo__gt&#39;</span><span class="p">]</span><span class="c">#&#39;zona_icontains&#39;</span>
     <span class="n">cuit</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -420,7 +421,7 @@
 <span class="c">#************************************************************************#</span>
 
 </div>
-<div class="viewcode-block" id="PedidoCliente"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoCliente">[docs]</a><span class="k">class</span> <span class="nc">PedidoCliente</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoCliente"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoCliente">[docs]</a><span class="k">class</span> <span class="nc">PedidoCliente</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Modelo de la clase padre de los pedidos de cliente</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;fecha_creacion__gte&#39;</span><span class="p">,</span><span class="s">&#39;tipo_pedido&#39;</span><span class="p">,</span><span class="s">&#39;cliente&#39;</span> <span class="p">]</span> <span class="c">#,&#39;tipo_pedido__&#39; como hacer para filtrar</span>
@@ -435,7 +436,7 @@
     <span class="n">cliente</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Cliente</span><span class="p">)</span>
     <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     
-<div class="viewcode-block" id="PedidoCliente.esParaHoy"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoCliente.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoCliente.esParaHoy"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoCliente.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Metodo que los hijos lo redefinen</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="k">pass</span>
@@ -444,7 +445,7 @@
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s"> ( </span><span class="si">%s</span><span class="s">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cliente</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_tipo_pedido_display</span><span class="p">())</span>
 </div>
-<div class="viewcode-block" id="PedidoClienteDetalle"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoClienteDetalle">[docs]</a><span class="k">class</span> <span class="nc">PedidoClienteDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoClienteDetalle"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoClienteDetalle">[docs]</a><span class="k">class</span> <span class="nc">PedidoClienteDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; </span>
 <span class="sd">        Clase que modela los detalles de los pedidos independientemente del tipo (fijo, ocacional o de cambio)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -453,7 +454,7 @@
 
     <span class="n">pedido_cliente</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="PedidoFijo"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoFijo">[docs]</a><span class="k">class</span> <span class="nc">PedidoFijo</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoFijo"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoFijo">[docs]</a><span class="k">class</span> <span class="nc">PedidoFijo</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Clase que modela los pedidos fijos, es hija de PedidoCliente</span>
 <span class="sd">        Un pedido fijo tiene fecha inicio, los dias para entregas los productos, y puede tener fecha de cancelacion</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -467,7 +468,7 @@
     <span class="n">fecha_cancelacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">dias</span> <span class="o">=</span> <span class="n">MultiSelectField</span><span class="p">(</span><span class="n">choices</span><span class="o">=</span><span class="n">TIPODIAS</span><span class="p">)</span>
 
-<div class="viewcode-block" id="PedidoFijo.esParaHoy"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoFijo.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoFijo.esParaHoy"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoFijo.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39; Metodo que verifica si un pedido tiene como fecha de entrega la fecha actual.</span>
 <span class="sd">            Se lo utiliza al armar una hoja de ruta.</span>
 <span class="sd">            Ademas, realiza una &quot;baja logica&quot; si el pedido fijo ya esta vencido (si se paso la fecha de canceacion). </span>
@@ -485,7 +486,7 @@
         <span class="k">else</span><span class="p">:</span>
             <span class="k">return</span> <span class="bp">False</span>
 </div></div>
-<div class="viewcode-block" id="PedidoCambio"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoCambio">[docs]</a><span class="k">class</span> <span class="nc">PedidoCambio</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoCambio"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoCambio">[docs]</a><span class="k">class</span> <span class="nc">PedidoCambio</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Clase que modela los pedidos de Cambio, es hija de PedidoCliente</span>
 <span class="sd">        Un pedido de cambio tiene fecha de entrega.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -497,7 +498,7 @@
     <span class="p">}</span>
     <span class="n">fecha_entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
 
-<div class="viewcode-block" id="PedidoCambio.esParaHoy"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoCambio.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoCambio.esParaHoy"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoCambio.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Metodo que verifica si un pedido tiene como fecha de entrega la fecha actual.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
@@ -508,7 +509,7 @@
 
 
 </div></div>
-<div class="viewcode-block" id="PedidoOcacional"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoOcacional">[docs]</a><span class="k">class</span> <span class="nc">PedidoOcacional</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoOcacional"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoOcacional">[docs]</a><span class="k">class</span> <span class="nc">PedidoOcacional</span><span class="p">(</span><span class="n">PedidoCliente</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Clase que modela los pedidos ocacionales, es hija de PedidoCliente</span>
 <span class="sd">        Un pedido ocacional tiene fecha de entrega.</span>
 <span class="sd">    &#39;&#39;&#39;</span>
@@ -520,7 +521,7 @@
     <span class="p">}</span>
 
     <span class="n">fecha_entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
-<div class="viewcode-block" id="PedidoOcacional.esParaHoy"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoOcacional.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoOcacional.esParaHoy"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoOcacional.esParaHoy">[docs]</a>    <span class="k">def</span> <span class="nf">esParaHoy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&#39;&#39;&#39;Metodo que verifica si un pedido tiene como fecha de entrega la fecha actual.</span>
 <span class="sd">        &#39;&#39;&#39;</span>
         <span class="n">d</span> <span class="o">=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">()</span>
@@ -532,7 +533,7 @@
 <span class="c">#********************************************************#</span>
          <span class="c">#   P E D I D O S   A  P R O V E E D O R   #</span>
 <span class="c">#********************************************************#</span></div></div>
-<div class="viewcode-block" id="PedidoProveedor"><a class="viewcode-back" href="../../recetas.html#recetas.models.PedidoProveedor">[docs]</a><span class="k">class</span> <span class="nc">PedidoProveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="PedidoProveedor"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PedidoProveedor">[docs]</a><span class="k">class</span> <span class="nc">PedidoProveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
 
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;fecha_desde&#39;</span><span class="p">,</span><span class="s">&#39;fecha_hasta&#39;</span><span class="p">,</span><span class="s">&#39;proveedor&#39;</span><span class="p">,</span><span class="s">&#39;estado_pedido&#39;</span><span class="p">]</span>
     <span class="n">FILTROS_MAPPER</span> <span class="o">=</span> <span class="p">{</span>
@@ -553,7 +554,7 @@
     <span class="n">fecha_cancelacion</span> <span class="o">=</span>  <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">blank</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="DetallePedidoProveedor"><a class="viewcode-back" href="../../recetas.html#recetas.models.DetallePedidoProveedor">[docs]</a><span class="k">class</span> <span class="nc">DetallePedidoProveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="DetallePedidoProveedor"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.DetallePedidoProveedor">[docs]</a><span class="k">class</span> <span class="nc">DetallePedidoProveedor</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">cantidad_insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
     <span class="n">insumo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Insumo</span><span class="p">)</span>
     <span class="n">pedido_proveedor</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">PedidoProveedor</span><span class="p">)</span>
@@ -562,7 +563,7 @@
 <span class="c">#********************************************************#</span>
          <span class="c">#   L O T E S   P R O D U C C I O N #</span>
 <span class="c">#********************************************************#</span></div>
-<div class="viewcode-block" id="Lote"><a class="viewcode-back" href="../../recetas.html#recetas.models.Lote">[docs]</a><span class="k">class</span> <span class="nc">Lote</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Lote"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Lote">[docs]</a><span class="k">class</span> <span class="nc">Lote</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;producto_terminado&#39;</span><span class="p">]</span>
     <span class="n">nro_lote</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">AutoField</span><span class="p">(</span><span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c"># Field name made lowercase.</span>
     <span class="n">fecha_produccion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">()</span>
@@ -572,7 +573,7 @@
     <span class="n">stock_reservado</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">producto_terminado</span><span class="o">=</span><span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">)</span>
 
-<div class="viewcode-block" id="Lote.reservar_stock"><a class="viewcode-back" href="../../recetas.html#recetas.models.Lote.reservar_stock">[docs]</a>    <span class="k">def</span> <span class="nf">reservar_stock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cantidad</span><span class="p">):</span>
+<div class="viewcode-block" id="Lote.reservar_stock"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Lote.reservar_stock">[docs]</a>    <span class="k">def</span> <span class="nf">reservar_stock</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">cantidad</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; Resibe la cantidad de stock que se necesita reservar.</span>
 <span class="sd">            Si stock disponible alcanza a cubrirla, se aumenta el stock reservado en esa cantidad</span>
 <span class="sd">            Si stock disponible no alcanza a cubrirla, se aumenta el stock reservado con stock disponible</span>
@@ -602,7 +603,7 @@
 
 
 </div>
-<div class="viewcode-block" id="Factura"><a class="viewcode-back" href="../../recetas.html#recetas.models.Factura">[docs]</a><span class="k">class</span> <span class="nc">Factura</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Factura"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Factura">[docs]</a><span class="k">class</span> <span class="nc">Factura</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">numero</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>  <span class="c">#es el numero de la factura en papel</span>
     <span class="n">monto_pagado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)])</span>
@@ -611,7 +612,7 @@
         <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="s">&quot;Factura&quot;</span><span class="p">)</span>
 
 </div>
-<div class="viewcode-block" id="PerdidaStock"><a class="viewcode-back" href="../../recetas.html#recetas.models.PerdidaStock">[docs]</a><span class="k">class</span> <span class="nc">PerdidaStock</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="PerdidaStock"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.PerdidaStock">[docs]</a><span class="k">class</span> <span class="nc">PerdidaStock</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="sd">&#39;&#39;&#39; Clase que modela el suceso de decrementar el stock de un lote debido a una perdida (por rotura, vencimiento u otros)</span>
 <span class="sd">    &#39;&#39;&#39;</span>
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;fecha_desde&#39;</span><span class="p">,</span><span class="s">&#39;fecha_hasta&#39;</span><span class="p">,</span><span class="s">&#39;causas&#39;</span><span class="p">]</span>
@@ -636,7 +637,7 @@
 <span class="c">#********************************************************#</span>
 
 </div>
-<div class="viewcode-block" id="HojaDeRuta"><a class="viewcode-back" href="../../recetas.html#recetas.models.HojaDeRuta">[docs]</a><span class="k">class</span> <span class="nc">HojaDeRuta</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="HojaDeRuta"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.HojaDeRuta">[docs]</a><span class="k">class</span> <span class="nc">HojaDeRuta</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">fecha_creacion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">chofer</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Chofer</span><span class="p">)</span>
     <span class="n">rendida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
@@ -649,14 +650,14 @@
                             <span class="s">&quot;cantidad_pedida&quot;</span><span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">cantidad_pedida</span><span class="p">})</span> 
         <span class="k">return</span> <span class="n">totales</span>
 </div>
-<div class="viewcode-block" id="ProductosLlevados"><a class="viewcode-back" href="../../recetas.html#recetas.models.ProductosLlevados">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevados</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="ProductosLlevados"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.ProductosLlevados">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevados</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">cantidad_pedida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">cantidad_enviada</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
     <span class="n">producto_terminado</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductoTerminado</span><span class="p">)</span>
     <span class="n">hoja_de_ruta</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">HojaDeRuta</span><span class="p">)</span>
     <span class="n">precio</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DecimalField</span><span class="p">(</span><span class="n">max_digits</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">decimal_places</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">validators</span><span class="o">=</span><span class="p">[</span><span class="n">MinValueValidator</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mo">00</span><span class="p">)],</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
 
-<div class="viewcode-block" id="ProductosLlevados.generar_detalles"><a class="viewcode-back" href="../../recetas.html#recetas.models.ProductosLlevados.generar_detalles">[docs]</a>    <span class="k">def</span> <span class="nf">generar_detalles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<div class="viewcode-block" id="ProductosLlevados.generar_detalles"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.ProductosLlevados.generar_detalles">[docs]</a>    <span class="k">def</span> <span class="nf">generar_detalles</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; En base al producto y a la cantidad pedida, sale a buscarlo en los lotes</span>
 <span class="sd">            por cada lote que se necesite para satisfacer la cantidad pedida se crea un detalle asociado a el</span>
 <span class="sd">            junto con la cantidad que pudo sacarle a ese lote.</span>
@@ -680,13 +681,13 @@
         <span class="bp">self</span><span class="o">.</span><span class="n">save</span><span class="p">()</span>
 
 </div></div>
-<div class="viewcode-block" id="ProductosLlevadosDetalle"><a class="viewcode-back" href="../../recetas.html#recetas.models.ProductosLlevadosDetalle">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevadosDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="ProductosLlevadosDetalle"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.ProductosLlevadosDetalle">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevadosDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">cantidad</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>
     <span class="n">lote</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Lote</span><span class="p">)</span>
     <span class="n">producto_llevado</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">ProductosLlevados</span><span class="p">)</span>
     <span class="n">cantidad_sobrante</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 </div>
-<div class="viewcode-block" id="Entrega"><a class="viewcode-back" href="../../recetas.html#recetas.models.Entrega">[docs]</a><span class="k">class</span> <span class="nc">Entrega</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Entrega"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Entrega">[docs]</a><span class="k">class</span> <span class="nc">Entrega</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">FILTROS</span> <span class="o">=</span> <span class="p">[</span><span class="s">&#39;fecha_desde&#39;</span><span class="p">,</span><span class="s">&#39;fecha_hasta&#39;</span><span class="p">]</span>
     <span class="n">FILTROS_MAPPER</span> <span class="o">=</span> <span class="p">{</span>
         <span class="s">&#39;fecha_desde&#39;</span><span class="p">:</span> <span class="s">&#39;fecha__gte&#39;</span><span class="p">,</span>
@@ -730,7 +731,7 @@
     <span class="k">def</span> <span class="nf">monto_restante</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>   <span class="c"># sirve solo para entregas no facturadas, si esta facturada nunca se deberia llamar, no tendria sentido</span>
         <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">monto_total</span><span class="p">()</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">monto_ya_abonado</span><span class="p">()</span>
 
-<div class="viewcode-block" id="Entrega.cobrar_con_factura"><a class="viewcode-back" href="../../recetas.html#recetas.models.Entrega.cobrar_con_factura">[docs]</a>    <span class="k">def</span> <span class="nf">cobrar_con_factura</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">monto</span><span class="p">,</span><span class="n">numero_factura</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+<div class="viewcode-block" id="Entrega.cobrar_con_factura"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Entrega.cobrar_con_factura">[docs]</a>    <span class="k">def</span> <span class="nf">cobrar_con_factura</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">monto</span><span class="p">,</span><span class="n">numero_factura</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
         <span class="sd">&quot;&quot;&quot; recibe monto que debe coincidir con el precio total de la entrega</span>
 <span class="sd">            si resiba un nro de factura, asocia esa factura a la entrega.</span>
 <span class="sd">            si no recibe nro de factura, crea nueva factura y la asocia a la entrega  </span>
@@ -753,7 +754,7 @@
         <span class="k">return</span> <span class="n">count</span>
         
 </div>
-<div class="viewcode-block" id="EntregaDetalle"><a class="viewcode-back" href="../../recetas.html#recetas.models.EntregaDetalle">[docs]</a><span class="k">class</span> <span class="nc">EntregaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="EntregaDetalle"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.EntregaDetalle">[docs]</a><span class="k">class</span> <span class="nc">EntregaDetalle</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Entrega</span><span class="p">)</span>
     <span class="n">cantidad_enviada</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span> <span class="c">#no va</span>
     <span class="n">cantidad_entregada</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">null</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
@@ -783,7 +784,7 @@
 
 
 </div>
-<div class="viewcode-block" id="Recibo"><a class="viewcode-back" href="../../recetas.html#recetas.models.Recibo">[docs]</a><span class="k">class</span> <span class="nc">Recibo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+<div class="viewcode-block" id="Recibo"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.Recibo">[docs]</a><span class="k">class</span> <span class="nc">Recibo</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">entrega</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="n">Entrega</span><span class="p">)</span>
     <span class="n">fecha</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">DateField</span><span class="p">(</span><span class="n">auto_now_add</span> <span class="o">=</span> <span class="bp">True</span><span class="p">)</span>
     <span class="n">numero</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">()</span>  <span class="c">#es el numero del recibo en papel</span>

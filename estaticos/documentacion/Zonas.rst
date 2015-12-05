@@ -5,11 +5,9 @@ Para poder filtrar todas las zonas el nombre deberá estar vacío y presionamos 
 .. image:: _static/zonas/zonas_ini.jpg
 
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
-   zonas_alta
-   zonas_modificar
-   zonas_eliminar
+   zonas alta
+   zonas modificar
+   zonas eliminar
 
-.. automodule:: zona.models
-   :members:

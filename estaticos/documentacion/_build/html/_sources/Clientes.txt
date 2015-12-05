@@ -2,12 +2,10 @@
 ====================================
 .. image:: _static/clientes/clientes_ini.jpg
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
-   clientes_alta
-   clientes_modificar
-   clientes_Eliminar
+   clientes alta
+   clientes modificar
+   clientes Eliminar
 
 
-.. automodule:: cliente.models
-   :members:

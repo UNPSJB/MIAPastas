@@ -18,18 +18,53 @@
              console.log(n);
              var patron= /\/\w+(\/\w+)?\//;
              var res=patron.exec(n);
+             if (n.toString()!='/index'){
+                res=res[0];
+                var s=res.substring(1,_.size(res)-1);
+                s = s.replace("/"," ");
+             }else{
+                var s = "/"+"ayuda usuario";
+                }
+                s = "/"+s;
+                console.log(s);
+             frame = $("#frameDocumentacion");
+             frame.attr("src",url+s+".html");
+             $("#modalDocumentacion").modal("show");
+             }
+
+            function abrirModalDocumentacionMantenimiento(url){
+             var n=window.location.pathname;
+             console.log(n);
+             var patron= /\/\w+(\/\w+)?\//;
+             var res=patron.exec(n);
              console.log(res);
-             res=res[0];
+
              console.log(res);
-             var s=res.substring(1,_.size(res)-1);
-             s = s.replace("/","_");
-             s = "/"+s;
-             
+             if (n.toString()!='/index'){
+                res=res[0];
+                var s=res.substring(1,_.size(res)-1);
+                 s = s.replace("/"," ");
+                 s = "/"+"codigo "+s;
+              }else{
+                var s='';
+                s = "/"+"codigo"+s;
+                }
+
+
+             frame = $("#frameDocumentacion");
+             frame.attr("src",url+s+".html");
+             $("#modalDocumentacion").modal("show");s
+             }
+
+            function abrirModalDocumentacionProyecto(url){
+             var s = "/proyecto"
              frame = $("#frameDocumentacion");
              frame.attr("src",url+s+".html");
              $("#modalDocumentacion").modal("show");s
              }
         </script>
+
+
     </head>
 
 
@@ -68,12 +103,52 @@
             </div>
         <!-- boton "Documentacion " -->
             <div style="float:right;">
+
+
+             <div class="dropdown" style="float:right;">
+              <button class="btn btn-success btn-lg dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                <span class="glyphicon glyphicon-user" aria-hidden="true">    Documentación    <br> <br/></span>
+
+                <span class="caret"></span>
+
+                             </button>
+              <ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+                <li><a href="javascript:abrirModalDocumentacion('{% static "documentacion/_build/html" %}')">Ayuda</a></li>
+                  <li role="separator" class="divider"></li>
+                <li><a href="javascript:abrirModalDocumentacionMantenimiento('{% static "documentacion/_build/html" %}')">Documentación de Mantenimiento</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="javascript:abrirModalDocumentacionProyecto('{% static "documentacion/_build/html" %}')">Documentación de Proyecto</a></li>
+
+              </ul>
+            </div>
+
+
+              </button>
            <!-- <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html/index.html" %}')" class="btn btn-success btn-lg" type="button">-->
+
+           <!-- <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html" %}')" class="btn btn-success btn-lg" type="button">
+                <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Ayuda   <br> <br/></span>
+
+             </a>
+
             <a href = "javascript:abrirModalDocumentacion('{% static "documentacion/_build/html" %}')" class="btn btn-success btn-lg" type="button">
-                <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Documentacion    <br> <br/></span>
+                <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Documentacion de Usuario   <br> <br/></span>
 
 
-              </a>
+             </a>
+
+            <a href = "javascript:abrirModalDocumentacionProyecto('{% static "documentacion/_build/html" %}')" class="btn btn-success btn-lg" type="button">
+                <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Documentacion del Proyecto   <br> <br/></span>
+
+
+            </a>
+
+            </div>
+            <a href = "javascript:abrirModalDocumentacionMantenimiento('{% static "documentacion/_build/html" %}')"  class="btn btn-success btn-lg" type="button">
+                <span class="glyphicon glyphicon-registration-mark" aria-hidden="true">   Documentacion de Mantenimiento    <br> <br/></span>
+
+            </a>
+        -->
             </div>
         <!-- boton "Home" va a la pagina principal-->
             <div style="float:right;">
