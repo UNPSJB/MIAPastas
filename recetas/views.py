@@ -586,7 +586,7 @@ def productosTerminadosBaja(request, producto_id=None):
     '''
     if len(p.pedidocliente_set.filter(activo=True))> 0:
         messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
-    elif len(p.lote_set.filter(stock_disponible>0)>0):
+    elif len(p.lote_set.filter(stock_disponible__gt = 0))>0:
         messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene lotes con stock disponible.')
     elif p.receta_set.exists():
         messages.error(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
@@ -1176,6 +1176,11 @@ def pedidosProveedorRecepcionar(request,pedido_id):
                 "pedido":pedido_proveedor_instancia })
             pedido_proveedor_instancia.estado_pedido = 2
             pedido_proveedor_instancia.save()
+            for detalle in pedido_proveedor_instancia.detallepedidoproveedor_set.all():
+                print detalle.insumo.stock, "ANTES"
+                detalle.insumo.stock -=detalle.cantidad_insumo
+                detalle.insumo.save()
+                print detalle.insumo.stock
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
     else:
@@ -1556,7 +1561,8 @@ def cobrarClienteFiltrado(request,cliente_id=None):
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()
     clientes = models.Cliente.objects.all()
-    entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.monto_restante())
+    #las deudas se saldan comenzando por las mas antiguas.
+    entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.fecha)
     print entregas_no_facturadas,"saldoo", saldo
     return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"cliente":cliente,"clientes":clientes,"saldo":saldo})
 
@@ -1572,8 +1578,9 @@ def cobrarCliente(request):
 
 @login_required()
 def cobrarClienteClasificar(request):
-# Recibe las entregas no facturadas del cliente seleccionado, y las separa en pagados con factura o con recibos
-# Devuelve dos listados de entregas, una para facturacion y otra para recibo
+    ''' Recibe las entregas no facturadas del cliente seleccionado, y las separa para cobrar con factura o con recibos
+        Devuelve dos listados de entregas, una para facturacion y otra para recibo.
+    ''' 
     entregas = re.findall("\d+",request.GET['entregas'])
     mont = re.findall("\S+",request.GET['monto'])
     monto = re.sub('["]', '', mont[0])
@@ -1582,6 +1589,7 @@ def cobrarClienteClasificar(request):
     entregas_para_factura = {}
     entregas_para_recibo={}
     monto_recibo = 0
+    monto_ingresado = monto
     for entrega_id in entregas:
         entrega = models.Entrega.objects.get(pk=entrega_id)
         if monto == 0:
@@ -1593,13 +1601,22 @@ def cobrarClienteClasificar(request):
         else:
             entregas_para_factura[entrega_id]="%s" % entrega.fecha
         monto -= entrega.monto_restante()
-    print "monto_", monto_recibo
-    return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
+    monto_factura = monto_ingresado - Decimal(monto_recibo)
+    for entrega_id in entregas_para_factura: #verifico si las entregas a facturar tenian pagos en recibos para sumarlo al monto de la factura
+        entrega = models.Entrega.objects.get(pk=entrega_id)
+        recibos_de_entrega = entrega.recibo_set.all()
+        for recibo in recibos_de_entrega:
+            monto_factura += recibo.monto_pagado
+    return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo, "monto_factura":str(monto_factura)}),content_type='json')
 
 
 
 @login_required()
 def cobrarClienteFacturar(request):
+    ''' Realiza el seteo de los cobros con factura o con recibos, segun corresponde.
+        Si se realiza un cobro con factura, el monto de esa factura incluye los recibos realizados
+        con anterioridad, si es que lo tuvieran.
+    '''
     para_factura = re.findall("\d+",request.GET['para_facturas'])
     para_recibo = re.findall("\d+",request.GET['para_recibo'])
     monto_recibo = re.findall("\S+",request.GET['monto_recibo'])
@@ -1610,11 +1627,9 @@ def cobrarClienteFacturar(request):
     if len(para_factura) != 0:
         monto_factura = re.sub('["]', '', monto_factura[0])
         monto_factura=Decimal(monto_factura)
-        entrega = models.Entrega.objects.get(pk=para_factura[0])
+        entrega = models.Entrega.objects.get(pk=para_factura[0]) #para obtener el saldo del cliente
         cliente=entrega.pedido.cliente
         cliente.saldo -=float(monto_factura)
-
-
     if len(para_recibo) != 0:
         monto_recibo = re.sub('["]', '', monto_recibo[0])
         monto_recibo=Decimal(monto_recibo)
@@ -1625,7 +1640,6 @@ def cobrarClienteFacturar(request):
     cliente.save()
     if len(num_factura) !=0:
         num_factura = int(num_factura[0])
-
     if len(num_recibo) !=0:
         num_recibo = int(num_recibo[0])
     print para_factura," ",para_recibo," ",monto_recibo," ",monto_factura," ",num_factura," ",num_recibo
@@ -1635,28 +1649,27 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
-    print "monto factura",monto_factura," monto recibo: ",monto_recibo
-    print "monto cliente ",cliente.saldo
+    messages.success(request, 'Pago realizado correctamente.')
     return HttpResponse(json.dumps("ok"),content_type='json')
-
 
 
 
 @login_required()
 def cobrarClienteMostrarRecibos(request):
+        ''' Devuelve una lista con los recibos de una entrega
+        '''
         entrega_id = re.findall("\d+",request.GET['entrega_id'])
         entrega = models.Entrega.objects.get(pk=entrega_id[0])
         recibos = models.Recibo.objects.filter(entrega=entrega)
         print recibos," estos son los recibos"
-        recibos=serializers.serialize('json', recibos)
+        recibos=serializers.serialize('json', recibos) #en javascript se lo puede manejar como objetos
         return HttpResponse(recibos,content_type='json')
-
-
-
 
 
 @login_required()
 def perdidasStockLotes(request):
+    ''' Devuelve las instancias de perdida de Stock segun criterios de filtracion para listarlos
+    '''
     filters, mfilters = get_filtros(request.GET, models.PerdidaStock)
     perdidas = models.PerdidaStock.objects.filter(**mfilters)
     return render(request, "perdidasStockLotes.html", {"perdidas":perdidas})

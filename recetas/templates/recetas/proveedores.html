@@ -45,7 +45,7 @@
             </thead>
               <tbody>
             {% for proveedor in proveedores %}
-                <tr class="renglon select-item" data-id="{{proveedor.id}}" id="renglon-{{proveedor.id}}">
+                <tr class="renglon select-item" data-id="{{proveedor.id}}" id="renglon-{{proveedor.id}}" data-pedidos="{{proveedor.pedidoproveedor_set.exists}}">
                       <td>{{proveedor.cuit}}</td>
                       <td>{{proveedor.razon_social}}</td>
                       <td>{{proveedor.localidad}}</td>
@@ -81,11 +81,13 @@
 <script>
     $(function() {
         var id;
+        var tiene_pedidos;
         function obtenerId(event) {
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             $el.addClass("danger");
             var _renglon = "";
+            tiene_pedidos = $el.data()["pedidos"] == "True";
             _renglon= "#renglon-"+id;
             $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
             $(_renglon).addClass("danger");
@@ -112,6 +114,22 @@
             if(id==undefined){
                 mostrar_error();
             }else{
+              if(tiene_pedidos){
+                  BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "El proveedor que intenta eliminar tiene pedidos asociados.No se puede eliminar",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        }
+                                        }
+                            ]
+                        });
+              }
+              else{
                 BootstrapDialog.show({
                             title: "Esta intentando eliminar",
                             cssClass: 'error-dialog',
@@ -130,8 +148,10 @@
                                     }
                             ]
                         });
+              }
+              }
             }
-        }
+        
 
         $("#modal-eliminar").click(mostrarModal);
 
