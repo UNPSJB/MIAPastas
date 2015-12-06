@@ -33,7 +33,7 @@ from django.http import HttpResponse
 from django.http import HttpResponseNotFound
 
 from xlsxwriter.workbook import Workbook
-
+#from pylab import *
 
 
 def get_order(get):
@@ -634,12 +634,17 @@ def listadoProductosMasVendidosFiltros(request):
 
 
 
-def GraficoTorta(request,productos):
-    from pylab import *    
+def GraficoTorta(request,productos,fecha_desde,fecha_hasta):
+    from pylab import *
     #  I M A G E N
-    figure(1, figsize=(7,7))# tamanio de figura
-    ax = axes([0, 0, 0.9, 0.9])# donde esta la figura ancho alto etc..
-    title('Productos Mas Vendidos', bbox={'facecolor':'0.8', 'pad':5})
+    #print productos,"hahhahahahha"
+    figure(1, figsize=(9,9))# tamanio de figura
+    #ax = axes([0, 0, 0.9, 0.9])# donde esta la figura ancho alto etc..
+    ax = axes([0.1, 0.1, 0.8, 0.8])
+
+    title('Productos Mas Vendidos ', bbox={'facecolor':'0.8', 'pad':5})
+    figtext(.5,.85,'Fecha Desde: ' + fecha_desde + "\n" + 'Fecha Hasta: ' + fecha_hasta,fontsize=10,horizontalalignment='center',bbox={'facecolor':'0.8', 'pad':5})
+
     labels = []
     fracs = []
     print "+"*20
@@ -647,8 +652,10 @@ def GraficoTorta(request,productos):
     for p in productos:
         labels.append(p)
         fracs.append(productos[p])
-    pie(fracs,labels=labels, autopct='%10.0f%%', shadow=True)
-    legend()    
+
+    pie(fracs,labels=labels, autopct='%10.0f%%',startangle=90 ,shadow=True)
+    legend(labels,loc="lower left",bbox_to_anchor=[0.8, 0.5])#,loc='bottom rigth')
+    #axis('equal')
     #savefig("a.png")
     response = HttpResponse(content_type='image/png')
     savefig(response,format='PNG')
@@ -659,6 +666,30 @@ def GraficoTorta(request,productos):
 
 @login_required()
 def ListadoProductosMasVendidosGrafico(request):
+    #OBTENIENDO LAS FECHAS
+    try:
+        fecha_desde = request.GET['fecha_desde']
+        fecha_hasta = request.GET['fecha_hasta']
+    except:
+        print('ENTREEEEE EN LA EXCEPCION!!!')
+        fecha_desde = datetime.datetime.today()
+        fecha_hasta = datetime.datetime.today()
+
+    if not fecha_desde:
+        fecha_desde = datetime.datetime.today()
+        fecha_desde = fecha_desde.strftime("%d/%m/%Y")
+
+
+    if not fecha_hasta:
+        fecha_hasta = datetime.datetime.today()
+        fecha_hasta = fecha_hasta.strftime("%d/%m/%Y")
+
+    if fecha_desde == fecha_hasta:
+        fecha_desde = "El comienzo"
+        print('DESSSSDE LOSSSSS INICIOSSSSSS')
+
+
+    #OBTENIENDO LAS ENTREGAS A TRAVES DEL ATRIBUTO FILTERS
     filters, mfilters = get_filtros(request.GET, models.Entrega)
     entregas = models.Entrega.objects.filter(**mfilters)
     if not entregas.exists():
@@ -671,7 +702,8 @@ def ListadoProductosMasVendidosGrafico(request):
                 except:
                     prod[d.get_producto_terminado().nombre]=0
                     prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
-    return GraficoTorta(request,prod)
+    return GraficoTorta(request,prod,fecha_desde,fecha_hasta)
+
 
 @login_required()
 def listadoProductosMasVendidosExcel(request):
@@ -693,9 +725,15 @@ def listadoProductosMasVendidosExcel(request):
         fecha_hasta = datetime.datetime.today()
         fecha_hasta = fecha_hasta.strftime("%d/%m/%Y")
 
+    if fecha_desde == fecha_hasta:
+        fecha_desde = "El comienzo"
+        print('DESSSSDE LOSSSSS INICIOSSSSSS')
+
     print(fecha_desde)
     print(fecha_hasta)
-    #OBTENIENDO LOS CLIENTES A TRAVES DEL ATRIBUTO FILTERS
+
+
+    #OBTENIENDO LAS ENTREGAS A TRAVES DEL ATRIBUTO FILTERS
     filters, mfilters = get_filtros(request.GET, models.Entrega)
     print(mfilters)
     entregas = models.Entrega.objects.filter(**mfilters)
