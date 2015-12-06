@@ -684,9 +684,7 @@ def ListadoProductosMasVendidosGrafico(request):
         fecha_hasta = datetime.datetime.today()
         fecha_hasta = fecha_hasta.strftime("%d/%m/%Y")
 
-    if fecha_desde == fecha_hasta:
-        fecha_desde = "El comienzo"
-        print('DESSSSDE LOSSSSS INICIOSSSSSS')
+
 
 
     #OBTENIENDO LAS ENTREGAS A TRAVES DEL ATRIBUTO FILTERS
@@ -725,9 +723,7 @@ def listadoProductosMasVendidosExcel(request):
         fecha_hasta = datetime.datetime.today()
         fecha_hasta = fecha_hasta.strftime("%d/%m/%Y")
 
-    if fecha_desde == fecha_hasta:
-        fecha_desde = "El comienzo"
-        print('DESSSSDE LOSSSSS INICIOSSSSSS')
+
 
     print(fecha_desde)
     print(fecha_hasta)
