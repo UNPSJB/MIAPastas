@@ -694,9 +694,9 @@ def ListadoProductosMasVendidosGrafico(request):
         fecha_hasta = datetime.datetime.today()
 
     if not fecha_desde:
-        fecha_desde = datetime.datetime.today()
-        fecha_desde = fecha_desde.strftime("%d/%m/%Y")
-
+        #fecha_desde = datetime.datetime.today()
+        #fecha_desde = fecha_desde.strftime("%d/%m/%Y")
+        fecha_desde = "Los inicios"
 
     if not fecha_hasta:
         fecha_hasta = datetime.datetime.today()
@@ -744,9 +744,9 @@ def listadoProductosMasVendidosExcel(request):
         fecha_hasta = datetime.datetime.today()
 
     if not fecha_desde:
-        fecha_desde = datetime.datetime.today()
-        fecha_desde = fecha_desde.strftime("%d/%m/%Y")
-
+        #fecha_desde = datetime.datetime.today()
+        #fecha_desde = fecha_desde.strftime("%d/%m/%Y")
+        fecha_desde = "Los inicios"
 
     if not fecha_hasta:
         fecha_hasta = datetime.datetime.today()
