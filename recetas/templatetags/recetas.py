@@ -93,3 +93,10 @@ def devolver_precio_total(entrega):
     return count
 
 
+@register.simple_tag
+def bolsines_totales(prod):
+    #usado dentro de listadoProductosMasVendidos.html para calcular el total de bolsines vendidos.
+    cantidad= 0
+    for nombre,cant in prod.items():
+        cantidad = cantidad + cant
+    return cantidad

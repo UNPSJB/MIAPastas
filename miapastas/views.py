@@ -406,6 +406,8 @@ def documentacion(request):
     return render(request,"/recetas/documentacion/_build/html/index.html", {})
     #return render(request, , {})
 
+
+#retorna todos los clientes morosos.
 @login_required()
 def listadoClientesMorosos(request):
     clientes = models.Cliente.objects.filter(saldo__gt=0)
@@ -415,6 +417,7 @@ def listadoClientesMorosos(request):
     ciudades= models.Ciudad.objects.all()
     return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
 
+#retorna los clientes morosos filtrados por el usuario.
 @login_required()
 def listadoClientesMorososFiltros(request):
     if request.method == "GET":
@@ -438,6 +441,7 @@ def listadoClientesMorososFiltros(request):
     return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
 
 
+#retorna un archivo excel que contiene todos los cliente morosos.
 @login_required()
 def listadoClientesMorososExcel(request):
     #para poner el total adeudado, recorrer los clientes
@@ -456,14 +460,61 @@ def listadoClientesMorososExcel(request):
     output = io.BytesIO()
     workbook = Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()
-    worksheet.write(0, 0, "Listado de Clientes Morosos")
 
-    worksheet.write(1, 0, "Cuit")
-    worksheet.write(1, 1, "Razon Social")
-    worksheet.write(1, 2, "Ciudad")
-    worksheet.write(1, 3, "Direccion")
-    worksheet.write(1, 4, "Telefono")
-    worksheet.write(1, 5, "Monto Adeudado")
+
+    bold = workbook.add_format({'bold': True})
+    italic = workbook.add_format({'italic': True})
+    red = workbook.add_format({'color': 'red'})
+
+    cell_format_titulo = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                       'bold':bold,
+                                              'italic':italic,'font_size':16,})
+
+    cell_format_header = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                       'bold':bold,
+                                              })
+
+    cell_format_body = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                            })
+
+    cell_format_footer = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                    'bold':bold,'font_size':13,
+                                    'font_color': 'red',
+                                            })
+
+    #http://xlsxwriter.readthedocs.org/format.html
+    fecha = datetime.date.today()
+    fecha = fecha.strftime("%d/%m/%Y")
+    worksheet.merge_range('A1:F1', "Listado de Clientes Morosos: "+fecha, cell_format_titulo)
+    #worksheet.set_column('A:F', 12)
+
+    #worksheet.set_column('A:F')
+    #worksheet.autofilter('A2:F2')
+    #worksheet.write(0, 0, "Listado de Clientes Morosos")
+
+    worksheet.write(1, 0,"Cuit",cell_format_header)
+    worksheet.set_column('A:A', 25)
+    worksheet.write(1, 1, "Razon Social",cell_format_header)
+    worksheet.set_column('B:B', 30)
+    worksheet.write(1, 2, "Ciudad",cell_format_header)
+    worksheet.set_column('C:C', 20)
+    worksheet.write(1, 3, "Direccion",cell_format_header)
+    #worksheet.set_column(1,3,15)
+    worksheet.set_column('D:D', 20)
+    worksheet.write(1, 4, "Telefono",cell_format_header)
+    #worksheet.set_column(1,4,15)
+    worksheet.set_column('E:E', 15)
+    worksheet.write(1, 5, "Monto Adeudado",cell_format_header)
+    #worksheet.set_column(1,5,5)
+    worksheet.set_column('F:F', 20)
 
     cantidad_total_adeudado = 0
     numero_fila = 2
@@ -471,18 +522,20 @@ def listadoClientesMorososExcel(request):
     for index, cliente in enumerate(clientes, 1):
         if cliente.saldo!=0:
 
-            worksheet.write(numero_fila, 0, cliente.cuit)
-            worksheet.write(numero_fila, 1, cliente.razon_social)
-            worksheet.write(numero_fila, 2, cliente.ciudad.nombre)
-            worksheet.write(numero_fila, 3, cliente.direccion)
-            worksheet.write(numero_fila, 4, cliente.telefono)
-            worksheet.write(numero_fila, 5, cliente.saldo)
+            worksheet.write(numero_fila, 0, cliente.cuit,cell_format_body)
+            #worksheet.set_column(1,0,len(str(cliente.cuit)))
+            worksheet.write(numero_fila, 1, cliente.razon_social,cell_format_body)
+            worksheet.write(numero_fila, 2, cliente.ciudad.nombre,cell_format_body)
+            worksheet.write(numero_fila, 3, cliente.direccion,cell_format_body)
+            worksheet.write(numero_fila, 4, cliente.telefono,cell_format_body)
+            worksheet.write(numero_fila, 5, '$'+str(cliente.saldo),cell_format_body)
             cantidad_total_adeudado += cliente.saldo
             numero_fila+=1
 
-    worksheet.write(numero_fila, 0, 'TOTAL ADEUDADO')
-    worksheet.write(numero_fila, 1, cantidad_total_adeudado)
 
+    worksheet.write(numero_fila, 0, 'TOTAL ADEUDADO',cell_format_footer)
+    worksheet.write(numero_fila, 1, '$'+str(cantidad_total_adeudado),cell_format_footer)
+    #worksheet.add_table('B3:F7')
     workbook.close()
 
     output.seek(0)
@@ -494,7 +547,7 @@ def listadoClientesMorososExcel(request):
 
 
 
-
+#muestra todos los productos termiandos disponibles.
 @login_required()
 def listadoProductosTerminadosDisponibles(request):
     productos = models.ProductoTerminado.objects.filter(stock__gt=0)
@@ -506,7 +559,7 @@ def listadoProductosTerminadosDisponibles(request):
 
     return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos,"productos_filtrados":productos})
 
-
+#muestra los productos terminados dispobibles filtrados por el usuario.
 @login_required()
 def listadoProductosTerminadosDisponiblesFiltros(request):
     if request.method == "GET":
@@ -532,7 +585,7 @@ def listadoProductosTerminadosDisponiblesFiltros(request):
 
     return render(request, "listadoProductosTerminadosDisponibles.html", {"productos": productos})
 
-
+#arma el archivo excel que muestra los productos terminados disponibles.
 @login_required()
 def listadoProductosTerminadosDisponiblesExcel(request):
     #para poner el total adeudado, recorrer los clientes
@@ -552,33 +605,90 @@ def listadoProductosTerminadosDisponiblesExcel(request):
     if not productos.exists():
         return HttpResponseNotFound('No hay productos terminados disponibles para exportar a Excel')
 
+
     #ARMANDO EL ARCHIVO EXCEL
     output = io.BytesIO()
     workbook = Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()
-    worksheet.write(0, 0, "Listado de Productos Terminados Disponibles")
+
+    bold = workbook.add_format({'bold': True})
+    italic = workbook.add_format({'italic': True})
+    red = workbook.add_format({'color': 'red'})
+
+    cell_format_titulo = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                       'bold':bold,
+                                              'italic':italic,'font_size':16,})
+
+    cell_format_header = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                       'bold':bold,
+                                              })
+
+    cell_format_sub_header = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+
+                                       'bold':bold,
+                                              })
+
+
+    cell_format_body = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+
+                                            })
+
+    cell_format_sub_footer = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+
+                                    'bold':bold,'font_size':12,
+                                    'font_color': 'red',
+                                            })
+
+    cell_format_footer = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                    'border': 1,
+                                    'bold':bold,'font_size':14,
+                                    'font_color': 'red',
+                                            })
+
+    fecha = datetime.date.today()
+    fecha = fecha.strftime("%d/%m/%Y")
+    worksheet.merge_range('A1:F1', "Listado de Productos Terminados Disponibles: "+fecha, cell_format_titulo)
+    worksheet.set_column('A1:F1', 25)
+
+
+
     fila = 1
     total_stock = 0
     for producto in productos:
-        worksheet.write(fila, 0, "Tipo de Fideo")
-        worksheet.write(fila, 1, producto.nombre)
+        worksheet.write(fila, 0, "Tipo de Fideo",cell_format_header)
+        worksheet.set_column('A:A', 25)
+        worksheet.write(fila, 1, producto.nombre,cell_format_header)
+        worksheet.set_column('B:B', 25)
+
         fila = fila + 1
-        worksheet.write(fila, 1, "N de Lote")
-        worksheet.write(fila, 2, "Cantidad")
+
+        worksheet.write(fila, 1, "N de Lote",cell_format_sub_header)
+        #worksheet.set_column('C:C', 15)
+        worksheet.write(fila, 2, "Cantidad",cell_format_sub_header)
+        worksheet.set_column('C:C', 15)
+
         fila = fila + 1
         for lote in producto.lote_set.all():
-            worksheet.write(fila, 1, lote.nro_lote)
-            worksheet.write(fila, 2, lote.cantidad_producida)
+            worksheet.write(fila, 1, lote.nro_lote,cell_format_body)
+            worksheet.write(fila, 2, lote.stock_disponible,cell_format_body)
             fila = fila + 1
 
         total_stock = total_stock + producto.stock
-        worksheet.write(fila, 1, "Total")
-        worksheet.write(fila, 2, producto.stock)
+        worksheet.write(fila, 1, "Total",cell_format_sub_footer)
+        worksheet.write(fila, 2, producto.stock,cell_format_sub_footer)
         fila = fila + 1
 
     fila = fila + 1
-    worksheet.write(fila, 1, "Total BOLSINES")
-    worksheet.write(fila, 2, total_stock)
+    worksheet.write(fila, 1, "TOTAL BOLSINES",cell_format_footer)
+    worksheet.write(fila, 2, total_stock,cell_format_footer)
 
 
     workbook.close()
@@ -590,7 +700,7 @@ def listadoProductosTerminadosDisponiblesExcel(request):
 
     return response
 
-
+#retorna todos los productos y sus cantidades vendidas
 @login_required()
 def listadoProductosMasVendidos(request):
     entregas = models.Entrega.objects.all()
@@ -607,7 +717,7 @@ def listadoProductosMasVendidos(request):
                     prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
     return render(request, "listadoProductosMasVendidos.html", {"prod": prod})
 
-
+#retorna los productos mas vendidos filtrados por el usuario.
 @login_required()
 def listadoProductosMasVendidosFiltros(request):
     if request.method == "GET":
@@ -637,7 +747,7 @@ def listadoProductosMasVendidosFiltros(request):
     return render(request, "listadoProductosTerminadosDisponibles.html", {})
 
 
-
+#arma el grafico de torta utilizando la libreria pylab
 def GraficoTorta(request,productos,fecha_desde,fecha_hasta):
     from pylab import *
     #  I M A G E N
@@ -668,7 +778,7 @@ def GraficoTorta(request,productos,fecha_desde,fecha_hasta):
 
 
 
-
+#retorna verdadero si todos los pedidos de las entregas son de cambio, falso sino.
 def verificarNoTodosPedidosCambio(entregas):
     bandera = False
     for entrega in entregas:
@@ -681,7 +791,7 @@ def verificarNoTodosPedidosCambio(entregas):
 
 
 
-
+#obtiene todos los datos necesarios para pasarlos a la funcion GraficoTorta() y que esta arme el grafico de torta
 @login_required()
 def ListadoProductosMasVendidosGrafico(request):
     #OBTENIENDO LAS FECHAS
@@ -732,6 +842,7 @@ def ListadoProductosMasVendidosGrafico(request):
     return GraficoTorta(request,prod,fecha_desde,fecha_hasta)
 
 
+#permite armar un archivo excel con los productos mas vendidos.
 @login_required()
 def listadoProductosMasVendidosExcel(request):
     #OBTENIENDO LAS FECHAS
@@ -775,38 +886,87 @@ def listadoProductosMasVendidosExcel(request):
     if verificarNoTodosPedidosCambio(entregas):
         return HttpResponseNotFound('No hay productos terminados vendidos. (Todos son Pedidos de Cambio)')
 
+
     #ARMANDO EL ARCHIVO EXCEL
     output = io.BytesIO()
     workbook = Workbook(output, {'in_memory': True})
     worksheet = workbook.add_worksheet()
-    worksheet.write(0, 0, "Listado de Productos Terminados Mas Vendidos")
+    #<<<<creando formatos>>>>
+    bold = workbook.add_format({'bold': True})
+    italic = workbook.add_format({'italic': True})
+    red = workbook.add_format({'color': 'red'})
 
-    worksheet.write(1, 0, "Fecha Desde: ")
-    worksheet.write(1, 1, fecha_desde)
+    cell_format_titulo = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                       'bold':bold,
+                                              'italic':italic,'font_size':16,})
 
-    worksheet.write(2, 0, "Fecha Hasta: ")
-    worksheet.write(2, 1, fecha_hasta)
+    cell_format_header = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                       'bold':bold,
+                                              })
 
-    worksheet.write(3, 0, "Producto Terminado")
-    worksheet.write(3, 1, "Cantidad Vendida")
+    cell_format_header_fechas = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+
+                                              })
+
+    cell_format_body = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                            })
+
+    cell_format_footer = workbook.add_format({'align': 'center',
+                                   'valign': 'vcenter',
+                                   'border': 1,
+                                    'bold':bold,'font_size':13,
+                                    'font_color': 'red',
+                                            })
+
+    #<<<<armando el archivo>>>>
+    fecha = datetime.date.today()
+    fecha = fecha.strftime("%d/%m/%Y")
+    worksheet.merge_range('A1:F1', "Listado de Productos Terminados Mas Vendidos: "+fecha, cell_format_titulo)
+    worksheet.set_column('A1:F1', 15)
+
+    worksheet.write(1, 0, "Fecha Desde: ",cell_format_header)
+    worksheet.write(1, 1, fecha_desde,cell_format_header_fechas)
+
+    worksheet.write(2, 0, "Fecha Hasta: ",cell_format_header)
+    worksheet.write(2, 1, fecha_hasta,cell_format_header_fechas)
+
+    worksheet.write(3, 0, "Producto Terminado",cell_format_header)
+    worksheet.set_column('A:A', 25)
+    worksheet.write(3, 1, "Cantidad Vendida",cell_format_header)
+    worksheet.set_column('B:B', 25)
 
     numero_fila = 4
 
     prod = {}
+    totales = 0
     for entrega in entregas:
         if not entrega.pedido.tipo_pedido == 3:#si no es un pedido de cambio, entonces proceso....
             for d in entrega.entregadetalle_set.all():
                     try:
                         prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+                        totales = totales + d.cantidad_entregada
                     except:
                         prod[d.get_producto_terminado().nombre]=0
                         prod[d.get_producto_terminado().nombre] += d.cantidad_entregada
+                        totales = totales + d.cantidad_entregada
 
 
     for nombre,cantidad in prod.items():
-        worksheet.write(numero_fila, 0, nombre)
-        worksheet.write(numero_fila, 1, cantidad)
+        worksheet.write(numero_fila, 0, nombre,cell_format_header)
+        worksheet.write(numero_fila, 1, str(cantidad) + ' Bolsines ',cell_format_header_fechas)
         numero_fila = numero_fila + 1
+
+
+    worksheet.write(numero_fila, 0, "TOTALES: ",cell_format_footer)
+    worksheet.write(numero_fila, 1,str(totales)+' Bolsines' , cell_format_footer)
 
     workbook.close()
 
