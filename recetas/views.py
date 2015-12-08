@@ -255,6 +255,7 @@ def insumosBaja(request,insumo_id):
         messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se ha podido eliminar porque tiene las siguiente recetas asociadas: %s .' % ", ".join(
            [ "%s" % r for r in insumo.receta_set.all()]
         ))
+        return redirect('insumos')
         #insumo.delete()
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
