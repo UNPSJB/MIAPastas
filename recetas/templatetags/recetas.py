@@ -1,5 +1,5 @@
 from django import template
-
+from django.template.defaultfilters import stringfilter
 register = template.Library()
 
 @register.simple_tag
@@ -49,17 +49,25 @@ def devolver_cantidad_pedida(detalle):
 
 @register.simple_tag
 def devolver_detalle(entrega,prod):
-	for d in entrega.pedido.pedidoclientedetalle_set.all():
+    """ Recibe una Entrega y un ProductoTerminado p
+        retorna una cadena vacia si no encuentra ningun detalle de pedido que apunte a p
+        retorna un detalle de pedido que coincida con p
+    """
+    for d in entrega.pedido.pedidoclientedetalle_set.all():
 		if d.producto_terminado == prod:
-			return d.id
-	return ""
+		    return d.id
+    return ""
 
 @register.simple_tag
 def devolver_producto(entrega,prod):
-	for d in entrega.pedido.pedidoclientedetalle_set.all():
+    """Recibe una Entrega y un ProductoTerminado p
+        retorna una cadena vacia si encuentra un detalle de pedido que apunte a p
+        retorna el id del producto en caso que no se encuentre ningun detalle relacionado con p 
+    """
+    for d in entrega.pedido.pedidoclientedetalle_set.all():
 		if d.producto_terminado == prod:
 			return ""
-	return prod.id
+    return prod.id
 
 @register.simple_tag
 def saldos_totales(clientes):
@@ -82,7 +90,7 @@ def stock_totales(productos):
 
 @register.simple_tag
 def devolver_precio_total(entrega):
-    """ Resibe un objeto Entrega
+    """ Recibe un objeto Entrega
         Recorre sus detalles sumando el precio que tenga cada uno para obtener el precio total
         detalles deben tener en precio, el precio total (precio prod * cantidad entregada)
         retorna precio total
@@ -92,6 +100,22 @@ def devolver_precio_total(entrega):
         count += d.precio
     return count
 
+
+@register.filter
+def producto_fue_llevado(h,p):
+    """ Recibe un producto y lo busca en la hoja.
+        devuelve True si lo encuentra y cantidad enviada > 0
+        devuelve Falso si no lo encuentra o no se envio nada
+    """
+    esta = False
+    print "producto fue  llevado",p
+    for c in h.productosllevados_set.all():        
+        if c.producto_terminado == p and c.cantidad_enviada>0:        
+            esta =  True
+            break    
+    if  esta:
+        return True    
+    return False
 
 @register.simple_tag
 def bolsines_totales(prod):
