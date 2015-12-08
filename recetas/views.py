@@ -245,13 +245,15 @@ def insumosBaja(request,insumo_id):
     """
 
     insumo = models.Insumo.objects.get(pk=insumo_id)
-    print(insumo.id,'sadasdasdadasdadasdasdasdasdasdaasddasd')
+
+
     if len(insumo.pedidoproveedor_set.all())>0:
         messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene asociados pedidos a proveedores. \n Si desea eliminarlo, elimine primero los pedidos.')
         return redirect('insumos')
+
     if insumo.receta_set.exists():
-       messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se ha podido eliminar porque tiene las siguiente recetas asociadas: %s .' % ", ".join(
-            [ "%s" % r for r in insumo.receta_set.all()]
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se ha podido eliminar porque tiene las siguiente recetas asociadas: %s .' % ", ".join(
+           [ "%s" % r for r in insumo.receta_set.all()]
         ))
         #insumo.delete()
     else:

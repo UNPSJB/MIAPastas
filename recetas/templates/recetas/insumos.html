@@ -76,7 +76,7 @@
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             tiene_receta = $el.data()["recetas"] == "True";
-
+            console.log(id)
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
