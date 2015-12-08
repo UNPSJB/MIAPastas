@@ -1167,8 +1167,10 @@ def pedidosProveedorRecepcionar(request,pedido_id):
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
             #pedido_proveedor_instancia.fecha_de_entrega = date.today()
-            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
-                messages.error(request, 'Problema de Fechas')
+            #if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
+            fecha_de_hoy = datetime.date.today()
+            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion or pedido_proveedor_instancia.fecha_de_entrega>fecha_de_hoy:
+                messages.error(request, 'Problema de Fechas: La fecha de entrega debe estar entre la fecha de realizacion y la fecha de hoy')
                 return render(request,"pedidosProveedorRecepcionar.html",{
                 "pedido_proveedor_form":pedido_proveedor_form,
                 "proveedor":proveedor,
