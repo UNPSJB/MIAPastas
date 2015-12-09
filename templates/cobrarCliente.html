@@ -249,6 +249,9 @@ var para_recibo = [];
 
 
     $(function(){
+
+
+
         if({{saldo}} != -1){
             $('.ocultos').css({display:''});}
         $( "#cliente" ).change( function(){
@@ -391,37 +394,27 @@ var para_recibo = [];
 
             if ($('#cuerpo_recibo').is(':visible')){
               if  (esEnteroPositivo(num_recibo)== false){
-                  BootstrapDialog.show({
-                      title: "Error",
-                      cssClass: 'error-dialog',
-                      message: "El numero de recibo debe ser un numero positivo",
-                      type: BootstrapDialog.TYPE_DANGER,
-                      buttons: [{
-                              label: 'Aceptar',
-                              action: function(dialogRef){
-                                  dialogRef.close();
-                              }
-                      }]
-                  });
-              return false;} 
+                $("#numero_recibo").notify("El numero de recibo debe ser un numero positivo",{position:"right middle"});
+                return false;}
+               
+              if (verificarNumRecibo() == true){
+                $("#numero_recibo").notify("El N° de Recibo ingresado ya existe",{position:"right middle"});
+                return false;
+              }
+                
               } 
 
              if ($('#cuerpo_factura').is(':visible')){
               if  (esEnteroPositivo(num_factura)== false){
-                  BootstrapDialog.show({
-                      title: "Error",
-                      cssClass: 'error-dialog',
-                      message: "El numero de factura debe ser un numero positivo",
-                      type: BootstrapDialog.TYPE_DANGER,
-                      buttons: [{
-                              label: 'Aceptar',
-                              action: function(dialogRef){
-                                  dialogRef.close();
-                              }
-                      }]
-                  });
-              return false;} 
-              } 
+                $("#numero_factura").notify("El numero de factura debe ser un numero positivo",{position:"right middle"});
+              return false;}
+               if (verificarNumFactura() == true){
+                $("#numero_factura").notify("El N° de Factura ingresado ya existe",{position:"right middle"});
+                return false;
+              }
+
+               
+              }
 
 
 
@@ -455,6 +448,52 @@ var para_recibo = [];
             });
             
 
+        }
+
+
+
+        
+        function verificarNumRecibo(event){
+          numero_recibo=$('#numero_recibo').val();
+          console.log(numero_recibo);
+          var error = false;
+          $.ajax({
+            type: "GET",
+            async:false,
+            url: '{% url 'getRecibos' %}',
+            dataType: "json",
+            data: { "recibo": numero_recibo },
+            success: function retornar(json) {
+                if(json == 1){  //si ya existia un recibo con ese numero
+                    error=true;
+                }           
+                }
+        });
+          return error;
+        }
+
+        function verificarNumFactura(event){
+          numero_factura=$('#numero_factura').val();
+          var error = false;
+
+          $.ajax({
+            type: "GET",
+            url: '{% url 'getFacturas' %}',
+            dataType: "json",
+            async:false,
+            data: { "factura": numero_factura },
+            success: function(json) {
+                console.log(json);     
+                if(json == 1){  //si ya existia un recibo con ese numero
+                  error=true;
+                }           
+                }
+            
+        });
+
+          return error;
+
+            
         }
 
 

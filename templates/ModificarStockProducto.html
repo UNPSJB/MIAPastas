@@ -52,7 +52,6 @@
                     
                     {% csrf_token %}
                     <div id="fields_hidden"></div>
-
                     <div class=" form-group">
                         <label class="col-sm-2 control-label">Cantidad a decrementar(*)</label>
                         <div class="col-sm-10" style="padding:11px;">
@@ -99,7 +98,7 @@ html = html + armar_hidden_comun({{lote.cantidad_producida}},"cantidad_producida
 html = html + armar_hidden_comun({{lote.stock_disponible}},"stock_disponible");
 html = html + armar_hidden_comun({{lote.stock_reservado}},"stock_reservado");
 
-$('#fields_hidden').html(html);
+$('#fields_hidden').html(html); 
 </script>
 
 {% endblock %}
