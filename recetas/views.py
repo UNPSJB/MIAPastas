@@ -1649,6 +1649,7 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+    messages.success(request, 'Pago realizado correctamente.')
     return HttpResponse(json.dumps("ok"),content_type='json')
 
 

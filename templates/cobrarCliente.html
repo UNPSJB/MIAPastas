@@ -31,7 +31,7 @@
                             <label for="exampleInputEmail2"> Cliente:  </label><fuente style="font-size: 160%;" > {{cliente.razon_social}} </fuente>
                              
               <p>&nbsp;</p>
-              <div class="col-md-6" >
+              <div class="col-md-6 notificar" >
 
               <!--INPUT DE LO QUE EL CLIENTE DEBE-->
               <form class="form-inline ocultos" style="display: none;">
@@ -292,18 +292,8 @@ var para_recibo = [];
         monto = $('#monto_a_pagar').val();
         monto = monto.replace(/,/g, '.');
         if  (esFloatPositivo(monto)== false){
-            BootstrapDialog.show({
-                    title: "Error",
-                    cssClass: 'error-dialog',
-                    message: "Debe ser un numero positivo",
-                    type: BootstrapDialog.TYPE_DANGER,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                dialogRef.close();
-                            }
-                    }]
-            });
+            $('#monto_a_pagar').notify("Ingrese correctamente el monto");
+
           return false;}
         entregas = [];
         $('#entregas').find('tr').each(function(){
@@ -456,19 +446,10 @@ var para_recibo = [];
                 dataType: 'json',
                 url: '{% url 'cobrarClienteFacturar' %}',
                 success: function(json){
-                    BootstrapDialog.show({
-                    title: "Error",
-                    cssClass: 'error-dialog',
-                    message: "Pago realizado correctamente",
-                    type: BootstrapDialog.TYPE_DANGER,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                dialogRef.close();
-                                window.location.reload();
-                            }
-                    }]
-            });
+                     window.location.reload();
+
+                    
+
 
                     }
             });
