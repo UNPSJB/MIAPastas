@@ -16,10 +16,8 @@
                     <input type="text" class="form-control" id="exampleInputName2" placeholder="Cuil/Cuit" >
                   </div>
                     FILTRO DE CUIT-->
-
                 <div>
-
-                  <label for="cliente">Cliente &nbsp;</label>
+                  <label for="cliente">Seleccione cliente &nbsp;</label>
                    <select class="form-control" id="cliente" name="cliente">
                               <option value="" selected="selected">---------</option>
                                  {% for c in clientes %}
@@ -30,7 +28,7 @@
                   <hr>
 
               </form>
-                            <textoprueba style="color:black;" > {{entregas.0.pedido.cliente.razon_social}} </textoprueba>
+                            <label for="exampleInputEmail2"> Cliente:  </label><fuente style="font-size: 160%;" > {{cliente.razon_social}} </fuente>
                              
               <p>&nbsp;</p>
               <div class="col-md-6" >
@@ -38,7 +36,7 @@
               <!--INPUT DE LO QUE EL CLIENTE DEBE-->
               <form class="form-inline ocultos" style="display: none;">
                   <div class="form-group">
-                        <label for="exampleInputEmail2">El cliente debe:  $</label>
+                        <label for="exampleInputEmail2"> Deuda:  $</label>
                         <input type="text" value="{{saldo}}" class="form-control" id="exampleInputEmail2" placeholder="Saldo del Cliente" readonly>
                   </div>
               </form>
@@ -57,7 +55,7 @@
                 <div class="col-md-9">
                     <table class="table table-hover" >
                         <thead>
-                            <h1>Pedidos no Facturados del Cliente </h1>
+                            <h2>Pedidos no Facturados del Cliente </h2>
                             <tr>
                                 <th style="display:none;"></th>
                                 <th>N° Pedido</th>
@@ -313,6 +311,23 @@ var para_recibo = [];
                 entregas.push(id);
         });
 
+        if (entregas.length == 0){
+              
+                  BootstrapDialog.show({
+                      title: "Error",
+                      cssClass: 'error-dialog',
+                      message: "El cliente no tiene deudas",
+                      type: BootstrapDialog.TYPE_DANGER,
+                      buttons: [{
+                              label: 'Aceptar',
+                              action: function(dialogRef){
+                                  dialogRef.close();
+                              }
+                      }]
+                  });
+              return false;
+              } 
+
 
         var myJsonString = JSON.stringify(entregas);
         var myJsonMonto = JSON.stringify(monto);
@@ -327,7 +342,7 @@ var para_recibo = [];
                  },
                 dataType: 'json',
                 //url: 'cobrarCliente/cobrarSaldo',
-                url:'{% url 'cobrarClienteSaldo' %}',
+                url:'{% url 'cobrarClienteClasificar' %}',
                 success: function(json){
                     mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo);
                     para_facturas = (json.para_facturas);

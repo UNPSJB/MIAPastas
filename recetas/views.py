@@ -162,7 +162,7 @@ def choferesBaja(request,chofer_id=None):
         chofer.activo=False
         chofer.save()
     else:
-        messages.success(request, 'El chofer: ' + chofer.nombre + ' no se puede eliminar porque tiene hojas de rutas pendientes')
+        messages.error(request, 'El chofer: ' + chofer.nombre + ' no se puede eliminar porque tiene hojas de rutas pendientes')
     return redirect('choferes')
 
 
@@ -245,7 +245,7 @@ def insumosBaja(request,insumo_id):
 
     insumo = models.Insumo.objects.get(pk=insumo_id)
     if len(insumo.pedidoproveedor_set.all())>0:
-        messages.success(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene pedidos a proveedores pendientes.')
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene pedidos a proveedores pendientes.')
         return redirect('insumos')
     if insumo.receta_set.exists():
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
@@ -585,11 +585,11 @@ def productosTerminadosBaja(request, producto_id=None):
         pass
     '''
     if len(p.pedidocliente_set.filter(activo=True))> 0:
-        messages.success(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
+        messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene pedidos asociados.')
     elif len(p.lote_set.filter(stock_disponible>0)>0):
-        messages.success(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene lotes con stock disponible.')
+        messages.error(request, 'El Producto: ' + p.nombre + ', no se puede eliminar porque tiene lotes con stock disponible.')
     elif p.receta_set.exists():
-        messages.success(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
+        messages.error(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in p.receta_set.all()]
         ))
         p.activo=False
@@ -1285,7 +1285,7 @@ def lotesAlta(request):
                                                                                             detalle_receta.insumo.nombre))
                     detalle_receta.insumo.save()
             except:
-                messages.success(request, 'No se actualizo stock de insumos ya que no hay receta asociada al Producto')
+                messages.error(request, 'No se actualizo stock de insumos ya que no hay receta asociada al Producto')
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
@@ -1528,21 +1528,20 @@ def LotesHojaRutaPdf(request,hoja_id=None):
 
 @login_required()
 def cobrarClienteFiltrado(request,cliente_id=None):
+# Busca todas las entregas de un cliente que no hayan sido abonadas completamente
+# Devuelve esas entregas y el monto total que adeuda
     entregas_no_facturadas = []
     cliente=models.Cliente.objects.get(pk=(cliente_id))
     entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
     saldo = 0
     for entrega in entregas:
-
         if entrega.factura == None and entrega.monto_total() > 0:
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()
-            print entrega.monto_restante()," eerere"
     clientes = models.Cliente.objects.all()
     entregas_no_facturadas = sorted(entregas_no_facturadas, key=lambda entrega: entrega.monto_restante())
     print entregas_no_facturadas,"saldoo", saldo
-    return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"clientes":clientes,"saldo":saldo})
-
+    return render(request, "cobrarCliente.html", {"entregas":entregas_no_facturadas,"cliente":cliente,"clientes":clientes,"saldo":saldo})
 
 
 
@@ -1554,10 +1553,10 @@ def cobrarCliente(request):
 
 
 
-
-
 @login_required()
-def cobrarClienteSaldo(request):
+def cobrarClienteClasificar(request):
+# Recibe las entregas no facturadas del cliente seleccionado, y las separa en pagados con factura o con recibos
+# Devuelve dos listados de entregas, una para facturacion y otra para recibo
     entregas = re.findall("\d+",request.GET['entregas'])
     mont = re.findall("\S+",request.GET['monto'])
     monto = re.sub('["]', '', mont[0])
@@ -1579,8 +1578,6 @@ def cobrarClienteSaldo(request):
         monto -= entrega.monto_restante()
     print "monto_", monto_recibo
     return HttpResponse(json.dumps({"para_facturas": entregas_para_factura,"para_recibo": entregas_para_recibo,"monto_recibo":monto_recibo}),content_type='json')
-
-
 
 
 
@@ -1608,7 +1605,7 @@ def cobrarClienteFacturar(request):
             entrega = models.Entrega.objects.get(pk=para_recibo[0])
             cliente=entrega.pedido.cliente
         cliente.saldo -=float(monto_recibo)
-        cliente.save()
+    cliente.save()
     if len(num_factura) !=0:
         num_factura = int(num_factura[0])
 
@@ -1624,8 +1621,6 @@ def cobrarClienteFacturar(request):
     print "monto factura",monto_factura," monto recibo: ",monto_recibo
     print "monto cliente ",cliente.saldo
     return HttpResponse(json.dumps("ok"),content_type='json')
-
-
 
 
 

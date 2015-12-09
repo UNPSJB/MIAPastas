@@ -333,6 +333,7 @@ class PedidoFijo(PedidoCliente):
         if self.fecha_cancelacion != None and self.fecha_cancelacion<date.today():
             self.activo=False
             self.save()
+            print "en es para hoyyyy"
             return False
         num_dia = date.today().weekday()
         if self.dias == None:
@@ -529,8 +530,6 @@ class ProductosLlevados(models.Model):
             print "Faltaron ",cantidad_buscada, "unidades para el producto: ",self.producto_terminado
         self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
         self.save()
-
-
 
 
 class ProductosLlevadosDetalle(models.Model):

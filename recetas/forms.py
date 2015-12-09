@@ -290,21 +290,15 @@ class LoteStockForm(forms.ModelForm):
         return lote
 
     def clean(self):
-        print "CLEAN POSTA"
         if len(self.mensaje_error) > 0:
            raise ValidationError(self.mensaje_error)
         cleaned_data = super(LoteStockForm, self).clean()
-        print "CLEAN POSTA 2"
-
         return cleaned_data
 
     def clean_cantidad_producida(self):
-        print "clean_cantidad_producida ",self.mensaje_error
-
         return self.cleaned_data["cantidad_producida"]
 
     def clean_cantidad(self):
-        print self.cleaned_data['stock_reservado']
         c =self.cleaned_data['cantidad']
         nueva_cantidad = self.cleaned_data['stock_disponible'] - c
         if nueva_cantidad < 0:
