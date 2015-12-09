@@ -288,7 +288,7 @@ var para_recibo = [];
 
 
 
-    function cobrar(){      //hacer filtro por cliente si o si
+    function cobrar(){      
         monto = $('#monto_a_pagar').val();
         monto = monto.replace(/,/g, '.');
         if  (esFloatPositivo(monto)== false){
@@ -344,7 +344,7 @@ var para_recibo = [];
                 //url: 'cobrarCliente/cobrarSaldo',
                 url:'{% url 'cobrarClienteClasificar' %}',
                 success: function(json){
-                    mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo);
+                    mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo,json.monto_factura);
                     para_facturas = (json.para_facturas);
                     para_recibo = (json.para_recibo);
                     }
@@ -354,7 +354,7 @@ var para_recibo = [];
 
             }
 
-         function mostrar_datos(para_facturas,para_recibo,monto_recibo){
+         function mostrar_datos(para_facturas,para_recibo,monto_recibo,monto_factura){
 
             monto_recibo = parseFloat(monto_recibo).toFixed(2);
 
@@ -362,7 +362,7 @@ var para_recibo = [];
             $('#body_entregas_recibo').empty();
             $('#cuerpo_factura').show();
             $('#cuerpo_recibo').show();
-            $('#monto_factura').val(monto-monto_recibo);
+            $('#monto_factura').val(monto_factura);
             $('#monto_recibo').val(monto_recibo);
 
             if (_.size(para_facturas)> 0){
@@ -371,8 +371,7 @@ var para_recibo = [];
                  for (key in (para_facturas)){
                     $('#body_entregas').append('<tr><td>'+key+'</td><td>'+para_facturas[key]+'</td></tr>');
                     }
-
-                 if (monto>(monto-monto_recibo)){  //si tambien hay q cargar un recibo
+                 if (monto_recibo > 0){  //si tambien hay q cargar un recibo
                     for (key in (para_recibo)){
                         $('#body_entregas_recibo').append('<tr><td>'+key+'</td><td>'+para_recibo[key]+'</td></tr>');
                     }
