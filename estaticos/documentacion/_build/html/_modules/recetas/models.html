@@ -81,7 +81,6 @@
             
             
                 <ul>
-<li class="toctree-l1"><a class="reference internal" href="../../tutorial.html">﻿Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../proyecto.html">﻿Proyecto</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../codigo.html">Codigo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../../ayuda usuario.html">﻿AYUDA DE USUARIO</a></li>
@@ -283,11 +282,20 @@
     <span class="c">#http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/</span>
     <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
+
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
             <span class="p">(</span><span class="s">&quot;ver_productos_terminados_disponibles&quot;</span><span class="p">,</span> <span class="s">&quot;Puede listar los productos disponibles&quot;</span><span class="p">),</span>
             <span class="p">(</span><span class="s">&quot;ver_productos_mas_vendidos&quot;</span><span class="p">,</span> <span class="s">&quot;Puede listar los productos mas vendidos&quot;</span><span class="p">),</span>
         <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">stockDisponibleEnDeposito</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">lotes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lote_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+        <span class="n">cantidad</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">lote</span> <span class="ow">in</span> <span class="n">lotes</span><span class="p">:</span> <span class="c">#hay que obtener la cantidad disponible en el deposito</span>
+            <span class="n">cantidad</span> <span class="o">+=</span> <span class="n">lote</span><span class="o">.</span><span class="n">stock_disponible</span> <span class="o">-</span> <span class="n">lote</span><span class="o">.</span><span class="n">stock_reservado</span>
+        <span class="k">return</span> <span class="n">cantidad</span>
+
 
     <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="k">return</span> <span class="s">&quot;</span><span class="si">%s</span><span class="s">&quot;</span><span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">nombre</span>
@@ -649,6 +657,17 @@
                             <span class="s">&quot;cantidad_enviada&quot;</span><span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">cantidad_enviada</span><span class="p">,</span>
                             <span class="s">&quot;cantidad_pedida&quot;</span><span class="p">:</span><span class="n">p</span><span class="o">.</span><span class="n">cantidad_pedida</span><span class="p">})</span> 
         <span class="k">return</span> <span class="n">totales</span>
+
+    <span class="k">def</span> <span class="nf">tiene_algun_producto</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;en tiene algun prod&quot;</span>
+        <span class="n">tiene</span> <span class="o">=</span> <span class="bp">False</span>
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">productosllevados_set</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">if</span> <span class="n">p</span><span class="o">.</span><span class="n">cantidad_enviada</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">tiene</span> <span class="o">=</span> <span class="bp">True</span>
+                <span class="k">break</span>
+        <span class="k">print</span> <span class="s">&quot;retorno : &quot;</span><span class="p">,</span><span class="n">tiene</span>
+        <span class="k">return</span> <span class="n">tiene</span>            
+
 </div>
 <div class="viewcode-block" id="ProductosLlevados"><a class="viewcode-back" href="../../codigo recetas.html#recetas.models.ProductosLlevados">[docs]</a><span class="k">class</span> <span class="nc">ProductosLlevados</span><span class="p">(</span><span class="n">models</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
     <span class="n">cantidad_pedida</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>

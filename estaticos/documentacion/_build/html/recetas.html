@@ -32,7 +32,7 @@
   
     <link rel="top" title="miaPastas 1.0.0 documentation" href="index.html"/>
         <link rel="up" title="﻿AYUDA DE USUARIO" href="ayuda usuario.html"/>
-        <link rel="next" title="﻿Alta Receta" href="recetas alta.html"/>
+        <link rel="next" title="﻿Consultar Recetas" href="recetas consultar.html"/>
         <link rel="prev" title="﻿AYUDA DE USUARIO" href="ayuda usuario.html"/> 
 
   
@@ -83,16 +83,24 @@
             
             
                 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="tutorial.html">﻿Tutorial</a></li>
 <li class="toctree-l1"><a class="reference internal" href="proyecto.html">﻿Proyecto</a></li>
 <li class="toctree-l1"><a class="reference internal" href="codigo.html">Codigo</a></li>
 <li class="toctree-l1 current"><a class="reference internal" href="ayuda usuario.html">﻿AYUDA DE USUARIO</a><ul class="current">
 <li class="toctree-l2 current"><a class="reference internal" href="ayuda usuario.html#ayuda">Ayuda</a><ul class="current">
 <li class="toctree-l3 current"><a class="current reference internal" href="">﻿Recetas</a><ul>
-<li class="toctree-l4"><a class="reference internal" href="#documentation-for-the-code">Documentation for the Code</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#consultar-recetas">Consultar Recetas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#modificar-recetas">Modificar Recetas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#eliminar-recetas">Eliminar Recetas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#alta-de-recetas">Alta de Recetas</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="lotes.html">﻿Producción</a></li>
 <li class="toctree-l3"><a class="reference internal" href="clientes.html">﻿Clientes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="ciudades.html">﻿Ciudades</a></li>
+<li class="toctree-l3"><a class="reference internal" href="zonas.html">﻿Zonas</a></li>
+<li class="toctree-l3"><a class="reference internal" href="proveedores.html">﻿Proveedores</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedidosProveedor.html">﻿Proveedores</a></li>
+<li class="toctree-l3"><a class="reference internal" href="choferes.html">﻿Choferes</a></li>
 </ul>
 </li>
 </ul>
@@ -145,14 +153,44 @@
             
   <div class="section" id="recetas">
 <h1>﻿Recetas<a class="headerlink" href="#recetas" title="Permalink to this headline">¶</a></h1>
-<p>&#8216;-&#8216;Pantalla principal de recetas
-Se verá el nombre y producto del cual se podrá filtrar
-Debajo se encontrará una lista de las recetas que se encuentran almacenadas con la descripción del producto terminado y la canidad</p>
-<div class="section" id="documentation-for-the-code">
-<h2>Documentation for the Code<a class="headerlink" href="#documentation-for-the-code" title="Permalink to this headline">¶</a></h2>
 <img alt="_images/rece_ini.jpg" src="_images/rece_ini.jpg" />
+<ol class="arabic simple">
+<li>Nombre de la sección donde estamos ubicados.</li>
+<li>Es el sector de filtrado, se podrá filtrar por nombre o producto.</li>
+<li>Área de resultado del filtro donde se mostrará nombre, producto terminado y cantidad, de no haberse realizado ningún filtro mostrará todas las recetas existentes. Al hacer click en Producto terminado mostrará todos los datos del producto terminado asociado.</li>
+<li>El icono de lupa sirve para mostrar más detalle sobre el ítem seleccionado como se muestra en la siguiente figura. De no seleccionar previamente un ítem aparecerá un mensaje de error.</li>
+<li>El icono de llave sirve para realizar una modificación sobre el ítem seleccionado. Para esto se deberá hacer click previamente sobre el ítem deseado. De no seleccionar previamente un ítem aparecerá un mensaje de error.</li>
+<li>Eliminar una receta.</li>
+<li>Alta de una receta, permite crear una receta.</li>
+</ol>
+<div class="section" id="consultar-recetas">
+<h2>Consultar Recetas<a class="headerlink" href="#consultar-recetas" title="Permalink to this headline">¶</a></h2>
+<img alt="_static/recetas/receta_consultar.jpg" src="_static/recetas/receta_consultar.jpg" />
+<ol class="arabic simple">
+<li>Nombre de la sección en la que nos ubicamos, (2) descripción de la receta, (3) el detalle de la receta, (4) botón para volver a la página anterior.</li>
+</ol>
+</div>
+<div class="section" id="modificar-recetas">
+<h2>Modificar Recetas<a class="headerlink" href="#modificar-recetas" title="Permalink to this headline">¶</a></h2>
+<img alt="_static/recetas/recetas_modificar.jpg" src="_static/recetas/recetas_modificar.jpg" />
+<ol class="arabic simple">
+<li>Nombre de la sección en la que nos ubicamos, (2) descripción de la receta a modificar, (3 y 4) el detalle de la receta a modificar, (5) agregar un insumo y su cantidad a la receta, (6) modificar la cantidad del insumo, (7) eliminar el insumo de la receta, (8) guardar los cambios de la receta.</li>
+</ol>
+</div>
+<div class="section" id="eliminar-recetas">
+<h2>Eliminar Recetas<a class="headerlink" href="#eliminar-recetas" title="Permalink to this headline">¶</a></h2>
+<p>Se deberá seleccionar una receta haciendo click, y luego hacer click sobre el botón de eliminar. Aparecerá el siguiente cartel:</p>
+<img alt="_static/recetas/recetas_eliminar.jpg" src="_static/recetas/recetas_eliminar.jpg" />
+</div>
+<div class="section" id="alta-de-recetas">
+<h2>Alta de Recetas<a class="headerlink" href="#alta-de-recetas" title="Permalink to this headline">¶</a></h2>
+<img alt="_static/recetas/recetas_alta.jpg" src="_static/recetas/recetas_alta.jpg" />
+<ol class="arabic simple">
+<li>Nombre de la sección en la que nos ubicamos, (2) descripción de la receta a crear, (3 y 4) el detalle de la receta a crear, agregar un insumo y su cantidad a la receta,  debajo se encuentra el botón de guardar.</li>
+</ol>
 <div class="toctree-wrapper compound">
 <ul>
+<li class="toctree-l1"><a class="reference internal" href="recetas consultar.html">﻿Consultar Recetas</a></li>
 <li class="toctree-l1"><a class="reference internal" href="recetas alta.html">﻿Alta Receta</a></li>
 <li class="toctree-l1"><a class="reference internal" href="receta eliminar.html">﻿Eliminar Receta</a></li>
 </ul>
@@ -167,7 +205,7 @@ Debajo se encontrará una lista de las recetas que se encuentran almacenadas con
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="recetas alta.html" class="btn btn-neutral float-right" title="﻿Alta Receta" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="recetas consultar.html" class="btn btn-neutral float-right" title="﻿Consultar Recetas" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="ayuda usuario.html" class="btn btn-neutral" title="﻿AYUDA DE USUARIO" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
