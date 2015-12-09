@@ -1,20 +1,23 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
-{% block contenido %}
+{% load bootstrap3 %}
 {% load recetas %}
+{% block contenido %}
 
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja.fecha_creacion}}</b></font></p></div>
             <div class="panel-body">                
-                <form class=" form-horizontal">    
+                <form class=" form-horizontal" method = "post" onsubmit = "return validar()">    
+                                     {% csrf_token %}
+
                 <h1><font color="#2E8B57" font-size="20%">Se Registraron correctamente las entregas.</font> </h1>
-                            {% for e in hoja.entrega_set.all%}
+                    {% for e in hoja.entrega_set.all%}
                             <p>&nbsp;</p>
                             <div>
                                 <span style="text-decoration: underline;font-size: 150%; ">
                                     <strong>
-                                        Cliente: {{e.pedido.cliente.razon_social}}
+                                        Cliente: {{e.pedido.cliente.razon_social}} {{e.pedido.get_tipo_pedido_display}}
                                     </strong>
                                 </span>
                             </div>
@@ -36,8 +39,7 @@
                                     <div class="col-sm-10" style="padding:0.7%;">
                                           {% devolver_cantidad_pedida d %}
                                     </div>
-                                </div>
-                                
+                                </div>                                
                                 <div class=" form-group" style="margin-left: 3%;">
                                     <label class="col-sm-2 control-label">Cantidad Entregada</label>
                                     <div class="col-sm-10" style="padding:0.7%;">
@@ -49,14 +51,32 @@
                                     <label class="col-sm-2 control-label">Precio Total</label>
                                     <div class="col-sm-10" style="padding:0.7%;">
                                         {{ d.precio }}
-                                    </div>
-                                
-                                </div>
-                            
+                                    </div>                                
+                                </div>                            
                             {% endfor %}
+                            <div class="form-inline ocultos" style="margin-left: 3%;">                            
+                                <h1 style="margin-left: 5%;"><font color="black" size="5%">Pagos </font> </h1>
+                                <label for="monto"> Monto a abonar: $ </label>
+                                <input type="text" class="form-control monto" id="monto"
+                                        data-preciototal= "{%devolver_precio_total e%}"
+                                        data-entregaid = "{% e.id %}"
+                                         >
+                                
+                                <label for="nro_doc"> Nro facgtura/remito:  </label>
+                                <input type="text" class="form-control" id="nro_doc" >
+                                
+                                <button type="button" id="pagar" onclick="" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
+                            </div>
                             </div>
 
-                        {% endfor %}                     
+                             
+                    {% endfor %}  
+                     
+                     {% buttons %}
+                        <button id = "btn-submit" type="submit" class="btn btn-primary">
+                            {% bootstrap_icon "star" %} Registrar Pagos
+                        </button>
+                    {% endbuttons %}                 
                 </form>
 
             </div>
@@ -67,5 +87,36 @@
 {% endblock %}
 {% block javascript %}
 <script>
+
+
+
+function inputs_validos(m){
+    var total = 0;
+    var valor = 0;
+    var diferencia = 0;
+    $(m).each(function(i,val){
+        total = parseFloat(val.getAttribute("data-preciototal"));
+        valor = parseFloat(val.value);            
+        if (valor > total){
+            diferencia = valor - total; 
+            alert("Se pagaton "+diferencia+" pesos de mas para la entrega");
+        }      
+    });
+    alert("todo legal");
+    return false;
+}
+
+function validar(){
+    var montos_pagados = $(".monto");    
+    if (inputs_validos(montos_pagados)){
+        console.log("asd");
+    }
+    return false;
+}
+
+$(".monto").click(function(){
+    $(this).val($(this).data()["preciototal"]);
+});
+
 </script>
 {% endblock %}

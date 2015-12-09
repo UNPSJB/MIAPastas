@@ -154,6 +154,7 @@ class ProductoTerminado(models.Model):
     class Meta:
         permissions = (
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
+            ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
 
     def __str__(self):
@@ -482,6 +483,11 @@ class PerdidaStock(models.Model):
     fecha = models.DateField(auto_now_add=True)
     causas = models.PositiveSmallIntegerField(choices=CAUSAS_DECREMENTO_STOCK, default="1")
 
+    class Meta:
+        permissions = (
+            ("ver_perdida_stock", "Puede listar las perdidas de stock"),
+        )
+
 
 #********************************************************#
          #    HOJA DE RUTA   #
@@ -625,6 +631,20 @@ class EntregaDetalle(models.Model):
             return self.producto_terminado
         return self.pedido_cliente_detalle.producto_terminado
 
+    def set_precio(self):
+        print "en set precio"
+        self.precio=0
+        # si es pedido de cambio no cobra nada
+        if self.entrega.pedido.tipo_pedido == 3:
+            self.precio=0
+        else:
+            print "recorriendo prod llevados"
+            for p in self.entrega.hoja_de_ruta.productosllevados_set.all():
+                print "-------->",p.producto_terminado
+                if p.producto_terminado.id == self.get_producto_terminado().id:                
+                    self.precio = p.precio * self.cantidad_entregada 
+                    break
+        self.save()
 
 
 class PerdidaStockLote(models.Model):
