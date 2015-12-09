@@ -290,7 +290,7 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente','activo' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),

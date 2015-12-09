@@ -13,12 +13,13 @@
 
 
       <form class="form-inline" method="get">
-            <div class="form-group col-md-12">
+            
                         <label for="fecha_creacion">Fecha Creacion (Mayor o igual)</label>
                         <input type="text" class="form-control datepicker" value="{{filtros.fecha_creacion}}" name="fecha_creacion" id="fecha_creacion">
 
 
             <p>&nbsp;</p>
+            <div>
             <div class="col-md-3 form-group">
               <label for="cliente">Cliente</label>
 
@@ -29,7 +30,7 @@
                                 {% endfor %}
               </select>
                 </div>
-              <div class="col-md-3 form-group">
+              <div class="col-md-9 form-group">
               <label for="tipo_pedido">Tipo Pedido</label>
 
               <select class="form-control" id="tipo_pedido" name="tipo_pedido">
@@ -38,23 +39,36 @@
                                 <option value="2">Ocacional</option>
                                 <option value="3">De Cambio</option>
 
-              </select>
+              </select>                
+                <div class="checkbox">
+                         <label>
+                          <input type="checkbox" class="form-control" {% if filtros.activo %} checked{% endif %}  value="{{filtros.activo}}" name="activo" id="activo"> Vigente
+                        </label>
+                    </div>
+                </div>
+                
+</div>       
+<hr>     
 
-              <div class="form-group">
+                    
+                <div class="col-md-12"><hr></div>
+                <hr>
+                 <div class="col-md-4">
+                        <h4 for="fecha_desde">Vigencia:</h4>
+                  <div>
                         <label for="fecha_desde">Fecha Desde</label>
                         <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
                   </div>
                   <div class="form-group">
                         <label for="fecha_hasta">Fecha Hasta</label>
                         <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
-                  </div>
-
-          </div>
-            <button type="submit" class="btn btn-default">Filtrar</button>
-        </div>
+                  </div> 
+                </div><div class="col-md-2"><button type="submit" class="btn btn-default">Filtrar</button></div>
+          
+            
       </form>
 
-          <p>&nbsp;</p>
+          <div class="col-md-12"><p>&nbsp;</p></div>
       <hr>
       <div class="row">
           <div class="col-md-7" style="overflow-y:scroll; max-height:350px;">

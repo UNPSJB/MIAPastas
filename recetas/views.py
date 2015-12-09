@@ -896,6 +896,7 @@ def pedidosClientes(request,pedido_id=None):
         qobj |= Q(**mfilters)
 
         pedidos = models.PedidoCliente.objects.filter(pobj & qobj)
+        #pedidos = pedidos.filter(activo=True)
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
