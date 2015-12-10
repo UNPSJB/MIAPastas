@@ -245,13 +245,17 @@ def insumosBaja(request,insumo_id):
     """
 
     insumo = models.Insumo.objects.get(pk=insumo_id)
+
+
     if len(insumo.pedidoproveedor_set.all())>0:
-        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene pedidos a proveedores pendientes.')
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene asociados pedidos a proveedores. \n Si desea eliminarlo, elimine primero los pedidos.')
         return redirect('insumos')
+
     if insumo.receta_set.exists():
-        messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
-            [ "%s" % r for r in insumo.receta_set.all()]
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se ha podido eliminar porque tiene las siguiente recetas asociadas: %s .' % ", ".join(
+           [ "%s" % r for r in insumo.receta_set.all()]
         ))
+        return redirect('insumos')
         #insumo.delete()
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
@@ -1173,8 +1177,10 @@ def pedidosProveedorRecepcionar(request,pedido_id):
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
             #pedido_proveedor_instancia.fecha_de_entrega = date.today()
-            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
-                messages.error(request, 'Problema de Fechas')
+            #if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
+            fecha_de_hoy = datetime.date.today()
+            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion or pedido_proveedor_instancia.fecha_de_entrega>fecha_de_hoy:
+                messages.error(request, 'Problema de Fechas: La fecha de entrega debe estar entre la fecha de realizacion y la fecha de hoy')
                 return render(request,"pedidosProveedorRecepcionar.html",{
                 "pedido_proveedor_form":pedido_proveedor_form,
                 "proveedor":proveedor,
@@ -1384,7 +1390,7 @@ def hojaDeRutaAlta(request):
             if p_llevado.is_valid():
                  p_llevado.save(hoja_ruta_instancia)
             #print "ERRORES ",p_llevado.errors.as_data()
-        if hoja_ruta_instancia.productosllevados_set.all():
+        if hoja_ruta_instancia.tiene_algun_producto():
             if  entregas_factory.is_valid():
                 for e in entregas_factory:
                     entrega_instancia= e.save(hoja_ruta_instancia)
@@ -1494,7 +1500,7 @@ def RendicionDeRepartoMostrar(request,hoja_id):
             messages.success(request,"Se registraron correctamente los pagos de las entregas")
             return redirect('index')
         else:
-            print "el factoruy no es valido"
+            print "el factory no es valido"
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_form,
                                                             "prefix_cobros":"cobros"})
