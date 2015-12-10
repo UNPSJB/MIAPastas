@@ -24,7 +24,7 @@ TIPODIAS = (
         (3, "miercoles"),
         (4,"jueves"),
         (5,"viernes")
-      )
+      ) 
 
 CAUSAS_DECREMENTO_STOCK = (
         (1, "Vencimiento"),
@@ -42,7 +42,7 @@ class Chofer (models.Model):
     nombre= models.CharField(max_length=100)
     direccion= models.CharField(max_length=100)
     telefono=models.PositiveIntegerField()
-    e_mail=models.CharField(max_length=100)
+    e_mail=models.EmailField(blank=True, null=True)
     activo = models.BooleanField(default=True)
     disponible = models.BooleanField(default=True)
     def __str__(self):
@@ -208,7 +208,7 @@ class Proveedor(models.Model):
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=100, unique=True)
-    email = models.CharField(max_length=30, unique=True, blank=True,null=True) #blank=True indica que puede estar el campo vacio
+    email = models.EmailField(unique=True) #blank=True indica que puede estar el campo vacio
     localidad = models.CharField(max_length=50, unique=True)
     numero_cuenta= models.PositiveIntegerField(unique=True)
     provincia = models.CharField(max_length=50, unique=True)
@@ -270,7 +270,7 @@ class Cliente(models.Model):
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar
     direccion = models.CharField(max_length=100, unique=True)
     telefono= models.PositiveIntegerField()
-    email = models.CharField(max_length=30,blank=True,null=True) #blank=True indica que puede estar el campo vacio
+    email = models.EmailField(blank=True, null=True) #blank=True indica que puede estar el campo vacio
     es_moroso = models.BooleanField(default=False)
     saldo = models.FloatField(default=0)
 
@@ -482,8 +482,8 @@ class Lote(models.Model):
 
 class Factura(models.Model):
     fecha = models.DateField(auto_now_add = True)
-    numero = models.PositiveIntegerField()  #es el numero de la factura en papel
-    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
+    numero = models.PositiveIntegerField(unique=True)  #es el numero de la factura en papel
+    monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,01)])
 
     def __str__(self):
         return "%s" % ("Factura")
@@ -664,7 +664,7 @@ class EntregaDetalle(models.Model):
 class Recibo(models.Model):
     entrega = models.ForeignKey(Entrega)
     fecha = models.DateField(auto_now_add = True)
-    numero = models.PositiveIntegerField()  #es el numero del recibo en papel
+    numero = models.PositiveIntegerField(unique=True)  #es el numero del recibo en papel
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)])
 
     def __str__(self):

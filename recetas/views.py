@@ -729,6 +729,8 @@ def clientesModificar(request,cliente_id = None):
     if request.method=="POST":
         cliente_form = forms.ClienteModificarForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
+            print "ENCLIENTEEEEE",cliente_instancia.saldo
+
             if cliente_instancia.es_moroso and cliente_instancia.saldo==0:
                 print(cliente_instancia.es_moroso)
                 messages.error(request,'El cliente no puede ser moroso ya que no posee saldo deudor')
@@ -736,6 +738,10 @@ def clientesModificar(request,cliente_id = None):
                 return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
             cliente_form.save()
             return redirect('clientes')
+        else:
+            return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+
+
     else:
         cliente_form = forms.ClienteModificarForm(instance= cliente_instancia)
         return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
@@ -1649,8 +1655,37 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+        
+
     messages.success(request, 'Pago realizado correctamente.')
     return HttpResponse(json.dumps("ok"),content_type='json')
+
+
+
+def getFacturas(request): 
+
+    num_factura = int(request.GET['factura'])
+    try:
+        factura = models.Factura.objects.get(numero=num_factura)
+        factura=1
+    except:
+        factura=0 #si no existe el factura
+    print factura
+    return HttpResponse(json.dumps(factura), content_type='json')
+
+
+def getRecibos(request): 
+    num_recibo = int(request.GET['recibo'])
+    try:
+        recibo = models.Recibo.objects.get(numero=num_recibo)
+        recibo=1
+    except:
+        recibo=0 #si no existe el recibo
+    print recibo
+    #json.dumps(recibo)
+    print recibo
+    return HttpResponse(json.dumps(recibo), content_type='json')
+
 
 
 

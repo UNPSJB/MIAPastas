@@ -157,6 +157,8 @@ urlpatterns = [
     url(r'^cobrarCliente/facturar$',recetasviews.cobrarClienteFacturar,name='cobrarClienteFacturar'),
     url(r'^cobrarCliente/Filtrado/(?P<cliente_id>[0-9]+)/$',recetasviews.cobrarClienteFiltrado,name='cobrarClienteFiltrado'),
     url(r'^cobrarCliente/mostrarRecibos$',recetasviews.cobrarClienteMostrarRecibos,name='cobrarClienteMostrarRecibos'),
+    url(r'^cobrarCliente/facturas$',recetasviews.getFacturas,name='getFacturas'),
+    url(r'^cobrarCliente/recibos$',recetasviews.getRecibos,name='getRecibos'),
 
 
 
