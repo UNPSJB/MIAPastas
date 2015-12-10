@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
-from local_settings import BASE_DIR
+from local_settings import BASE_DIR, DATABASES
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -85,13 +85,23 @@ LOGIN_URL = "/"
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-    }
-}
+#DATABASES = {
+ #   'default': {
+  #      'ENGINE': 'django.db.backends.sqlite3',
+   #     'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+   # }
+#}
 
+#DATABASES = {
+ #   'default': {
+  #      'ENGINE': 'django.db.backends.postgresql_psycopg2',
+  #      'NAME': 'bdMiaPastas',
+   #     'USER': 'postgres',
+    #    'PASSWORD': 'postgres',
+     #   'HOST': '',
+      #  'PORT': '',
+    #},
+#}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
