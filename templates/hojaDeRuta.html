@@ -3,15 +3,15 @@
 {% load bootstrap3 %}
 {% block contenido %}
 <div class="container">
-<div class="panel panel-default">
+<div class="panel panel-default" style="width: 100%;">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta</b></font></p></div>
   <div class="panel-body">
            <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return validar()" method="post">
                      {% csrf_token %}
                      {{ extras_form_factory.management_form }}
                      {{ entregas_form_factory.management_form }}         
-
-
+            <div>
+            <div class="col-md-6">
             <div class=" form-group">
                 <label  class="col-sm-2 control-label">Fecha:</label>
                 <div class="col-sm-10" style="padding:7px;">
@@ -20,7 +20,7 @@
             </div>
                 <div class="form-group">
                         <label class="col-sm-2 control-label" for="chofer">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
-                         <div class="col-sm-2">
+                         <div class="col-sm-5">
                               <select class="form-control "  id="chofer" name="chofer" required="required">
                                   <option value="">--------</option>
                                   {% for chofer in choferes %}
@@ -29,9 +29,32 @@
                               </select>
                          </div>
                    </div>
+</div>
+                <div class="panel panel-success col-md-6">
+                    <table id="tabladisponibes" class="table table-hover">
+                    <thead>
+                        <h1>Productos disponibles</h1>
+                        <tr>
+                            <th>Producto</th>
+                            <th>Cantidad</th>
+                        </tr>
+                    </thead>
+                    <tbody id="cuerpoDisponibles" class="Disponibles">
+                    {% for producto in productos %}
+                      <tr id="{{producto.id}}">
+                         <td>{{producto.nombre}}</td>
+                        <td> {{producto.stock_disponible}}</td>
+                      </tr>
+                    {% endfor %}
+                    </tbody>
+              </table>
+                </div>
+                </div>  
+
                <tr>
           <p>&nbsp;</p>
-      <div class="row">
+      <div class="row col-md-12">
+      <hr>
           <div class="col-md-6" style="overflow-y:scroll; max-height:450px;">
           <table class="table table-hover" id="datatables" class="display">
                 <thead>
@@ -67,7 +90,7 @@
           </div>
           <p></p>
           </div>
-          <div class="col-md-5">
+          <div class="col-md-5" id="tablaAsignados">
               <table id="tablaPedidosAsignados" class="table table-hover">
                     <thead>
                         <h1>Pedidos asignados</h1>
@@ -207,6 +230,14 @@ var totales_datos=[];
 
 
         $(function() {
+         /* $("#tablaAsignados").notify("El producto {{productos.2.nombre}} no tiene mas stock",{clickToHide: false,autoHide: false,position:"top right"});
+         var ell = $("#tablaAsignados");
+          var not = $.notify(ell,"El producto {{productos.2.nombre}} no tiene mas stock",{clickToHide: false,autoHide: false,position:"top right"});
+          */
+         //n.close();
+
+          
+
 
         var estado;
         function obtenerId(event) {
@@ -242,6 +273,27 @@ var totales_datos=[];
 
        });
 
+
+        function mostrarAdvertencia(producto){
+
+            var n = noty({
+            layout: 'bottomRight',
+              type: 'warning',
+              text: '<strong>Atencion!</strong> <br>El producto '+ producto+' no tiene mas stock',
+              dismissQueue: true, 
+                animation: {
+                  open: {height: 'toggle'},
+                  close: {height: 'toggle'},
+                  easing: 'swing',
+                  speed: 500 
+                  },
+                timeout: 0
+              });
+    
+
+        }
+
+
         function agregarHojaDeRutaMismoCliente(){
             var nro_pedido;
             var razon_social;
@@ -258,6 +310,7 @@ var totales_datos=[];
             razon_social_clase.trim();  //quito los espacios en blanco porque sino no lo puedo usar como una clase
             var cliente = $el.data()["cliente"];
             $('#tablaPedidosAsignados').append('<tr class="renglon select-item-asignados cliente-'+razon_social_clase+'" data-clase='+razon_social_clase+'  data-cliente='+cliente+' data-id='+nro_pedido+' id="renglon_asignado-'+nro_pedido+'"><td>'+nro_pedido+'</td><td>'+razon_social+'</td></tr>');
+
 
             }
 
@@ -341,6 +394,12 @@ var totales_datos=[];
                     mostrarTotales();
                     }
             });
+            console.log(totales_cantidades);
+            for (producto_id in totales_productos){
+              if(totales_cantidades[producto_id] > {{productos.producto_id.}})
+              console.log(producto)
+
+            }
         }
 
         function agregar_extra_totales(){

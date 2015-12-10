@@ -151,11 +151,16 @@ class ProductoTerminado(models.Model):
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
 
+
     class Meta:
         permissions = (
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
             ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
+
+    def stockDisponible(self):
+        lotes = self.lotes_set.all()
+        
 
     def __str__(self):
         return "%s"% self.nombre
