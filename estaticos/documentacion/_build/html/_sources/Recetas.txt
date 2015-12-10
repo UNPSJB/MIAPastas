@@ -14,14 +14,14 @@
 Consultar Recetas
 -----------------
 
-.. image:: _static/recetas/receta_consultar.jpg
+.. image:: _static/recetas/receta_detalle.jpg
 
 (1) Nombre de la sección en la que nos ubicamos, (2) descripción de la receta, (3) el detalle de la receta, (4) botón para volver a la página anterior.
 
 Modificar Recetas
 -----------------
 
-.. image:: _static/recetas/recetas_modificar.jpg
+.. image:: _static/recetas/receta_modificar.jpg
 
 (1) Nombre de la sección en la que nos ubicamos, (2) descripción de la receta a modificar, (3 y 4) el detalle de la receta a modificar, (5) agregar un insumo y su cantidad a la receta, (6) modificar la cantidad del insumo, (7) eliminar el insumo de la receta, (8) guardar los cambios de la receta.
 
@@ -29,12 +29,12 @@ Eliminar Recetas
 -----------------
 Se deberá seleccionar una receta haciendo click, y luego hacer click sobre el botón de eliminar. Aparecerá el siguiente cartel:
 
-.. image:: _static/recetas/recetas_eliminar.jpg
+.. image:: _static/recetas/receta_eliminar.jpg
 
 Alta de Recetas
 -----------------
 
-.. image:: _static/recetas/recetas_alta.jpg
+.. image:: _static/recetas/receta_alta.jpg
 
 (1) Nombre de la sección en la que nos ubicamos, (2) descripción de la receta a crear, (3 y 4) el detalle de la receta a crear, agregar un insumo y su cantidad a la receta,  debajo se encuentra el botón de guardar.
 
