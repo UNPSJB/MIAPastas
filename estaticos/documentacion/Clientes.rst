@@ -2,9 +2,10 @@
 ====================================
 .. image:: _static/clientes/clientes_ini.jpg
 .. toctree::
-   :maxdepth: 1
+   :maxdepth: 2
    
-   Clientes_alta
-   Clientes_modificar
-   Clientes_Eliminar
+   clientes alta
+   clientes modificar
+   clientes Eliminar
+
 
