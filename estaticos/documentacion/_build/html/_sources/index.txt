@@ -16,7 +16,6 @@ Contents:
 .. toctree::
    :maxdepth: 3
    
-   tutorial
    proyecto
    codigo
    ayuda usuario

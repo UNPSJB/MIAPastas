@@ -89,7 +89,7 @@ urlpatterns = [
 
 
 
-    url(r'^choferes$',recetasviews.choferes,name='choferes'),
+    url(r'^choferes/$',recetasviews.choferes,name='choferes'),
     url(r'^choferes/(?P<chofer_id>[0-9]+)/$',recetasviews.choferes,name='choferConsulta'),
     url(r'^choferes/alta/$',recetasviews.choferesAlta,name='choferesAlta'),
     url(r'^choferes/modificar/(?P<chofer_id>[0-9]+)/$',recetasviews.choferesModificar,name='choferModificar'),
@@ -167,7 +167,7 @@ urlpatterns = [
     url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
     url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
-    url(r'^pedidosProveedor$',recetasviews.pedidosProveedor,name='pedidosProveedor'),
+    url(r'^pedidosProveedor/$',recetasviews.pedidosProveedor,name='pedidosProveedor'),
     url(r'^pedidosProveedor/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedor,name='pedidosProveedorConsulta'),
     url(r'^pedidosProveedor/alta/$',recetasviews.pedidosProveedorAlta,name='pedidosProveedorAlta'),
 
