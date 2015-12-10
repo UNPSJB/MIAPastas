@@ -488,6 +488,8 @@ class Factura(models.Model):
     def __str__(self):
         return "%s" % ("Factura")
 
+    def to_string(self):
+        return "Factura"
 
 class PerdidaStock(models.Model):
     ''' Clase que modela el suceso de decrementar el stock de un lote debido a una perdida (por rotura, vencimiento u otros)
@@ -681,3 +683,5 @@ class Recibo(models.Model):
     def __str__(self):
         return "%s" % ("Resibo")
 
+    def to_string(self):
+        return "Recibo"

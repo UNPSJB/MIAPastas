@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect,render_to_response
 from . import models
 from . import forms
 from django.forms.formsets import formset_factory
@@ -1501,6 +1501,16 @@ def RendicionDeRepartoMostrar(request,hoja_id):
             return redirect('index')
         else:
             print "el factory no es valido"
+            print "context"
+
+            print request.session
+            return render_to_response('rendicionDeRepartoMostrar.html', 
+                                    {"hoja":hoja,
+                                    "cobros_factory":cobros_form,
+                                    "prefix_cobros":"cobros"}, 
+                                    context_instance=RequestContext(request))
+
+          
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_form,
                                                             "prefix_cobros":"cobros"})

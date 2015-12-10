@@ -1,5 +1,6 @@
 from django import template
 from django.template.defaultfilters import stringfilter
+from django.utils.safestring import mark_safe
 register = template.Library()
 
 @register.simple_tag
@@ -124,3 +125,72 @@ def bolsines_totales(prod):
     for nombre,cant in prod.items():
         cantidad = cantidad + cant
     return cantidad
+
+@register.simple_tag
+def no_lleve(prod):
+    """ recibe un ProductoLlevado 
+        retorn true si cantidad_enviada = 0
+        retorna falso si cantidad_enviada > 0
+    """
+
+    print "en no lleve:; "
+    if prod.cantidad_enviada > 0:
+        print "por retornar falso"
+        return ""
+    print "por retornar true"
+    return "oculto"
+
+
+
+@register.simple_tag
+def devolver_input_cambio(entrega,detalle):
+    print "en input de cambio"
+    entrega_id = entrega.id
+    producto_hidden_id =  detalle.producto_terminado.id
+    detalle_pedido_id = detalle.id
+    producto_id = detalle.producto_terminado.id
+    
+    i = [ "<input entrega_id = \""+str(entrega_id)+"\"",
+        
+        "type=\"text\" class=\"input-entregas\"",
+        "producto_hidden_id = \""+str(producto_hidden_id)+"\"",
+        "detalle_pedido_id = \""+str(detalle_pedido_id)+"\"",
+        "producto_id = \""+str(producto_id)+"\"",
+        "placeholder=\"Cantidad \"",
+        " tipo_pedido= \""+ str(entrega.pedido.tipo_pedido)+"\"",
+        " cantidad_pedida= \""+ str(detalle.cantidad_producto)+"\"",
+        "value=\"0\">"]
+    s=""
+    for a in i:
+        s = s + a
+    print "por retornar s"
+    return s 
+
+@register.simple_tag
+def devolver_input(entrega,p_llevado):
+    entrega_id = entrega.id
+    producto_hidden_id = devolver_producto(entrega,p_llevado.producto_terminado)
+    detalle_pedido_id = devolver_detalle(entrega,p_llevado.producto_terminado)
+    producto_id = p_llevado.producto_terminado.id
+    if p_llevado.cantidad_enviada == 0:
+        i = ["<input class=\"input-entregas\"",  
+        " entrega_id=\""+str(entrega_id)+"\""+"type=\"text\"",
+        " producto_hidden_id = \""+str(producto_hidden_id)+"\"",
+        " detalle_pedido_id = \""+str(detalle_pedido_id)+"\"",
+        " producto_id = \""+str(producto_id)+"\"",
+        " placeholder=\"Cantidad\"",
+        " value=\"0\" hidden",
+        " tipo_pedido= \""+ str(entrega.pedido.tipo_pedido)+"\">"]
+    else:
+        i = ["<input class=\"input-entregas\"",  
+        " entrega_id=\""+str(entrega_id)+"\""+"type=\"text\"",
+        " producto_hidden_id = \""+str(producto_hidden_id)+"\"",
+        " detalle_pedido_id = \""+str(detalle_pedido_id)+"\"",
+        " producto_id = \""+str(producto_id)+"\"",
+        " placeholder=\"Cantidad\""
+        " tipo_pedido= \""+ str(entrega.pedido.tipo_pedido)+"\"",
+        " value=\"0\">"]
+    s=""
+    for a in i:
+        s=s+a
+    return s
