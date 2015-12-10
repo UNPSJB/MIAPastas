@@ -98,6 +98,7 @@ def choferes(request,chofer_id=None):
         # filtros
         filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
+        choferes = choferes.filter(activo=True)
         return render(request, "recetas/choferes.html",
                   {"choferes": choferes,
                    "filtros": filters})
@@ -156,7 +157,7 @@ def choferesBaja(request,chofer_id=None):
     chofer = models.Chofer.objects.get(pk=chofer_id)
     # HAY Q HACER VALIDACIONES.
     hojas_de_ruta=models.HojaDeRuta.objects.filter(chofer=chofer)
-
+    hojas_de_ruta = hojas_de_ruta.filter(rendida=False)
     if len(hojas_de_ruta) == 0:
         #chofer.delete()
         chofer.activo=False
@@ -410,8 +411,7 @@ def recetasBaja(request,receta_id):
     receta = models.Receta.objects.get(pk=receta_id)
     messages.success(request, 'La Receta: ' + receta.nombre + ', ha sido eliminada correctamente.')
     receta.delete()
-    #receta.activo=False
-    #receta.save()
+
     return redirect('recetas')
 
 #********************************************************#
@@ -690,8 +690,6 @@ def zonasBaja(request,zona_id =None):
     else:
         messages.success(request, 'La zona: ' + p.nombre + ', ha sido eliminado correctamente.')
         p.delete()
-        #p.activo=False
-        #p.save()
 
     return redirect('zonas')
 
@@ -894,9 +892,8 @@ def pedidosClientes(request,pedido_id=None):
         qobj |= Q(**mfilters)
         filters, mfilters = get_filtros(request.GET, models.PedidoCambio)
         qobj |= Q(**mfilters)
-
         pedidos = models.PedidoCliente.objects.filter(pobj & qobj)
-        #pedidos = pedidos.filter(activo=True)
+        pedidos = pedidos.filter(activo=True)
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
@@ -959,7 +956,6 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
 
 
-
 @login_required()
 @permission_required('recetas.delete_pedidocliente')
 def pedidosClienteBaja(request,pedido_id):
@@ -973,7 +969,6 @@ def pedidosClienteBaja(request,pedido_id):
 
 
 
-
 @login_required()
 @permission_required('recetas.change_pedidocliente')
 def pedidosClienteModificar(request, pedido_id):
@@ -981,7 +976,7 @@ def pedidosClienteModificar(request, pedido_id):
     detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
     if pedido_instancia.tipo_pedido == 1:
         pedido_instancia = get_object_or_404(models.PedidoFijo, pk=pedido_id)
-        pedidosClientes_form = forms.PedidoClienteFijoModificarForm
+        pedidosClientes_form = forms.PedidoClienteFijoForm
     elif pedido_instancia.tipo_pedido == 2:
         pedido_instancia = get_object_or_404(models.PedidoOcacional, pk=pedido_id)
         pedidosClientes_form = forms.PedidoClienteOcacionalForm
@@ -994,7 +989,7 @@ def pedidosClienteModificar(request, pedido_id):
 
     if request.method=="POST":
         if pedido_instancia.tipo_pedido == 1:
-            pedidosClientes_form = forms.PedidoClienteFijoModificarForm(request.POST,instance= pedido_instancia)
+            pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
             fecha_posta = pedido_instancia.fecha_inicio
            #aca modifique fieeeeeerrraaaaaa
 
@@ -1099,7 +1094,7 @@ def pedidosProveedorAlta(request):
             id_proveedor = request.GET['proveedor']
             id_fecha = request.GET['fecha']
             proveedor = models.Proveedor.objects.get(pk=id_proveedor)
-            insumos = proveedor.insumos.all()
+            insumos = proveedor.insumos.filter()
             form = forms.PedidoProveedorAltaForm(initial={'proveedor':id_proveedor,'fecha_realizacion':id_fecha})#esto esta copado, te iniciaiza los datos del form automatico de django con los valores que vos queres......
 
             return render(request, "pedidosProveedorAlta.html", {
@@ -1378,6 +1373,7 @@ def hojaDeRutaAlta(request):
                     entrega_instancia= e.save(hoja_ruta_instancia)
                     if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
                         entrega_instancia.pedido.activo=False #marco como entregado
+                        entrega_instancia.pedido.save()
         else:
             hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
@@ -1471,16 +1467,11 @@ def RendicionDeRepartoMostrar(request,hoja_id):
 
 
 
-
 @login_required()
 def rendicionHojasDeRutas(request):
     hojas = models.HojaDeRuta.objects.filter(rendida=False) #a futuro filtrar por hojas de rutas no rendidas
     print hojas
     return render(request,"rendicionHojasDeRutas.html",{"hojas":hojas})
-
-
-
-
 
 
 #********************************************************#
@@ -1536,6 +1527,8 @@ def cobrarClienteFiltrado(request,cliente_id=None):
     entregas = models.Entrega.objects.filter(pedido__cliente=cliente)
     saldo = 0
     for entrega in entregas:
+        if entrega.pedido.tipo_pedido == 3:    #si el pedido es de cambio no se cobra
+            continue
         if entrega.factura == None and entrega.monto_total() > 0:
             entregas_no_facturadas.append(entrega)
             saldo += entrega.monto_restante()

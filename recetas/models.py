@@ -291,7 +291,7 @@ class Cliente(models.Model):
 
 
 class PedidoCliente(models.Model):
-    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente','activo' ] #,'tipo_pedido__' como hacer para filtrar
+    FILTROS = ['fecha_creacion__gte','tipo_pedido','cliente' ] #,'tipo_pedido__' como hacer para filtrar
     TIPOPEDIDO = (
         (1, "Pedido Fijo"),
         (2, "Pedido Ocasional"),
@@ -305,9 +305,6 @@ class PedidoCliente(models.Model):
     
     def esParaHoy(self):
         pass
-
-    def esParaHoy(self):
-        print "soy padreeeeee"
 
     
     def __str__(self):
