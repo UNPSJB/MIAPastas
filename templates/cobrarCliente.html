@@ -31,7 +31,7 @@
                             <label for="exampleInputEmail2"> Cliente:  </label><fuente style="font-size: 160%;" > {{cliente.razon_social}} </fuente>
                              
               <p>&nbsp;</p>
-              <div class="col-md-6" >
+              <div class="col-md-6 notificar" >
 
               <!--INPUT DE LO QUE EL CLIENTE DEBE-->
               <form class="form-inline ocultos" style="display: none;">
@@ -288,22 +288,12 @@ var para_recibo = [];
 
 
 
-    function cobrar(){      //hacer filtro por cliente si o si
+    function cobrar(){      
         monto = $('#monto_a_pagar').val();
         monto = monto.replace(/,/g, '.');
         if  (esFloatPositivo(monto)== false){
-            BootstrapDialog.show({
-                    title: "Error",
-                    cssClass: 'error-dialog',
-                    message: "Debe ser un numero positivo",
-                    type: BootstrapDialog.TYPE_DANGER,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                dialogRef.close();
-                            }
-                    }]
-            });
+            $('#monto_a_pagar').notify("Ingrese correctamente el monto");
+
           return false;}
         entregas = [];
         $('#entregas').find('tr').each(function(){
@@ -344,7 +334,7 @@ var para_recibo = [];
                 //url: 'cobrarCliente/cobrarSaldo',
                 url:'{% url 'cobrarClienteClasificar' %}',
                 success: function(json){
-                    mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo);
+                    mostrar_datos(json.para_facturas,json.para_recibo,json.monto_recibo,json.monto_factura);
                     para_facturas = (json.para_facturas);
                     para_recibo = (json.para_recibo);
                     }
@@ -354,7 +344,7 @@ var para_recibo = [];
 
             }
 
-         function mostrar_datos(para_facturas,para_recibo,monto_recibo){
+         function mostrar_datos(para_facturas,para_recibo,monto_recibo,monto_factura){
 
             monto_recibo = parseFloat(monto_recibo).toFixed(2);
 
@@ -362,7 +352,7 @@ var para_recibo = [];
             $('#body_entregas_recibo').empty();
             $('#cuerpo_factura').show();
             $('#cuerpo_recibo').show();
-            $('#monto_factura').val(monto-monto_recibo);
+            $('#monto_factura').val(monto_factura);
             $('#monto_recibo').val(monto_recibo);
 
             if (_.size(para_facturas)> 0){
@@ -371,8 +361,7 @@ var para_recibo = [];
                  for (key in (para_facturas)){
                     $('#body_entregas').append('<tr><td>'+key+'</td><td>'+para_facturas[key]+'</td></tr>');
                     }
-
-                 if (monto>(monto-monto_recibo)){  //si tambien hay q cargar un recibo
+                 if (monto_recibo > 0){  //si tambien hay q cargar un recibo
                     for (key in (para_recibo)){
                         $('#body_entregas_recibo').append('<tr><td>'+key+'</td><td>'+para_recibo[key]+'</td></tr>');
                     }
@@ -457,19 +446,10 @@ var para_recibo = [];
                 dataType: 'json',
                 url: '{% url 'cobrarClienteFacturar' %}',
                 success: function(json){
-                    BootstrapDialog.show({
-                    title: "Error",
-                    cssClass: 'error-dialog',
-                    message: "Pago realizado correctamente",
-                    type: BootstrapDialog.TYPE_DANGER,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                dialogRef.close();
-                                window.location.reload();
-                            }
-                    }]
-            });
+                     window.location.reload();
+
+                    
+
 
                     }
             });

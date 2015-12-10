@@ -6,7 +6,7 @@
 
 <div class="container">
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Productos Terminados Disponibles</b></font></p></div>
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Productos Mas Vendidos</b></font></p></div>
             <div class="panel-body">
                  <!--Formulario del FILTRO-->
             <div class="row">
@@ -67,7 +67,7 @@
 
            <div class="col-md-2">
 
-               <a href="{% url 'listadoProductosMasVendidosExcel' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Exportar a Excel</a>
+               <a href="{% url 'listadoProductosMasVendidosExcel' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Exportar</a>
 
                
                <a href="{% url 'ListadoProductosMasVendidosGrafico' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Grafico Torta</a>
