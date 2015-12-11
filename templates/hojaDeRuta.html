@@ -553,22 +553,48 @@ var productosExtrasDicc = new Array();
         //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto de la lista q cumple con la funcion
       }
 
+
+      function separar_cantidades(){
+        /* metodo que separa: por cada producto su cantidad pedida, y su cantidad extra*/
+        console.log("EN SEPARAR CANTIDADES ");
+        var c_extra=0;
+        var c_pedida = 0;
+        var producto=undefined;
+        var extra = undefined;
+        html = "";
+        for (i=0; i< _.size(totales_cantidades);i++){
+           c_pedida = totales_cantidades[i];
+           producto = totales_productos[i];
+           extra = _.find(productos_extras,function(v){
+                                return v.producto == totales_productos[i];
+                });
+           console.log(extra);
+           if (extra != undefined){
+            console.log(extra);
+              c_extra = parseInt(extra.cantidad);
+              c_pedida = parseInt(c_pedida) - c_extra;  
+              extra=undefined;       
+           }else{ c_extra=0;}
+           console.log(producto);
+          console.log(c_pedida);
+          console.log(c_extra);
+          html = html + armar_hidden(prefix_extras,c_pedida,"cantidad_pedida",i);
+          html = html + armar_hidden(prefix_extras,producto,"producto_terminado",i);
+          html = html + armar_hidden(prefix_extras,c_extra,"cantidad_extra",i);
+        }
+                return html;
+
+      }
+
         function altaHojaRuta(){
              var html="";
+             html = html + separar_cantidades();             
              console.log(totales_cantidades, "totales cant")
              console.log(totales_productos,"totales_productos");
              $(pedidosAsignados).each(function(i,val){
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
-             });
-            // $("#pedidos_hidden").html(html);
-             $(totales_cantidades).each(function(i,val){
-                html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad_pedida",i);
-                html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
-                console.log("------------------------");
-                var aux = _.find(productos_extras,function(v){
-                                return v.producto == totales_productos[i];
-                });
-             });
+             });            
+             
             $("#pedidos_hidden").html(html);
             document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(totales_cantidades);
             document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);

@@ -546,17 +546,18 @@ class HojaDeRuta(models.Model):
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
+    cantidad_extra = models.PositiveIntegerField(default=0)
     cantidad_enviada = models.PositiveIntegerField(default=0)
     producto_terminado = models.ForeignKey(ProductoTerminado)
     hoja_de_ruta = models.ForeignKey(HojaDeRuta)
     precio= models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,00)],default=0)
 
     def generar_detalles(self):
-        """ En base al producto y a la cantidad pedida, sale a buscarlo en los lotes
-            por cada lote que se necesite para satisfacer la cantidad pedida se crea un detalle asociado a el
+        """ En base al producto y a la (cantidad pedida + cantidad_extra), sale a buscarlo en los lotes
+            Por cada lote que se necesite para cubrir la cantidad pedida se crea un detalle asociado a el
             junto con la cantidad que pudo sacarle a ese lote.
         """
-        cantidad_buscada = self.cantidad_pedida
+        cantidad_buscada = self.cantidad_pedida + self.cantidad_extra
         for lote in Lote.objects.filter(producto_terminado = self.producto_terminado,
                                         fecha_vencimiento__gte=datetime.date.today(),
                                         stock_disponible__gte = 0):
@@ -571,7 +572,7 @@ class ProductosLlevados(models.Model):
                 break
         if cantidad_buscada > 0:
             print "Faltaron ",cantidad_buscada, "unidades para el producto: ",self.producto_terminado
-        self.cantidad_enviada = self.cantidad_pedida - cantidad_buscada
+        self.cantidad_enviada = (self.cantidad_pedida + self.cantidad_extra) - cantidad_buscada
         self.save()
 
 
