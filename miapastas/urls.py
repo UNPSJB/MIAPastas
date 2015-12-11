@@ -152,7 +152,7 @@ urlpatterns = [
 
                 # FIN PRIMERA ENTREGA
 
-    url(r'^cobrarCliente$',recetasviews.cobrarCliente,name='cobrarCliente'),
+    url(r'^cobrarCliente/$',recetasviews.cobrarCliente,name='cobrarCliente'),
     url(r'^cobrarCliente/cobrarSaldo$',recetasviews.cobrarClienteClasificar,name='cobrarClienteClasificar'),
     url(r'^cobrarCliente/facturar$',recetasviews.cobrarClienteFacturar,name='cobrarClienteFacturar'),
     url(r'^cobrarCliente/Filtrado/(?P<cliente_id>[0-9]+)/$',recetasviews.cobrarClienteFiltrado,name='cobrarClienteFiltrado'),

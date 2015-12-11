@@ -12,6 +12,7 @@ Ayuda
    recetas
    lotes
    clientes
+   cobrarCliente
    ciudades
    zonas
    productos terminados

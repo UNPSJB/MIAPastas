@@ -1,7 +1,8 @@
-﻿Consultar Ciudades
+﻿Modificar Ciudades
 ====================================
-Seleccionar una ciudad click sobre el deseado y sobre el ícono de lupa.
 
-.. image:: _static/ciudades/ciudades_detalle.jpg
+Seleccionar con un click la ciudad a modificar, luego hacer click sobre el ícono de modificar.
 
-(1) Nombre de la sección en la que nos ubicamos, (2) descripción de la ciudad consultada.
+.. image:: _static/ciudades/ciudades_modificar.jpg
+
+(1) Nombre de la sección en la que nos ubicamos, (2) descripción de la ciudad a modificar, (3)  guardar los cambios de la ciudad.
