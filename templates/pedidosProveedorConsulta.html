@@ -8,44 +8,93 @@
                   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Pedido a Proveedor</b></font></p></div>
                   <div class="panel-body">
                           <!-- formulario -->
-                          <form role="form">
+                          <form role="form" class="form-horizontal">
 
-                                      <div class="form-group">
+                                     <div class=" form-group">
+                                        <label  class="col-sm-2 control-label my_label">Fecha de Realizacion:</label>
+                                        <div class="col-sm-10" style="padding:7px;">
+                                          {{pedido.fecha_realizacion}}
+                                        </div>
+                                     </div>
+
+                                     <!--<div class="form-group">
                                             <label for="fecha_realizacion">Fecha de Realizacion</label>
                                             <input value="{{pedido.fecha_realizacion}}" type="text" class="form-control" id="fecha_realizacion" name ="fecha_realizacion" readonly>
-                                      </div>
-                                      <div class="form-group">
+                                      </div>-->
+
+                                      <div class=" form-group">
+                                        <label  class="col-sm-2 control-label my_label">Fecha de Entrega:</label>
+                                        <div class="col-sm-10" style="padding:7px;">
+                                          {% if pedido.fecha_de_entrega = None %}No Entregado{% else %}{{pedido.fecha_de_entrega}}{% endif %}
+                                        </div>
+                                     </div>
+
+                                      <!--<div class="form-group">
                                             <label for="fecha_de_entrega">Fecha de Entrega</label>
                                             <input value="{% if pedido.fecha_de_entrega = None %}No Entregado{% else %}{{pedido.fecha_de_entrega}}{% endif %}" type="text" class="form-control" id="fecha_de_entrega" readonly>
+                                      </div>-->
+
+                                      <div class=" form-group">
+                                        <label  class="col-sm-2 control-label my_label">Proveedor:</label>
+                                        <div class="col-sm-10" style="padding:7px;">
+                                          {{pedido.proveedor}}
+                                        </div>
                                       </div>
 
-                                      <div class="form-group">
+                                      <!--<div class="form-group">
                                             <label for="proveedor">Proveedor</label>
                                             <input value="{{pedido.proveedor}}" type="text" class="form-control" id="proveedor" readonly>
+                                      </div>-->
+
+
+                                      <div class=" form-group">
+                                        <label  class="col-sm-2 control-label my_label">Estado del Pedido:</label>
+                                        <div class="col-sm-10" style="padding:7px;">
+                                          {{pedido.get_estado_pedido_display}}
+                                        </div>
                                       </div>
 
-                                      <div class="form-group">
+
+                                      <!--<div class="form-group">
                                             <label for="estado_pedido">Estado del Pedido</label>
                                             <input value="{{pedido.get_estado_pedido_display}}" type="text" class="form-control" id="estado_pedido" readonly>
-                                      </div>
+                                      </div>-->
 
                                       {% if pedido.estado_pedido = 3 %}
-                                      <div class="form-group">
+
+                                      <div class=" form-group">
+                                        <label  class="col-sm-2 control-label my_label">Fecha de Cancelacion:</label>
+                                        <div class="col-sm-10" style="padding:7px;">
+                                          {{pedido.fecha_cancelacion}}
+                                        </div>
+                                      </div>
+
+                                      <!--<div class="form-group">
                                             <label for="fecha_cancelacion">Fecha de Cancelacion</label>
                                             <input value="{{pedido.fecha_cancelacion}}" type="text" class="form-control" id="fecha_cancelacion" readonly>
-                                      </div>
+                                      </div>-->
                                       {% endif %}
 
                                       {% if pedido.estado_pedido = 2 %}
-                                      <div class="form-group">
+
+                                      <div class=" form-group">
+                                        <label  class="col-sm-2 control-label my_label">Descripcion:</label>
+                                        <div class="col-sm-10" style="padding:7px;">
+
+                                            <textarea  type = "text" class=" form-control"  rows="6" id="descripcion" name="descripcion" readonly>{% if pedido.descripcion = None %}Sin Descripcion{% else %}{{pedido.descripcion}}{% endif %} </textarea>
+                                        </div>
+                                      </div>
+
+
+                                      <!--<div class="form-group">
                                             <label for="descripcion">Descripcion</label>
                                             <input value="{% if pedido.descripcion = None %}Sin Descripcion{% else %}{{pedido.descripcion}}{% endif %}" type="text" class="form-control" id="descripcion" readonly>
-                                      </div>
+                                      </div>-->
                                       {% endif %}
 
                           </form>
                           <!-- fin formulario -->
-                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos del Pedido</b></font></p></div>
+                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b><fuente style="font-size: 100%;" >Insumos del Pedido</fuente></b></font></p></div>
                           <div class="col-md-11 pull-right">
                               <table class="table table-hover ">
                                     <thead>
@@ -58,7 +107,7 @@
                                       {% for d in pedido.detallepedidoproveedor_set.all %}
                                         <tr>
                                             <td>{{d.insumo.nombre}}</td>
-                                            <td>{{d.cantidad_insumo}}</td>
+                                            <td>{{d.cantidad_insumo}} {{d.insumo.get_unidad_medida_display}}</td>
                                         </tr>
                                       {% endfor %}
                                      </tbody>
