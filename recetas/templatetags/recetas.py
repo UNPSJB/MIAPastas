@@ -105,7 +105,7 @@ def devolver_precio_total(entrega):
 def producto_fue_llevado(h,p):
     """ Recibe un producto y lo busca en la hoja.
         devuelve True si lo encuentra y cantidad enviada > 0
-        Falso si no lo encuentra o no se envio nada
+        devuelve Falso si no lo encuentra o no se envio nada
     """
     esta = False
     print "producto fue  llevado",p
@@ -117,3 +117,10 @@ def producto_fue_llevado(h,p):
         return True    
     return False
 
+@register.simple_tag
+def bolsines_totales(prod):
+    #usado dentro de listadoProductosMasVendidos.html para calcular el total de bolsines vendidos.
+    cantidad= 0
+    for nombre,cant in prod.items():
+        cantidad = cantidad + cant
+    return cantidad
