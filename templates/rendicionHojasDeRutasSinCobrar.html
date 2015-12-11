@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% block contenido %}
+<!-- Este es el formulario de recetas -->
+<div class="container">
+<div class="panel panel-default">
+  <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hojas de Rutas sin Cobrar</b></font></p></div>
+  <div class="panel-body">
+      
+      <div class="row">
+          <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
+          <table class="table" >
+            <thead>
+            <tr>
+                <th>N°</th>
+                <th>Fecha de creacion</th>
+                <th>Chofer</th>
+            </tr>
+            </thead>
+              <tbody>
+            {% for hoja in hojas %}
+                <tr class="renglon select-item" data-id="{{hoja.id}}" id="renglon-{{hoja.id}}">
+                      <td>{{hoja.pk}}</td>
+                      <td>{{hoja.fecha_creacion}}</td>
+                      <td>{{hoja.chofer.nombre}}</td>
+
+                </tr>
+            {% endfor %}
+          </tbody>
+          </table>
+          </div>
+      <div class="col-md-2">
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+           <button type="button" id="rendir-hoja" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Cobrar  </span></button>
+
+          </div>
+          <p></p>
+</div>
+          </div>
+      <hr/>
+
+  </div>
+</div>
+
+
+
+
+   <!-- Este es el fin del formulario de recetas -->
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("danger");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+        function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar una hoja",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+        }
+
+
+        function rendir(){
+            if(id==undefined){
+            mostrar_error();
+            }else{
+            window.open('/rendicionDeReparto/mostrar/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#rendir-hoja").click(rendir);
+
+
+    });
+</script>
+</div>
+{% endblock %} endblock %}
