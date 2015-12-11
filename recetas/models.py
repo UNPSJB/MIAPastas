@@ -158,9 +158,13 @@ class ProductoTerminado(models.Model):
             ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
 
-    def stockDisponible(self):
-        lotes = self.lotes_set.all()
-        
+    def stockDisponibleEnDeposito(self):
+        lotes = self.lote_set.all()
+        cantidad = 0
+        for lote in lotes: #hay que obtener la cantidad disponible en el deposito
+            cantidad += lote.stock_disponible - lote.stock_reservado
+        return cantidad
+
 
     def __str__(self):
         return "%s"% self.nombre

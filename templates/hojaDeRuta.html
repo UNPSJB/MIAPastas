@@ -30,8 +30,9 @@
                          </div>
                    </div>
 </div>
-                <div class="panel panel-success col-md-6">
+                <div class="panel panel-success col-md-6" >
                     <table id="tabladisponibes" class="table table-hover">
+                    esta tabla se puede ocultar...
                     <thead>
                         <h1>Productos disponibles</h1>
                         <tr>
@@ -41,9 +42,9 @@
                     </thead>
                     <tbody id="cuerpoDisponibles" class="Disponibles">
                     {% for producto in productos %}
-                      <tr id="{{producto.id}}">
+                      <tr>
                          <td>{{producto.nombre}}</td>
-                        <td> {{producto.stock_disponible}}</td>
+                        <td id="producto-{{producto.id}}"> {{producto.stockDisponibleEnDeposito}}</td>
                       </tr>
                     {% endfor %}
                     </tbody>
@@ -225,20 +226,14 @@ var prefix_entregas = "{{prefix_entregas}}";
 var totales_productos=[];
 var totales_cantidades=[];
 var totales_datos=[];
-
+var notificaciones=[];
+var productosDicc = new Array();
+var productosNombresDicc = new Array();
 
 
 
         $(function() {
-         /* $("#tablaAsignados").notify("El producto {{productos.2.nombre}} no tiene mas stock",{clickToHide: false,autoHide: false,position:"top right"});
-         var ell = $("#tablaAsignados");
-          var not = $.notify(ell,"El producto {{productos.2.nombre}} no tiene mas stock",{clickToHide: false,autoHide: false,position:"top right"});
-          */
-         //n.close();
-
-          
-
-
+        
         var estado;
         function obtenerId(event) {
             $(".select-item-asignados").removeClass("danger");
@@ -250,7 +245,7 @@ var totales_datos=[];
             $el.addClass("danger");
             var _renglon = "";
             _renglon= "#renglon-"+id;
-            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(".select-item").removeClass("danger");//quito la clase active, para q se deseleccionen
             $(_renglon).addClass("danger");
         }
 
@@ -273,25 +268,6 @@ var totales_datos=[];
 
        });
 
-
-        function mostrarAdvertencia(producto){
-
-            var n = noty({
-            layout: 'bottomRight',
-              type: 'warning',
-              text: '<strong>Atencion!</strong> <br>El producto '+ producto+' no tiene mas stock',
-              dismissQueue: true, 
-                animation: {
-                  open: {height: 'toggle'},
-                  close: {height: 'toggle'},
-                  easing: 'swing',
-                  speed: 500 
-                  },
-                timeout: 0
-              });
-    
-
-        }
 
 
         function agregarHojaDeRutaMismoCliente(){
@@ -373,6 +349,7 @@ var totales_datos=[];
 
 
         function generarTotales(){
+            $.noty.closeAll();
             generarHoja();
             console.log(pedidosAsignados);
             totales = {};
@@ -388,19 +365,46 @@ var totales_datos=[];
                 url: 'hojaDeRuta/generarTotales',
                 success: function(json){
                     totales_productos = _.keys(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
+                    productosDicc =  json.totales;
+                    productosNombresDicc = json.datos;
                     totales_cantidades = _.values(json.totales);
                     totales_datos = _.values(json.datos);
                     agregar_extra_totales();
                     mostrarTotales();
                     }
             });
-            console.log(totales_cantidades);
-            for (producto_id in totales_productos){
-              if(totales_cantidades[producto_id] > {{productos.producto_id.}})
-              console.log(producto)
+           
+      }
 
-            }
+        function verificarStock(){
+          for (var producto in productosDicc){
+             if(productosDicc[producto] > parseInt($('#producto-'+producto+'').html())){
+                  mostrarAdvertencia(producto,productosNombresDicc[producto]);
+              }else{
+                  try{
+                      notificaciones[producto].close();
+                  }catch(err) {}            }
+          }
+            
         }
+
+
+        function mostrarAdvertencia(i,producto){
+            notificaciones[i] = noty({
+            layout: 'bottomRight',
+              type: 'warning', //Alert, Success, Error, Warning, Information, Confirm
+              text: '<strong>Atencion!</strong> <br>El producto '+ producto+' no tiene mas stock',
+              dismissQueue: true, 
+                animation: {
+                  open: {height: 'toggle'},
+                  close: {height: 'toggle'},
+                  easing: 'swing',
+                  speed: 500 
+                  },
+                timeout: false
+              });
+        }
+
 
         function agregar_extra_totales(){
             $('#tabla_extras').find('tr').each(function(){
@@ -410,16 +414,21 @@ var totales_datos=[];
                 elemento_siguiente=$(elemento_siguiente).find("input").val();
                 var index = _.indexOf(totales_datos,elemento);
                 if (index == -1){
-                    console.log("estoy en elemento nuevoooooo")
+                    productosDicc[id_elemento] = parseInt(elemento_siguiente)
+                    productosNombresDicc[id_elemento] = elemento 
                     totales_productos.push(id_elemento);
                     totales_datos.push(elemento);
                     totales_cantidades.push(parseInt(elemento_siguiente));
                 }
                 else{
                     totales_cantidades[index]+= parseInt(elemento_siguiente);
+                    productosDicc[id_elemento] += parseInt(elemento_siguiente)
+
                 }
                 }
                 )
+            verificarStock();
+
 
         }
 
@@ -427,7 +436,7 @@ var totales_datos=[];
             $("#cuerpoTotalesPedidos tr").remove();
             var total=0;
             for(i=0;i< totales_cantidades.length;i++){
-                $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_datos[i]+'</td><td>'+totales_cantidades[i]+'</td></tr>');
+                $('#cuerpoTotalesPedidos').append('<tr ><td>'+totales_datos[i]+'</td><td >'+totales_cantidades[i]+'</td></tr>');
                 total=total+parseInt(totales_cantidades[i]);
             }
 
@@ -438,17 +447,22 @@ var totales_datos=[];
       $("#add-detalle-extra").click(function(){
             var cantidad = $("#cantidad_producto").val();
             var producto = $("#select_productos").val();
+            if(productosDicc[producto] > parseInt($('#producto-'+producto+'').html())){
+                $("#select_productos").notify("El producto seleccionado no tiene mas stock",{position:"top right"});
+                return;
+            }
+            
             var texto = document.getElementById('select_productos').options[document.getElementById('select_productos').selectedIndex].text;
             if ((cantidad == "") || (producto == "")){
-                alert("Debe llenar todos los campos");
+              $("#cantidad_producto").notify("Debe llenar todos los campos",{position:"top right"});
             }else{
                 if (!esEnteroPositivo(cantidad)){
-                     alert("debe ingresar una cantidad valida");
+              $("#cantidad_producto").notify("Debe ingresar una cantidad valida",{position:"top right"});
                 }else{
                      var ins = _.find(productos_extras,{producto:producto});
                      if (ins != undefined){
-                        alert("Producto ya cargado");
-                     }else{
+                        $("#select_productos").notify("Producto ya cargado",{position:"top right"});                     
+                    }else{
                         var id_prod = document.getElementById('select_productos').value;
                         var nombre_prod = $('#select_productos option:selected').text();
                         $('#tabla_extras').append('<tr id="'+id_prod+'"><td style="display:none;">'+id_prod+'</td><td>'+nombre_prod+'</td><td><input class="cantidades_tablas" id="cantidad-'+id_prod+'" onchange="cambio_cantidad(this)"  name="cantidad-'+id_prod+'" value="'+document.getElementById('cantidad_producto').value+'" type="text"></td><td><button type="button"  class="btn-eliminar" onClick= "eliminar('+id_prod+')">Eliminar</button></td><td><button type="button" class="btn-modificar" onClick= "modificar('+id_prod+')">Modificar</button></td></tr>');
@@ -479,8 +493,6 @@ var totales_datos=[];
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
              });
             // $("#pedidos_hidden").html(html);
-            console.log("cantiddddd ",totales_cantidades);
-            console.log("proddd ",totales_productos);
              $(totales_cantidades).each(function(i,val){
                 html = html + armar_hidden(prefix_extras,totales_cantidades[i],"cantidad_pedida",i);
                 html = html + armar_hidden(prefix_extras,totales_productos[i],"producto_terminado",i);
@@ -488,11 +500,8 @@ var totales_datos=[];
                 var aux = _.find(productos_extras,function(v){
                                 return v.producto == totales_productos[i];
                 });
-                console.log("auxxxxxxx");
-                console.log(aux);
              });
             $("#pedidos_hidden").html(html);
-            console.log(_.size(totales_cantidades));
             document.getElementById("id_"+prefix_extras+"-TOTAL_FORMS").value = _.size(totales_cantidades);
             document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);
 
@@ -520,10 +529,6 @@ var totales_datos=[];
                 altaHojaRuta();
             }
         }
-
-
-
-
 
 
 
