@@ -59,6 +59,12 @@ class ChoferForm(forms.ModelForm):
         raise ValidationError("Cuit no valido")
         return cuit
 
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        nombre = texto_lindo(nombre, True)
+        if nombre.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
+        return nombre
 
 class ModificarStockInsumoForm(forms.Form):
     insumo = forms.ModelChoiceField(queryset=models.Insumo.objects.all(), empty_label="(----)")
@@ -128,7 +134,12 @@ class RecetaForm(forms.ModelForm):
             raise ValidationError("ya hay una receta para este producto.")
         return producto_terminado
 
-
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        nombre = texto_lindo(nombre, True)
+        if nombre.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
+        return nombre
 
 
 class RecetaDetalleForm(forms.ModelForm):
@@ -158,6 +169,8 @@ class ProveedorForm(forms.ModelForm):
     def clean_nombre_dueno(self):
         nombre_dueno = self.cleaned_data['nombre_dueno']
         nombre_dueno = texto_lindo(nombre_dueno, True)
+        if nombre_dueno.isalpha:
+            raise ValidationError('El nombre del dueno debe tener solo letras.')
         return nombre_dueno
 
     def clean_direccion(self):
@@ -173,11 +186,15 @@ class ProveedorForm(forms.ModelForm):
     def clean_localidad(self):
         localidad = self.cleaned_data['localidad']
         localidad = texto_lindo(localidad, True)
+        if localidad.isalpha:
+            raise ValidationError('El nombre de la localidad debe tener solo letras.')
         return localidad
 
     def clean_provincia(self):
         provincia = self.cleaned_data['provincia']
         provincia = texto_lindo(provincia, True)
+        if provincia.isalpha:
+            raise ValidationError('El nombre de la provincia debe tener solo letras.')
         return provincia
 
 
@@ -199,7 +216,11 @@ class ProveedorModificarForm(forms.ModelForm):
     def clean_nombre_dueno(self):
         nombre_dueno = self.cleaned_data['nombre_dueno']
         nombre_dueno = texto_lindo(nombre_dueno, True)
+        if nombre_dueno.isalpha:
+            raise ValidationError('El nombre del dueno debe tener solo letras.')
         return nombre_dueno
+
+
 
     def clean_direccion(self):
         direccion = self.cleaned_data['direccion']
@@ -214,13 +235,16 @@ class ProveedorModificarForm(forms.ModelForm):
     def clean_localidad(self):
         localidad = self.cleaned_data['localidad']
         localidad = texto_lindo(localidad, True)
+        if localidad.isalpha:
+            raise ValidationError('El nombre de la localidad debe tener solo letras.')
         return localidad
 
     def clean_provincia(self):
         provincia = self.cleaned_data['provincia']
         provincia = texto_lindo(provincia, True)
+        if provincia.isalpha:
+            raise ValidationError('El nombre de la provincia debe tener solo letras.')
         return provincia
-
 
 
 
@@ -244,7 +268,10 @@ class ProductoTerminadoForm(forms.ModelForm):
         nombre = texto_lindo(nombre, True)
         if models.Zona.objects.filter(nombre=nombre).exists():
             raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
+        if nombre.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
         return nombre
+
 
 
 class LoteStockForm(forms.ModelForm):
@@ -317,6 +344,8 @@ class CiudadForm(forms.ModelForm):
         nombre = texto_lindo(nombre, True)
         if models.Ciudad.objects.filter(nombre=nombre).exists():
             raise ValidationError('Ya existe una Ciudad con ese nombre.')
+        if nombre.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
         return nombre
 
 
@@ -343,6 +372,8 @@ class ZonaForm(forms.ModelForm):
         nombre = texto_lindo(nombre, True)
         if models.Zona.objects.filter(nombre=nombre).exists():
             raise ValidationError('Ya existe una Zona con ese nombre.')
+        if nombre.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
         return nombre
 
 
@@ -363,6 +394,8 @@ class ClienteModificarForm(forms.ModelForm):
     def clean_nombre_dueno(self):
         nombre_dueno = self.cleaned_data['nombre_dueno']
         nombre_dueno = texto_lindo(nombre_dueno, True)
+        if nombre_dueno.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
         return nombre_dueno
 
     def clean_direccion(self):
@@ -390,6 +423,8 @@ class ClienteAltaForm(forms.ModelForm):
     def clean_nombre_dueno(self):
         nombre_dueno = self.cleaned_data['nombre_dueno']
         nombre_dueno = texto_lindo(nombre_dueno, True)
+        if nombre_dueno.isalpha:
+            raise ValidationError('El nombre debe tener solo letras.')
         return nombre_dueno
 
     def clean_direccion(self):
