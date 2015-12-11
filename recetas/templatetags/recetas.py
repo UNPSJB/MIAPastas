@@ -49,17 +49,25 @@ def devolver_cantidad_pedida(detalle):
 
 @register.simple_tag
 def devolver_detalle(entrega,prod):
-	for d in entrega.pedido.pedidoclientedetalle_set.all():
+    """ Recibe una Entrega y un ProductoTerminado p
+        retorna una cadena vacia si no encuentra ningun detalle de pedido que apunte a p
+        retorna un detalle de pedido que coincida con p
+    """
+    for d in entrega.pedido.pedidoclientedetalle_set.all():
 		if d.producto_terminado == prod:
-			return d.id
-	return ""
+		    return d.id
+    return ""
 
 @register.simple_tag
 def devolver_producto(entrega,prod):
-	for d in entrega.pedido.pedidoclientedetalle_set.all():
+    """Recibe una Entrega y un ProductoTerminado p
+        retorna una cadena vacia si encuentra un detalle de pedido que apunte a p
+        retorna el id del producto en caso que no se encuentre ningun detalle relacionado con p 
+    """
+    for d in entrega.pedido.pedidoclientedetalle_set.all():
 		if d.producto_terminado == prod:
 			return ""
-	return prod.id
+    return prod.id
 
 @register.simple_tag
 def saldos_totales(clientes):
@@ -96,16 +104,16 @@ def devolver_precio_total(entrega):
 @register.filter
 def producto_fue_llevado(h,p):
     """ Recibe un producto y lo busca en la hoja.
-        devuelve True si lo encuentra
-        Falso si no lo encuentra
+        devuelve True si lo encuentra y cantidad enviada > 0
+        Falso si no lo encuentra o no se envio nada
     """
     esta = False
-    print "fuer llevado"
-    for c in h.productosllevados_set.all():
-        if c.producto_terminado == p:
-            print "retorn true"
+    print "producto fue  llevado",p
+    for c in h.productosllevados_set.all():        
+        if c.producto_terminado == p and c.cantidad_enviada>0:        
             esta =  True
-            break
-    print "retorn ",esta
-    return esta
+            break    
+    if  esta:
+        return True    
     return False
+

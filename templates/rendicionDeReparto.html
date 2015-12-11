@@ -44,6 +44,7 @@
                             <tbody>
                                 {% for producto_llevado in hoja.productosllevados_set.all %}
                                     <tr>
+                                    {% if producto_llevado.cantidad_enviada > 0%}
                                         <td>{{producto_llevado.producto_terminado}}</td>
                                         <td>{{producto_llevado.cantidad}}</td>
                                         <td>
@@ -54,7 +55,7 @@
                                             {% for det in producto_llevado.productosllevadosdetalle_set.all%}
                                                  <tr>
                                                     <td>Lote-{{det.lote.nro_lote}} </td>
-                                                    <td>{{  det.cantidad}}</td>
+                                                    <td>{{det.cantidad}}</td>
                                                      <td><input producto_id="{{producto_llevado.producto_terminado.id}}"
                                                                 lote_id="{{det.lote.nro_lote}}"
                                                                 cant_enviada="{{det.cantidad}}"
@@ -63,6 +64,7 @@
                                                  </tr>
                                             {% endfor %}
                                             </table>
+                                            {%endif%}
                                         </td>
                                 </tr>
                                 {% endfor %}
@@ -101,10 +103,12 @@
                                             <th>Cantidad Entregada</th>
                                             {% if  entrega.pedido.tipo_pedido != 3%}
                                                 {%for p_llevado in hoja.productosllevados_set.all %}
+                                                {% if p_llevado.cantidad_enviada > 0 %}
                                                  <tr>    
                                                      <td>{{ p_llevado.producto_terminado.id }}
                                                          {{ p_llevado.producto_terminado.nombre }} </td>
                                                      <td>{% devolver_cantidad_pedida_entrega entrega p_llevado.producto_terminado %}</td>
+                                                
                                  <td> <input entrega_id="{{entrega.id}}" 
                                              type="text" class="input-entregas"
                         producto_hidden_id = "{% devolver_producto entrega p_llevado.producto_terminado %}"
@@ -114,6 +118,7 @@
                                             value="0">
                                         </td>
                                                  </tr>
+                                                 {%endif%}
 
                                                 {% endfor %}
                                             {%else%}
@@ -123,7 +128,7 @@
                                                      <td>{{ d.producto_terminado.id }}
                                                          {{ d.producto_terminado.nombre }} </td>
                                                      <td>{{ d.cantidad_producto }}</td>
-                                                    }
+                                                    
                                  <td> <input entrega_id="{{entrega.id}}" 
                                              type="text" class="input-entregas"
                         producto_hidden_id = "{{ d.producto_terminado.id}}"
