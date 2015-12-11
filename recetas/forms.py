@@ -137,8 +137,6 @@ class RecetaDetalleForm(forms.ModelForm):
         exclude = ['receta'] #setea todos campos menos receta
 
 
-
-
 class ProveedorForm(forms.ModelForm):
     class Meta:
         model = models.Proveedor
@@ -164,11 +162,6 @@ class ProveedorForm(forms.ModelForm):
         direccion = self.cleaned_data['direccion']
         direccion = texto_lindo(direccion, True)
         return direccion
-
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        email = texto_lindo(email, True)
-        return email
 
     def clean_localidad(self):
         localidad = self.cleaned_data['localidad']
@@ -629,21 +622,21 @@ class LoteForm(forms.ModelForm):
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
         }
 
-    def save(self, *args, **kwargs):
+
+    
+    def save(self,commit=True):
         print "en metodo save del form de Lote"
         # Sobrecargar save devuelve el objeto apunto de ser guardado
-        lote = super(LoteForm, self).save(*args, **kwargs)
+        lote = super(LoteForm, self).save(commit=False)
         lote.stock_disponible = lote.cantidad_producida
         prod = lote.producto_terminado
         dias = prod.dias_vigencia
-        print "DIAS DE VIGENCIA DEL PRODUCTO: ",dias
         delta = timedelta(days=dias)
-        print  "DELTA A SUMAR ES: ",delta
         lote.fecha_vencimiento = lote.fecha_produccion + delta
-        print "fecha de vencimiento del lote: " ,lote.fecha_vencimiento
-        lote.save()
+        if commit:
+            lote.save()
         return lote
-
+    
     def clean_fecha_vencimiento(self):
         print "cleanb fecha vencimiento"
         fecha = self.cleaned_data['fecha_vencimiento']
