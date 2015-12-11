@@ -137,7 +137,7 @@
         <div class="col-md-11 pull-right">
           <div class="col-md-10">
 
-          <table class="table table-hover">
+          <table class="table table-hover" cellspacing="2" cellpadding="2" border="2">
             <thead>
             <tr>
 
@@ -150,8 +150,8 @@
             {% for insumo in insumos %}
                 <tr>
 
-                  <td><a href="{% url 'insumoConsulta' insumo.id %}">{{insumo.nombre}}</a></td>
-              <td>{{insumo.get_unidad_medida_display}}</td>
+                  <td align="center"><a href="{% url 'insumoConsulta' insumo.id %}">{{insumo.nombre}}</a></td>
+                  <td align="center">{{insumo.get_unidad_medida_display}}</td>
 
 
           </tr>
