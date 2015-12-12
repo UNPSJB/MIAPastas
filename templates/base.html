@@ -17,13 +17,21 @@
         <script type="text/javascript">
             function abrirModalDocumentacion(url){
              var n=window.location.pathname;
-             console.log(n);
              var patron= /\/\w+(\/\w+)?\//;
              var res=patron.exec(n);
+             var stringLength = n.length; // this will be 16
+             var lastChar = n.charAt(stringLength - 2); // this will be the string "."
              if (n.toString()!='/index'){
                 res=res[0];
-                var s=res.substring(1,_.size(res)-1);
-                s = s.replace("/"," ");
+                console.log(n);s
+                if (!(isNaN(lastChar)) && (n.indexOf("modificar/") == -1)){
+                  var s=res.substring(1,_.size(res)-2);
+                  s = s.replace ("/", " consultar");
+                  }
+                else{
+                    var s=res.substring(1,_.size(res)-1);
+                    s = s.replace("/"," ");
+                }
              }else{
                 var s = "/"+"ayuda usuario";
                 }

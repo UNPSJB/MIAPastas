@@ -6,7 +6,7 @@
 <div class="panel panel-default" style="width: 100%;">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hoja de Ruta</b></font></p></div>
   <div class="panel-body">
-           <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return validar()" method="post">
+    <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return altaHojaRuta()" method="post">
                      {% csrf_token %}
                      {{ extras_form_factory.management_form }}
                      {{ entregas_form_factory.management_form }}         
@@ -30,11 +30,10 @@
                          </div>
                    </div>
 </div>
-                <div class="panel panel-success col-md-6" >
-                    <table id="tabladisponibes" class="table table-hover">
-                    esta tabla se puede ocultar...
+                <div class="panel panel-success col-md-6" id="divtabladisponibes">
+                    <table id="tabladisponibes" class="table table-condensed">
                     <thead>
-                        <h1>Productos disponibles</h1>
+                        <h4>Productos disponibles</h4>
                         <tr>
                             <th>Producto</th>
                             <th>Cantidad</th>
@@ -44,7 +43,7 @@
                     {% for producto in productos %}
                       <tr>
                          <td>{{producto.nombre}}</td>
-                        <td id="producto-{{producto.id}}"> {{producto.stockDisponibleEnDeposito}}</td>
+                        <td id="producto-{{producto.id}}" class="celdaCantidadDisponible" data-id="{{producto.id}}"> {{producto.stockDisponibleEnDeposito}}</td>
                       </tr>
                     {% endfor %}
                     </tbody>
@@ -112,9 +111,6 @@
           </div>
           <div class="col-md-5">
               <div>
-                    <!-- Trigger the modal with a button -->
-              <button type="button" class=" glyphicon glyphicon-shopping-cart pull-right btn btn-info hola" 
-                      data-toggle="modal" data-target="#ModalProductosExtra"> Agregar extras</button>
 
 
             <table class="table table-hover">
@@ -141,8 +137,14 @@
       </div>
        <div>         
                <div id="pedidos_hidden"></div>
+
+                <button type="button" onclick="mostrarModalExtras()" class="btn btn-primary pull-right">
+                        {% bootstrap_icon "star" %} Crear Hoja
+                    </button>
+
+
                {% buttons %}
-                    <button id = "btn-submit" type="submit" class="btn btn-primary pull-right">
+                    <button id = "btn-submit" type="submit"  class="btn btn-primary pull-right" style="display: none;">
                         {% bootstrap_icon "star" %} Crear Hoja
                     </button>
                 {% endbuttons %}
@@ -150,15 +152,17 @@
 
 
            <!-- Modal de PRODUCTOS EXTRAS -->
-            <div id="ModalProductosExtra" class="modal fade" role="dialog">
+            <div id="ModalProductosExtra" class="modal fade" role="dialog" data-backdrop="static" data-keyboard="false">
               <div class="modal-dialog">
                 <!-- Modal content-->
                 <div class="modal-content">
                   <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    
                     <h2 class="modal-title">Agregar productos extra</h2>
                   </div>
+
                   <div class="modal-body">
+                  <div id="tablaDisponiblesParaExtra"></div>
                     <div class="form-group col-md-5">
                         <label for="select_productos">Producto Terminado</label>
                           <select class="form-control" id="select_productos">
@@ -193,7 +197,10 @@
                       </table>
                   </div>
                   <div class="modal-footer">
-                      <button type="button" onclick="generarTotales()" class="btn btn-default" data-dismiss="modal">Aceptar</button>
+
+                  <a href="{% url 'index' %}">
+                   <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"> ANULAR TODO </span></button></a>
+                      <button type="button" onclick="enviarSubmit()" class="btn btn-default" data-dismiss="modal">Aceptar</button> </a>
                      <!--  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button> -->
                   </div>
                 </div>
@@ -227,9 +234,39 @@ var totales_productos=[];
 var totales_cantidades=[];
 var totales_datos=[];
 var notificaciones=[];
-var productosDicc = new Array();
-var productosNombresDicc = new Array();
+var productosDicc = new Array();  //el key es el id_producto, y el valor es la cantidad de ese producto
+var productosNombresDicc = new Array(); //el key es el id_producto, y el valor es el nombre de ese roducto
+var productosExtrasDicc = new Array();
 
+
+        function mostrarModalExtras(){
+
+          if( !$('#chofer').val() ) { 
+            document.getElementById("chofer").focus();
+            $("#chofer").notify("Debe seleccionar un chofer",{position:"top right"});
+            return;
+          }
+          if (validar() == false){
+            return;
+          }
+
+          //se modifica la tabla de disponibles principal pero no importa porque no se va a ver mas
+          $(".celdaCantidadDisponible").each(function(i,val){
+                id_producto_disponible = parseInt($(val).data()["id"]);
+                valor_anterior = parseInt($(val).text());
+                valor_a_restar = productosDicc[id_producto_disponible];
+                if(!valor_a_restar > 0 ){
+                  valor_a_restar = 0;
+                }
+                valor_nuevo = valor_anterior - valor_a_restar;
+                
+                $(val).html(valor_nuevo);
+
+          });
+
+          $("#tablaDisponiblesParaExtra").append($("#divtabladisponibes").html());
+          $("#ModalProductosExtra").modal('show');
+        }
 
 
         $(function() {
@@ -347,6 +384,10 @@ var productosNombresDicc = new Array();
 
            }
 
+           function enviarSubmit(){
+            generarTotales();
+            $("#btn-submit").trigger("click"); //ejecuto el submit del formulario
+           }
 
         function generarTotales(){
             $.noty.closeAll();
@@ -370,6 +411,7 @@ var productosNombresDicc = new Array();
                     totales_cantidades = _.values(json.totales);
                     totales_datos = _.values(json.datos);
                     agregar_extra_totales();
+                    console.log("toales cantidades ",totales_cantidades,"  tot prod ",totales_productos, " y el dicc_prod ",productosDicc);
                     mostrarTotales();
                     }
             });
@@ -412,23 +454,29 @@ var productosNombresDicc = new Array();
                 elemento = $(this).find("td").eq(1).html();
                 elemento_siguiente=$(this).find("td").eq(2);
                 elemento_siguiente=$(elemento_siguiente).find("input").val();
+                console.log("elem: ",elemento, " . ",elemento_siguiente);
                 var index = _.indexOf(totales_datos,elemento);
+                productosExtrasDicc[id_elemento] = parseInt(elemento_siguiente) 
                 if (index == -1){
                     productosDicc[id_elemento] = parseInt(elemento_siguiente)
                     productosNombresDicc[id_elemento] = elemento 
                     totales_productos.push(id_elemento);
                     totales_datos.push(elemento);
                     totales_cantidades.push(parseInt(elemento_siguiente));
+                    console.log(totales_cantidades, "y tot prod",totales_productos);
                 }
                 else{
                     totales_cantidades[index]+= parseInt(elemento_siguiente);
                     productosDicc[id_elemento] += parseInt(elemento_siguiente)
+                     console.log(totales_cantidades, "y tot prod",totales_productos);
+                   
 
                 }
                 }
                 )
             verificarStock();
-
+            console.log("Dicc extra: ",productosExtrasDicc);
+            alert("aguantaaaaaaaaa");
 
         }
 
@@ -447,9 +495,15 @@ var productosNombresDicc = new Array();
       $("#add-detalle-extra").click(function(){
             var cantidad = $("#cantidad_producto").val();
             var producto = $("#select_productos").val();
+            /*
             if(productosDicc[producto] > parseInt($('#producto-'+producto+'').html())){
                 $("#select_productos").notify("El producto seleccionado no tiene mas stock",{position:"top right"});
                 return;
+            }else{ */
+              if(cantidad > parseInt($('#producto-'+producto+'').html())){
+                $("#select_productos").notify("El producto seleccionado no tiene mas stock",{position:"top right"});
+                return;
+
             }
             
             var texto = document.getElementById('select_productos').options[document.getElementById('select_productos').selectedIndex].text;
@@ -482,6 +536,13 @@ var productosNombresDicc = new Array();
       function modificar(id){
             var nueva_cantidad = $("#cantidad-"+id).val();
             id_input = document.getElementById("cantidad-"+id);
+            console.log(id_input," id input");
+            if(nueva_cantidad > parseInt($('#producto-'+id+'').html())){
+                $("#cantidad-"+id).notify("El producto seleccionado no tiene mas stock",{position:"top right"});
+                return;
+
+            }
+
             var index = _.indexOf(productos_extras,_.findWhere(productos_extras, function(d){return d.producto==id;}));
             productos_extras = modificar_cantidad_arreglo(productos_extras,nueva_cantidad,id_input,index);
         //con _.findWhere(productos_extras, function(d){return d.producto==id;}) se obtiene el objeto de la lista q cumple con la funcion
@@ -489,6 +550,10 @@ var productosNombresDicc = new Array();
 
         function altaHojaRuta(){
              var html="";
+             alert("en onsubmit");
+             console.log(totales_cantidades, "totales cant")
+             console.log(totales_productos,"totales_productos");
+             alert("LPM");
              $(pedidosAsignados).each(function(i,val){
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
              });
@@ -506,6 +571,7 @@ var productosNombresDicc = new Array();
             document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);
 
              console.log($("#pedidos_hidden"));
+             //return false; //BORRAR!!!!!!!!!
         }
 
         function validar(){
@@ -524,9 +590,6 @@ var productosNombresDicc = new Array();
                     }]
             });
             return false;
-            }
-            else{
-                altaHojaRuta();
             }
         }
 

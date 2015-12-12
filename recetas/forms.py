@@ -56,7 +56,7 @@ class ChoferForm(forms.ModelForm):
         if result is not None:
             #if cuit_valido(cuit):
             return cuit
-        raise ValidationError("Cuit no valido papa")
+        raise ValidationError("Cuit no valido")
         return cuit
 
 

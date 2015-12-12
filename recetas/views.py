@@ -245,13 +245,17 @@ def insumosBaja(request,insumo_id):
     """
 
     insumo = models.Insumo.objects.get(pk=insumo_id)
+
+
     if len(insumo.pedidoproveedor_set.all())>0:
-        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene pedidos a proveedores pendientes.')
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque tiene asociados pedidos a proveedores. \n Si desea eliminarlo, elimine primero los pedidos.')
         return redirect('insumos')
+
     if insumo.receta_set.exists():
-        messages.success(request, 'El Insumo: ' + insumo.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
-            [ "%s" % r for r in insumo.receta_set.all()]
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se ha podido eliminar porque tiene las siguiente recetas asociadas: %s .' % ", ".join(
+           [ "%s" % r for r in insumo.receta_set.all()]
         ))
+        return redirect('insumos')
         #insumo.delete()
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
@@ -729,6 +733,8 @@ def clientesModificar(request,cliente_id = None):
     if request.method=="POST":
         cliente_form = forms.ClienteModificarForm(request.POST,instance= cliente_instancia)
         if cliente_form.is_valid():
+            print "ENCLIENTEEEEE",cliente_instancia.saldo
+
             if cliente_instancia.es_moroso and cliente_instancia.saldo==0:
                 print(cliente_instancia.es_moroso)
                 messages.error(request,'El cliente no puede ser moroso ya que no posee saldo deudor')
@@ -736,6 +742,10 @@ def clientesModificar(request,cliente_id = None):
                 return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
             cliente_form.save()
             return redirect('clientes')
+        else:
+            return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
+
+
     else:
         cliente_form = forms.ClienteModificarForm(instance= cliente_instancia)
         return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
@@ -1167,8 +1177,10 @@ def pedidosProveedorRecepcionar(request,pedido_id):
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(request.POST, instance=pedido_proveedor_instancia)
         if pedido_proveedor_form.is_valid():
             #pedido_proveedor_instancia.fecha_de_entrega = date.today()
-            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
-                messages.error(request, 'Problema de Fechas')
+            #if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion:
+            fecha_de_hoy = datetime.date.today()
+            if pedido_proveedor_instancia.fecha_de_entrega < pedido_proveedor_instancia.fecha_realizacion or pedido_proveedor_instancia.fecha_de_entrega>fecha_de_hoy:
+                messages.error(request, 'Problema de Fechas: La fecha de entrega debe estar entre la fecha de realizacion y la fecha de hoy')
                 return render(request,"pedidosProveedorRecepcionar.html",{
                 "pedido_proveedor_form":pedido_proveedor_form,
                 "proveedor":proveedor,
@@ -1659,8 +1671,37 @@ def cobrarClienteFacturar(request):
     for id_entrega in para_recibo:
         entrega = models.Entrega.objects.get(pk=id_entrega)
         entrega.cobrar_con_recibo(monto_recibo,(num_recibo))
+        
+
     messages.success(request, 'Pago realizado correctamente.')
     return HttpResponse(json.dumps("ok"),content_type='json')
+
+
+
+def getFacturas(request): 
+
+    num_factura = int(request.GET['factura'])
+    try:
+        factura = models.Factura.objects.get(numero=num_factura)
+        factura=1
+    except:
+        factura=0 #si no existe el factura
+    print factura
+    return HttpResponse(json.dumps(factura), content_type='json')
+
+
+def getRecibos(request): 
+    num_recibo = int(request.GET['recibo'])
+    try:
+        recibo = models.Recibo.objects.get(numero=num_recibo)
+        recibo=1
+    except:
+        recibo=0 #si no existe el recibo
+    print recibo
+    #json.dumps(recibo)
+    print recibo
+    return HttpResponse(json.dumps(recibo), content_type='json')
+
 
 
 
