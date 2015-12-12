@@ -36,7 +36,7 @@ CAUSAS_DECREMENTO_STOCK = (
 # Create your models here.
                #     C H O F E R E S    #
 #********************************************************#
-class Chofer (models.Model):    
+class Chofer(models.Model):
     FILTROS = ['cuit__icontains', 'nombre__icontains']
     cuit= models.CharField(max_length=20, unique=True)
     nombre= models.CharField(max_length=100)
