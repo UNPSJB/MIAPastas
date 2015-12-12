@@ -38,7 +38,7 @@
                     <p>&nbsp;</p>
 
           <div class="btn-group btn-group-sm col-md-2" role="group" aria-label="...">
-           <button type="button" id="ver-hoja" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Ver  </span></button>
+           <a id="ver-hoja" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
 
           </div>
           <p></p>
@@ -102,7 +102,7 @@
             if(id==undefined){
               mostrar_error();
             }else{
-              window.open('/hojaDeRuta/mostrar/'+id+'',"_self")
+              window.open('/hojaDeRuta/mostrarRecibos/'+id+'',"_self")
             }
 
         }

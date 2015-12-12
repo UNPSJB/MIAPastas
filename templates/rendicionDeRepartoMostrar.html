@@ -139,7 +139,6 @@ function inputs_validos(m){
             $(id_valor).notify("Se pagaron $"+diferencia+" pesos de mas para la entrega",{position:"top left"});
             return false;
         }
-        alert(valor);
         if  (esFloatPositivo(valor)== false && valor != 0 ){
             document.getElementById("monto-"+id_entrega).focus();
             $(id_valor).notify("Debe ser un numero positivo el monto de la entrega",{position:"top right"});

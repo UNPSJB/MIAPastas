@@ -329,12 +329,13 @@
                             <li role="separator" class="divider"></li>
                         {% endif %}
                         {% if perms.recetas.add_entrega %}
-                        <li><a href="{%url 'rendicionHojasDeRutas'%}">Registrar Rendicion del Reparto</a></li>
+                        <li><a href="{%url 'rendicionHojasDeRutas'%}">Rendir</a></li>
                         {% endif %}
                         <li role="separator" class="divider"></li>
                         {% if perms.recetas.add_entrega %}
-                        <li><a href="{%url 'rendicionHojasDeRutasSinCobrar'%}">Registrar Cobro de reparto realizado</a></li>
+                        <li><a href="{%url 'rendicionHojasDeRutasSinCobrar'%}">Cobrar</a></li>
                         {% endif %}
+                        
                     </ul>
                 </li>
           {% endif %}
@@ -359,6 +360,10 @@
                     {% if perms.recetas.ver_productos_mas_vendidos %}
                         <li><a href="{%url 'listadoProductosMasVendidos'%}">Listado de Productos Mas Vendidos</a></li>
                     {% endif %}
+                    <li role="separator" class="divider"></li>
+                        {% if perms.recetas.add_entrega %}
+                        <li><a href="{%url 'listadoHojasDeRutaFinalizadas'%}">Listado de Hojas de ruta Finalizadas</a></li>
+                        {% endif %}
                 </ul>
             </li>
           {% endif %}

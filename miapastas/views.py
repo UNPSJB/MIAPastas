@@ -440,6 +440,19 @@ def listadoClientesMorososFiltros(request):
     ciudades= models.Ciudad.objects.all()
     return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
 
+@login_required()
+def listadoHojasDeRutaFinalizadas(request):
+    hojas = models.HojaDeRuta.objects.filter(rendida=True,pagado=True)
+
+    filters, mfilters = get_filtros(request.GET, models.HojaDeRuta)
+    hojas = hojas.filter(**mfilters)
+    print(mfilters)
+    
+
+
+    return render(request, "listadoHojasDeRutaFinalizadas.html", {"hojas": hojas,"filtros": filters})
+
+
 
 #retorna un archivo excel que contiene todos los cliente morosos.
 @login_required()

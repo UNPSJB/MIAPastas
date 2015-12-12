@@ -69,6 +69,7 @@ urlpatterns = [
     url(r'^listadoProductosMasVendidosFiltros$',views.listadoProductosMasVendidosFiltros,name='listadoProductosMasVendidosFiltros'),
     url(r'^listadoProductosMasVendidosExcel$',views.listadoProductosMasVendidosExcel,name='listadoProductosMasVendidosExcel'),
     url(r'^listadoProductosMasVendidosGrafico$',views.ListadoProductosMasVendidosGrafico,name='ListadoProductosMasVendidosGrafico'),
+    url(r'^listadoHojasDeRutaFinalizadas$',views.listadoHojasDeRutaFinalizadas,name='listadoHojasDeRutaFinalizadas'),
 
                     # Hechos en forms
 
@@ -184,7 +185,7 @@ urlpatterns = [
      url(r'^hojaDeRuta$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
      url(r'^hojaDeRuta/generarTotales$',recetasviews.generarTotales,name='generarTotales'),
      url(r'^hojaDeRuta/alta/$',recetasviews.hojaDeRutaAlta,name='hojaDeRutaAlta'),
-     url(r'^hojaDeRuta/mostrar/(?P<hoja_id>[0-9]+)$',recetasviews.HojaDeRutaMostrar,name='HojaDeRutaMostrar'),
+     url(r'^hojaDeRuta/mostrarRecibos/(?P<hoja_id>[0-9]+)$',recetasviews.HojaDeRutaMostrar,name='HojaDeRutaMostrar'),
 
      url(r'^rendicionDeReparto/mostrar/(?P<hoja_id>[0-9]+)$',recetasviews.RendicionDeRepartoMostrar,name='rendicionDeRepartoMostrar'),
      url(r'^rendicionDeReparto/mostrar/sinCobrar$',recetasviews.rendicionHojasDeRutasSinCobrar,name='rendicionHojasDeRutasSinCobrar'),
