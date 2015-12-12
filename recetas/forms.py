@@ -48,6 +48,11 @@ class ChoferForm(forms.ModelForm):
         model = models.Chofer
         fields = ["cuit", "nombre", "direccion", "telefono", "e_mail"]
 
+    def __init__(self, *args, **kwargs):
+        super(ChoferForm, self).__init__(*args, **kwargs)
+        self.fields['cuit'].widget = forms.TextInput(attrs={
+            'placeholder': 'NN-NNNNNNNN-N'})
+
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
         pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
@@ -153,8 +158,21 @@ class ProveedorForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProveedorForm, self).__init__(*args, **kwargs)
+        self.fields['cuit'].widget = forms.TextInput(attrs={
+            'placeholder': 'NN-NNNNNNNN-N'})
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
-
+    '''
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido")
+        return cuit
+    '''
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
         razon_social = texto_lindo(razon_social, True)
@@ -196,9 +214,26 @@ class ProveedorModificarForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProveedorModificarForm, self).__init__(*args, **kwargs)
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
-
+    '''
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        print cuit, "RRRRRR"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        try:
+            result = re.match(pattern, cuit)
+        except:
+            pass
+        print "esultttttttttttttttt ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido")
+        return cuit
+    '''
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
+        print "iiiiiiiiiiii",self.cleaned_data['cuit']
+
         razon_social = texto_lindo(razon_social, True)
         return razon_social
 
@@ -214,10 +249,7 @@ class ProveedorModificarForm(forms.ModelForm):
         direccion = texto_lindo(direccion, True)
         return direccion
 
-    def clean_email(self):
-        email = self.cleaned_data['email']
-        email = texto_lindo(email, True)
-        return email
+    
 
     def clean_localidad(self):
         localidad = self.cleaned_data['localidad']
@@ -228,6 +260,8 @@ class ProveedorModificarForm(forms.ModelForm):
         provincia = self.cleaned_data['provincia']
         provincia = texto_lindo(provincia, True)
         return provincia
+
+    
 
 
 
@@ -385,7 +419,18 @@ class ClienteModificarForm(forms.ModelForm):
         direccion = self.cleaned_data['direccion']
         direccion = texto_lindo(direccion, True)
         return direccion
-
+    '''
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido")
+        return cuit
+        '''
 
 
 class ClienteAltaForm(forms.ModelForm):
@@ -393,6 +438,11 @@ class ClienteAltaForm(forms.ModelForm):
         model = models.Cliente
         fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email"]
         exclude = ['es_moroso']
+
+    def __init__(self, *args, **kwargs):
+        super(ClienteAltaForm, self).__init__(*args, **kwargs)
+        self.fields['cuit'].widget = forms.TextInput(attrs={
+            'placeholder': 'NN-NNNNNNNN-N'})
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
@@ -419,7 +469,18 @@ class ClienteAltaForm(forms.ModelForm):
         moroso = self.cleaned_data["es_moroso"]
         print "EN CLEAN DE MOROSO: ",moroso
         return moroso
-
+'''
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido")
+        return cuit
+'''
 
 
 class PedidoProveedorAltaForm(forms.ModelForm):
@@ -686,6 +747,8 @@ class HojaDeRutaForm(forms.ModelForm):
     class Meta:
         model = models.HojaDeRuta
         fields = ["chofer"]
+
+
     
 class EntregaForm(forms.ModelForm):
     class Meta:

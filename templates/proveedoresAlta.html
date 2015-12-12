@@ -16,17 +16,18 @@
                      {% csrf_token %}
                     <!-- {% bootstrap_form proveedores_form %} -->
 
-                    {% bootstrap_field proveedores_form.cuit  %}
-                    {% bootstrap_field  proveedores_form.razon_social  %}
-                    {% bootstrap_field  proveedores_form.localidad  %}
-                    {% bootstrap_field  proveedores_form.nombre_dueno  %}
-                    {% bootstrap_field  proveedores_form.direccion  %}
-                    {% bootstrap_field  proveedores_form.email  %}
-                    {% bootstrap_field  proveedores_form.numero_cuenta  %}
-                    {% bootstrap_field  proveedores_form.provincia  %}
-                    {% bootstrap_field  proveedores_form.telefono  %}
+                    {% bootstrap_field proveedores_form.cuit  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.razon_social layout='horizontal' %}
+                    {% bootstrap_field  proveedores_form.localidad  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.nombre_dueno  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.direccion  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.email  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.numero_cuenta  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.provincia  layout='horizontal'%}
+                    {% bootstrap_field  proveedores_form.telefono  layout='horizontal'%}
 
 
+                                                                 <p>&nbsp;</p>
 
                       <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Insumos</b></font></p>

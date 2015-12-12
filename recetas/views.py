@@ -915,6 +915,7 @@ def pedidosClientes(request,pedido_id=None):
                     totales[producto]=0
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
         print "diccionario",totales
+        print filters, "FILTERSSSSSSSSSSSSSS"
         return render(request, "pedidosCliente.html",
                       {"pedidos": pedidos,
                        "filtros": filters,

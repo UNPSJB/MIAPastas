@@ -446,10 +446,8 @@ def listadoHojasDeRutaFinalizadas(request):
 
     filters, mfilters = get_filtros(request.GET, models.HojaDeRuta)
     hojas = hojas.filter(**mfilters)
+    hojas = sorted(hojas, key=lambda hoja: hoja.fecha_creacion)
     print(mfilters)
-    
-
-
     return render(request, "listadoHojasDeRutaFinalizadas.html", {"hojas": hojas,"filtros": filters})
 
 
