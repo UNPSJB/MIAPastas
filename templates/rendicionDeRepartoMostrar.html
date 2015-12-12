@@ -63,10 +63,9 @@
                                 <label for="monto"> Monto a abonar: $ </label>
                                 <input type="text" class="form-control monto" id="monto-{{e.id}}"
                                         data-preciototal= "{%devolver_precio_total e%}"
-                                        data-entregaid = "{{ e.id }}"
-                                         >                                
+                                        data-entregaid = "{{ e.id }}" value="0">                                
                                 <label for="nro_doc"> Nro factura/remito:  </label>
-                                <input type="text" class="form-control documento" id="nro-{{ e.id }}" >                                
+                                <input type="text" class="form-control documento" id="nro-{{ e.id }}" readonly >                                
 
                                 <button type="button" id="pagar" onclick="" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
                             </div>
@@ -100,7 +99,6 @@ function armar_inputs(){
     var a = $(".monto");
     for (i=0;i<_.size(a);i++){
         if(a[i].value == 0){
-            alert("continue");
             continue;
         }
         html = html + armar_hidden(prefix, a[i].value, "cantidad_abonada",i);        
@@ -136,12 +134,14 @@ function inputs_validos(m){
         }
 
         if  (esFloatPositivo(valor)== false && valor != 0 ){
-
+            document.getElementById("monto-"+id_entrega).focus();
             $(id_valor).notify("Debe ser un numero positivo el monto de la entrega",{position:"top right"});
             return false;
         }
-                if(numero_doc.length == 0 && !valor == 0){
+                if((numero_doc.length == 0 && !valor == 0) || esEnteroPositivo(numero_doc) == false){
                      if (valor != 0){
+                        document.getElementById("nro-"+id_entrega).focus();
+
                         $(id_num).notify("Debe ingresar un numero de recibo/factura",{position:"top right"});
                         return false;
                 }
@@ -161,11 +161,9 @@ function validar(){
         console.log("es todo valido hay q mandar true");
         armar_inputs(); 
 
-        alert("por salir");
 
         return true;
         }
-        alert("por salir 2");
 
     return false;    
 
@@ -176,7 +174,10 @@ $(".monto").click(function(){
     $(this).val($(this).data()["preciototal"]);
     id_entrega = this.getAttribute("data-entregaid"); 
     id_num = "#nro-"+id_entrega;    //id del input de factura o recibo
+    console.log($(id_num)," -",id_num);
     $(id_num).attr('readonly', false);
+        console.log($(id_num));
+
 
 });
 
@@ -188,6 +189,7 @@ $(".monto").change(function () {
         $(id_num).attr('readonly', true);
    }
 });
+
 
 
 
