@@ -44,7 +44,7 @@
             </thead>
               <tbody>
 
-              {%for chofer in choferes%}
+              {% for chofer in choferes %}
               <tr class="renglon select-item" data-id="{{chofer.id}}" id="renglon-{{chofer.id}}">
                     <td>{{chofer.cuit}}</td>
                     <td>{{chofer.nombre}}</td>
@@ -52,7 +52,7 @@
                     <td>{{chofer.telefono}}</td>
                     <td>{{chofer.e_mail}}</td>
               </tr>
-              {%endfor%}
+              {% endfor %}
           </tbody>
           </table>
           </div>

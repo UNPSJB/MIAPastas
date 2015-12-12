@@ -99,6 +99,7 @@ def choferes(request,chofer_id=None):
         filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
         choferes = choferes.filter(activo=True)
+        #choferes = [c for c in choferes if c.activo == True]
         return render(request, "recetas/choferes.html",
                   {"choferes": choferes,
                    "filtros": filters})
