@@ -140,8 +140,11 @@ def usuarioEditar(request ,usuario_id):
 
 
 @login_required()
-def usuarioCambiarClave(request):
-    return render(request, "usuarioCambiarClave.html", {})
+def usuarioCambiarClave(request,usuario_id,password):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    usuario.set_password(password)
+    usuario.save()
+    return redirect('usuario')
 
 
 
