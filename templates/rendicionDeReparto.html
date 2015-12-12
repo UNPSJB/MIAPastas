@@ -31,27 +31,26 @@
                         </div>
                       </form>
 
-                <form action="" method="post" class="form-horizontal panel panel-default ">
+                <form action="" method="post" class="form-horizontal panel panel-default" id="form-sobrantes">
                     <div class="panel-heading"><p class="login-title"><font face="tahoma" size="2" color="black"><b>Productos Sobrantes</b></font></p></div>
                         <table class="table table-hover">
                             <thead>
                                 <tr>
-                                    <th>Producto</th>
-                                    <th>Cantidad</th>
-                                    <th>Lotes</th>
+                                    <th style="text-align:center;">Producto</th>
+                                    <th style="text-align:center;">Lotes</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for producto_llevado in hoja.productosllevados_set.all %}
-                                    <tr>
+                                    <tr style="text-align:center;">
                                     {% if producto_llevado.cantidad_enviada > 0%}
                                         <td>{{producto_llevado.producto_terminado}}</td>
                                         <td>{{producto_llevado.cantidad}}</td>
                                         <td>
-                                            <table BORDER="2" CELLPADDING="6" CELLSPACING="6">
-                                                <th>  Lote  </th>
-                                                <th>  Enviado  </th>
-                                                <th>  Sobrante  </th>
+                                            <table BORDER="2">
+                                                <th width="33%" style="text-align:center;">  Lote  </th>
+                                                <th width="33%" style="text-align:center;">  Enviado  </th>
+                                                <th width="33%" style="text-align:center;">  Sobrante  </th>
                                             {% for det in producto_llevado.productosllevadosdetalle_set.all%}
                                                  <tr>
                                                     <td>Lote-{{det.lote.nro_lote}} </td>
@@ -63,10 +62,10 @@
                                                                 type="number" class="input-sobrantes" value="0"></td>
                                                  </tr>
                                             {% endfor %}
-                                            </table>
-                                            {%endif%}
+                                            </table>                                            
                                         </td>
-                                </tr>
+                                        {%endif%}
+                                    </tr>
                                 {% endfor %}
                             </tbody>
                         </table>
@@ -76,7 +75,8 @@
                     <p>&nbsp;</p>
                 </form>
 
-                <form action="" method="post" class="form-horizontal panel panel-default " onsubmit="return validacion_final()">
+                <form action="" method="post" class="form-horizontal panel panel-default " 
+                        onsubmit="return validacion_final()" id="form-entregas">
                     <div class="panel-heading"><p class=" login-title"><font face="tahoma" size="2" color="black"><b>Entregas</b></font></p></div>
                      {% csrf_token %}
                     {{ detalles_factory.management_form }}
@@ -86,40 +86,29 @@
                     <table class="table table-hover">
                          <thead>
                             <tr>
-                               <th>Pedido</th>
-                               <th>Cliente</th>
-                               <th>Productos</th>
+                               <th style="text-align:center;">Pedido</th>
+                               <th style="text-align:center;">Cliente</th>
+                               <th style="text-align:center;">Productos</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for entrega  in hoja.entrega_set.all %}
-                               <tr>
+                               <tr style="text-align:center;">
                                   <td> Nro {{entrega.pedido.id}} {{entrega.pedido.get_tipo_pedido_display}}</td>
                                   <td>{{entrega.pedido.cliente}}</td>
-                                  <td align="center">
+                                  <td>
                                         <table   border="2">
-                                            <th>Producto</th>
-                                            <th>Cantidad Pedida</th>
-                                            <th>Cantidad Entregada</th>
+                                            <th width="33%" style="text-align:center;">Producto</th>
+                                            <th width="33%" style="text-align:center;">Cantidad Pedida</th>
+                                            <th width="33%" style="text-align:center;">Cantidad Entregada</th>
                                             {% if  entrega.pedido.tipo_pedido != 3%}
                                                 {%for p_llevado in hoja.productosllevados_set.all %}
-                                                {% if p_llevado.cantidad_enviada > 0 %}
                                                  <tr>    
                                                      <td>{{ p_llevado.producto_terminado.id }}
                                                          {{ p_llevado.producto_terminado.nombre }} </td>
                                                      <td>{% devolver_cantidad_pedida_entrega entrega p_llevado.producto_terminado %}</td>
-                                                
-                                 <td> <input entrega_id="{{entrega.id}}" 
-                                             type="text" class="input-entregas"
-                        producto_hidden_id = "{% devolver_producto entrega p_llevado.producto_terminado %}"
-                        detalle_pedido_id = "{% devolver_detalle entrega p_llevado.producto_terminado %}"
-                        producto_id = "{{p_llevado.producto_terminado.id}}"
-                                            placeholder="Cantidad "
-                                            value="0">
-                                        </td>
+                                                <td>{% devolver_input entrega p_llevado%}</td>                 
                                                  </tr>
-                                                 {%endif%}
-
                                                 {% endfor %}
                                             {%else%}
                                                 {%for d in entrega.pedido.pedidoclientedetalle_set.all%}
@@ -128,15 +117,7 @@
                                                      <td>{{ d.producto_terminado.id }}
                                                          {{ d.producto_terminado.nombre }} </td>
                                                      <td>{{ d.cantidad_producto }}</td>
-                                                    
-                                 <td> <input entrega_id="{{entrega.id}}" 
-                                             type="text" class="input-entregas"
-                        producto_hidden_id = "{{ d.producto_terminado.id}}"
-                        detalle_pedido_id = "{{d.id}}"
-                        producto_id = "{{d.producto_terminado.id}}"
-                                            placeholder="Cantidad "
-                                            value="0">
-                                        </td>
+                                                    <td>{% devolver_input_cambio entrega d%}</td>                
                                                  </tr>
                                                     {% endif%}
                                                 {%endfor%}
@@ -173,15 +154,7 @@
 {% endblock %}
 {% block javascript %}
 <script>
-    var listado_entregas = [
-        {% for entrega in hoja.entrega_set.all %}
-            {% for detalle_entrega in entrega.entregadetalle_set.all%}
-                {"detalle_id": {{detalle_entrega.id}},
-                "entrega_id": {{entrega.id}},
-                "cantidad_enviada":0},
-            {% endfor%}
-        {%endfor%}
-    ];
+   
 
 var listado_productos_totales={};
 var listado_productos_sobrantes={};
@@ -196,6 +169,19 @@ var listado_productos_entregados={};
 
 var prefix_entregas = "{{prefix}}"; //este tiene q venir desde la view
 var prefix_prod_llevados = "{{prefix_prod_llevados}}";
+$("#form-entregas").hide();
+
+
+function noty_error(mje,type){
+    noty({
+               text: mje,
+               layout: 'topCenter',
+               closeWith: ['click', 'hover'],
+               type: type
+    });
+
+}
+
 
 function limpiar_diccionario(dic){
     for (i in dic){
@@ -203,27 +189,75 @@ function limpiar_diccionario(dic){
     }
 }
 
+function input_valido(input){
+    /* recibe un INPUT, y verifica que su valor sea un numero natural 
+        retorna false si encuenta error
+        retrorna true si no encuentra error
+    */
+    if (input_vacio(input)){
+            $(input).notify("Llena el campo",{position:"right top",autoHideDelay:50000});    
+            return false;
+        }else{
+            if (esNatural(input.value) == false){
+                $(input).notify("Debe ser natural",{position:"right top",autoHideDelay:50000});
+                return false;
+            }
+        }
+    return true;
+}
+
 
 $("#boton-sobrantes-aceptar").click(function(){
+    limpiar_diccionario(listado_productos_sobrantes);
     var sobrantes = $(".input-sobrantes");
-    if (imputs_llenos(sobrantes) == true){        
-        $(sobrantes).each(function(i,val){
+    var val;
+    error=0;
+    for (i=0;i<_.size(sobrantes);i++){        
+        val = sobrantes[i];
+        if (!input_valido(val)){            
+            error+=1;                
+        }else{
             prod_id = val.getAttribute("producto_id");
             enviado = parseInt(val.getAttribute("cant_enviada"));
             valor_nuevo = parseInt(val.value);
             if (enviado < valor_nuevo){
-                alert("No pueden sobrar mas productos de los que se llevaron");
+                error+=1;
+                $(val).notify("Hay de mas",{position:"right top",autoHideDelay:50000});
             }else{
-                listado_productos_sobrantes[prod_id] = valor_nuevo;
-                console.log("-------------------------");
-                $(this).prop('readonly',true);
-                }
-        });
+                listado_productos_sobrantes[prod_id] += valor_nuevo;
+                $(val).prop('readonly',true);
+            }
+        }
     }
-    console.log("sobrantes: "+listado_productos_sobrantes);
+    if (error>0){
+        noty({
+           text: 'Corregir Errores!',
+           layout: 'center',
+           closeWith: ['click', 'hover'],
+           type: 'error',
+           animation: {
+                    open: {height: 'toggle'},
+                    close: {height: 'toggle'},
+                    easing: 'swing',
+                    speed: 500 
+                    }
+        });
+    }else{
+        $("#form-entregas").show();
+        noty({
+           text: 'Entregas!',
+           layout: 'bottomCenter',
+           closeWith: ['click', 'hover'],
+           type: 'information',
+        });
+
+    }
+    console.log("-----------assssd--------------");
+    console.log(listado_productos_sobrantes);
 });
 
 $("#boton-sobrantes-modificar").click(function(){
+    $("#form-entregas").hide();
     $($(".input-sobrantes")).each(function(i,val){
         $(listado_productos_sobrantes).each(function(i,val){
             for (prop in val){
@@ -232,7 +266,7 @@ $("#boton-sobrantes-modificar").click(function(){
         });
         $(this).prop('readonly',false);
     });
-    console.log("sobrantes "+listado_productos_sobrantes);
+    console.log(listado_productos_sobrantes);
 });
 
     function hay_balance(){
@@ -242,12 +276,12 @@ $("#boton-sobrantes-modificar").click(function(){
             count = listado_productos_sobrantes[id] + listado_productos_entregados[id];
             if (listado_productos_totales[id] < count){
                 var a = count - listado_productos_totales[id];
-                alert("Para el producto "+ id+ " se cargaron "+ a+" unidades  de mas!");
+                noty_error("Para el producto "+ id+ " se cargaron "+ a+" unidades  de mas!","error");
                 return false;
             }else{
                 if (listado_productos_totales[id] > count ){
                     var a = listado_productos_totales[id] - count;
-                    alert("Faltan registrar para el producto "+id+" unidades: "+a);
+                    noty_error("Faltan registrar para el producto "+id+" unidades: "+a,"error");
                     return false;
                 }
             }
@@ -259,18 +293,48 @@ $("#boton-sobrantes-modificar").click(function(){
 
 
     function validacion_final(){
-        console.log("en validacion_final");
+        limpiar_diccionario(listado_productos_entregados); 
         var cant_entregadas = $(".input-entregas");
-        var diccionario={};
-        $(cant_entregadas).each(function(i,val){
-            prod_id = parseInt(val.getAttribute('producto_id'));
-            nueva_cantidad = parseInt(val.value);
+        error = 0;
+        var val;
+        for (i=0;i<_.size(cant_entregadas);i++){
+            val = cant_entregadas[i];
+            if (!input_valido(val)){
+                error += 1;
+                continue;
+            }else{
+                tipo = parseInt(val.getAttribute('tipo_pedido'));
+                prod_id = parseInt(val.getAttribute('producto_id'));
+                nueva_cantidad = parseInt(val.value);
+                if (tipo == 3){
+                    cantidad_pedida = parseInt(val.getAttribute('cantidad_pedida')); 
+                    if (cantidad_pedida < nueva_cantidad){
+                        $(val).notify("De cambio no se entregan de mas",{position:"right top",autoHideDelay:50000});
+                        error += 1;                    
+                    }
+                }
+            }
             listado_productos_entregados[prod_id] += nueva_cantidad;
+        }      
+        if (error>0){
+            limpiar_diccionario(listado_productos_entregados); 
+            noty({
+               text: 'Corregir Errores!',
+               layout: 'top',
+               closeWith: ['click', 'hover'],
+               type: 'error'
             });
+            return false;
+        }
         console.log("------------------------------");
         console.log(listado_productos_entregados);
         if (hay_balance()){
-            alert("BALANCE positivo");
+            noty({
+               text: 'TODO LEGAL !!!',
+               layout: 'topCenter',
+               closeWith: ['click', 'hover'],
+               type: 'success'
+            });
             armar_inputs();      
             return true;
         }
@@ -310,6 +374,15 @@ $("#boton-sobrantes-modificar").click(function(){
         document.getElementById("id_"+prefix_prod_llevados+"-TOTAL_FORMS").value = count;
 
     }
+
+
+$(".input-entregas").change(function(){        
+        console.log("quitar notifi error");   
+        if (input_valido(this)){                 
+            $(this).notify("bien papa!",{  autoHideDelay: 800,className:"success",position:"right top"});      
+        }
+             
+    });
 
 
 </script>

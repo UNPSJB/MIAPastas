@@ -9,6 +9,12 @@
 	background-color:rgb(34,177,76);/*rgb(128,255,0) rgb(239,50,3)#8AC007;*/
 }
 
+.error_input
+{
+   border:4px solid red;
+}
+
+
 .boton_bottom{
 bottom:0;}
 
@@ -23,6 +29,10 @@ bottom:0;}
     border: 1px solid #0291DD;
     font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;
     font-size: 11px;
+}
+
+.oculto{
+     visibility:hidden;
 }
 
 .my_label{

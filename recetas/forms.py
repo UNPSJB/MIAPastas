@@ -745,7 +745,8 @@ class ProdLlevadoDetalleRendirForm(forms.Form):
     cantidad_sobrante = forms.IntegerField()
 
     def save(self):
-        """ recupera el detalle de prod llevado, y en base a la cantidad sobrane actualiza el stock reservado y disponible del LOTE """
+        """ recupera el detalle de prod llevado, y en base a la cantidad sobrane actualiza el stock 
+            reservado y disponible del LOTE """
         det = self.cleaned_data["detalle_id"]
         cant_sobrante = self.cleaned_data["cantidad_sobrante"]
         det.cantidad_sobrante = cant_sobrante
@@ -763,20 +764,26 @@ class CobroEntregaRendir(forms.Form):
     cantidad_abonada = forms.FloatField()
     nro_doc = forms.IntegerField()
 
-    def clean(self):        
+    def clean(self):
+        """ Verifica que el nro de doc ingresado no exista.
+            si el monto abonado = precio total de lo entregado, se busca en Factura
+            si el monto abonado < precio total de lo entregado, se busca en Recibo
+        """        
         cleaned_data = super(CobroEntregaRendir, self).clean()
         cantidad_abonada = self.cleaned_data["cantidad_abonada"]
         entrega = self.cleaned_data["entrega"]
         nro_doc = self.cleaned_data["nro_doc"]        
         if cantidad_abonada == entrega.precio_total():
             obj = models.Factura 
-        else:
+        elif cantidad_abonada < entrega.precio_total():
             print "por crear recibo"
-            obj = models.Recibo        
+            obj = models.Recibo
+        else:
+            raise Validaciones("Se pago de Mas")
         o = obj.objects.filter(numero=nro_doc)       
         if len(o) > 0:   
             print "Error doc ya existe"         
-            raise ValidationError("Para la entrega se registro un doc que ya existe")
+            raise ValidationError("Ya existe una factura con el numero %d "%(nro_doc))
         return cleaned_data
 
 

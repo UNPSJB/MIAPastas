@@ -11,7 +11,9 @@
                 <form class=" form-horizontal" method = "post" onsubmit = "return validar()">    
                     {% csrf_token %}
                     {{ cobros_factory.management_form }}
-
+                        {% for f in cobros_factory %}
+                            {% bootstrap_form_errors f %}
+                        {% endfor %}
                 <h1><font color="#2E8B57" font-size="20%">Se Registraron correctamente las entregas.</font> </h1>
                     {% for e in hoja.entrega_set.all%}
                             <p>&nbsp;</p>
@@ -55,7 +57,7 @@
                                     </div>                                
                                 </div>                            
                             {% endfor %}
-                            {% if e.pedido.tipo_pedido != 3%}                            
+                            {% if e.precio_total > 0 %}                            
                             <div class="form-inline pagos" style="margin-left: 3%;">                            
                                 <h1 style="margin-left: 5%;"><font color="black" size="5%">Pagos </font> </h1>
                                 <label for="monto"> Monto a abonar: $ </label>
