@@ -1285,28 +1285,38 @@ def lotesAlta(request):
         lote_form = forms.LoteForm(request.POST)
         if lote_form.is_valid():
             lote = lote_form.save(commit = False)
+            print "MIRAR ESTO"
+            print lote.producto_terminado, lote.pk
             lote.stock_disponible = lote.cantidad_producida #stock inicial
-            lote.save()
+            #lote.save()
             # actualizo stock del producto
             lote.producto_terminado.stock +=  lote.stock_disponible
-            lote.producto_terminado.save()
+            #lote.producto_terminado.save()
             # disminuye stock de insumos
             try:
                 receta = lote.producto_terminado.receta_set.get()
+                print receta ,"receeeeee"
                 cant__producida= lote.cantidad_producida
                 detalles_receta = receta.recetadetalle_set.all()
                 for detalle_receta in  detalles_receta:
                     cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
                     detalle_receta.insumo.decrementar(cant_decrementar)
                     if detalle_receta.insumo.stock < 0:
-                        messages.error(request, 'El insumo %s quedo con stock %d '%(detalle_receta.insumo,detalle_receta.insumo.stock))
+                        messages.error(request, 'No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(detalle_receta.insumo.stock * -1),detalle_receta.insumo.get_unidad_medida_display()))
+                        return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
                     else:
-                        messages.success(request, 'Se decrementaron %d %s de %s '%(cant_decrementar,
-                                                                                            detalle_receta.insumo.get_unidad_medida_display(),
-                                                                                            detalle_receta.insumo.nombre))
-                    detalle_receta.insumo.save()
+                        messages.success(request, 'Se decrementaron %d %s de %s '%(cant_decrementar,detalle_receta.insumo.get_unidad_medida_display(),detalle_receta.insumo.nombre))
+                        print "LOTEEE", lote.pk, "___",lote.fecha_produccion
+
+                        lote.save()
+                        lote.producto_terminado.save()
+                        detalle_receta.insumo.save()
             except:
-                messages.error(request, 'No se actualizo stock de insumos ya que no hay receta asociada al Producto')
+                messages.error(request, 'No se creo el Lote ya que no hay receta asociada al Producto')
+                print "asasdsadas--------"
+                print lote.pk
+                return render(request,"lotesAlta.html",{"lote_form":lote_form}) #
+
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
@@ -1359,8 +1369,10 @@ def hojaDeRuta(request):
                 pedidos_ya_cargados.append(entrega.pedido.id)
         for pedido in pedidos_clientes:
             if pedido.esParaHoy() and (pedido.id not in pedidos_ya_cargados):
+                if(pedido.cliente.es_moroso == True):
+                    messages.error(request, 'El pedido para el cliente '+pedido.cliente.razon_social+' no se puede enviar porque es moroso.')
+                    continue    
                 pedidos_clientes_enviar.append(pedido)
-        print "peidooooo", pedidos_clientes_enviar
         choferes = models.Chofer.objects.filter(activo=True)
         #choferes = models.Chofer.objects.filter(disponible=True)
         productos = models.ProductoTerminado.objects.filter(activo=True)

@@ -263,7 +263,9 @@ var productosExtrasDicc = new Array();
                   valor_a_restar = 0;
                 }
                 valor_nuevo = valor_anterior - valor_a_restar;
-                
+                if (valor_nuevo <0){
+                  valor_nuevo=0;
+                }
                 $(val).html(valor_nuevo);
 
           });

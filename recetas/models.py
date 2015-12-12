@@ -520,6 +520,11 @@ class PerdidaStock(models.Model):
 
 
 class HojaDeRuta(models.Model):
+    FILTROS = ['fecha_desde','fecha_hasta']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha_creacion__gte',
+        'fecha_hasta': 'fecha_creacion__lte'
+    }
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
