@@ -203,7 +203,6 @@ class RecetaDetalle(models.Model):
 #********************************************************#
 
 class Proveedor(models.Model):
-
     FILTROS = ['cuit__icontains','razon_social__icontains','localidad__icontains']
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100, unique=True)
@@ -213,7 +212,7 @@ class Proveedor(models.Model):
     numero_cuenta= models.PositiveIntegerField(unique=True)
     provincia = models.CharField(max_length=50, unique=True)
     telefono= models.PositiveIntegerField()
-    cuit= models.PositiveIntegerField(unique=True)
+    cuit= models.CharField(unique=True,max_length=20)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
 #RELACION UNO A MUCHOS CON pedidosProveedor
     #activo = models.BooleanField(default=True)
@@ -264,7 +263,7 @@ class Ciudad(models.Model):
 class Cliente(models.Model):
 
     FILTROS = ['cuit__icontains','razon_social__icontains','ciudad','es_moroso','saldo__gt']#'zona_icontains'
-    cuit = models.PositiveIntegerField(unique=True)
+    cuit = models.CharField(unique=True,max_length=20)
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
     ciudad = models.ForeignKey(Ciudad)#----> problema para filtrar

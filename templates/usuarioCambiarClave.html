@@ -36,6 +36,7 @@
                     </form>
                     {% buttons %}
                     <a class="btn btn-primary" href = "{% url 'usuarioEditar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-pencil" aria-hidden="true"> Aceptar </span></b></font></a>
+                    <a class="btn btn-danger pull-right" href = "javascript:history.back()" ><font face="tahoma" ><b><span class="glyphicon glyphicon-remove" aria-hidden="true"> Cancelar </span></b></font></a>
                     <!--<a class="btn btn-primary" href = "{% url 'usuarioCambiarClave' %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>-->
                     {% endbuttons %}
                 </div>

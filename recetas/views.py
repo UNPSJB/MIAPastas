@@ -96,8 +96,12 @@ def choferes(request,chofer_id=None):
         return render(request, "choferesConsulta.html",{"chofer": chofer})
     elif request.method == 'GET':
         # filtros
+        print "FILTROORORORORORO",request.GET
+        print "FILTROORORORORORO",request.POST
+
         filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
+        print filter," filterrrrrrrrrrrrrrrrrrrr ,",mfilters
         choferes = choferes.filter(activo=True)
         #choferes = [c for c in choferes if c.activo == True]
         return render(request, "recetas/choferes.html",

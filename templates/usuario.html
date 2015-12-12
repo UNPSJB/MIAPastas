@@ -41,28 +41,30 @@
                     {% buttons %}
                     <a class="btn btn-primary" href = "{% url 'usuarioEditar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-pencil" aria-hidden="true"> Editar </span></b></font></a>
                     <a class="btn btn-primary" href = "{% url 'usuarioCambiarClave' %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>
+
                     {% endbuttons %}
                 </div>
+                <div style="padding-top: 30%;"><a class="btn btn-danger pull-right" href = "{% url 'index' %}" ><font face="tahoma" ><b><span class="glyphicon glyphicon-remove" aria-hidden="true"> Cancelar </span></b></font></a></div>
             </div>
     </div>
 </div>
 {% endblock %}
 {% block javascript %}
 <script>
-    $(function() {
+    
 
         function editar(){
             window.open('/usuario/editar/'+id+'',"_self")
-        }}
+        }
 
         function cambiar_clave(){
             window.open('/usuario/clave/'+id+'',"_self")
-        }}
+        }
 
         $("#editar-usuario").click(editar);
         $("#cambiar-clave").click(cambiar_clave);
 
-    });
+    
 </script>
 
 {% endblock %}
