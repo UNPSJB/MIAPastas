@@ -113,7 +113,9 @@ function armar_form(){
         html_form = html_form + armar_hidden(pref,d.insumo,"insumo",i);
         html_form = html_form + armar_hidden(pref,d.cantidad,"cantidad_insumo",i);
         html_form = html_form + armar_hidden(pref,d.delete_form,"DELETE",i);
-        html_form = html_form + armar_hidden(pref,d.pk,"id",i);
+        if (d.pk == ""){
+          html_form = html_form + armar_hidden(pref,"","id",i);
+        }else{html_form = html_form + armar_hidden(pref,d.pk,"id",i);}        
         html_form = html_form + armar_hidden(pref,d.receta_pk,"receta",i);
      });
     document.getElementById("id_"+pref+"-TOTAL_FORMS").value = _.size(detalles);
@@ -145,23 +147,46 @@ $(function() {
 
 
     var listado_detalles = [
-    {% for detalle in detalles_receta %}{"receta_pk":{{detalle.receta.pk}},"pk": {{detalle.pk}}, "insumo": {{detalle.insumo.pk}}, "cantidad": "{{detalle.cantidad_insumo}}", "texto": "{{detalle.insumo}}" },{% endfor %}
+      {% if not error %}
+          {% for detalle in detalles_pedido %}
+              {"receta_pk":{{detalle.receta.pk}},
+                "pk": {{detalle.pk}}, 
+                "insumo": {{detalle.insumo.pk}}, 
+                "cantidad": "{{detalle.cantidad_insumo}}", 
+                "texto": "{{detalle.insumo}}" },
+          {% endfor %}
+      {% else %}
+          {% for detalle_form in detalles_form_factory %}
+              {% if detalle_form.receta.value != None%}
+              {"receta_pk":{{detalle_form.receta.value}},
+                {%if  detalle_form.instance.pk != None%}
+                    "pk": {{detalle_form.instance.pk}},
+                {% else %}
+                    "pk": '',
+                {% endif%}                 
+                "insumo": {{detalle_form.insumo.value}}, 
+                "cantidad": {{detalle_form.cantidad_insumo.value}}, 
+                "texto": $('#id_insumo option[value="{{detalle_form.insumo.value}}"]').text()},
+                {% endif%}
+          {% endfor %}
+      {% endif%}
     ]
-    console.log("cantidad de listado "+listado_detalles[0].cantidad);
+    
     $(listado_detalles).each(function(i, d) {
         detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,delete_form:"",texto: d.texto,pk:d.pk });
      });
-         console.log("cantidad de detalle "+detalles[0].cantidad);
+     armar_tabla();
+     var iniciales = _.filter(listado_detalles,function(detalle){
+        return detalle.pk != ""; });
 
-    armar_tabla();
-    document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(listado_detalles);
+    document.getElementById("id_"+"{{pref}}"+"-INITIAL_FORMS").value = _.size(iniciales);
 
 
 
   $("#add-detalle-receta").click(function(){
-        var cantidad = Number($("#cantidadInsumo").val());
-        var insumo = Number($("#id_insumo").val());
-        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        var cantidad = parseInt($("#cantidadInsumo").val());
+        var insumo = parseInt($("#id_insumo").val());
+        var texto = $('#id_insumo option[value=\"'+insumo+'\"]').text();
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{

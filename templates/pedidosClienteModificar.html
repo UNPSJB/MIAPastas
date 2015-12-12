@@ -8,25 +8,17 @@
 
               <form action="{% url 'pedidosClienteModificar' pedido_id %}" method="post" class="form" onsubmit="return validarForm()">
                   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b></b></font></p>
-
                       {% if pedido_form.errors %}
                       {% bootstrap_form_errors pedido_form %}
                         {% endif %}
-
-
                   {% csrf_token %}
-
                         {% if tipo_pedido = 1 %}
                          {% bootstrap_field pedido_form.fecha_inicio  %}
-                        {% bootstrap_field pedido_form.fecha_cancelacion  %}
-
+                        {% bootstrap_field pedido_form.fecha_cancelacion %}
                         {% bootstrap_field pedido_form.dias  %}
-
                       {% else %}
                          {% bootstrap_field pedido_form.fecha_entrega id="datepicker" %}
                       {% endif %}
-
-
                   {{ detalles_form_factory.management_form }}
 
                  <!-- Este input es solo para poder leer los detalles de la receta desde js-->
@@ -99,10 +91,6 @@
     <% } %>
     <% })%>
 </script>
-
-
-
-
 <script>
 
 var detalles = [];
@@ -110,14 +98,31 @@ var pedido_pk = {{id}};
 var pref = "{{pref}}";
 var id_cliente = {{id_cliente}}
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
-
+var datos_iniciales;
 
 $(function() {
+
+  console.log("inicializando datos en pedido cliente modificar");
+  /* ----------------- ------------------------------------*/
+  
+
+  /* ----------------- ------------------------------------*/
+
+
+
+
+
+
+
+
+
+
+
         $( "#datepicker" ).datepicker({ dateFormat: 'dd mm yy',
                                         inline: true
         });
     });
-
+  
 function eliminar(indi){
         detalles = eliminar_objeto(detalles,indi);
         armar_tabla(); //refresco la tabla
@@ -169,17 +174,45 @@ function validarForm(){
 
 $(function() {
                 /* INICIAMOS DETALLES */
-    var listado_detalles = [
-    {% for detalle in detalles_pedido %}{"pedido_pk":{{detalle.pedido_cliente.pk}},"pk": {{detalle.pk}}, "producto": {{detalle.producto_terminado.pk}}, "cantidad": "{{detalle.cantidad_producto}}", "texto": "{{detalle.producto_terminado}}" },{% endfor %}
+    var datos_iniciales = [
+      {% if not error %}
+          {% for detalle in detalles_pedido %}
+              {"pedido_pk":{{detalle.pedido_cliente.pk}},
+                "pk": {{detalle.pk}}, 
+                "producto": {{detalle.producto_terminado.pk}}, 
+                "cantidad": {{detalle.cantidad_producto}}, 
+                "texto": "{{detalle.producto_terminado.nombre}}" },
+          {% endfor %}
+      {% else %}
+          {% for detalle_form in detalles_form_factory %}
+              {% if detalle_form.producto_terminado.value != None%}
+              {"pedido_pk":{{detalle_form.pedido_cliente.value}},
+                {%if  detalle_form.instance.pk != None%}
+                    "pk": {{detalle_form.instance.pk}},
+                {% else %}
+                    "pk": '',
+                {% endif%}                 
+                "producto": {{detalle_form.producto_terminado.value}}, 
+                "cantidad": {{detalle_form.cantidad_producto.value}}, 
+                "texto": $('#id_producto option[value="{{detalle_form.producto_terminado.value}}"]').text()},
+                {% endif%}
+          {% endfor %}
+      {% endif%}
     ]
-    console.log("cantidad de listado "+listado_detalles[0].cantidad);
-    $(listado_detalles).each(function(i, d) {
-        detalles.push({pedido_pk:d.pedido_pk,cantidad:d.cantidad, producto: d.producto,delete_form:"",texto: d.texto,pk:d.pk });
+    console.log("ver");
+    console.log(datos_iniciales);
+
+    
+    $(datos_iniciales).each(function(i, d) {
+        detalles.push({pedido_pk:d.pedido_pk,cantidad:d.cantidad, producto: d.producto,delete_form:"",
+                        texto: d.texto,pk:d.pk });
      });
      armar_tabla();
 
-     console.log(detalles);
-    document.getElementById("id_"+pref+"-INITIAL_FORMS").value = _.size(detalles);
+    console.log(detalles);
+    var validos = _.filter(datos_iniciales,function(val){
+      return val.pk != "";})
+    document.getElementById("id_"+pref+"-INITIAL_FORMS").value = _.size(validos);
 
 
 

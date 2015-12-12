@@ -207,7 +207,7 @@ class Proveedor(models.Model):
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100, unique=True)
     direccion = models.CharField(max_length=100, unique=True)
-    email = models.EmailField(unique=True) #blank=True indica que puede estar el campo vacio
+    email = models.CharField(max_length = 50) #blank=True indica que puede estar el campo vacio
     localidad = models.CharField(max_length=50, unique=True)
     numero_cuenta= models.PositiveIntegerField(unique=True)
     provincia = models.CharField(max_length=50, unique=True)

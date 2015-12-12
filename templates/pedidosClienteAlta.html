@@ -108,6 +108,10 @@
 
 var detalles = [];
 var tpl_tabla=_.template($("#detalle_tabla_tpl").html());
+
+var datos_iniciales;
+
+
         // saco producto del arreglo detalles
 function eliminar(indi){
         detalles = eliminar_objeto(detalles,indi);
@@ -153,9 +157,26 @@ function validarForm(){
 
 $(function() {
 
+  datos_iniciales= [
+      {% for detalle_form in detalles_form_factory %}
+            {% if detalle_form.producto_terminado.value != None%}
+              {"producto": {{detalle_form.producto_terminado.value}},
+                "cantidad":{{detalle_form.cantidad_producto.value}},
+                "texto": $('#id_producto option[value="{{detalle_form.producto_terminado.value}}"]').text()
+              },
+            {%endif%}
+      {% endfor%}
+  ];
+  $(datos_iniciales).each(function(i, d) {
+        detalles.push({cantidad:d.cantidad, producto: d.producto,i:"0",texto: d.texto});
+     });   
+  armar_tabla();
+
+
+
   $("#add-detalle-receta").click(function(){
-        var cantidad = $("#cantidadProducto").val();
-        var producto = $("#id_producto").val();
+        var cantidad = parseInt($("#cantidadProducto").val());
+        var producto = parseInt($("#id_producto").val());
         var texto = document.getElementById('id_producto').options[document.getElementById('id_producto').selectedIndex].text;
         if ((cantidad == "") || (producto == "")){
             alert("Debe llenar todos los campos");
@@ -169,11 +190,8 @@ $(function() {
                  }else{
                     detalles.push({cantidad: cantidad, producto: producto,i:"0",texto:texto});
                     armar_tabla();
-                    console.log(detalles);
                     det = detalles[0];
-                    console.log(det);
                     d = det.cantidad;
-                    console.log(d);
                  }
             }
         }

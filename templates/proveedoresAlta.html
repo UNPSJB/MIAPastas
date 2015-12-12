@@ -9,12 +9,10 @@
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Proveedor</b></font></p></div>
             <div class="panel-body">
-
-
                 <form action="{% url 'proveedoresAlta' %}" method="post" class="form" onsubmit="return validarForm()">
                          <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Proveedor</b></font></p></div>
                      {% csrf_token %}
-                    <!-- {% bootstrap_form proveedores_form %} -->
+
 
                     {% bootstrap_field proveedores_form.cuit  layout='horizontal'%}
                     {% bootstrap_field  proveedores_form.razon_social layout='horizontal' %}
@@ -29,6 +27,7 @@
 
                                                                  <p>&nbsp;</p>
 
+
                       <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Insumos</b></font></p>
                       </div>
@@ -41,9 +40,7 @@
                                  <option value="{{i.id}}">{{i}}</option>
                             {% endfor %}
                          </select>
-
                      {{ detalles_form_factory.management_form }}
-
                     <button id="add-detalle-proveedor" type="button" class="btn btn-primary">Add</button>
                     <table class="table table-hover" id="nueva" class="display">
                         <thead>
@@ -55,7 +52,6 @@
                         <tbody>
                             <table class="table table-hover" id="detalles" class="display"></table>
                         </tbody>
-
                     </table>
                 {% buttons %}
                     <button id = "btn-submit" type="submit" class="btn btn-primary">
@@ -68,30 +64,9 @@
             </div>
     </div>
 </div>
-<!--
-{% if proveedores_form.errors %}
-    {% for field in proveedores_form %}
-        {% for error in field.errors %}
-            <div class="alert alert-error">
-                <strong>{{ error|escape }}</strong>
-            </div>
-        {% endfor %}
-    {% endfor %}
-    {% for error in proveedores_form.non_field_errors %}
-        <div class="alert alert-error">
-            <strong>{{ error|escape }}</strong>
-        </div>
-    {% endfor %}
-{% endif %}
-
--->
-
 {% endblock %}
 {% block javascript %}
-
-
 <script>
-
 var tabla_detalle_tpl;
 var detalle_insumo_imput_tpl;
 var detalles = [];
@@ -162,8 +137,16 @@ function validarForm(){
 }
 
 $(function() {
-
-
+    var datos_iniciales  =[
+        {% for insumo in proveedores_form.insumos.value %} 
+            {"insumo":{{insumo}}, 
+             "texto":$('#id_insumo option[value="{{insumo}}"]').text()},
+        {% endfor %}
+    ] 
+    $(datos_iniciales).each(function(i, d) {
+        detalles.push({insumo: d.insumo,texto: d.texto});
+     });
+     armar_tabla();
   {% if modal %}
     $("#myModal").modal("show");
   {% endif %}
