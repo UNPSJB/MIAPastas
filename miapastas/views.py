@@ -478,6 +478,8 @@ def listadoClientesMorososExcel(request):
     filters, mfilters = get_filtros(request.GET, models.Cliente)
     print(mfilters)
     clientes = models.Cliente.objects.filter(**mfilters)
+    clientes = clientes.filter(saldo__gt = 0)
+    print(clientes,'dasdasd')
 
     #VERIFICANDO QUE HAYA CLIENTES
     if not clientes.exists():
