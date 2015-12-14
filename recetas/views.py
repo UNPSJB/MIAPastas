@@ -1081,7 +1081,9 @@ def pedidosProveedor(request,pedido_id=None):
 
 
 
-
+#if pedido_proveedor_instancia.fecha_realizacion > datetime.date.today():
+             #   messages.error(request, 'la fecha de realizacion no debe ser superior a la fecha actual.')
+                #return redirect('pedidosProveedorAlta')
 
 @login_required()
 @permission_required('recetas.add_pedidoproveedor')
@@ -1095,6 +1097,9 @@ def pedidosProveedorAlta(request):
         if pedido_proveedor_form.is_valid():
             pedido_proveedor_instancia = pedido_proveedor_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
+            if pedido_proveedor_instancia.fecha_realizacion > datetime.date.today():
+                messages.error(request, 'la fecha de realizacion no debe ser superior a la fecha actual.')
+                return redirect('pedidosProveedorAlta')
             if detalles_form.is_valid():
                 #detalles = detalles_form.save(commit=False)
                 pedido_proveedor_instancia.save()
@@ -1135,8 +1140,6 @@ def pedidosProveedorAlta(request):
 
 
 
-
-
 @login_required()
 @permission_required('recetas.change_pedidoproveedor')
 def pedidosProveedorModificar(request,pedido_id):
@@ -1172,6 +1175,7 @@ def pedidosProveedorModificar(request,pedido_id):
                                                    "pedido_id":pedido_id,"proveedor":proveedor,
                                                    "pref":pref
                                                    })
+
 
 
 

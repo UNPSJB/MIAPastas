@@ -486,14 +486,24 @@ class PedidoProveedorAltaForm(forms.ModelForm):
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','fecha_cancelacion']
 
-
-
+    #def clean_fecha_realizacion(self):
+     #   fecha_realizacion = self.cleaned_data['fecha_realizacion']
+      #  if fecha_realizacion > datetime.date.today():
+       #     raise ValidationError('La fecha de Realizacion debe no debe ser mayor a la fecha actual.')
+        #return fecha_realizacion
+    
 class PedidoProveedorModificarForm(forms.ModelForm):
     class Meta:
         model = models.PedidoProveedor
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor','fecha_cancelacion']
+
+    def clean_fecha_realizacion(self):
+        fecha_realizacion = self.cleaned_data['fecha_realizacion']
+        if fecha_realizacion > datetime.date.today():
+            raise ValidationError('La fecha de Realizacion no debe ser mayor a la fecha actual.')
+        return fecha_realizacion
 
 
 class PedidoProveedorRecepcionarForm(forms.ModelForm):
