@@ -921,8 +921,12 @@ class BaseRendirCobrosFormset(BaseFormSet):
             En el caso de que existan dos facturas/recibo, sera correcto si corresponden al mismo Cliente
             Si no corresponden al mismo cliente se informa que esto no es valido.
         """
-        print "1- en clean de base formser rendir cobros",self
-        if self.forms[0].cleaned_data["entrega"].hoja_de_ruta.pagado == True:
+        
+        try:
+            hoja_pagada = self.forms[0].cleaned_data["entrega"].hoja_de_ruta.pagado
+        except:
+            hoja_pagada=False
+        if hoja_pagada:
             print "fue pagada ya!"
             raise ValidationError("La hoja de ruta seleccionada ya fue Pagada")
         if self.total_error_count() > 0:

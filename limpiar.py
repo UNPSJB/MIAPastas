@@ -35,7 +35,7 @@ for f in models.Recibo.objects.all():
 for i in range(1,4):
 	for l in range(0,3):
 		producto = models.ProductoTerminado.objects.all()[l]		
-		lote = models.Lote.objects.create(producto_terminado=producto,fecha_produccion= date.today(),fecha_vencimiento= date.today() + timedelta(days=1000),cantidad_producida=10,stock_reservado=0,stock_disponible=10)
-		producto.stock +=10
+		lote = models.Lote.objects.create(producto_terminado=producto,fecha_produccion= date.today(),fecha_vencimiento= date.today() + timedelta(days=1000),cantidad_producida=100,stock_reservado=0,stock_disponible=100)
+		producto.stock +=100
 		producto.save()
 
