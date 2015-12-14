@@ -1203,7 +1203,7 @@ def pedidosProveedorRecepcionar(request,pedido_id):
             pedido_proveedor_instancia.save()
             for detalle in pedido_proveedor_instancia.detallepedidoproveedor_set.all():
                 print detalle.insumo.stock, "ANTES"
-                detalle.insumo.stock -=detalle.cantidad_insumo
+                detalle.insumo.stock +=detalle.cantidad_insumo
                 detalle.insumo.save()
                 print detalle.insumo.stock
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
