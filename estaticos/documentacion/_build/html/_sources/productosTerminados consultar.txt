@@ -1,4 +1,4 @@
-﻿Consultar Producto Modificado
+﻿Consultar Producto Terminado
 ====================================
 
 Seleccionar un producto haciendo click sobre el deseado y sobre el ícono de lupa.
