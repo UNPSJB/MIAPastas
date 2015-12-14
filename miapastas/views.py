@@ -520,7 +520,7 @@ def listadoClientesMorososExcel(request):
     #http://xlsxwriter.readthedocs.org/format.html
     fecha = datetime.date.today()
     fecha = fecha.strftime("%d/%m/%Y")
-    worksheet.merge_range('A1:F1', "Listado de Clientes Morosos: "+fecha, cell_format_titulo)
+    worksheet.merge_range('A1:F1', "Listado de Clientes con Deuda: "+fecha, cell_format_titulo)
     #worksheet.set_column('A:F', 12)
 
     #worksheet.set_column('A:F')
