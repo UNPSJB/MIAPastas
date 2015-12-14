@@ -61,8 +61,10 @@
 
                                 {% endfor %}
                                 <td><font color="red"><b>TOTAL DE BOLSINES: {{producto.stock}}</b></font></td>
+                              <p>&nbsp;</p>
                               </tbody>
                           </table>
+                    <p>&nbsp;</p>
                     {% endfor %}
                 </div>
 
@@ -73,6 +75,8 @@
             <hr/>
                 <div class="col-md-2">
                     <div class="form-group">
+                        <p>&nbsp;</p>
+                        <p>&nbsp;</p>
                         <label for="totalAdeudado"><font color="green"><b>TOTAL DE BOLSINES</b></font></label>
                         <input type="text" class="form-control"
                                value="{%stock_totales productos_filtrados%}"
