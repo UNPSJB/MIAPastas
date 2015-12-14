@@ -5,26 +5,21 @@
 
 
 <div class="container">
-    <div class="row">
-        <div class="col-sm-6 col-md-4 col-md-offset-4">
-            <h1 class="text-center login-title"><font face="tahoma" size="3" color="green"><b>Mía Pastas System</font><font face="verdana" size="1" color="green" ><br>versión 1.0</br></b></font></h1>
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Alta Usuario</b></font></p></div>
+            <div class="panel-body">
+                <div class="col-sm-6 col-md-4 col-md-offset-4">
+                    <form  method="post" action="{% url 'signup' %}">
+                        {% csrf_token %}
+                        <input placeholder="Nombre de usuario( * )" class="form-control" type="text"  id="username"  name="username" tabindex="1" required autofocus>
+                        <input placeholder="Contraseña( * )" class="form-control" type="password"  id="password" name="password" tabindex="2" required>
+                        <input placeholder="e-mail( * )" class="form-control" type="email"  id="e-mail" name="e-mail" tabindex="4" required>
+                        <input placeholder="Nombre( * )" class="form-control" type="text"  id="nombre" name="nombre" tabindex="5" required>
+                        <input placeholder="Apellido( * )" class="form-control" type="text"  id="apellido" name="apellido" tabindex="6" required>
 
-            <div class="account-wall">
-
-
-                <form  method="post" action="{% url 'signup' %}">
-
-                    {% csrf_token %}
-                    <input placeholder="Nombre de usuario" class="form-control" type="text"  id="username"  name="username" tabindex="1" required autofocus>
-                    <input placeholder="Contraseña" class="form-control" type="password"  id="password" name="password" tabindex="2" required>
-                    <input placeholder="e-mail" class="form-control" type="email"  id="e-mail" name="e-mail" tabindex="4" required>
-                    <input placeholder="Nombre" class="form-control" type="text"  id="nombre" name="nombre" tabindex="5" required>
-                    <input placeholder="Apellido" class="form-control" type="text"  id="apellido" name="apellido" tabindex="6" required>
-
-
-                    <input id="crear_usuario" class="btn btn-lg btn-success btn-block" type="submit" value="Crear"/><input type="hidden" name="next" value="/signup/" />
-                </form>
-
+                        <input id="crear_usuario" class="btn btn-lg btn-success btn-block" type="submit" value="Crear"/><input type="hidden" name="next" value="/signup/" />
+                    </form>
+                </div>
             </div>
         </div>
     </div>
