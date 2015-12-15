@@ -33,6 +33,8 @@ urlpatterns = [
     url(r'^logout$', logout, {'template_name': 'login.html', }, name="logout"),
     url(r'^usuario$', views.usuario,name="usuario" ),
 
+
+
     url(r'^signup$', views.signup, name='signup'),
     url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
     url(r'^usuarioEditar/(?P<usuario_id>[0-9]+)/$', views.usuarioEditar, name='usuarioEditar'),

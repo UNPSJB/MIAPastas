@@ -111,6 +111,7 @@ class RecetaForm(forms.ModelForm):
     def save(self, *args, **kwargs):
         # Sobrecargar save devuelve el objeto apunto de ser guardado
         obj_receta = super(RecetaForm, self).save(*args, **kwargs)
+        print "e sae recetaaaaaaaaaaaaaaaa"
         #detalles = models.RecetaDetalle.objects.filter(receta = obj_receta)
         #if detalles is  None:
         #    raise ValidationError("Debe existir al menos un detalle para la Receta.")
