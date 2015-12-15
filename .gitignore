@@ -3,3 +3,4 @@
 __pycache__
 *.sqlite3*
 *.orig
+miapastas/local_settings.py

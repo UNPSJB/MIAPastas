@@ -34,10 +34,10 @@
                          </div>
                    </div>
 </div>
-                <div class="panel panel-success col-md-6" id="divtabladisponibes">
+                <div class="panel panel-success col-md-6" id="divtabladisponibes" style="background-color:#F5FCAB; border-color:#349222;">
                     <table id="tabladisponibes" class="table table-condensed">
                     <thead>
-                        <h4>Productos disponibles</h4>
+                        <h4> <b>Productos disponibles</b></h4>
                         <tr>
                             <th>Producto</th>
                             <th>Cantidad</th>
@@ -160,7 +160,7 @@
               <div class="modal-dialog">
                 <!-- Modal content-->
                 <div class="modal-content">
-                  <div class="modal-header">
+                  <div class="modal-header" style="background-color:#3AB31B;">
                     
                     <h2 class="modal-title">Agregar productos extra</h2>
                   </div>
@@ -181,7 +181,7 @@
                             <label for="cantidad_producto">Cantidad a agregar</label>
                             <input type="text" class="form-control" id="cantidad_producto" placeholder="cantidad" >
                           </div>
-                      <div class="form-group col-md-1">
+                      <div class="form-group col-md-1" style="top:5px;">
                             <label for="exampleInputEmail2"></label>
                             <button type="button" id="add-detalle-extra" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">    </span></button>
 
@@ -203,7 +203,7 @@
                   <div class="modal-footer">
 
                   <a href="{% url 'index' %}">
-                   <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"> ANULAR TODO </span></button></a>
+                   <button type="button" class="btn btn-danger pull-left"><span class="glyphicon glyphicon-arrow-left" aria-hidden="true"> Anular Todo </span></button></a>
                       <button type="button" onclick="enviarSubmit()" class="btn btn-default" data-dismiss="modal">Aceptar</button> </a>
                      <!--  <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button> -->
                   </div>
@@ -390,6 +390,7 @@ var productosExtrasDicc = new Array();
 
            function enviarSubmit(){
             generarTotales();
+            console.log("termine gen toooooooooooooooooooooooooooooooooo");
             $("#btn-submit").trigger("click"); //ejecuto el submit del formulario
            }
 
@@ -407,6 +408,7 @@ var productosExtrasDicc = new Array();
                      'pedidos': myJsonString
                  },
                 dataType: 'json',
+                async:false,  //vuelve sincronico al AJAX, importante
                 url: 'hojaDeRuta/generarTotales',
                 success: function(json){
                     totales_productos = _.keys(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
@@ -480,7 +482,6 @@ var productosExtrasDicc = new Array();
                 )
             verificarStock();
             console.log("Dicc extra: ",productosExtrasDicc);
-            alert("aguantaaaaaaaaa");
 
         }
 
@@ -554,10 +555,8 @@ var productosExtrasDicc = new Array();
 
         function altaHojaRuta(){
              var html="";
-             alert("en onsubmit");
              console.log(totales_cantidades, "totales cant")
              console.log(totales_productos,"totales_productos");
-             alert("LPM");
              $(pedidosAsignados).each(function(i,val){
                 html = html + armar_hidden(prefix_entregas,val,"pedido",i);
              });
@@ -575,7 +574,6 @@ var productosExtrasDicc = new Array();
             document.getElementById("id_"+prefix_entregas+"-TOTAL_FORMS").value = _.size(pedidosAsignados);
 
              console.log($("#pedidos_hidden"));
-             //return false; //BORRAR!!!!!!!!!
         }
 
         function validar(){
