@@ -1,6 +1,6 @@
 ﻿Recetas
 =======
-
+Dentro de ABM Productos Terminados aparecerá la siguiente pantalla
 .. image:: _static/recetas/rece_ini.jpg
 
 1.	Nombre de la sección donde estamos ubicados.
@@ -25,6 +25,11 @@ Modificar Recetas
 
 (1) Nombre de la sección en la que nos ubicamos, (2) descripción de la receta a modificar, (3 y 4) el detalle de la receta a modificar, (5) agregar un insumo y su cantidad a la receta, (6) modificar la cantidad del insumo, (7) eliminar el insumo de la receta, (8) guardar los cambios de la receta.
 
+*	Observaciones:
+
+	No se podrá modificar una receta con un producto terminado que ya exista en otra receta.
+
+
 Eliminar Recetas
 -----------------
 Se deberá seleccionar una receta haciendo click, y luego hacer click sobre el botón de eliminar. Aparecerá el siguiente cartel:
@@ -38,6 +43,10 @@ Alta de Recetas
 
 (1) Nombre de la sección en la que nos ubicamos, (2) descripción de la receta a crear, (3 y 4) el detalle de la receta a crear, agregar un insumo y su cantidad a la receta,  debajo se encuentra el botón de guardar.
 
+*	Observaciones:
+
+	No se podrá dar de alta una receta que tenga el mismo nombre que otra que ya exista.
+	No se podrá dar de alta una receta que contenga un mismo producto terminado de otra receta.
 
 .. toctree::
    :maxdepth: 2
