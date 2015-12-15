@@ -9,11 +9,15 @@ from django.db.models import Q
 
 
 #clase para redefinir objects y obtener solo instancias activas
-'''
-class ManagerActivos(models.Manager):
-    def get_queryset(self):
-        return super(ManagerActivos, self).get_queryset().filter(activo=True)
+class ManagerBajasLogicas(models.Manager):
+    def __init__(self, activo):
+        super(ManagerBajasLogicas, self).__init__()
+        self.activo = activo
 
+    def get_queryset(self):
+        return super(ManagerBajasLogicas, self).get_queryset().filter(activo=self.activo)
+
+'''
 class ManagerActivosHojasRutas(models.Manager):
     def get_queryset(self):
         return super(ManagerActivosHojasRutas, self).get_queryset().filter(rendida=False)
@@ -45,6 +49,11 @@ class Chofer(models.Model):
     e_mail=models.EmailField(blank=True, null=True)
     activo = models.BooleanField(default=True)
     disponible = models.BooleanField(default=True)
+
+    # Managers de chofer
+    objects = ManagerBajasLogicas(activo=True)
+    eliminados = ManagerBajasLogicas(activo=False)
+
     def __str__(self):
         return "%s" % (self.nombre)
 

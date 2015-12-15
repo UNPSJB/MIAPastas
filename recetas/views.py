@@ -98,8 +98,6 @@ def choferes(request,chofer_id=None):
         # filtros
         filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
-        choferes = choferes.filter(activo=True)
-        #choferes = [c for c in choferes if c.activo == True]
         return render(request, "recetas/choferes.html",
                   {"choferes": choferes,
                    "filtros": filters})
@@ -258,12 +256,16 @@ def insumosBaja(request,insumo_id):
            [ "%s" % r for r in insumo.receta_set.all()]
         ))
         return redirect('insumos')
-        #insumo.delete()
+        #insumo.delete()s
+    elif len(insumo.proveedores.all()) > 0:
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque esta sociado a un proveedor.')
+        return redirect('insumos')
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
         #insumo.delete()
-    insumo.activo=False
-    insumo.save()
+    #insumo.activo=False
+    #insumo.save()
+    insumo.delete()
     return redirect('insumos')
 
 
@@ -902,7 +904,9 @@ def pedidosClientes(request,pedido_id=None):
         print "GET ",request.GET
         #filtros para filtrar por rango de fechas de entrega, varia para cada tipo
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
+        print "FILTROSSSS",mfilters," "
         pobj = Q(**mfilters)
+
         filters, mfilters = get_filtros(request.GET, models.PedidoFijo)
         qobj = Q(**mfilters)
         filters, mfilters = get_filtros(request.GET, models.PedidoOcacional)
@@ -927,7 +931,6 @@ def pedidosClientes(request,pedido_id=None):
                        "filtros": filters,
                        "clientes":clientes,
                        "totales":totales})
-
 
 
 
@@ -975,7 +978,14 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                 "tipo_pedido": tipo_pedido_id})
 
 
-
+def choferesAltaAjax(request):
+    cuit = request.GET['cuit']
+    try:
+        chofer = models.Chofer.eliminados.get(cuit=cuit)
+        return HttpResponse(json.dumps("1"),content_type='json')
+    except:
+        return HttpResponse(json.dumps("0"),content_type='json')
+    
 
 @login_required()
 @permission_required('recetas.delete_pedidocliente')
@@ -989,6 +999,7 @@ def pedidosClienteBaja(request,pedido_id):
     pedido.activo=False
     pedido.save()
     return redirect('pedidosCliente')
+
 
 
 
@@ -1782,9 +1793,4 @@ def productosMasVendidos(request):
     savefig(response,format='PNG')
     return response
 
-def pdfGuia(request):
-    with open(' static "/documentacion" ', 'r') as pdf:
-        response = HttpResponse(pdf.read(), mimetype='application/pdf')
-        response['Content-Disposition'] = 'inline;filename=Guia-v2.pdf'
-        return response
-    pdf.closed
+

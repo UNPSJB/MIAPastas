@@ -478,6 +478,8 @@ def listadoClientesMorososExcel(request):
     filters, mfilters = get_filtros(request.GET, models.Cliente)
     print(mfilters)
     clientes = models.Cliente.objects.filter(**mfilters)
+    clientes = clientes.filter(saldo__gt = 0)
+    print(clientes,'dasdasd')
 
     #VERIFICANDO QUE HAYA CLIENTES
     if not clientes.exists():
@@ -520,7 +522,7 @@ def listadoClientesMorososExcel(request):
     #http://xlsxwriter.readthedocs.org/format.html
     fecha = datetime.date.today()
     fecha = fecha.strftime("%d/%m/%Y")
-    worksheet.merge_range('A1:F1', "Listado de Clientes Morosos: "+fecha, cell_format_titulo)
+    worksheet.merge_range('A1:F1', "Listado de Clientes con Deuda: "+fecha, cell_format_titulo)
     #worksheet.set_column('A:F', 12)
 
     #worksheet.set_column('A:F')
@@ -577,7 +579,7 @@ def listadoClientesMorososExcel(request):
 #muestra todos los productos termiandos disponibles.
 @login_required()
 def listadoProductosTerminadosDisponibles(request):
-    productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+    productos = models.ProductoTerminado.objects.filter(stock__gte=0)
 
     print("pase por acaaaaaa")
     print(productos)
@@ -597,7 +599,7 @@ def listadoProductosTerminadosDisponiblesFiltros(request):
         print(mfilters)
         #if "saldo__gt" not in mfilters or mfilters['saldo__gt'] == "" or float(mfilters['saldo__gt'])<0:
          #   mfilters["saldo__gt"] = 0
-        productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+        productos = models.ProductoTerminado.objects.filter(stock__gte=0)
         productos_filtrados = models.ProductoTerminado.objects.filter(**mfilters)
 
         return render(request, "listadoProductosTerminadosDisponibles.html",
@@ -605,7 +607,7 @@ def listadoProductosTerminadosDisponiblesFiltros(request):
                    "filtros": filters,
                    })
 
-    productos = models.ProductoTerminado.objects.filter(stock__gt=0)
+    productos = models.ProductoTerminado.objects.filter(stock__gte=0)
     print("pase por acaaaaaa")
     print(productos)
     print("pase por acaaaaaa")

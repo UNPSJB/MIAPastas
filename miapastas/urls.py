@@ -89,16 +89,13 @@ urlpatterns = [
 
     #############################################################################################
 
-
-
-
-
-
     url(r'^choferes/$',recetasviews.choferes,name='choferes'),
     url(r'^choferes/(?P<chofer_id>[0-9]+)/$',recetasviews.choferes,name='choferConsulta'),
     url(r'^choferes/alta/$',recetasviews.choferesAlta,name='choferesAlta'),
     url(r'^choferes/modificar/(?P<chofer_id>[0-9]+)/$',recetasviews.choferesModificar,name='choferModificar'),
     url(r'^choferes/baja/(?P<chofer_id>[0-9]+)/$',recetasviews.choferesBaja,name='choferesBaja'),
+    url(r'^choferesAltaAjax/$',recetasviews.choferesAltaAjax,name='choferesAltaAjax'),
+
 
     url(r'^recetas/$',recetasviews.recetas,name='recetas'),
     url(r'^recetas/alta/$',recetasviews.recetasAlta,name='recetasAlta'),
