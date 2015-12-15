@@ -29,7 +29,7 @@
                             <font face="tahoma" size="4" color="black"><b>Modificar Detalles</b></font></p>
                   </div>
 
-                  <label for="id_producto">Producto</label>
+                  <label for="id_producto">Producto (*)</label>
                   <select class="form-control" id="id_producto" name="id_producto" title="">
                        <option value="" selected="selected">---------</option>
                              {% for i in productos %}
@@ -38,7 +38,7 @@
                   </select>
 
                   <div class="form-group">
-                       <label for="cantidadProducto">Cantidad</label>
+                       <label for="cantidadProducto">Cantidad (*)</label>
                        <input type="text" class="form-control" name="cantidadProducto" id="cantidadProducto" placeholder="cantidad" >
                   </div>
 

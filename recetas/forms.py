@@ -52,6 +52,11 @@ class ChoferForm(forms.ModelForm):
         super(ChoferForm, self).__init__(*args, **kwargs)
         self.fields['cuit'].widget = forms.TextInput(attrs={
             'placeholder': 'NN-NNNNNNNN-N'})
+        self.fields['cuit'].label = "Cuit (*)"
+        self.fields['nombre'].label = "Nombre (*)"
+        self.fields['direccion'].label = "Direccion (*)"
+        self.fields['telefono'].label = "Telefono (*)"
+        self.fields['e_mail'].label = "E-mail"
     
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
@@ -99,6 +104,12 @@ class ModificarStockInsumoForm(forms.Form):
         insumo.modificar_stock(cantidad,int(unidad_medida))
         insumo.save()
 
+    def __init__(self, *args, **kwargs):
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(ModificarStockInsumoForm, self).__init__(*args, **kwargs)
+        self.fields['insumo'].label = "Insumo (*)"
+        self.fields['cantidad'].label = "Cantidad (*)"
+        self.fields['unidad_medida'].label="Unidad de medida (*)"
 
 class InsumoForm(forms.ModelForm):
     class Meta:
@@ -179,6 +190,15 @@ class ProveedorForm(forms.ModelForm):
         super(ProveedorForm, self).__init__(*args, **kwargs)
         self.fields['cuit'].widget = forms.TextInput(attrs={
             'placeholder': 'NN-NNNNNNNN-N'})
+        self.fields['cuit'].label = "Cuit (*)"
+        self.fields['razon_social'].label = "Razon social (*)"
+        self.fields['localidad'].label = "Localidad (*)"
+        self.fields['nombre_dueno'].label = "Nombre dueno (*)"
+        self.fields['direccion'].label = "Direccion (*)"
+        self.fields['email'].label = "E-mail (*)"
+        self.fields['numero_cuenta'].label = "Numero cuenta (*)"
+        self.fields['provincia'].label = "Provincia (*)"
+        self.fields['telefono'].label = "Telefono (*)"
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
     
     def clean_razon_social(self):
@@ -233,6 +253,17 @@ class ProveedorModificarForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(ProveedorModificarForm, self).__init__(*args, **kwargs)
         #self.fields['fecha_creacion'].widget.attrs.update({'class' : 'datepicker'})
+        self.fields['cuit'].widget = forms.TextInput(attrs={
+            'placeholder': 'NN-NNNNNNNN-N'})
+        self.fields['cuit'].label = "Cuit (*)"
+        self.fields['razon_social'].label = "Razon social (*)"
+        self.fields['localidad'].label = "Localidad (*)"
+        self.fields['nombre_dueno'].label = "Nombre dueno (*)"
+        self.fields['direccion'].label = "Direccion (*)"
+        self.fields['email'].label = "E-mail (*)"
+        self.fields['numero_cuenta'].label = "Numero cuenta (*)"
+        self.fields['provincia'].label = "Provincia (*)"
+        self.fields['telefono'].label = "Telefono (*)"
     
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
@@ -291,7 +322,9 @@ class ProductoTerminadoForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super(ProductoTerminadoForm, self).__init__(*args, **kwargs)
+        self.fields['nombre'].label = "Nombre ( * )"
         self.fields['precio'].label = "Precio Bolsin ( * )"
+        self.fields['dias_vigencia'].label = "Dias vigencias ( * )"
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -367,7 +400,15 @@ class LoteStockForm(forms.ModelForm):
 class CiudadForm(forms.ModelForm):
     class Meta:
         model = models.Ciudad
-        fields = ["nombre","codigo_postal","zona"]  
+        fields = ["nombre","codigo_postal","zona"]
+
+
+    def __init__(self, *args, **kwargs):
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(CiudadForm, self).__init__(*args, **kwargs)
+        self.fields['nombre'].label = "Nombre (*)"
+        self.fields['codigo_postal'].label = "Codigo postal (*)"
+        self.fields['zona'].label = "Zona (*)"
 
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
@@ -397,6 +438,12 @@ class ZonaForm(forms.ModelForm):
         model = models.Zona
         fields = ["nombre"]
 
+
+    def __init__(self, *args, **kwargs):
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(ZonaForm, self).__init__(*args, **kwargs)
+        self.fields['nombre'].label = "Nombre (*)"
+
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
@@ -412,6 +459,19 @@ class ClienteModificarForm(forms.ModelForm):
     class Meta:
         model = models.Cliente
         fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
+
+    def __init__(self, *args, **kwargs):
+        super(ClienteModificarForm, self).__init__(*args, **kwargs)
+        self.fields['cuit'].widget = forms.TextInput(attrs={
+            'placeholder': 'NN-NNNNNNNN-N'})
+        self.fields['cuit'].label = "Cuit (*)"
+        self.fields['razon_social'].label = "Razon social (*)"
+        self.fields['nombre_dueno'].label = "Nombre dueno (*)"
+        self.fields['ciudad'].label = "Ciudad (*)"
+        self.fields['direccion'].label = "Direccion (*)"
+        self.fields['telefono'].label = "Telefono (*)"
+        self.fields['email'].label = "E-mail"
+        self.fields['es_moroso'].label = "Es moroso"
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
@@ -511,6 +571,12 @@ class PedidoProveedorAltaForm(forms.ModelForm):
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','fecha_cancelacion']
 
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoProveedorAltaForm, self).__init__(*args, **kwargs)
+        self.fields['fecha_realizacion'].label = "Fecha realizacion (*)"
+        self.fields['proveedor'].label = "Proveedor (*)"
+
     #def clean_fecha_realizacion(self):
      #   fecha_realizacion = self.cleaned_data['fecha_realizacion']
       #  if fecha_realizacion > datetime.date.today():
@@ -523,6 +589,13 @@ class PedidoProveedorModificarForm(forms.ModelForm):
         widgets = {
             'fecha_realizacion': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['fecha_de_entrega', 'estado_pedido','insumos','descripcion','proveedor','fecha_cancelacion']
+
+    def __init__(self, *args, **kwargs):
+        super(PedidoProveedorModificarForm, self).__init__(*args, **kwargs)
+        self.fields['fecha_realizacion'].label = "Fecha realizacion (*)"
+
+
+
 
     def clean_fecha_realizacion(self):
         fecha_realizacion = self.cleaned_data['fecha_realizacion']
@@ -571,7 +644,7 @@ class PedidoClienteFijoForm(forms.ModelForm):
             'fecha_inicio': forms.DateInput(attrs={'class': 'datepicker'}),
             'fecha_cancelacion': forms.DateInput(attrs={'class': 'datepicker'})}
 
-                
+
     def clean(self):
         ''' 
         Metodo que realiza validaciones sobre los campos del Formulario.
@@ -617,7 +690,10 @@ class PedidoClienteFijoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
-
+        self.fields['cliente'].label = "Cliente (*)"
+        self.fields['fecha_inicio'].label = "Fecha inicio (*)"
+        self.fields['fecha_cancelacion'].label = "Fecha cancelacion"
+        self.fields['dias'].label = "Dias (*)"
 
 
 
@@ -639,7 +715,13 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         exclude = ['productos','tipo_pedido','activo']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-    
+
+    def __init__(self, *args, **kwargs):
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+        self.fields['cliente'].label = "Cliente (*)"
+        self.fields['fecha_entrega'].label = "Fecha de entrega (*)"
+
     def clean(self):
         ''' Metodo que realiza validaciones sobre los campos del Formulario.
             Se valida que el cliente no tenga pedidos ocacionales para ese mismo dia      
@@ -674,9 +756,6 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
-    def __init__(self, *args, **kwargs):
-        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
-        super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
 
 
 class PedidoClienteCambioForm(forms.ModelForm):
@@ -688,6 +767,11 @@ class PedidoClienteCambioForm(forms.ModelForm):
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido','activo']
 
+    def __init__(self, *args, **kwargs):
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
+        self.fields['cliente'].label = "Cliente (*)"
+        self.fields['fecha_entrega'].label = "Fecha de entrega (*)"
 
     def clean(self):
             ''' 
@@ -723,10 +807,7 @@ class PedidoClienteCambioForm(forms.ModelForm):
             raise ValidationError("No se puede registrar un pedido para un sabado o domingo, se entrega de lunes a viernes")
         return fecha
 
-    def __init__(self, *args, **kwargs):
-        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
-        super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
-        
+
 
 #############################################################################
 ############################################################################
@@ -779,6 +860,12 @@ class HojaDeRutaForm(forms.ModelForm):
     class Meta:
         model = models.HojaDeRuta
         fields = ["chofer"]
+
+
+    def __init__(self, *args, **kwargs):
+        self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
+        super(HojaDeRutaForm, self).__init__(*args, **kwargs)
+        self.fields['chofer'].label = "Chofer (*)"
 
 
     
