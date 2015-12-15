@@ -871,8 +871,8 @@ class CobroEntregaRendir(forms.Form):
         """    
         print "en clean de cobro"    
         cleaned_data = super(CobroEntregaRendir, self).clean()
+        entrega = self.cleaned_data["entrega"]        
         cantidad_abonada = self.cleaned_data["cantidad_abonada"]
-        entrega = self.cleaned_data["entrega"]
         nro_doc = self.cleaned_data["nro_doc"]        
         if cantidad_abonada == entrega.precio_total():
             obj = models.Factura 
@@ -908,6 +908,9 @@ class BaseRendirCobrosFormset(BaseFormSet):
             Si no corresponden al mismo cliente se informa que esto no es valido.
         """
         print "1- en clean de base formser rendir cobros"
+        if self.forms[0].cleaned_data["entrega"].hoja_de_ruta.pagado == True:
+            print "fue pagada ya!"
+            raise ValidationError("La hoja de ruta seleccionada ya fue Pagada")
         if self.total_error_count() > 0:
             print "2- hay errores voy a retornar"
             return
