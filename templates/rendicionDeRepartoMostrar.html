@@ -15,10 +15,9 @@
                         {% for f in cobros_factory %}
                             {% bootstrap_form_errors f %}
                         {% endfor %}
-                        {% bootstrap_formset_errors cobros_factory %}
-                
+                        {% bootstrap_formset_errors cobros_factory %}                
                         
-                        
+
                 <h1><font color="#2E8B57" font-size="20%">Se Registraron correctamente las entregas.</font> </h1>
                     {% for e in hoja.entrega_set.all%}
                             <p>&nbsp;</p>
@@ -97,6 +96,27 @@
 {% block javascript %}
 <script>
 var prefix = "{{prefix_cobros}}";
+
+{% if error%}
+    inicializar_formulario()
+{%endif%}    
+
+   
+
+function inicializar_formulario(){
+    var id = undefined;       
+      {% for cobros_form in cobros_factory %}
+          {% if cobros_form.nro_doc.value != None %}
+                entrega_id = {{cobros_form.entrega.value}};
+                id_input = "#monto-"+entrega_id
+                $(id_input).val({{cobros_form.cantidad_abonada.value}});
+                id_input = "#nro-"+entrega_id
+                $(id_input).val({{cobros_form.nro_doc.value}});            
+          {%endif%}
+      {% endfor %}    
+}
+
+
 
 
 function armar_inputs(){
