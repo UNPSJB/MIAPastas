@@ -25,6 +25,10 @@ Ayuda
    hojaDeRuta
    reparto
    rendicionHojasDeRutas
-   listados
-
-
+   rendicionDeReparto mostrar
+   listadoClientesMorosos
+   listadoProductosTerminadosDisponibles
+   lotes perdidaStock
+   listadoProductosMasVendidos
+   listadoHojasDeRutaFinalizadas
+   
