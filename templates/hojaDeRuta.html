@@ -9,7 +9,11 @@
     <form class="form-horizontal" action="{% url 'hojaDeRutaAlta' %}" onsubmit="return altaHojaRuta()" method="post">
                      {% csrf_token %}
                      {{ extras_form_factory.management_form }}
-                     {{ entregas_form_factory.management_form }}         
+                     {{ entregas_form_factory.management_form }} 
+
+                     {% for f in entregas_form_factory %}
+                            {% bootstrap_form_errors f %}
+                        {% endfor %}        
             <div>
             <div class="col-md-6">
             <div class=" form-group">

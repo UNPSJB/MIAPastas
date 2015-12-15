@@ -485,11 +485,14 @@ class Factura(models.Model):
     numero = models.PositiveIntegerField(unique=True)  #es el numero de la factura en papel
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2,validators=[MinValueValidator(0,01)])
 
+    #class Meta: digo que la factura debe ser unica, en numero + cliente
+        #unique_together = (("numero", "cliente"),)
     def __str__(self):
         return "%s" % ("Factura")
 
     def to_string(self):
         return "Factura"
+
 
 class PerdidaStock(models.Model):
     ''' Clase que modela el suceso de decrementar el stock de un lote debido a una perdida (por rotura, vencimiento u otros)

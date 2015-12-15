@@ -1397,6 +1397,12 @@ def hojaDeRutaAlta(request):
                     if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
                         entrega_instancia.pedido.activo=False #marco como entregado
                         entrega_instancia.pedido.save()
+            else:
+                for form in entregas_factory:
+                    for k,error in form.errors.items():
+                        print "error ",error
+                        messages.error(request,error)                
+                return redirect("hojaDeRuta")        
         else:
             hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')

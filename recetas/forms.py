@@ -680,6 +680,18 @@ class EntregaForm(forms.ModelForm):
         entrega.save()
         return entrega
 
+    def clean_pedido(self):
+        pedido = self.cleaned_data["pedido"]
+        try:
+            entrega = pedido.entrega_set.latest("id")
+        except:
+            return self.cleaned_data["pedido"]         
+        if entrega.fecha == datetime.date.today():
+            raise ValidationError("El pedido Nro %d ya esta en una hoja de ruta para la fecha %s"%(pedido.id, datetime.date.today()))
+        return self.cleaned_data["pedido"]
+
+
+
 class BaseEntregaFormset(BaseFormSet):
     def clean(self):
         print "en clean de base de entregaFormset"
@@ -785,10 +797,6 @@ class CobroEntregaRendir(forms.Form):
             print "Error doc ya existe"         
             raise ValidationError("Ya existe una factura con el numero %d "%(nro_doc))
         return cleaned_data
-
-
-
-
     def save(self):
         """ Si la cantidad abonada es igual al precio total de la Entrega se crea una Factura
             con nro_doc y se asocia a la Entrega, si cantidad abonada es menor al precio total
@@ -804,5 +812,10 @@ class CobroEntregaRendir(forms.Form):
         self.cleaned_data["entrega"].pedido.cliente.decrementar_saldo(self.cleaned_data["cantidad_abonada"])
 
 
-
+class BaseRendirCobrosFormset(BaseFormSet):
+    def clean(self):
+        print "en clean de base formser rendir cobros"
+        for form in self.forms:
+            n = form.cleaned_data["nro_doc"]
+            
   ############### fin ####################
