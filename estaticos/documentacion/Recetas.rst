@@ -1,7 +1,10 @@
 ﻿Recetas
 =======
 Dentro de ABM Productos Terminados aparecerá la siguiente pantalla
+
+
 .. image:: _static/recetas/rece_ini.jpg
+
 
 1.	Nombre de la sección donde estamos ubicados.
 2.	Es el sector de filtrado, se podrá filtrar por nombre o producto.
@@ -15,6 +18,7 @@ Consultar Recetas
 -----------------
 
 .. image:: _static/recetas/receta_detalle.jpg
+
 
 (1) Nombre de la sección en la que nos ubicamos, (2) descripción de la receta, (3) el detalle de la receta, (4) botón para volver a la página anterior.
 
