@@ -106,6 +106,10 @@ class RecetaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(RecetaForm, self).__init__(*args, **kwargs)
         self.fields['cant_prod_terminado'].label = "Cantidad Bolsines ( * )"
+        self.fields['nombre'].label = "Nombre ( * )"
+        self.fields['producto_terminado'].label = "Producto Terminado ( * )"
+        self.fields['descripcion'].label = "Descripcion ( * )"
+        self.fields['producto_terminado'].label = "Producto Terminado ( * )"
 
 
     def save(self, *args, **kwargs):
@@ -395,7 +399,6 @@ class ClienteModificarForm(forms.ModelForm):
         model = models.Cliente
         fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email","es_moroso"]
 
-
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
         #cuit = self.cleaned_data['cuit']
@@ -432,10 +435,18 @@ class ClienteAltaForm(forms.ModelForm):
         fields = ["cuit","razon_social","nombre_dueno","ciudad","direccion","telefono","email"]
         exclude = ['es_moroso']
 
+
     def __init__(self, *args, **kwargs):
         super(ClienteAltaForm, self).__init__(*args, **kwargs)
         self.fields['cuit'].widget = forms.TextInput(attrs={
             'placeholder': 'NN-NNNNNNNN-N'})
+        self.fields['cuit'].label = "Cuit (*)"
+        self.fields['razon_social'].label = "Razon social (*)"
+        self.fields['nombre_dueno'].label = "Nombre dueno (*)"
+        self.fields['ciudad'].label = "Ciudad (*)"
+        self.fields['direccion'].label = "Direccion (*)"
+        self.fields['telefono'].label = "Telefono (*)"
+        self.fields['email'].label = "E-mail"
 
     def clean_razon_social(self):
         razon_social = self.cleaned_data['razon_social']
@@ -592,6 +603,7 @@ class PedidoClienteFijoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
+
 
 
 
