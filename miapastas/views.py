@@ -83,6 +83,7 @@ def get_filtros(get, modelo):
 
 @login_required()
 def index(request):
+    print "INDEXXXXXXXXXXXXX"
     return render_to_response('index.html', {'user': request.user}, context_instance=RequestContext(request))
 
 

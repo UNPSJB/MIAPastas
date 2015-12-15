@@ -5,9 +5,9 @@
 <div class="container">
 
     <div class="panel panel-default">
-        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Asignar grupos</b></font></p></div>
-            <div class="row">
-                <div  class="form-inline col-md-12">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Asignar Grupos</b></font></p></div>
+            <div class="panel-body">
+                <div class="col-sm-6 col-md-4 col-md-offset-4">
                     <div class="form-group">
                         <label>Usuario:</label>
                         <input type="text" class="form-control" value="{{usuario.username}}" name="user" id="user" readonly>
@@ -17,19 +17,28 @@
                         <input type="text" class="form-control" value="{{usuario.last_name}}" name="apellido" id="apellido" readonly>
                         <label>e-mail:</label>
                         <input type="text" class="form-control" value="{{usuario.email}}" name="email" id="email" readonly>
-                    </div>
-                </div>
-            </div>
-            <p>&nbsp;</p>
+                        <label for="id_grupo">Grupo</label>
 
-            <div class="row">
-                <form method="get" class="form-inline col-md-12">
-                    <div class="col-md-6" style="overflow-y:scroll; max-height:350px;">
+                        <select class="form-control" id="id_grupo" name="id_grupo" title="" >
+                        <option value="" selected="selected">---------</option>
+                             {% for i in grupos %}
+                                 <option value="{{i.id}}">{{i}}</option>
+                            {% endfor %}
+                        </select>
                         <p>&nbsp;</p>
-                              <table class="table table-hover">
+
+
+
+                         <p>&nbsp;</p>
+                        <table class="table table-hover">
                                 <thead>
                                 <tr>
-                                    <th>grupos del ususario</th>
+                                    <th>Grupos del Usuario: {{usuario.username}}</th>
+                                    {% buttons %}
+                                    <th><button id="agregar-grupo"  class="btn btn-primary" ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true">Agregar</span></button></th>
+
+                                    <th><button id="quitar-grupo" class="btn btn-danger" ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true">Quitar</span></button></th>
+                                    {% endbuttons %}
                                 </tr>
                                 </thead>
                                   <tbody>
@@ -40,26 +49,26 @@
                                     </tr>
                                     {% endfor %}
                                   </tbody>
-                              </table>
+                        </table>
                     </div>
+                </div>
+            </div>
+            <p>&nbsp;</p>
 
-                    <label for="id_grupo">Grupo</label>
-                    <select class="form-control" id="id_grupo" name="id_grupo" title="" >
-                    <option value="" selected="selected">---------</option>
-                         {% for i in grupos %}
-                             <option value="{{i.id}}">{{i}}</option>
-                        {% endfor %}
-                    </select>
+            <div class="row">
+
+            <div class="col-md-2">
 
 
-                    <p>&nbsp;</p>
-                </form>
-                <div align="right"class="form-inline col-md-7">
-                    {% buttons %}
-                    <button id="agregar-grupo"  class="btn btn-primary" ><span class="glyphicon glyphicon-chevron-left" aria-hidden="true">Agregar</span></button>
-                    <p></p>
-                    <button id="quitar-grupo" class="btn btn-danger" ><span class="glyphicon glyphicon-chevron-right" aria-hidden="true">Quitar</span></button>
-                    {% endbuttons %}
+
+            </div>
+                <div class="form-inline col-md-3">
+
+            </div>
+                    <div class="col-md-7" style="overflow-y:scroll; max-height:350px;">
+                        <p>&nbsp;</p>
+
+                    </div>
                 </div>
             </div>
         </div>

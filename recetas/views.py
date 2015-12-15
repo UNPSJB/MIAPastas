@@ -96,12 +96,8 @@ def choferes(request,chofer_id=None):
         return render(request, "choferesConsulta.html",{"chofer": chofer})
     elif request.method == 'GET':
         # filtros
-        print "FILTROORORORORORO",request.GET
-        print "FILTROORORORORORO",request.POST
-
         filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
-        print filter," filterrrrrrrrrrrrrrrrrrrr ,",mfilters
         choferes = choferes.filter(activo=True)
         #choferes = [c for c in choferes if c.activo == True]
         return render(request, "recetas/choferes.html",
@@ -120,6 +116,7 @@ def choferesAlta(request):
 
     if request.method == "POST":
         chofer_form = forms.ChoferForm(request.POST)
+        print chofer_form['nombre'].value, "nombre choferrrr"
         if chofer_form.is_valid():
             chofer_form.save()
             return redirect('choferes')
@@ -1788,3 +1785,9 @@ def productosMasVendidos(request):
     savefig(response,format='PNG')
     return response
 
+def pdfGuia(request):
+    with open(' static "/documentacion" ', 'r') as pdf:
+        response = HttpResponse(pdf.read(), mimetype='application/pdf')
+        response['Content-Disposition'] = 'inline;filename=Guia-v2.pdf'
+        return response
+    pdf.closed
