@@ -828,6 +828,7 @@ class BaseRendirCobrosFormset(BaseFormSet):
         clientes = []
         aux = {}
         for form in self.forms:
+            print "a"
             d = form.cleaned_data["nro_doc"]
             c = form.cleaned_data["entrega"].pedido.cliente.id
             if form.cleaned_data["entrega"].precio_total() == form.cleaned_data["cantidad_abonada"]:
@@ -836,7 +837,8 @@ class BaseRendirCobrosFormset(BaseFormSet):
                 aux = {d:"Recibo"}
             print "aux vale: ",aux
             if aux in doc:
-                if clientes[doc.index(aux)] != c:                    
+                if clientes[doc.index(aux)] != c:   
+                    print "3- voy a tirar error"                 
                     raise ValidationError("Se registro mismo numero de %s para clientes diferentes"%(aux.pop(d)))
             doc.append(aux)
             clientes.append(c)
