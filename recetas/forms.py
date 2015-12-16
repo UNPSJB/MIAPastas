@@ -84,6 +84,7 @@ class ChoferForm(forms.ModelForm):
             chofer.save()
             return chofer
         else:
+            print "NO EXISTEEEEEEEEE"
             return super(ChoferForm, self).save()
             
 
@@ -319,7 +320,6 @@ class ProductoTerminadoForm(forms.ModelForm):
         fields = ["nombre","precio","dias_vigencia"]
 
 
-
     def __init__(self, *args, **kwargs):
         super(ProductoTerminadoForm, self).__init__(*args, **kwargs)
         self.fields['nombre'].label = "Nombre ( * )"
@@ -334,6 +334,19 @@ class ProductoTerminadoForm(forms.ModelForm):
         #if nombre.isalpha:
          #   raise ValidationError('El nombre debe tener solo letras.')
         return nombre
+
+    def save(self):
+        producto = models.ProductoTerminado.eliminados.filter(nombre=self.cleaned_data['nombre'])
+        print "EN FORM PRODDDDDDD",producto
+        if producto.exists():
+            producto = producto.first()
+            producto.activo = True
+            producto.save()
+            return producto
+        else:
+            print "NO EXISTEEEEEEEEE"
+            return super(ProductoTerminadoForm, self).save()
+        
 
 
 
@@ -427,8 +440,11 @@ def texto_lindo(texto, titulo=False):
     #titulo=True significa que si ingresamos un texto "hola mundo" se transformara en "Hola Mundo".
     #si titulo=False significa que si ingresamos un texto "HOLA MUNDO" se tranformara en "Hola mundo"
     # Quitamos espacios extra en todo el texto
+    print "EN TEXTO LINDOOOOO", texto
     texto = " ".join(texto.split())
     texto = ". ".join(map(lambda t: t.strip().capitalize(), texto.split(".")))
+    print "EN TEXTO LINDOOOOO 2222222222222", texto
+
     return titulo and texto.title() or texto
 
 

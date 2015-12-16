@@ -534,6 +534,19 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 
+def productosTerminadosAltaAjax(request):
+    nombre = request.GET['nombre']
+    nombre = forms.texto_lindo(nombre, True)
+    print "EN AJAXXXXX", nombre
+    try:
+        producto = models.ProductoTerminado.eliminados.get(nombre=nombre)
+        return HttpResponse(json.dumps("1"),content_type='json')
+    except:
+        return HttpResponse(json.dumps("0"),content_type='json')
+    
+
+
+
 """
 def productosTerminadosAlta(request):
     if request.method == "POST":
