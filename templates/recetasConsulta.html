@@ -8,39 +8,79 @@
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción de la Receta</b></font></p></div>
   <div class="panel-body">
-        <form role="form">
-                  <div class="form-group">
+        <form role="form" class="form-horizontal">
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Nombre:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{receta.nombre}}
+                    </div>
+                  </div>
+
+                  <!--<div class="form-group">
                     <label for="nombre">Nombre</label>
                     <input value="{{receta.nombre}}" type="text" class="form-control" id="nombre" name ="nombre" readonly>
+                  </div>-->
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Producto Terminado:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{receta.producto_terminado}}
+                    </div>
                   </div>
-                  <div class="form-group">
+
+                  <!--<div class="form-group">
                       <label for="producto_terminado">Producto Terminado</label>
                     <input value="{{receta.producto_terminado}}" type="text" class="form-control" id="producto_terminado" readonly>
+                  </div>-->
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Cantidad que produce:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{receta.cant_prod_terminado}} bolsines
+                    </div>
                   </div>
-                  <div class="form-group">
+
+
+                  <!--<div class="form-group">
                      <label for="cantidad_producto" >Cantidad que produce</label>
                     <input value="{{receta.cant_prod_terminado}}" type="text" class="form-control" id="cantidad_producto" readonly>
+                  </div>-->
+
+                 <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Fecha de creación:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{receta.fecha_creacion}}
+                    </div>
                   </div>
-                 <div class="form-group">
+
+
+                 <!--<div class="form-group">
                    <label for="fecha_creacion">Fecha de creación</label>
                     <input value="{{receta.fecha_creacion}}" type="text" class="form-control" id="fecha_creacion" readonly>
-                  </div>
+                  </div>-->
+
+                <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Descripción:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      <textarea  type = "text" class=" form-control"  rows="6" id="descripcion" name="descripcion" readonly>{{receta.descripcion}} </textarea>
+                    </div>
+                </div>
 
 
-             <div class="form-group">
+             <!-- <div class="form-group">
                   <label for ="descripcion">Descripción</label>
                  <textarea  type = "text" class=" form-control"  rows="6" id="descripcion" name="descripcion" readonly>{{receta.descripcion}} </textarea>
-              </div>
+              </div>-->
 
         </form>
-       <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Insumos de la Receta</b></font></p></div>
-      <div class="col-md-11 pull-right">
+       <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b><fuente style="font-size: 100%;" >Insumos de la Receta: {{receta.nombre}}</fuente></b></font></p></div>
+       <div class="col-md-11 pull-right">
           <table class="table table-hover ">
             <thead>
             <tr>
                 <th>Nombre</th>
                 <th>Cantidad</th>
-                <th>Unidad Medida</th>
+                <th>Unidad de Medida</th>
             </tr>
             </thead>
               <tbody>

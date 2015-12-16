@@ -9,8 +9,8 @@
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Productos Mas Vendidos</b></font></p></div>
             <div class="panel-body">
                  <!--Formulario del FILTRO-->
-            <div class="row">
-                 <form method="get" class="form-inline col-md-5" action="{% url 'listadoProductosMasVendidosFiltros' %}">
+            <div class="col-xs-12 col-md-8 ">
+                 <form method="get"  role="form" class="form-inline" action="{% url 'listadoProductosMasVendidosFiltros' %}">
                        <!-- <div class="form-group">
                             <label for="nombre">Nombre</label>
                             <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
@@ -32,12 +32,15 @@
                         
 
                   </form>
-                  <form method="get" class="form-inline col-md-1" action="{% url 'listadoProductosMasVendidos' %}">
+            </div>
+                <div class="col-xs-6 col-md-4">
+                  <form method="get" role="form" class="form-inline" action="{% url 'listadoProductosMasVendidos' %}">
                       <button type="submit" class="btn btn-default">Filtrar Todos</button>
 
                                          <p>&nbsp;</p>
                   </form>
-            </div>
+                </div>
+
             <div class="row">
                 <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
                     <p>&nbsp;</p>
@@ -67,17 +70,17 @@
 
            <div class="col-md-2">
 
-               <a href="{% url 'listadoProductosMasVendidosExcel' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Exportar</a>
+               <a href="{% url 'listadoProductosMasVendidosExcel' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-success"><span class="glyphicon glyphicon-print" aria-hidden="true">  Exportar</span></a>
 
                
-               <a href="{% url 'ListadoProductosMasVendidosGrafico' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-default">Grafico Torta</a>
+               <a href="{% url 'ListadoProductosMasVendidosGrafico' %}?fecha_desde={{filtros.fecha_desde}}&fecha_hasta={{filtros.fecha_hasta}}" class="btn btn-warning"><span class="glyphicon glyphicon-menu-down" aria-hidden="true">  Graficos</span></a>
                
            </div>
             </div>
             <hr/>
             <div class="col-md-2">
                     <div class="form-group">
-                        <label for="totales">TOTAL DE BOLSINES VENDIDOS</label>
+                        <label for="totales"><font color="green"><b>TOTAL DE BOLSINES VENDIDOS</b></font></label>
                         <input type="text" class="form-control"
                                value="{%bolsines_totales prod%}"
                                name="totales" id="totales" READONLY>
@@ -85,11 +88,11 @@
                     </div>
             </div>
         </div>
+        </div>
     </div>
 </div>
 
-en cobrar a cliente esta el ejemplo de ajax
-hay un errror cuando queres mostrar todos los clientes MORORSOS!!! TE MUESTRA LOS QUE NO SON MOROSOS.
+
     <!-- Este es el fin del formulario de Listado -->
 
 

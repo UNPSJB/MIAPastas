@@ -10,50 +10,133 @@
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Descripción del Proveedor</b></font></p></div>
   <div class="panel-body">
       <!-- formulario -->
-      <form role="form">
-                  <div class="form-group">
-                    <label for="ejemplo_email_1">Cuit</label>
-                    <input value="{{proveedor.cuit}}" type="text" class="form-control" id="ejemplo_email_1" readonly>
-                  </div>
-                  <div class="form-group">
-                    <label for="ejemplo_password_1">Razón Social</label>
-                    <input value="{{proveedor.razon_social}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
-                 <div class="form-group">
-                    <label for="ejemplo_password_1">Nombre del Dueño</label>
-                    <input value="{{proveedor.nombre_dueno}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+      <form role="form" class="form-horizontal">
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">CUIT:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.cuit}}
+                    </div>
                   </div>
 
-                  <div class="form-group">
+
+                  <!--<div class="form-group">
+                    <label for="ejemplo_email_1">Cuit</label>
+                    <input value="{{proveedor.cuit}}" type="text" class="form-control" id="ejemplo_email_1" readonly>
+                  </div>-->
+
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Razón Social:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.razon_social}}
+                    </div>
+                  </div>
+
+                  <!--<div class="form-group">
+                    <label for="ejemplo_password_1">Razón Social</label>
+                    <input value="{{proveedor.razon_social}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Nombre del Dueño:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.nombre_dueno}}
+                    </div>
+                  </div>
+
+                 <!--<div class="form-group">
+                    <label for="ejemplo_password_1">Nombre del Dueño</label>
+                    <input value="{{proveedor.nombre_dueno}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Localidad:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.localidad}}
+                    </div>
+                  </div>
+
+
+                  <!--<div class="form-group">
                     <label for="ejemplo_password_1">Localidad</label>
                     <input value="{{proveedor.localidad}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Provincia:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.provincia}}
+                    </div>
                   </div>
-                  <div class="form-group">
+
+
+                  <!--<div class="form-group">
                     <label for="ejemplo_password_1">Provincia</label>
                     <input value="{{proveedor.provincia}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Dirección:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.direccion}}
+                    </div>
                   </div>
-                  <div class="form-group">
+
+
+                  <!--<div class="form-group">
                     <label for="ejemplo_password_1">Dirección</label>
                     <input value="{{proveedor.direccion}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Teléfono:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.telefono}}
+                    </div>
                   </div>
-                  <div class="form-group">
+
+
+                  <!--<div class="form-group">
                     <label for="ejemplo_password_1">Teléfono</label>
                     <input value="{{proveedor.telefono}}" type="text" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+                  <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Email:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.email}}
+                    </div>
                   </div>
-                  <div class="form-group">
+
+                  <!--<div class="form-group">
                     <label for="ejemplo_password_1">Email</label>
                     <input value="{{proveedor.email}}" type="email" class="form-control" id="ejemplo_password_1" readonly>
+                  </div>-->
+
+                   <div class=" form-group">
+                    <label  class="col-sm-2 control-label my_label">Número de Cuenta:</label>
+                    <div class="col-sm-10" style="padding:7px;">
+                      {{proveedor.numero_cuenta}}
+                    </div>
                   </div>
-                  <div class="form-group">
+
+
+                  <!--<div class="form-group">
                     <label for="ejemplo_password_1">Número de Cuenta</label>
                     <input value="{{proveedor.numero_cuenta}}" type="email" class="form-control" id="ejemplo_password_1" readonly>
-                  </div>
+                  </div>-->
 
 
         </form>
-       <div class="row">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b><fuente style="font-size: 100%;" >Insumos que Provee {{proveedor.razon_social}}</fuente></b></font></p></div>
+        <div class="col-md-11 pull-right">
           <div class="col-md-10">
-              <h2>Insumos que Provee</h2>
+
           <table class="table table-hover">
             <thead>
             <tr>
@@ -75,6 +158,7 @@
             {% endfor %}
           </tbody>
           </table>
+
           </div>
 
 
@@ -82,11 +166,12 @@
           </div>
       <div>
 
-      <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
 
   </div>
-
 </div>
+    <a href="javascript:history.back()" class="btn pull-right" ><font face="tahoma" size="2" color="green"><b><span class="glyphicon glyphicon-triangle-left" aria-hidden="true"> Volver </span></b></font></a>
+
 </div>
 
     <!-- Este es el fin del formulario de recetas -->
