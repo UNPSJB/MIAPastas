@@ -934,7 +934,6 @@ def pedidosClientes(request,pedido_id=None):
 
 
 
-
 @login_required()
 @permission_required('recetas.add_pedidocliente')
 def pedidosClientesAlta(request, tipo_pedido_id):

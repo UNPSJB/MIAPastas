@@ -290,6 +290,8 @@ var para_recibo = [];
         monto = monto.replace(/,/g, '.');
         monto=parseFloat(monto)
         monto_adeudado = ($("#deuda_input").val());
+        monto_adeudado = monto_adeudado.replace(/,/g, '.');
+        monto_adeudado=parseFloat(monto_adeudado)
         console.log(monto,monto_adeudado)
         if  (esFloatPositivo(monto)== false){
             $('#monto_a_pagar').notify("Ingrese correctamente el monto");

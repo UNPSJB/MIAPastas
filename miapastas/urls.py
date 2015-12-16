@@ -89,11 +89,6 @@ urlpatterns = [
 
     #############################################################################################
 
-
-
-
-
-
     url(r'^choferes/$',recetasviews.choferes,name='choferes'),
     url(r'^choferes/(?P<chofer_id>[0-9]+)/$',recetasviews.choferes,name='choferConsulta'),
     url(r'^choferes/alta/$',recetasviews.choferesAlta,name='choferesAlta'),
