@@ -529,6 +529,7 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm(request.POST)
         if producto_form.is_valid():
             producto_form.save()
+            messages.success(request, 'El Producto ha sido creado correctamente.')
             return redirect('productosTerminados')
     else:
         producto_form = forms.ProductoTerminadoForm()
@@ -586,6 +587,7 @@ def productosTerminadosModificar(request,producto_id = None):
             producto_form.save()
             print(producto_instancia.stock)
             return redirect('productosTerminados')
+        messages.success(request, 'El Producto ha sido modificado correctamente.')
     else:
         producto_form = forms.ProductoTerminadoForm(instance= producto_instancia)
     return render(request,"productosTerminadosModificar.html",{"producto_form":producto_form,"id":producto_id,"producto":producto_instancia})
