@@ -770,7 +770,7 @@ class ProdLlevadoDetalleRendirForm(forms.Form):
 
 ProdLlevadoFormset_class = formset_factory(ProdLlevadoDetalleRendirForm)
 
-  ############### REGISTRAR PAGOS PARA ENTREGAS EN RENDICION ####################
+############### REGISTRAR PAGOS PARA ENTREGAS EN RENDICION ####################
 
 class CobroEntregaRendir(forms.Form):
     entrega = forms.ModelChoiceField(models.Entrega.objects.all())

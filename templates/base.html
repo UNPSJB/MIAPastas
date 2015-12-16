@@ -330,6 +330,10 @@
                         {% if perms.recetas.add_entrega %}
                         <li><a href="{%url 'rendicionHojasDeRutas'%}">Registrar Rendicion del Reparto</a></li>
                         {% endif %}
+                        <li role="separator" class="divider"></li>
+                        {% if perms.recetas.add_entrega %}
+                        <li><a href="{%url 'rendicionHojasDeRutasSinCobrar'%}">Registrar Cobro de reparto realizado</a></li>
+                        {% endif %}
                     </ul>
                 </li>
           {% endif %}

@@ -854,9 +854,7 @@ def ciudadesBaja(request,ciudad_id =None):
         postcondicion: La ciudad ha sido dada de baja
     """
     p = models.Ciudad.objects.get(pk=ciudad_id)
-    #p.delete()
-    p.activo=False
-    p.save()
+    p.delete()
     return redirect('ciudades')
 
 
@@ -1487,6 +1485,17 @@ def rendicionReparto(request,hoja_id=None):
 
 
 
+@login_required()
+def rendicionHojasDeRutasSinCobrar(request):
+    ''' Devuelve todas las hojas de ruta ya rendidas pero que no fueron cobradas en el momento de la recepcion.
+    '''
+    print "EN REND SIN COBRARRRR"
+
+    hojas = models.HojaDeRuta.objects.filter(rendida=True,pagado=False) 
+    print hojas
+    return render(request,"rendicionHojasDeRutasSinCobrar.html",{"hojas":hojas})
+
+
 
 @login_required()
 def RendicionDeRepartoMostrar(request,hoja_id):
@@ -1503,6 +1512,8 @@ def RendicionDeRepartoMostrar(request,hoja_id):
                 else:
                     print "el formulario solo no es valido"
             messages.success(request,"Se registraron correctamente los pagos de las entregas")
+            hoja.pagado = True   #registro como hoja de ruta ya cobrada en la recepcion
+            hoja.save()
             return redirect('index')
         else:
             print "el factory no es valido"

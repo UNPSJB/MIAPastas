@@ -523,6 +523,7 @@ class HojaDeRuta(models.Model):
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)
+    pagado = models.BooleanField(default=False)
 
     def balance(self):
         totales=[]
@@ -636,6 +637,7 @@ class Entrega(models.Model):
         else:
             self.factura=factura[0]
         self.save()
+
 
     def cobrar_con_recibo(self,monto,numero_recibo=None):
         recibo = Recibo.objects.create(entrega=self,fecha=date.today(),numero=numero_recibo,monto_pagado=monto)

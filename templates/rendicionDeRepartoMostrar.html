@@ -7,7 +7,10 @@
 <div class="container">
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja.fecha_creacion}}</b></font></p></div>
-            <div class="panel-body">                
+            <div class="panel-body">        
+            <form class=" form-horizontal" action="{% url 'rendicionDeRepartoMostrar' hoja.id %}" method = "post" onsubmit = "return validar()">    
+                    {% csrf_token %}
+                    {{ cobros_factory.management_form }}
                         {% for f in cobros_factory %}
                             {% bootstrap_form_errors f %}
                         {% endfor %}
@@ -64,12 +67,11 @@
                             <div class="form-inline pagos" style="margin-left: 3%;">                            
                                 <h1 style="margin-left: 5%;"><font color="black" size="5%">Pagos </font> </h1>
                                 <label for="monto"> Monto a abonar: $ </label>
-                                <input type="text" class="form-control monto" id="monto"
+                                <input type="text" class="form-control monto" id="monto-{{e.id}}"
                                         data-preciototal= "{%devolver_precio_total e%}"
-                                        data-entregaid = "{{ e.id }}"
-                                         >                                
+                                        data-entregaid = "{{ e.id }}" value="0">                                
                                 <label for="nro_doc"> Nro factura/remito:  </label>
-                                <input type="text" class="form-control documento" id="nro-{{ e.id }}" >                                
+                                <input type="text" class="form-control documento" id="nro-{{ e.id }}" readonly >                                
 
                                 <button type="button" id="pagar" onclick="" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Pagar  </span></button>
                             </div>
@@ -102,6 +104,9 @@ function armar_inputs(){
     var html = "";
     var a = $(".monto");
     for (i=0;i<_.size(a);i++){
+        if(a[i].value == 0){
+            continue;
+        }
         html = html + armar_hidden(prefix, a[i].value, "cantidad_abonada",i);        
         id_num = "#nro-"+a[i].getAttribute("data-entregaid"); 
         numero_doc = $(id_num).val();
@@ -109,7 +114,6 @@ function armar_inputs(){
         html = html + armar_hidden(prefix, a[i].getAttribute("data-entregaid"), "entrega",i);      
     }
     $("#hiddens_cobros").html(html);
-    alert(_.size(a));
     document.getElementById("id_"+prefix+"-TOTAL_FORMS").value = _.size(a);
 
 
@@ -121,60 +125,76 @@ function inputs_validos(m){
     var valor = 0;
     var diferencia = 0;
     for(i=0; i<_.size(m);i++){
+
         total = parseFloat(m[i].getAttribute("data-preciototal"));
         valor = parseFloat(m[i].value);  
         id_entrega = m[i].getAttribute("data-entregaid"); 
-        id_num = "#nro-"+id_entrega; 
+        id_num = "#nro-"+id_entrega;    //id del input de factura o recibo
+        id_valor= "#monto-"+id_entrega;    //id del input de monto a abonar
         numero_doc = $(id_num).val();
         if (valor > total){
             diferencia = valor - total; 
-            alert("Se pagaton "+diferencia+" pesos de mas para la entrega con id "+id_entrega);
-            return false;
-        } 
-        if  (esFloatPositivo(valor)== false){
-            BootstrapDialog.show({
-                    title: "Error",
-                    cssClass: 'error-dialog',
-                    message: "Debe ser un numero positivo el monto de la entrega con id "+id_entrega,
-                    type: BootstrapDialog.TYPE_DANGER,
-                    buttons: [{
-                            label: 'Aceptar',
-                            action: function(dialogRef){
-                                dialogRef.close();
-                            }
-                    }]
-            });
+            document.getElementById("monto-"+id_entrega).focus();
+            $(id_valor).notify("Se pagaron $"+diferencia+" pesos de mas para la entrega",{position:"top left"});
             return false;
         }
-                if(numero_doc.length == 0){
+
+        if  (esFloatPositivo(valor)== false && valor != 0 ){
+            document.getElementById("monto-"+id_entrega).focus();
+            $(id_valor).notify("Debe ser un numero positivo el monto de la entrega",{position:"top right"});
+            return false;
+        }
+                if((numero_doc.length == 0 && !valor == 0) || esEnteroPositivo(numero_doc) == false){
                      if (valor != 0){
-                        alert("Debe ingresar un numero de recibo/factura para la entrega con id "+id_entrega);
+                        document.getElementById("nro-"+id_entrega).focus();
+
+                        $(id_num).notify("Debe ingresar un numero de recibo/factura",{position:"top right"});
                         return false;
                 }
                
             }
     }
-    
+
     return true; 
 }
 
 
 function validar(){
     var montos_pagados = $(".monto");    
+
     if (inputs_validos(montos_pagados)){
+
         console.log("es todo valido hay q mandar true");
-        armar_inputs();
+        armar_inputs(); 
+
+
         return true;
-    }
+        }
+
     return false;    
-}
-    
+
+}    
 
 
 $(".monto").click(function(){
     $(this).val($(this).data()["preciototal"]);
+    id_entrega = this.getAttribute("data-entregaid"); 
+    id_num = "#nro-"+id_entrega;    //id del input de factura o recibo
+    console.log($(id_num)," -",id_num);
+    $(id_num).attr('readonly', false);
+        console.log($(id_num));
+
+
 });
 
+
+$(".monto").change(function () {
+    if(this.value == 0){
+    id_entrega = this.getAttribute("data-entregaid"); 
+    id_num = "#nro-"+id_entrega;    //id del input de factura o recibo
+        $(id_num).attr('readonly', true);
+   }
+});
 
 
 
