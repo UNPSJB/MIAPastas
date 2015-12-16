@@ -63,18 +63,21 @@ function filtrar_tupla(n){
     //$('#id_unidad_medida option[value=' + val + ']').hide(); }); 
 
 
-
+    var valor_inicial=undefined;
     $(tuplas).each(function(i,val){
         $(val).each(function(z,v){
             esconder(v);
            if (_.find(tuplas[n-1],function(num){ return num == v; }))  {
                 //$(val).each(function(x,c){
+                    if (z==1){
+                        valor_inicial = v;
+                    }
                     mostrar(v);
-           }
-                
-           
+            }          
         });
     });
+    $("#id_unidad_medida").val($("#id_unidad_medida option[value=" + valor_inicial + "]").val());
+
 }
 
 
