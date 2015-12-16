@@ -121,7 +121,7 @@ class InsumoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(InsumoForm, self).__init__(*args, **kwargs)
         self.fields['nombre'].label = "Nombre ( * )"
-        self.fields['descripcion'].label = "Dscripcion ( * )"
+        self.fields['descripcion'].label = "Descripcion ( * )"
         self.fields['unidad_medida'].label = "Unidad de Medida ( * )"
 
 class RecetaForm(forms.ModelForm):
@@ -365,7 +365,7 @@ class LoteStockForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LoteStockForm, self).__init__(*args, **kwargs)
         self.fields['stock_disponible'].label = "Stock (*)"
-        self.fields['cantidad_producida'].label = "producida(*)"
+        self.fields['cantidad_producida'].label = "Cantidad producida(*)"
         self.fields['cantidad'].label = "Cantidad ( * )"
         self.mensaje_error = ""
 
@@ -837,7 +837,11 @@ class LoteForm(forms.ModelForm):
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
         }
 
-
+    def __init__(self, *args, **kwargs):
+        super(LoteForm, self).__init__(*args, **kwargs)
+        self.fields['producto_terminado'].label = "Producto terminado ( * )"
+        self.fields['fecha_produccion'].label = "Fecha produccion ( * )"
+        self.fields['cantidad_producida'].label = "Cantidad producida ( * )"
     
     def save(self,commit=True):
         print "en metodo save del form de Lote"
