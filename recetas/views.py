@@ -1784,9 +1784,3 @@ def productosMasVendidos(request):
     savefig(response,format='PNG')
     return response
 
-def pdfGuia(request):
-    with open(' static "/documentacion" ', 'r') as pdf:
-        response = HttpResponse(pdf.read(), mimetype='application/pdf')
-        response['Content-Disposition'] = 'inline;filename=Guia-v2.pdf'
-        return response
-    pdf.closed
