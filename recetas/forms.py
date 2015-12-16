@@ -334,7 +334,7 @@ class ProductoTerminadoForm(forms.ModelForm):
         #if nombre.isalpha:
          #   raise ValidationError('El nombre debe tener solo letras.')
         return nombre
-
+    '''
     def save(self):
         producto = models.ProductoTerminado.eliminados.filter(nombre=self.cleaned_data['nombre'])
         print "EN FORM PRODDDDDDD",producto
@@ -346,7 +346,7 @@ class ProductoTerminadoForm(forms.ModelForm):
         else:
             print "NO EXISTEEEEEEEEE"
             return super(ProductoTerminadoForm, self).save()
-        
+    ''' 
 
 
 
