@@ -534,6 +534,8 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 
+
+"""
 def productosTerminadosAltaAjax(request):
     nombre = request.GET['nombre']
     nombre = forms.texto_lindo(nombre, True)
@@ -543,11 +545,8 @@ def productosTerminadosAltaAjax(request):
         return HttpResponse(json.dumps("1"),content_type='json')
     except:
         return HttpResponse(json.dumps("0"),content_type='json')
-    
 
 
-
-"""
 def productosTerminadosAlta(request):
     if request.method == "POST":
         producto_form = forms.ProductoTerminadoForm(request.POST)
@@ -567,7 +566,6 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 """
-
 
 
 @login_required()
@@ -931,6 +929,7 @@ def pedidosClientes(request,pedido_id=None):
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
+            print pedido.productos.all(), "ACAAAAAAAAaaaaaaaaaaaaaAA"
             for producto in pedido.productos.all():
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto

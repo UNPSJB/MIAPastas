@@ -17,6 +17,7 @@ class ManagerBajasLogicas(models.Manager):
     def get_queryset(self):
         return super(ManagerBajasLogicas, self).get_queryset().filter(activo=self.activo)
 
+
 '''
 class ManagerActivosHojasRutas(models.Manager):
     def get_queryset(self):
@@ -76,8 +77,6 @@ def stock_docena(cant):
 
 class Insumo(models.Model):
     FILTROS = ['nombre__icontains', 'stock__lte']
-
-
 
     NONE = 0
     GRAMO = 1
@@ -160,10 +159,8 @@ class ProductoTerminado(models.Model):
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
     # Managers de chofer
-    objects = ManagerBajasLogicas(activo=True)
-    eliminados = ManagerBajasLogicas(activo=False)
 
-
+    
 
     class Meta:
         permissions = (
