@@ -159,7 +159,6 @@ class ProductoTerminado(models.Model):
     dias_vigencia = models.PositiveIntegerField(default=01)#esto es la fecha de vencimiento
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
-    # Managers de chofer
 
     
 

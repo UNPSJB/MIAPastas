@@ -146,6 +146,7 @@ urlpatterns = [
     url(r'^productosTerminados/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminados,name='productosTerminadosConsulta'),
     url(r'^productosTerminados/modificar/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosModificar,name='productosTerminadosModificar'),
     url(r'^productosTerminados/baja/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosBaja,name='productosTerminadosBaja'),
+    url(r'^productosTerminadosAltaAjax/(?P<producto_id>[0-9]+)/$',recetasviews.productosTerminadosAltaAjax,name='productosTerminadosAltaAjax'),
 
     url(r'^productosTerminadosActualizarStock/(?P<lote_id>[0-9]+)/$',recetasviews.loteStock,name='productosTerminadosActualizarStock'),
 
