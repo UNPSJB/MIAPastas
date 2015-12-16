@@ -1303,6 +1303,7 @@ def lotes(request,lote_id=None):
 @permission_required('recetas.change_lote')
 def lotesModificar(request,lote_id=None):
     lote_instancia = models.Lote.objects.get(pk=lote_id)
+    #messages.success(request, 'Lote N ' + str(lote_instancia.nro_lote) + ' creado para el Producto: ' + str(lote_instancia.producto_terminado))
     return render(request,"lotesModificar.html",{"lote_form_modificar":forms.LoteForm() ,"lote_instancia":lote_instancia,"id":lote_id})
 
 
@@ -1344,6 +1345,7 @@ def lotesAlta(request):
                         lote.save()
                         lote.producto_terminado.save()
                         detalle_receta.insumo.save()
+                messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             except:
                 messages.error(request, 'No se creo el Lote ya que no hay receta asociada al Producto')
                 print "asasdsadas--------"
