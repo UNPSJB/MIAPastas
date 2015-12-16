@@ -978,6 +978,7 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                 "detalles_form_factory": detalles_form or detalles_form_class(),
                 "tipo_pedido": tipo_pedido_id})
 
+
 def choferesAltaAjax(request):
     cuit = request.GET['cuit']
     try:
@@ -986,9 +987,6 @@ def choferesAltaAjax(request):
     except:
         return HttpResponse(json.dumps("0"),content_type='json')
     
-
-
-
 
 @login_required()
 @permission_required('recetas.delete_pedidocliente')

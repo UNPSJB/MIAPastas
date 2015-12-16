@@ -112,8 +112,8 @@ function inicializar_formulario(){
                 entrega_id = {{cobros_form.entrega.value}};
                 id_input = "#monto-"+entrega_id
                 $(id_input).val(parseFloat({{cobros_form.cantidad_abonada.value}}));
-                id_input = "#nro-"+entrega_id
-                $(id_input).val({{cobros_form.nro_doc.value}}); 
+                id_input_nro = "#nro-"+entrega_id
+                $(id_input_nro).val({{cobros_form.nro_doc.value}}); 
                 if($(id_input).val() != 0){
                     $(id_input_nro).attr('readonly', false);
                 }
