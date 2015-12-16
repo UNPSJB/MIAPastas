@@ -760,6 +760,7 @@ def clientesModificar(request,cliente_id = None):
                 cliente_form = forms.ClienteModificarForm(initial={'cuit':cliente_instancia.cuit,'razon_social':cliente_instancia.razon_social,'nombre_dueno':cliente_instancia.nombre_dueno,'ciudad':cliente_instancia.ciudad,'direccion':cliente_instancia.direccion,'telefono':cliente_instancia.telefono,'email':cliente_instancia.email,'es_moroso':cliente_instancia.es_moroso})
                 return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
             cliente_form.save()
+            messages.success(request, 'El Cliente ha sido modificado correctamente.')
             return redirect('clientes')
         else:
             return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
@@ -778,6 +779,7 @@ def clientesAlta(request):
         cliente_form = forms.ClienteAltaForm(request.POST)
         if cliente_form.is_valid():
             cliente_form.save()
+            messages.success(request, 'El Cliente ha sido dado de alta correctamente.')
             return redirect('clientes')
     else:
         cliente_form = forms.ClienteAltaForm()
@@ -797,6 +799,7 @@ def clientesBaja(request,cliente_id =None):
         p.activo=False
         p.save()
         #p.delete()
+        messages.success(request, 'El Cliente ha sido dado dado de baja correctamente.')
     return redirect('clientes')
 
 
