@@ -98,8 +98,6 @@ def choferes(request,chofer_id=None):
         # filtros
         filters, mfilters = get_filtros(request.GET, models.Chofer)
         choferes = models.Chofer.objects.filter(**mfilters)
-        choferes = choferes.filter(activo=True)
-        #choferes = [c for c in choferes if c.activo == True]
         return render(request, "recetas/choferes.html",
                   {"choferes": choferes,
                    "filtros": filters})
@@ -259,14 +257,15 @@ def insumosBaja(request,insumo_id):
         ))
         return redirect('insumos')
         #insumo.delete()s
-    elif insumo.proveedores.all() > 0:
+    elif len(insumo.proveedores.all()) > 0:
         messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque esta sociado a un proveedor.')
         return redirect('insumos')
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
         #insumo.delete()
-    insumo.activo=False
-    insumo.save()
+    #insumo.activo=False
+    #insumo.save()
+    insumo.delete()
     return redirect('insumos')
 
 
@@ -979,6 +978,15 @@ def pedidosClientesAlta(request, tipo_pedido_id):
                 "detalles_form_factory": detalles_form or detalles_form_class(),
                 "tipo_pedido": tipo_pedido_id})
 
+def choferesAltaAjax(request):
+    cuit = request.GET['cuit']
+    try:
+        chofer = models.Chofer.eliminados.get(cuit=cuit)
+        return HttpResponse(json.dumps("1"),content_type='json')
+    except:
+        return HttpResponse(json.dumps("0"),content_type='json')
+    
+
 
 
 
@@ -994,6 +1002,7 @@ def pedidosClienteBaja(request,pedido_id):
     pedido.activo=False
     pedido.save()
     return redirect('pedidosCliente')
+
 
 
 

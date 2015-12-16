@@ -14,7 +14,10 @@
                     {% bootstrap_form chofer_form layout='horizontal' %}
                     <p>&nbsp;</p>
                     {% buttons %}
-                        <button type="submit" class="btn btn-primary">
+                        <button id="btn_submit"type="submit" class="btn btn-primary"  style="display: none;">
+                            {% bootstrap_icon "star" %} Agregar
+                        </button>
+                        <button id="btn_submit_falso" type="button" class="btn btn-primary"  >
                             {% bootstrap_icon "star" %} Agregar
                         </button>
                     {% endbuttons %}
@@ -27,3 +30,53 @@
 
 
 {% endblock %}
+{% block javascript %}
+<script>
+
+
+$("#btn_submit_falso").click(function(){
+    cuit = $("#id_cuit").val();
+    $.ajax({
+                type: 'get',
+                data : {                     
+                     'cuit': cuit
+                 },
+                dataType: 'json',
+                async:false,  //vuelve sincronico al AJAX, importante
+                url: '{% url 'choferesAltaAjax' %}',  /* Antes era hojaderuta/generarTotales*/
+                success: function(json){
+                    console.log(json);
+                    if(json == "1"){
+                        BootstrapDialog.show({
+                        title: "Error",
+                        cssClass: 'error-dialog',
+                        message: "El cuit ingresado es de un chofer que existio con anterioridad, desea revivirlo?",
+                        type: BootstrapDialog.TYPE_DANGER,
+                        buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                $("#btn_submit").trigger("click");
+                                dialogRef.close();
+                            }
+                            },{label: 'Cancelar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }}
+                    ]
+            });
+                    }
+                    else{
+                        $("#btn_submit").trigger("click");
+
+                    }
+                    }
+            });
+
+});
+
+
+
+
+</script>
+{% endblock %}
+

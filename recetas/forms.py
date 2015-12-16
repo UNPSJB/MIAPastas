@@ -71,6 +71,20 @@ class ChoferForm(forms.ModelForm):
          #   raise ValidationError('El nombre debe tener solo letras.')
         return nombre
 
+    def save(self):
+        chofer = models.Chofer.eliminados.filter(cuit=self.cleaned_data['cuit'])
+        if chofer.exists():
+            chofer = chofer.first()
+            chofer.activo = True
+            chofer.save()
+            return chofer
+        else:
+            return super(ChoferForm, self).save()
+            
+
+
+
+
 class ModificarStockInsumoForm(forms.Form):
     insumo = forms.ModelChoiceField(queryset=models.Insumo.objects.all(), empty_label="(----)")
     cantidad = forms.IntegerField()
@@ -907,7 +921,7 @@ class BaseRendirCobrosFormset(BaseFormSet):
             En el caso de que existan dos facturas/recibo, sera correcto si corresponden al mismo Cliente
             Si no corresponden al mismo cliente se informa que esto no es valido.
         """
-        print "1- en clean de base formser rendir cobros"
+        print "1- en clean de base formser rendir cobros",self
         if self.forms[0].cleaned_data["entrega"].hoja_de_ruta.pagado == True:
             print "fue pagada ya!"
             raise ValidationError("La hoja de ruta seleccionada ya fue Pagada")
