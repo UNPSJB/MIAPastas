@@ -411,7 +411,7 @@ var productosExtrasDicc = new Array();
                  },
                 dataType: 'json',
                 async:false,  //vuelve sincronico al AJAX, importante
-                url: 'hojaDeRuta/generarTotales',
+                url: 'generarTotales/',  /* Antes era hojaderuta/generarTotales*/
                 success: function(json){
                     totales_productos = _.keys(json.datos);   //_.keys devuelve en una lista todos las claves del diccionario
                     productosDicc =  json.totales;

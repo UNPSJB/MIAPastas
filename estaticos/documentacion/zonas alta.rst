@@ -1,6 +1,8 @@
-﻿Alta Zona
+﻿Alta de Zona
 ====================================
-Se deberá acceder al botón agregar desde la pantalla de zonas, luego se ingresará el nombre de la zona. 
-.. image:: _static/zonas/zonas_alta.jpg
-Por el momento el detalle de las ciudades estará vacío por no contar con ciudades cargadas en la zona.
-No se podrá cargar una zona que ya exista.
+
+.. image:: _static/zonas/zona_alta.jpg
+
+(1) Nombre de la sección en la que nos ubicamos, (2) datos de la Zona a crear, (3) confirmar el alta de nueva zona.
+*	Observaciones:
+	No se podrá dar de alta una zona que ya exista.

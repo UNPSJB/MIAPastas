@@ -94,11 +94,13 @@
 <li class="toctree-l4"><a class="reference internal" href="#alta-lote">Alta Lote</a></li>
 </ul>
 </li>
+<li class="toctree-l3"><a class="reference internal" href="clientes.html">﻿Clientes</a></li>
 <li class="toctree-l3"><a class="reference internal" href="cobrarCliente.html">﻿Cobrar Cliente</a></li>
 <li class="toctree-l3"><a class="reference internal" href="ciudades.html">﻿Ciudades</a></li>
 <li class="toctree-l3"><a class="reference internal" href="zonas.html">﻿Zonas</a></li>
 <li class="toctree-l3"><a class="reference internal" href="proveedores.html">﻿Proveedores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="pedidosProveedor.html">﻿Proveedores</a></li>
+<li class="toctree-l3"><a class="reference internal" href="pedidosCliente.html">﻿Proveedores</a></li>
 <li class="toctree-l3"><a class="reference internal" href="choferes.html">﻿Choferes</a></li>
 </ul>
 </li>
@@ -173,6 +175,12 @@
 <ol class="arabic simple">
 <li>Nombre de la sección en la que nos ubicamos, (2) descripción del lote a modificar, (3) guardar los cambios del lote.</li>
 </ol>
+<ul class="simple">
+<li>Observaciones:
+La cantidad a decrementar de stock deberá ser mayor a cero.
+El valor máximo posible a decrementar deberá estár comprendido entre el stock disponible y 99.999.999.
+No se puede decrementar el stock de un producto terminado que posea hojas de rutas sin rendir.</li>
+</ul>
 </div>
 <div class="section" id="alta-lote">
 <h2>Alta Lote<a class="headerlink" href="#alta-lote" title="Permalink to this headline">¶</a></h2>
@@ -180,11 +188,19 @@
 <ol class="arabic simple">
 <li>Nombre de la sección en la que nos ubicamos, (2) descripción del lote a crear, (3) botón de guardar.</li>
 </ol>
+<ul class="simple">
+<li>Observaciones:
+No se puede crear stock de lotes que no tenga una receta asociada al producto.
+No se puede ingresar una cantidad que supere los insumos disponibles.</li>
+</ul>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="lotes consultar.html">﻿Consultar Lotes</a></li>
-<li class="toctree-l1"><a class="reference internal" href="lotes alta.html">﻿Lotes alta</a></li>
-<li class="toctree-l1"><a class="reference internal" href="productosTerminadosActualizarStock consultar.html">﻿Modificar Stock de Lote</a></li>
+<li class="toctree-l1"><a class="reference internal" href="lotes alta.html">﻿Registrar una producción</a></li>
+<li class="toctree-l1"><a class="reference internal" href="productosTerminadosActualizarStock consultar.html">﻿Modificar Stock de Lote</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="productosTerminadosActualizarStock consultar.html#observaciones">Observaciones:</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>

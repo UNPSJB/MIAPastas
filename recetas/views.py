@@ -258,7 +258,10 @@ def insumosBaja(request,insumo_id):
            [ "%s" % r for r in insumo.receta_set.all()]
         ))
         return redirect('insumos')
-        #insumo.delete()
+        #insumo.delete()s
+    elif insumo.proveedores.all() > 0:
+        messages.error(request, 'El Insumo: ' + insumo.nombre + ', no se puede eliminar porque esta sociado a un proveedor.')
+        return redirect('insumos')
     else:
         messages.success(request, 'El Insumo: ' + insumo.nombre + ', ha sido eliminado correctamente.')
         #insumo.delete()
@@ -902,7 +905,9 @@ def pedidosClientes(request,pedido_id=None):
         print "GET ",request.GET
         #filtros para filtrar por rango de fechas de entrega, varia para cada tipo
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
+        print "FILTROSSSS",mfilters," "
         pobj = Q(**mfilters)
+
         filters, mfilters = get_filtros(request.GET, models.PedidoFijo)
         qobj = Q(**mfilters)
         filters, mfilters = get_filtros(request.GET, models.PedidoOcacional)
@@ -1081,7 +1086,9 @@ def pedidosProveedor(request,pedido_id=None):
 
 
 
-
+#if pedido_proveedor_instancia.fecha_realizacion > datetime.date.today():
+             #   messages.error(request, 'la fecha de realizacion no debe ser superior a la fecha actual.')
+                #return redirect('pedidosProveedorAlta')
 
 @login_required()
 @permission_required('recetas.add_pedidoproveedor')
@@ -1095,6 +1102,9 @@ def pedidosProveedorAlta(request):
         if pedido_proveedor_form.is_valid():
             pedido_proveedor_instancia = pedido_proveedor_form.save(commit = False) #commit false
             detalles_form = detalles_form_class(request.POST, request.FILES)
+            if pedido_proveedor_instancia.fecha_realizacion > datetime.date.today():
+                messages.error(request, 'la fecha de realizacion no debe ser superior a la fecha actual.')
+                return redirect('pedidosProveedorAlta')
             if detalles_form.is_valid():
                 #detalles = detalles_form.save(commit=False)
                 pedido_proveedor_instancia.save()
@@ -1131,8 +1141,6 @@ def pedidosProveedorAlta(request):
                 "insumos":insumos,
                 "pedido_proveedor_form": pedido_proveedor_form or forms.PedidoProveedorAltaForm(),
                 "detalles_form_factory": detalles_form or detalles_form_class()})
-
-
 
 
 
@@ -1177,6 +1185,7 @@ def pedidosProveedorModificar(request,pedido_id):
 
 
 
+
 @login_required()
 @permission_required('recetas.change_pedidoproveedor')
 def pedidosProveedorRecepcionar(request,pedido_id):
@@ -1199,7 +1208,7 @@ def pedidosProveedorRecepcionar(request,pedido_id):
             pedido_proveedor_instancia.save()
             for detalle in pedido_proveedor_instancia.detallepedidoproveedor_set.all():
                 print detalle.insumo.stock, "ANTES"
-                detalle.insumo.stock -=detalle.cantidad_insumo
+                detalle.insumo.stock +=detalle.cantidad_insumo
                 detalle.insumo.save()
                 print detalle.insumo.stock
             messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
@@ -1384,6 +1393,7 @@ def hojaDeRuta(request):
         productos = models.ProductoTerminado.objects.filter(activo=True)
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
         entregas_factory_class = formset_factory(forms.EntregaForm)
+        print productos,choferes, "EEEEEEEEEEEEEEEEEEEEEEEEE"
         return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
                                                   "pedidos":pedidos_clientes_enviar,
                                                   "choferes":choferes,
@@ -1423,7 +1433,7 @@ def hojaDeRutaAlta(request):
                     for k,error in form.errors.items():
                         print "error ",error
                         messages.error(request,error)                
-                return redirect("hojaDeRuta")        
+                return redirect("hojaDeRuta")
         else:
             hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
@@ -1448,6 +1458,7 @@ def HojaDeRutaMostrar(request,hoja_id):
 
 @login_required()
 def generarTotales(request):
+    print "EN GENERAR TOTALES"
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
     totales={}
     nombres={}
@@ -1543,7 +1554,7 @@ def RendicionDeRepartoMostrar(request,hoja_id):
             print "context"
 
             print request.session
-            return render_to_response('rendicionDeRepartoMostrar.html', 
+            return render_to_response('rendicionDeRepartoMostrar.html',
                                     {"hoja":hoja,
                                     "cobros_factory":cobros_form,
                                     "prefix_cobros":"cobros"}, 
@@ -1783,4 +1794,5 @@ def productosMasVendidos(request):
     response = HttpResponse(content_type='image/png')
     savefig(response,format='PNG')
     return response
+
 

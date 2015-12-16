@@ -9,4 +9,5 @@ No se podrá dar de alta un cliente que ya exista, esto quiere decir que exista 
 
 *	Observaciones
 ---------------------
-Para dar de alta un chofer se deberá tener la ciudad y zona cargadas.
+•	No se podrá dar de alta a un cliente que ya existe.
+•	No se podrá dar de alta a un cliente en donde la ciudad no exista.
