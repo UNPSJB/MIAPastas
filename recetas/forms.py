@@ -718,7 +718,8 @@ class EntregaDetalleForm(forms.ModelForm):
 
 class BaseEntregaDetalleFormset(BaseFormSet):
     def clean(self):        
-        print "en clean principal base"
+        """Se valida que la cantidad total entregada, no supere la cantidad total llevada"""
+        print "en clean principal base detalles entrega"
        
 
 EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaDetalleFormset,extra=0)
@@ -780,7 +781,8 @@ class CobroEntregaRendir(forms.Form):
         """ Verifica que el nro de doc ingresado no exista.
             si el monto abonado = precio total de lo entregado, se busca en Factura
             si el monto abonado < precio total de lo entregado, se busca en Recibo
-        """        
+        """    
+        print "en clean de cobro"    
         cleaned_data = super(CobroEntregaRendir, self).clean()
         cantidad_abonada = self.cleaned_data["cantidad_abonada"]
         entrega = self.cleaned_data["entrega"]
@@ -788,15 +790,15 @@ class CobroEntregaRendir(forms.Form):
         if cantidad_abonada == entrega.precio_total():
             obj = models.Factura 
         elif cantidad_abonada < entrega.precio_total():
-            print "por crear recibo"
             obj = models.Recibo
         else:
             raise Validaciones("Se pago de Mas")
         o = obj.objects.filter(numero=nro_doc)       
         if len(o) > 0:   
             print "Error doc ya existe"         
-            raise ValidationError("Ya existe una factura con el numero %d "%(nro_doc))
+            raise ValidationError("Ya existe %s con el numero %d "%(obj().to_string(),nro_doc))
         return cleaned_data
+
     def save(self):
         """ Si la cantidad abonada es igual al precio total de la Entrega se crea una Factura
             con nro_doc y se asocia a la Entrega, si cantidad abonada es menor al precio total
@@ -814,8 +816,32 @@ class CobroEntregaRendir(forms.Form):
 
 class BaseRendirCobrosFormset(BaseFormSet):
     def clean(self):
-        print "en clean de base formser rendir cobros"
+        """ Se valida que no se ingresen numeros de facturas/recibos iguales
+            En el caso de que existan dos facturas/recibo, sera correcto si corresponden al mismo Cliente
+            Si no corresponden al mismo cliente se informa que esto no es valido.
+        """
+        print "1- en clean de base formser rendir cobros"
+        if self.total_error_count() > 0:
+            print "2- hay errores voy a retornar"
+            return
+        doc = []
+        clientes = []
+        aux = {}
         for form in self.forms:
-            n = form.cleaned_data["nro_doc"]
-            
+            d = form.cleaned_data["nro_doc"]
+            c = form.cleaned_data["entrega"].pedido.cliente.id
+            if form.cleaned_data["entrega"].precio_total() == form.cleaned_data["cantidad_abonada"]:
+                aux = {d:"Factura"}
+            else:
+                aux = {d:"Recibo"}
+            print "aux vale: ",aux
+            if aux in doc:
+                if clientes[doc.index(aux)] != c:                    
+                    raise ValidationError("Se registro mismo numero de %s para clientes diferentes"%(aux.pop(d)))
+            doc.append(aux)
+            clientes.append(c)
+           
+CobroEntregaRendirFormsetClass = formset_factory(CobroEntregaRendir,formset=BaseRendirCobrosFormset,extra=0)
+
+
   ############### fin ####################

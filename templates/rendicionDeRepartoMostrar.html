@@ -8,12 +8,15 @@
     <div class="panel panel-default">
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Rendicion Hoja de Ruta {{hoja.fecha_creacion}}</b></font></p></div>
             <div class="panel-body">                
-                <form class=" form-horizontal" method = "post" onsubmit = "return validar()">    
-                    {% csrf_token %}
-                    {{ cobros_factory.management_form }}
                         {% for f in cobros_factory %}
                             {% bootstrap_form_errors f %}
                         {% endfor %}
+                        {% bootstrap_formset_errors cobros_factory %}
+                <form class=" form-horizontal" method = "post" onsubmit = "return validar()">    
+                    {% csrf_token %}
+                    {{ cobros_factory.management_form }}
+                        
+                        
                 <h1><font color="#2E8B57" font-size="20%">Se Registraron correctamente las entregas.</font> </h1>
                     {% for e in hoja.entrega_set.all%}
                             <p>&nbsp;</p>

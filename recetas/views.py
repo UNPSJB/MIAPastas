@@ -1491,11 +1491,10 @@ def rendicionReparto(request,hoja_id=None):
 @login_required()
 def RendicionDeRepartoMostrar(request,hoja_id):
     print "EN RENDICION REPARTO MOSTRAR VIEWW"
-    cobros_factory_class = formset_factory(forms.CobroEntregaRendir)
     hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
-    cobros_form = cobros_factory_class(prefix="cobros")
+    cobros_form = forms.CobroEntregaRendirFormsetClass(prefix="cobros")
     if request.method == "POST":
-        cobros_form = cobros_factory_class(request.POST,request.FILES,prefix="cobros")
+        cobros_form = forms.CobroEntregaRendirFormsetClass(request.POST,request.FILES,prefix="cobros")
         if cobros_form.is_valid():
             print "COBROS FORM SON VALIDOS"
             for form in cobros_form:
