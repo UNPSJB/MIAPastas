@@ -730,18 +730,18 @@ EntregaDetalleFormset = formset_factory(EntregaDetalleForm, formset=BaseEntregaD
 class ProductosLlevadosForm(forms.ModelForm):
     class Meta:
         model = models.ProductosLlevados
-        fields = ["cantidad_pedida","producto_terminado"]
+        fields = ["cantidad_pedida","producto_terminado","cantidad_extra"]
 
     def save(self, hoja_de_ruta):
+        """ Asigna al productoLlevado la hoja_de_ruta 
+            self.precio con el precio del producto terminado.
+            Llama a la function generar_detalles() para buscar cantidad_pedida + cantidad_extra a los lotes.
+        """
         producto_llevado= super(ProductosLlevadosForm, self).save(commit=False)
         producto_llevado.hoja_de_ruta = hoja_de_ruta
         producto_llevado.precio = producto_llevado.producto_terminado.precio
         producto_llevado.save()
         producto_llevado.generar_detalles()
-         # si no tengo stock para el producto pedido, no lo LLEVO 
-        #if producto_llevado.cantidad_enviada == 0:
-        #    producto_llevado.delete()
-        #    return None
         return producto_llevado
 
 
