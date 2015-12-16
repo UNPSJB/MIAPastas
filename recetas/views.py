@@ -1534,6 +1534,7 @@ def rendicionHojasDeRutasSinCobrar(request):
 @login_required()
 def RendicionDeRepartoMostrar(request,hoja_id):
     print "EN RENDICION REPARTO MOSTRAR VIEWW"
+    error = False
     hoja = models.HojaDeRuta.objects.get(pk = hoja_id)
     cobros_form = forms.CobroEntregaRendirFormsetClass(prefix="cobros")
     if request.method == "POST":
@@ -1543,8 +1544,6 @@ def RendicionDeRepartoMostrar(request,hoja_id):
             for form in cobros_form:
                 if form.is_valid():
                     form.save()
-                else:
-                    print "el formulario solo no es valido"
             messages.success(request,"Se registraron correctamente los pagos de las entregas")
             hoja.pagado = True   #registro como hoja de ruta ya cobrada en la recepcion
             hoja.save()
@@ -1552,18 +1551,11 @@ def RendicionDeRepartoMostrar(request,hoja_id):
         else:
             print "el factory no es valido"
             print "context"
-
-            print request.session
-            return render_to_response('rendicionDeRepartoMostrar.html',
-                                    {"hoja":hoja,
-                                    "cobros_factory":cobros_form,
-                                    "prefix_cobros":"cobros"}, 
-                                    context_instance=RequestContext(request))
-
-          
+            error = True      
     return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_form,
-                                                            "prefix_cobros":"cobros"})
+                                                            "prefix_cobros":"cobros",
+                                                            "error":error})
 
 
 

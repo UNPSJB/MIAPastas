@@ -25,8 +25,16 @@
              if (n.toString()!='/index'){
                 res=res[0];
                 if (!(isNaN(lastChar)) && (n.indexOf("modificar/") == -1)){
-                  var s=res.substring(1,_.size(res)-2);
-                  s = s.replace ("/", " consultar");
+                var cont;
+                  for (var i=n.length;i>=0 ; i--){
+                    if (!(isNaN(n[i]))){
+                      n=n.charAt(stringLength-1);
+                      i++;
+                      console.log("conte 1");
+                      }
+                    }
+                     var s=res.substring(1,_.size(res)-2);
+                     s = s.replace ("/", " consultar");
                   }
                 else{
                     var s=res.substring(1,_.size(res)-1);

@@ -49,6 +49,7 @@ En (5) se mostrarán todos los productos terminados asignados a la hoja de ruta,
 .. toctree::
    :maxdepth: 2
    
-   HojaDeRuta mostrarRecibos modificar
+   HojaDeRuta 
+   hojaDeRuta consultarmostrarRecibo
 
 

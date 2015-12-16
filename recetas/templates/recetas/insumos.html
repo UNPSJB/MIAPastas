@@ -39,7 +39,7 @@
                               <tbody>
                                 {% for insumo in insumos %}
 
-                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}" data-recetas="{{insumo.receta_set.exists}}">
+                                <tr class="renglon select-item" data-id="{{insumo.id}}" id="renglon-{{insumo.id}}" data-recetas="{{insumo.receta_set.exists}}" data-insumos="{{insumo.stock}}">
                                     <td>{{insumo.nombre}}</td>
                                     <td>{{insumo.stock}}</td>
                                     <td>{{insumo.get_unidad_medida_display}}</td>
@@ -76,7 +76,9 @@
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             tiene_receta = $el.data()["recetas"] == "True";
-            console.log(id)
+            insumos = $el.data()["insumos"];
+            console.log(id);
+            console.log(insumos);
             $el.addClass("active");
             var _renglon = "";
             _renglon= "#renglon-"+id;
@@ -114,6 +116,25 @@
                             type: BootstrapDialog.TYPE_DANGER,
                             buttons: [{
                                     label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                    }
+                                    }
+                            ]
+                        });
+                  }else if(insumos>0){
+                        BootstrapDialog.show({
+                            title: "Esta intentando eliminar",
+                            cssClass: 'error-dialog',
+                            message: "Esta tratando de eliminar un insumo que tiene stock mayor a cero. Esta seguro que quiere eliminarlo?",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        eliminar();}
+                                        },{
+                                    label: 'Cancelar',
                                     action: function(dialogRef){
                                         dialogRef.close();
                                     }
