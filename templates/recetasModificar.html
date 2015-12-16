@@ -148,7 +148,7 @@ $(function() {
 
     var listado_detalles = [
       {% if not error %}
-          {% for detalle in detalles_pedido %}
+          {% for detalle in detalles_receta %}
               {"receta_pk":{{detalle.receta.pk}},
                 "pk": {{detalle.pk}}, 
                 "insumo": {{detalle.insumo.pk}}, 
@@ -171,7 +171,8 @@ $(function() {
           {% endfor %}
       {% endif%}
     ]
-    
+    console.log("inciializamos ");
+    console.log(listado_detalles);
     $(listado_detalles).each(function(i, d) {
         detalles.push({receta_pk:d.receta_pk,cantidad:d.cantidad, insumo: d.insumo,delete_form:"",texto: d.texto,pk:d.pk });
      });
