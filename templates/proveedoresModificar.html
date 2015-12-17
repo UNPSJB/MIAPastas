@@ -15,10 +15,7 @@
                     {% if proveedor_form.errors %}
                       {% bootstrap_form_errors proveedor_form %}
                         {% endif %}
-
-
                     {% csrf_token %}
-
                     {% bootstrap_field proveedor_form.cuit  %}
                     {% bootstrap_field  proveedor_form.razon_social  %}
                     {% bootstrap_field  proveedor_form.localidad  %}
@@ -28,8 +25,6 @@
                     {% bootstrap_field  proveedor_form.numero_cuenta  %}
                     {% bootstrap_field  proveedor_form.provincia  %}
                     {% bootstrap_field  proveedor_form.telefono  %}
-
-
                 <div class="panel-heading"><p class="text-center login-title">
                             <font face="tahoma" size="4" color="black"><b>Insumos</b></font></p>
                       </div>
@@ -70,41 +65,24 @@
 
     </div></div>
 </div>
-
-    <!-- Este es el fin del formulario de recetas -->
-
-
-    {% endblock %}
-
+{% endblock %}
 {% block javascript %}
-
-
 <script>
-
 var tabla_detalle_tpl;
 var detalle_insumo_imput_tpl;
 var detalles = [];
+
 var insumos_cargados = [
-        {% for i in proveedor_form.instance.insumos.all %}
-            {"insumo_id":{{i.id}},"nombre":"{{i.nombre}}"},
-        {%endfor%}
+        {% if not error %}
+            {% for i in proveedor_form.instance.insumos.all %}
+                {"insumo_id":{{i.id}},"nombre":"{{i.nombre}}"},
+            {%endfor%}
+        {% else %}
+            {% for i in proveedor_form.insumos.value %}
+                {"insumo_id":{{i}},"nombre":$('#id_insumo option[value="{{i}}"]').text()},
+            {%endfor%}
+        {%endif%}
     ];
-
-    var prod = [
-        {% for d in insumos_instancias %}
-            {"insumo_id":{{d.id}},"nombre":"{{d.nombre}}"},
-        {%endfor%}
-    ];
-
-
-    console.log(insumos_cargados);
-    console.log(prod);
-
-
-
-
-
-
 tabla_detalle_tpl = $.tpl("<tr><td><%= texto %></td>"
                     +"<td><button type="+ "button "+"value= "+"Eliminar "+"data-id="+"<%= insumo%> "
                     +" id="+"renglon-<%= insumo%> class="+"btn-eliminar"+" onClick= "+"eliminar(<%= insumo%>)"
@@ -175,7 +153,6 @@ function validarForm(){
         armar_form();
         return true;
     }
-
 }
 
 $(function() {
@@ -184,7 +161,6 @@ $(function() {
   {% endif %}
 
   $("#add-detalle-proveedor").click(function(){
-        console.log(detalles);
         var insumo = $("#id_insumo").val();
         var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
         var ins = _.find(detalles,{insumo:insumo});
@@ -193,8 +169,6 @@ $(function() {
         }else{
             if (ins == undefined){
                 detalles.push({insumo: insumo,texto:texto});
-                        console.log(detalles);
-
                 armar_tabla();
             }else{
                 BootstrapDialog.show({

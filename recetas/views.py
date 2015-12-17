@@ -339,29 +339,33 @@ def recetasModificar(request,receta_id):
         precondicion: La receta a modificar debe existir
         postcondicion: La receta ha sido modificada
     """
+    detalles_formset = None
     receta_instancia = get_object_or_404(models.Receta, pk=receta_id)
     detalles_instancias = models.RecetaDetalle.objects.filter(receta = receta_instancia)
     insumos = models.Insumo.objects.filter(activo=True) #para detalles
     detalles_inlinefactory = inlineformset_factory(models.Receta,models.RecetaDetalle,fields=('cantidad_insumo','insumo','receta'))
-
-    if request.method=="POST":
+    error = False
+    if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST,instance= receta_instancia)
+        detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
         if receta_form.is_valid():
             receta_instancia = receta_form.save(commit=False)
             #Detalles
-            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='recetadetalle_set',instance=receta_instancia)
             if detalles_formset.is_valid():
                 detalles_formset.save()
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido modificada correctamente.')
                 receta_instancia.save()
             return redirect('recetas')
+        else:
+            error = True
     else:
         receta_form = forms.RecetaForm(instance= receta_instancia)        
     pref = "recetadetalle_set"
     return render(request,"recetasModificar.html",{"receta_form":receta_form,"id":receta_id,
                                                    "detalles_receta":detalles_instancias,
                                                    "insumos":insumos,
-                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='recetadetalle_set'),
+                                                   "detalles_form_factory":detalles_formset or detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='recetadetalle_set'),
+                                                   "error": error,
                                                    "receta_id":receta_id,
                                                    "pref":pref
                                                    })
@@ -382,9 +386,9 @@ def recetasAlta(request):
     insumos = models.Insumo.objects.filter(activo=True)
     if request.method == "POST":
         receta_form = forms.RecetaForm(request.POST) #crea formulario de receta cno los datos del post
+        detalles_form = detalles_form_class(request.POST, request.FILES)
         if receta_form.is_valid():
-            receta_instancia = receta_form.save(commit = False) #commit false
-            detalles_form = detalles_form_class(request.POST, request.FILES)
+            receta_instancia = receta_form.save(commit = False) #commit false            
             if detalles_form.is_valid():
                 #detalles = detalles_form.save(commit=False)
                 receta_instancia.save()
@@ -393,7 +397,6 @@ def recetasAlta(request):
                     detalle_instancia.receta = receta_instancia
                     detalle_instancia.save()
                 messages.success(request, 'La Receta: ' + receta_instancia.nombre + ', ha sido registrada correctamente.')
-
                 return redirect('recetas')
     return render(request, "recetasAlta.html", {
             "insumos":insumos,
@@ -440,21 +443,21 @@ def proveedores(request,proveedor_id=None):
         proveedores_form = forms.ProveedorForm()
     return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
 
-
-
-
 @login_required()
 @permission_required('recetas.add_proveedor')
 def proveedoresAlta(request):
     proveedores_form = forms.ProveedorForm()
     insumos = models.Insumo.objects.filter(activo=True)
+    error = False
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
             proveedor_instancia=proveedores_form.save()
             return redirect('proveedores')
-        return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
-    return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form or forms.ProveedorForm(),"insumos":insumos})
+        else:
+            error = True    
+    return render(request, "proveedoresAlta.html",{"proveedores_form": proveedores_form,
+                                                    "insumos":insumos,"error":error})
 
 
 
@@ -477,18 +480,19 @@ def proveedoresBaja(request,proveedor_id =None):
 @permission_required('recetas.change_proveedor')
 def proveedoresModificar(request,proveedor_id =None):
     proveedor_instancia = get_object_or_404(models.Proveedor, pk=proveedor_id)
-    
+    insumos_instancias = models.Insumo.objects.filter(activo=True)
+    error = False
+    proveedor_form = None
     if request.method=="POST":
-        print request.POST, "pssttttttttttttt"
         proveedor_form = forms.ProveedorModificarForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
             proveedor_form.save()
             return redirect('proveedores')
-        return render(request,"proveedoresModificar.html",{"proveedor_form":proveedor_form,"id":proveedor_id})
-    else:
-        proveedor_form = forms.ProveedorModificarForm(instance= proveedor_instancia)
-        insumos_instancias = models.Insumo.objects.filter(activo=True)
-        return render(request,"proveedoresModificar.html",{"insumos_instancias":insumos_instancias,"proveedor_form":proveedor_form,"id":proveedor_id})
+        else:
+            error = True
+    return render(request,"proveedoresModificar.html",{"insumos_instancias":insumos_instancias,
+                        "proveedor_form":proveedor_form or forms.ProveedorModificarForm(instance= proveedor_instancia),
+                                                            "id":proveedor_id,"error":error})
 
 #********************************************************#
                #     P R O D U C T O S   #
@@ -944,11 +948,11 @@ def pedidosClientesAlta(request, tipo_pedido_id):
 
     if request.method == "POST":
         pedidosClientes_form = pedidosClientes_form(request.POST) #crea formulario de receta cono los datos del post
+        detalles_form = detalles_form_class(request.POST, request.FILES)
         if  pedidosClientes_form.is_valid():
             if tipo_pedido_id == "1":
                 dias = pedidosClientes_form.cleaned_data.get('dias')    #agregado por lo que decia un foro wtf
             pedido_instancia =  pedidosClientes_form.save(commit = False) #commit false
-            detalles_form = detalles_form_class(request.POST, request.FILES)
             if detalles_form.is_valid():
                 pedido_instancia.tipo_pedido=tipo_pedido_id
                 print pedido_instancia
@@ -993,6 +997,8 @@ def pedidosClienteModificar(request, pedido_id):
         modificar los atributos permitidos. Mediante formularios realiza las validaciones de los nuevos datos
         del pedido.
     '''
+    detalles_formset=None
+    error = False
     pedido_instancia = get_object_or_404(models.PedidoCliente, pk=pedido_id)
     detalles_inlinefactory = inlineformset_factory(models.PedidoCliente,models.PedidoClienteDetalle,fields=('cantidad_producto','producto_terminado','pedido_cliente'))
     if pedido_instancia.tipo_pedido == 1:
@@ -1009,6 +1015,7 @@ def pedidosClienteModificar(request, pedido_id):
     productos = models.ProductoTerminado.objects.filter(activo=True) #para detalles
 
     if request.method=="POST":
+        detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
         if pedido_instancia.tipo_pedido == 1:
             pedidosClientes_form = forms.PedidoClienteFijoForm(request.POST,instance= pedido_instancia,my_arg = pedido_id)
             fecha_posta = pedido_instancia.fecha_inicio
@@ -1026,24 +1033,25 @@ def pedidosClienteModificar(request, pedido_id):
                         messages.error(request, 'La fecha inicio nueva no puede ser anterior al dia actual')
                         return redirect('/pedidosCliente/Modificar/'+pedido_id)
             #DETALLES
-            detalles_formset = detalles_inlinefactory(request.POST,request.FILES,prefix='pedidoclientedetalle_set',instance=pedido_instancia)
             print detalles_formset.is_valid()
             if detalles_formset.is_valid():
                 detalles_formset.save()
                 messages.success(request, 'El pedido: ' + pedido_instancia.get_tipo_pedido_display()+" de "+pedido_instancia.cliente.razon_social + ', ha sido modificada correctamente.')
                 pedido_instancia.save()
-            return redirect('pedidosCliente')
-
+                return redirect('pedidosCliente')
+        else:
+            error=True
     #si el form no es valido, le mando todo al html para que muestre los errores#
     pref = "pedidoclientedetalle_set" #pedidoclientedetalle_set
     return render(request,"pedidosClienteModificar.html",{"pedido_form":pedidosClientes_form,"id":pedido_id,
                                                    "detalles_pedido":detalles_instancias,
                                                    "productos":productos,
-                                                   "detalles_form_factory":detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
+                                                   "detalles_form_factory":detalles_formset or detalles_inlinefactory(initial=list(detalles_instancias.values()), prefix='pedidoclientedetalle_set'),
                                                    "pedido_id":pedido_id,
                                                    "pref":pref,
                                                    "tipo_pedido":pedido_instancia.tipo_pedido,
-                                                    "id_cliente":pedido_instancia.cliente.id
+                                                    "id_cliente":pedido_instancia.cliente.id,
+                                                    "error":error
 
                                                    })
 

@@ -139,11 +139,27 @@ console.log("voy a modificar en la pos "+i);
 }
 
 $(function() {
+   var listado_detalles = [
+   {% if detalles_form_factory.forms %}
+      {% for det in detalles_form_factory %}
+          {% if det.insumo.value != None %}
+            {"insumo": {{det.insumo.value}}, 
+              "cantidad": {{det.cantidad_insumo.value}} ,
+              "texto": $('#id_insumo option[value="{{det.insumo.value}}"]').text()},
+          {%endif%}
+      {% endfor %}
+    ];
+    {% endif%}
+    $(listado_detalles).each(function(i, d) {
+        detalles.push({cantidad:d.cantidad, insumo: d.insumo,i:"0",texto: d.texto});
+     });   
+    armar_tabla();
+
 
   $("#add-detalle-receta").click(function(){
-        var cantidad = $("#cantidadInsumo").val();
-        var insumo = $("#id_insumo").val();
-        var texto = document.getElementById('id_insumo').options[document.getElementById('id_insumo').selectedIndex].text;
+        var cantidad = parseInt($("#cantidadInsumo").val());
+        var insumo = parseInt($("#id_insumo").val());
+        var texto = $('#id_insumo option[value=\"'+insumo+'\"]').text();
         if ((cantidad == "") || (insumo == "")){
             alert("Debe llenar todos los campos");
         }else{
