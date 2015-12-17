@@ -132,10 +132,11 @@ class Insumo(models.Model):
     # Control de stock
     def incrementar(self, cantidad, unidad=NONE):
         self.stock += self.CONVERT[unidad](cantidad)
-
+        self.save()
     def decrementar(self, cantidad, unidad=NONE):
         print "voy a decrementar del insumo ",self.nombre, "la cantidad: ",cantidad, "unidad medida: ",unidad
         self.stock -= self.CONVERT[unidad](cantidad)
+        self.save()
 
     modificar_stock = incrementar
 
@@ -159,6 +160,9 @@ class ProductoTerminado(models.Model):
     dias_vigencia = models.PositiveIntegerField(default=01)#esto es la fecha de vencimiento
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
+    # Managers de chofer
+
+
 
 
     class Meta:
@@ -556,6 +560,13 @@ class HojaDeRuta(models.Model):
         print "retorno : ",tiene
         return tiene            
 
+    def lleva_producto(self,p):
+        for prod in self.productosllevados_set.all():
+            if prod == p and prod.cantidad_enviada > 0:
+                return True
+        return False
+
+         
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)

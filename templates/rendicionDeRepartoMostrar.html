@@ -112,8 +112,8 @@ function inicializar_formulario(){
                 entrega_id = {{cobros_form.entrega.value}};
                 id_input = "#monto-"+entrega_id
                 $(id_input).val(parseFloat({{cobros_form.cantidad_abonada.value}}));
-                id_input = "#nro-"+entrega_id
-                $(id_input).val({{cobros_form.nro_doc.value}}); 
+                id_input_nro = "#nro-"+entrega_id
+                $(id_input_nro).val({{cobros_form.nro_doc.value}}); 
                 if($(id_input).val() != 0){
                     $(id_input_nro).attr('readonly', false);
                 }
@@ -151,9 +151,8 @@ function inputs_validos(m){
     var valor = 0;
     var diferencia = 0;
     for(i=0; i<_.size(m);i++){
-
         total = parseFloat(m[i].getAttribute("data-preciototal"));
-        valor = (m[i].value);  
+        valor = (m[i].value);
         id_entrega = m[i].getAttribute("data-entregaid"); 
         id_num = "#nro-"+id_entrega;    //id del input de factura o recibo
         id_valor= "#monto-"+id_entrega;    //id del input de monto a abonar

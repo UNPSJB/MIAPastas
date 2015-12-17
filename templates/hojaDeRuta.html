@@ -23,7 +23,7 @@
                  </div>
             </div>
                 <div class="form-group">
-                        <label class="col-sm-2 control-label" for="chofer">Chofer</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
+                        <label class="col-sm-2 control-label" for="chofer">Chofer(*)</label><!-- automaticamente debe mostrar solo los choferes disponibles, sin hoja de ruta asignada -->
                          <div class="col-sm-5">
                               <select class="form-control "  id="chofer" name="chofer" required="required">
                                   <option value="">--------</option>
@@ -64,7 +64,9 @@
                 <thead>
                     <h1>Pedidos para el día</h1>
                     <tr>
-                        <th>N° Pedido</th>
+                        
+                        <th> Tipo Pedido</th>
+                        <th style="display: none;">N° Pedido</th>
                         <th>Razon Social</th>
                         <th>Ciudad</th>
                         <th>Zona</th>
@@ -75,7 +77,19 @@
                     <tr class="renglon select-item cliente-{{pedido.cliente.cuit}}" 
                         data-cliente="{{pedido.cliente.cuit}}" 
                         data-id="{{pedido.id}}" id="renglon-{{pedido.id}}">
-                        <td>{{pedido.id}}</td>
+                        
+                        <td>{% if pedido.tipo_pedido == 1 %}
+                                Fijo
+                             {% else %}
+                                {% if pedido.tipo_pedido == 2 %}
+                                    Ocacional
+                                {% else %}
+                                    {% if pedido.tipo_pedido == 3 %}
+                                        Cambio
+                                    {% endif %}
+                                {% endif %}
+                             {% endif %}</td>
+                             <td style="display: none;">{{pedido.id}}</td>
                         <td>{{pedido.cliente.razon_social}}</td>
                         <td>{{pedido.cliente.ciudad.nombre}}</td>
                         <td>{{pedido.cliente.ciudad.zona.nombre}}</td>
@@ -97,7 +111,7 @@
           <div class="col-md-5" id="tablaAsignados">
               <table id="tablaPedidosAsignados" class="table table-hover">
                     <thead>
-                        <h1>Pedidos asignados</h1>
+                        <h1>Pedidos asignados (*)</h1>
                         <tr>
                             <th>N° Pedido</th>
                             <th>Razon Social</th>
@@ -319,9 +333,9 @@ var productosExtrasDicc = new Array();
             var cont = 0;
             $el.hide(); // en vez de hide se puede usar remove(), para que se muestre es con show()
             $el.find('td').each (function() {
-              if(cont==0)
+              if(cont==1) //estaba 0
                 nro_pedido = $(this).html();//me muestra el codigo html del objeto al que esta asignado
-              if(cont==1)
+              if(cont==2) //estaba 1
                 razon_social = $(this).html();
               cont=cont+1;
             });
@@ -342,9 +356,9 @@ var productosExtrasDicc = new Array();
             var original=$el.data()["id"];
 
             $el.find('td').each (function() {
-              if(cont==0)
-                nro_pedido = $(this).html();//me muestra el codigo html del objeto al que esta asignado
               if(cont==1)
+                nro_pedido = $(this).html();//me muestra el codigo html del objeto al que esta asignado
+              if(cont==2)
                 razon_social = $(this).html();
               cont=cont+1;
             });
@@ -386,8 +400,6 @@ var productosExtrasDicc = new Array();
                 }
                 )
            });
-
-
            }
 
            function enviarSubmit(){

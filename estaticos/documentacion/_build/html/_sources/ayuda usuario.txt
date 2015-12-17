@@ -8,7 +8,8 @@ Ayuda
 .. toctree::
    :maxdepth: 1
    
-
+   usuariosAdmin
+   usuario
    recetas
    lotes
    clientes
