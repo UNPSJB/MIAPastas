@@ -332,24 +332,14 @@ class ProductoTerminadoForm(forms.ModelForm):
         self.fields['precio'].label = "Precio Bolsin ( * )"
         self.fields['dias_vigencia'].label = "Dias vigencias ( * )"
 
-    def clean_dias_vigencia(self):
-        dias_vigencia = self.cleaned_data['dias_vigencia']
-        if dias_vigencia<=0:
-            raise ValidationError('La vigencia debe ser mayor a cero')
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        nombre = texto_lindo(nombre, True)
+        if models.Zona.objects.filter(nombre=nombre).exists():
+            raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
         #if nombre.isalpha:
          #   raise ValidationError('El nombre debe tener solo letras.')
-        return dias_vigencia
-
-    def clean_cuit(self):
-        cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
-        result = re.match(pattern, cuit)
-        print "esult ",result
-        if result is not None:
-            #if cuit_valido(cuit):
-            return cuit
-        raise ValidationError("Cuit no valido")
-        return cuit
+        return nombre
     '''
     def save(self):
         producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
