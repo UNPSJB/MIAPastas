@@ -13,12 +13,12 @@
                     {% bootstrap_form producto_form layout='horizontal' %}
                     <p>&nbsp;</p>
                     {% buttons %}
-                    <!--
+                    
                     <button id="btn_submit_falso" type="button" class="btn btn-primary"  >
                             {% bootstrap_icon "star" %} Aceptar
                         </button>
-                    -->
-                        <button id="btn_submit" type="submit" class="btn btn-primary">
+                    
+                        <button id="btn_submit" type="submit" class="btn btn-primary" style="display: none;">
                             {% bootstrap_icon "star" %} Aceptar
                         </button>
                     {% endbuttons %}
@@ -36,6 +36,56 @@
 {% endblock %}
 {% block javascript %}
 <script>
+
+$("#btn_submit_falso").click(function(){
+    nombre = $("#id_nombre").val();
+    $.ajax({
+                type: 'get',
+                data : {                     
+                     'nombre': nombre
+                 },
+                dataType: 'json',
+                async:false,  //vuelve sincronico al AJAX, importante
+                url: '{% url 'productosTerminadosAltaAjax' 1   %}',  /* Antes era hojaderuta/generarTotales*/
+                success: function(json){
+                    console.log(json);
+                    if(json == "1"){
+                        BootstrapDialog.show({
+                        title: "Error",
+                        cssClass: 'error-dialog',
+                        message: "El nombre ingresado corresponde a un producto que existio anteriormente, desea revivirlo?",
+                        type: BootstrapDialog.TYPE_DANGER,
+                        buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                $.ajax({
+                                    type: 'get',
+                                    data : {                     
+                                         'nombre': nombre
+                                     },
+                                    dataType: 'json',
+                                    async:false,  //vuelve sincronico al AJAX, importante
+                                    url: '{% url 'productosTerminadosAltaAjax' 2 %}',  /* Antes era hojaderuta/generarTotales*/
+                                    success: function(json){
+                                        window.open('/productosTerminados/',"_self")
+
+                                    }});
+                                //$("#btn_submit").trigger("click");
+                                dialogRef.close();
+                            }
+                            },{label: 'Cancelar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }}
+                    ]
+            });
+                    }
+                    else{
+                        $("#btn_submit").trigger("click");
+                    }
+                    }
+            });
+});
 
 
 </script>

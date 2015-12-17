@@ -525,47 +525,38 @@ def productosTerminados(request,producto_id=None):
 @login_required()
 @permission_required('recetas.add_productoterminado')
 def productosTerminadosAlta(request):
+    print "AN ALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     if request.method == "POST":
         producto_form = forms.ProductoTerminadoForm(request.POST)
         if producto_form.is_valid():
             producto_form.save()
+            messages.success(request, 'El producto se dio de alta correctamente.')
+
             return redirect('productosTerminados')
     else:
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 
 
-"""
-def productosTerminadosAltaAjax(request):
+
+def productosTerminadosAltaAjax(request,producto_id=None):
     nombre = request.GET['nombre']
     nombre = forms.texto_lindo(nombre, True)
-    print "EN AJAXXXXX", nombre
+    if producto_id == "2":
+        print "En el dos lpmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+        producto = models.ProductoTerminado.objects.get(nombre=nombre)
+        producto.activo=True
+        producto.save()
+        messages.success(request, 'El producto: ' + producto.nombre +' se dio de alta nuevamente.')
+        return HttpResponse(json.dumps("1"),content_type='json')
     try:
-        producto = models.ProductoTerminado.eliminados.get(nombre=nombre)
+        producto = models.ProductoTerminado.objects.get(nombre=nombre)
+        if producto.activo== True:
+            return HttpResponse(json.dumps("0"),content_type='json')
+
         return HttpResponse(json.dumps("1"),content_type='json')
     except:
         return HttpResponse(json.dumps("0"),content_type='json')
-
-
-def productosTerminadosAlta(request):
-    if request.method == "POST":
-        producto_form = forms.ProductoTerminadoForm(request.POST)
-        if producto_form.is_valid():
-            nombre = producto_form.cleaned_data['nombre']
-            datos = models.ProductoTerminado.objects.filter(nombre__icontains=nombre)
-            if datos == None: #significa que no existe un producto con ese nombre. Ejemplo receta1 != Receta1 != ReCeTa1
-                producto_form.save()
-                messages.success(request, 'El Producto: ' + nombre + ', ha sido dado de alta correctamente.')
-                return redirect('productosTerminados')
-            else:
-                messages.error(request, 'El Producto: ' + nombre + ', ya existe.')
-                return HttpResponseRedirect('')
-                #return render(request,'productosTerminadosAlta.html',{"producto_form": producto_form})
-
-    else:
-        producto_form = forms.ProductoTerminadoForm()
-    return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
-"""
 
 
 @login_required()
@@ -615,6 +606,7 @@ def productosTerminadosBaja(request, producto_id=None):
         messages.error(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in p.receta_set.all()]
         ))
+        p.receta_set.get().delete()
         p.activo=False
         p.save()
     else:
@@ -1008,6 +1000,10 @@ def pedidosClienteBaja(request,pedido_id):
     print "en bajaaaaaaaaaaa"
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
     messages.success(request, 'El pedido: de '+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    if pedido.tipo_pedido == 1:
+        pedido.pedidofijo.fecha_cancelacion=date.today()
+        print pedido.pedidofijo.fecha_cancelacion, "FEHANC CANCEACONNNNNNNN"
+        pedido.pedidofijo.save()
     pedido.activo=False
     pedido.save()
     return redirect('pedidosCliente')
