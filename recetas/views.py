@@ -441,16 +441,8 @@ def proveedores(request,proveedor_id=None):
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         pedidos = p.pedidoproveedor_set.all()
-        bandera = False
-        for p in pedidos:
-            if p.estado_pedido==1:
-                bandera = True
-                break
         i = p.insumos.all()
-        pedidosPendientes = {}
-        pedidosPendientes[p.id]= bandera
-        print(pedidosPendientes,"dsadsadasdsadsadassdsdaddsadsadsa")
-        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i,"pedidosPendientes":pedidosPendientes})
+        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
     filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
     pedidosPendientes = {}
