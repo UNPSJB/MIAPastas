@@ -437,12 +437,35 @@ def recetasBaja(request,receta_id):
 @login_required()
 @permission_required('recetas.add_proveedor')
 def proveedores(request,proveedor_id=None):
+
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
+        pedidos = p.pedidoproveedor_set.all()
+        bandera = False
+        for p in pedidos:
+            if p.estado_pedido==1:
+                bandera = True
+                break
         i = p.insumos.all()
-        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
+        pedidosPendientes = {}
+        pedidosPendientes[p.id]= bandera
+        print(pedidosPendientes,"dsadsadasdsadsadassdsdaddsadsadsa")
+        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i,"pedidosPendientes":pedidosPendientes})
     filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
+    pedidosPendientes = {}
+    bandera = False
+    print("que onda!!!")
+    for proveedor in proveedores:
+        pedidos = proveedor.pedidoproveedor_set.all()
+        for p in pedidos:
+            if p.estado_pedido==1:
+                bandera=True
+                break
+        pedidosPendientes[proveedor.id] = bandera
+        bandera = False
+    print("procese todo")
+
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
@@ -450,7 +473,8 @@ def proveedores(request,proveedor_id=None):
             return redirect('proveedores')
     else:
         proveedores_form = forms.ProveedorForm()
-    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+        print("entre al eslse")
+    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters,"pedidosPendientes":pedidosPendientes})
 
 @login_required()
 @permission_required('recetas.add_proveedor')
