@@ -16,7 +16,7 @@ Ayuda
    cobrarCliente
    ciudades
    zonas
-   productos terminados
+   productosTerminados
    insumos
    modificarStock
    proveedores
