@@ -222,7 +222,7 @@ urlpatterns = [
     url(r'^produccionesModificar$',views.produccionesModificar,name='produccionesModificar'),
 
     url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
-    url(r'^insumosConsulta$',views.insumosConsulta,name='insumosConsulta'),
+    url(r'^insumosConsulta/$',views.insumosConsulta,name='insumosConsulta'),
     url(r'^insumosModificar$',views.insumosModificar,name='insumosModificar'),
     # url(r'^zonas$',views.zonas,name='zonas'),
     #url(r'^zonasAlta$',views.zonasAlta,name='zonasAlta'),
