@@ -140,8 +140,11 @@ def usuarioEditar(request ,usuario_id):
 
 
 @login_required()
-def usuarioCambiarClave(request):
-    return render(request, "usuarioCambiarClave.html", {})
+def usuarioCambiarClave(request,usuario_id,password):
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    usuario.set_password(password)
+    usuario.save()
+    return redirect('usuario')
 
 
 
@@ -439,6 +442,17 @@ def listadoClientesMorososFiltros(request):
     print("pase por acaaaaaa")
     ciudades= models.Ciudad.objects.all()
     return render(request, "listadoClientesMorosos.html", {"clientes": clientes,"ciudades":ciudades})
+
+@login_required()
+def listadoHojasDeRutaFinalizadas(request):
+    hojas = models.HojaDeRuta.objects.filter(rendida=True,pagado=True)
+
+    filters, mfilters = get_filtros(request.GET, models.HojaDeRuta)
+    hojas = hojas.filter(**mfilters)
+    hojas = sorted(hojas, key=lambda hoja: hoja.fecha_creacion)
+    print(mfilters)
+    return render(request, "listadoHojasDeRutaFinalizadas.html", {"hojas": hojas,"filtros": filters})
+
 
 
 #retorna un archivo excel que contiene todos los cliente morosos.

@@ -36,8 +36,8 @@ CAUSAS_DECREMENTO_STOCK = (
 # Create your models here.
                #     C H O F E R E S    #
 #********************************************************#
-class Chofer (models.Model):    
-    FILTROS = ['cuit_icontains', 'nombre_icontains']
+class Chofer(models.Model):
+    FILTROS = ['cuit__icontains', 'nombre__icontains']
     cuit= models.CharField(max_length=20, unique=True)
     nombre= models.CharField(max_length=100)
     direccion= models.CharField(max_length=100)
@@ -520,6 +520,11 @@ class PerdidaStock(models.Model):
 
 
 class HojaDeRuta(models.Model):
+    FILTROS = ['fecha_desde','fecha_hasta']
+    FILTROS_MAPPER = {
+        'fecha_desde': 'fecha_creacion__gte',
+        'fecha_hasta': 'fecha_creacion__lte'
+    }
     fecha_creacion = models.DateField(auto_now_add = True)
     chofer = models.ForeignKey(Chofer)
     rendida = models.BooleanField(default=False)

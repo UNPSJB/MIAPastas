@@ -75,9 +75,9 @@
         </form>
        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b><fuente style="font-size: 100%;" >Insumos de la Receta: {{receta.nombre}}</fuente></b></font></p></div>
        <div class="col-md-11 pull-right">
-          <table class="table table-hover ">
+          <table class="table table-hover " cellspacing="2" cellpadding="2" border="2">
             <thead>
-            <tr>
+            <tr >
                 <th>Nombre</th>
                 <th>Cantidad</th>
                 <th>Unidad de Medida</th>
@@ -86,9 +86,9 @@
               <tbody>
               {% for d in receta.recetadetalle_set.all %}
                 <tr>
-                    <td><a href="{% url 'insumoConsulta' d.insumo.id %}">{{d.insumo.nombre}}</a></td>
-                    <td>{{d.cantidad_insumo}}</td>
-                    <td>{{d.insumo.get_unidad_medida_display}}</td>
+                    <td align="center"><a href="{% url 'insumoConsulta' d.insumo.id %}">{{d.insumo.nombre}}</a></td>
+                    <td align="center">{{d.cantidad_insumo}}</td>
+                    <td align="center">{{d.insumo.get_unidad_medida_display}}</td>
                 </tr>
               {% endfor %}
              </tbody>

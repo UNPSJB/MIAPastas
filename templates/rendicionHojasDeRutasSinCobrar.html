@@ -35,6 +35,10 @@
            <button type="button" id="rendir-hoja" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Cobrar  </span></button>
 
           </div>
+          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+           <a id="ver-hoja" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+
+          </div>
           <p></p>
 </div>
           </div>
@@ -91,6 +95,15 @@
 
 
         $("#rendir-hoja").click(rendir);
+        function ver(){
+            if(id==undefined){
+            mostrar_error();
+            }else{
+            window.open('/hojaDeRuta/mostrarRecibos/'+id+'',"_self")
+            }
+        }
+        
+        $("#ver-hoja").click(ver);
 
 
     });

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load staticfiles %}
+{% load bootstrap3 %}
+{% load recetas %}
+{% block contenido %}
+
+<div class="container">
+    <div class="panel panel-default">
+        <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Listado de Hojas de Ruta Finalizadas</b></font></p></div>
+            <div class="panel-body">
+                 <!--Formulario del FILTRO-->
+            <div class="col-xs-12 col-md-8 ">
+                 <form method="get"  role="form" class="form-inline" action="{% url 'listadoHojasDeRutaFinalizadas' %}">
+                       <!-- <div class="form-group">
+                            <label for="nombre">Nombre</label>
+                            <input type="text" class="form-control" value="{{filtros.nombre}}" name="nombre" id="nombre" >
+                        </div>-->
+                        <div class="form-group">
+                        <label for="fecha_desde">Fecha Desde</label>
+                        <input type="text" class="form-control datepicker" value="{{filtros.fecha_desde}}" name="fecha_desde" id="fecha_desde">
+                        </div>
+                        <div class="form-group">
+                            <label for="fecha_hasta">Fecha Hasta</label>
+                            <input type="text" class="form-control datepicker" value="{{filtros.fecha_hasta}}" name="fecha_hasta" id="fecha_hasta">
+                        </div>
+
+
+
+
+                        <button type="submit" class="btn btn-default">Filtrar</button>
+                                         <p>&nbsp;</p>
+                        
+
+                  </form>
+            </div>
+                <div class="col-xs-6 col-md-4">
+                  <form method="get" role="form" class="form-inline" action="{% url 'listadoHojasDeRutaFinalizadas' %}">
+                      <button type="submit" class="btn btn-default">Filtrar Todos</button>
+
+                                         <p>&nbsp;</p>
+                  </form>
+                </div>
+
+            <div class="row">
+                <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
+                    <p>&nbsp;</p>
+
+                          <table class="table table-hover">
+                            <thead>
+                            <tr>
+                                <th>Fecha de creacion</th>
+                                <th>Chofer</th>
+                                <th> N° de Entregas</th>
+
+                            </tr>
+                            </thead>
+                              <tbody>
+
+                               {% for hoja in hojas %}
+                                <tr class="renglon select-item" data-id="{{hoja.id}}" id="renglon-{{hoja.id}}">
+                                    <td>{{hoja.fecha_creacion}}</td>
+                                    <td>{{hoja.chofer.nombre}}</td>
+                                    <td>{{hoja.entrega_set.all|length}}</td>
+                                </tr>
+
+                                {% endfor %}
+
+                              </tbody>
+                          </table>
+                </div>
+           <div class="col-md-2">
+           <a id="ver-hoja" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
+           </div>
+            </div>
+            <hr/>
+        </div>
+        </div>
+    </div>
+</div>
+
+
+    <!-- Este es el fin del formulario de Listado -->
+
+
+{% endblock %}
+{% block javascript %}
+<script>
+    $(function() {
+        var id;
+        function obtenerId(event) {
+            var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
+            id = $el.data()["id"];
+            $el.addClass("danger");
+            var _renglon = "";
+            _renglon= "#renglon-"+id;
+            $(".select-item").removeClass("danger");        //quito la clase active, para q se deseleccionen
+            $(_renglon).addClass("danger");
+        }
+
+        $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
+
+        function mostrar_error(){
+            BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "Debe seleccionar una hoja",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                            }
+                    }]
+            });
+        }
+
+
+        function ver(){
+            if(id==undefined){
+            mostrar_error();
+            }else{
+            window.open('/hojaDeRuta/mostrarRecibos/'+id+'',"_self")
+            }
+        }
+        
+        $("#ver-hoja").click(ver);
+
+
+    });
+</script>
+{% endblock %} endblock %}

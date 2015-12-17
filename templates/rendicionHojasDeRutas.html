@@ -7,31 +7,7 @@
 <div class="panel panel-default">
   <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Hojas de Rutas</b></font></p></div>
   <div class="panel-body">
-      <!--
-      <form class="form-inline">
-          <div class="form-group">
-            <label for="cuit">Cuit</label>
-            <input type="text" class="form-control" value="{{filtros.cuit}}" id="cuit" placeholder="Jane Doe" name="cuit">
-          </div>
-          <div class="form-group">
-            <label for="razonSocial">Razón Social</label>
-            <input type="text" class="form-control" value="{{filtros.razon_social}}" id="razon_social" placeholder="Razon Social" name="razon_social">
-          </div>
-          <div class="form-group">
-            <label for="localidad">Localidad</label>
-            <input type="text" class="form-control" value="{{filtros.localidad}}" id="localidad" placeholder="localidad" name="localidad">
-          </div>
-          <hr>
-
-
-          <label>
-
-          </label>
-          <button type="submit" class="btn btn-default">Filtrar</button>
-      </form>
-          <p>&nbsp;</p>
-
--->
+      
       <div class="row">
           <div class="col-md-10" style="overflow-y:scroll; max-height:350px;">
           <table class="table" >
@@ -54,9 +30,15 @@
           </tbody>
           </table>
           </div>
-      <div class="col-md-2">
-          <div class="btn-group btn-group-sm" role="group" aria-label="...">
+      <div>
+          <div class="btn-group btn-group-sm col-md-2" role="group" aria-label="...">
            <button type="button" id="rendir-hoja" class="boton_bottom btn btn-success pull-down"><span class="glyphicon glyphicon-arrow-right" aria-hidden="true">  Rendir  </span></button>
+
+          </div>
+                    <p>&nbsp;</p>
+
+          <div class="btn-group btn-group-sm col-md-2" role="group" aria-label="...">
+           <a id="ver-hoja" type="button" class="btn btn-info"><span class="glyphicon glyphicon-search" aria-hidden="true">  </span></a>
 
           </div>
           <p></p>
@@ -115,6 +97,21 @@
 
 
         $("#rendir-hoja").click(rendir);
+ 
+        function ver(){
+            if(id==undefined){
+              mostrar_error();
+            }else{
+              window.open('/hojaDeRuta/mostrarRecibos/'+id+'',"_self")
+            }
+
+        }
+
+
+        $("#ver-hoja").click(ver);
+
+
+
 
 
     });

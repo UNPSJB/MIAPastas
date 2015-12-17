@@ -11,7 +11,7 @@
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Cambiar Contraseña</b></font></p></div>
             <div class="panel-body">
                 <div class="col-sm-6 col-md-4 col-md-offset-4">
-                    <form action="{% url 'usuario'  %}" method="post" class="form">
+                    <div>
 
 
                         <div class="form-group">
@@ -20,26 +20,58 @@
                         </div>
 
                         <div class="form-group">
-                            <label>Contraseña Nueva:</label>
-                            <input type="text" class="form-control" value="{{user.first_name}}" name="first_name" id="first_name" >
+                            <label>Contraseña Nueva( * )</label>
+                            <input type="password" class="form-control"  name="pass" id="pass" required>
                         </div>
 
                         <div class="form-group">
-                            <label>Repita la Contraseña:</label>
-                            <input type="text" class="form-control" value="{{user.last_name}}" name="last_name" id="last_name" >
+                            <label>Repita la Contraseña( * )</label>
+                            <input type="password" class="form-control"  name="pass2" id="pass2" required>
                         </div>
 
 
 
                         <p>&nbsp;</p>
 
-                    </form>
+                    </div>
                     {% buttons %}
-                    <a class="btn btn-primary" href = "{% url 'usuarioEditar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-pencil" aria-hidden="true"> Aceptar </span></b></font></a>
-                    <!--<a class="btn btn-primary" href = "{% url 'usuarioCambiarClave' %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>-->
+                    <button id ="cambiar-clave" type="button"  class="btn btn-primary"><font face="tahoma" ><b><span  class="glyphicon glyphicon-start" aria-hidden="true"> Aceptar </span></b></font></button>
                     {% endbuttons %}
                 </div>
             </div>
     </div>
 </div>
+{% endblock %}
+
+{% block javascript %}
+<script>
+    $(function() {
+
+        function cambiar(){
+            var password = $("#pass").val();
+            var password2 = $("#pass2").val();
+            if (password == password2){
+                 BootstrapDialog.show({
+                    title: "Error",
+                    cssClass: 'error-dialog',
+                    message: "La contraseña y su repeticion no coinciden",
+                    type: BootstrapDialog.TYPE_DANGER,
+                    buttons: [{
+                            label: 'Aceptar',
+                            action: function(dialogRef){
+                                dialogRef.close();
+                 }}]});
+            }else{
+                $.ajax({
+                    method: "GET",
+                    url:'usuarioCambiarClave/{{usuario.pk}}/password/'
+                });
+            }
+        };
+
+
+        $("#cambiar-clave").click(cambiar);
+    });
+</script>
+
 {% endblock %}

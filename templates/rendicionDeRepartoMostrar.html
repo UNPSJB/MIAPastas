@@ -128,7 +128,7 @@ function inputs_validos(m){
     for(i=0; i<_.size(m);i++){
 
         total = parseFloat(m[i].getAttribute("data-preciototal"));
-        valor = parseFloat(m[i].value);  
+        valor = (m[i].value);  
         id_entrega = m[i].getAttribute("data-entregaid"); 
         id_num = "#nro-"+id_entrega;    //id del input de factura o recibo
         id_valor= "#monto-"+id_entrega;    //id del input de monto a abonar
@@ -139,7 +139,6 @@ function inputs_validos(m){
             $(id_valor).notify("Se pagaron $"+diferencia+" pesos de mas para la entrega",{position:"top left"});
             return false;
         }
-
         if  (esFloatPositivo(valor)== false && valor != 0 ){
             document.getElementById("monto-"+id_entrega).focus();
             $(id_valor).notify("Debe ser un numero positivo el monto de la entrega",{position:"top right"});
