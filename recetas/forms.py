@@ -848,16 +848,15 @@ class LoteForm(forms.ModelForm):
         self.fields['fecha_produccion'].label = "Fecha produccion ( * )"
         self.fields['cantidad_producida'].label = "Cantidad producida ( * )"
     
-    def save(self,commit=True):
+    def save(self,guardar = False):
         print "en metodo save del form de Lote"
-        # Sobrecargar save devuelve el objeto apunto de ser guardado
-        lote = super(LoteForm, self).save(commit=False)
+        lote = super(LoteForm, self).save(commit=False)    
         lote.stock_disponible = lote.cantidad_producida
         prod = lote.producto_terminado
         dias = prod.dias_vigencia
         delta = timedelta(days=dias)
         lote.fecha_vencimiento = lote.fecha_produccion + delta
-        if commit:
+        if guardar:
             lote.save()
         return lote
     

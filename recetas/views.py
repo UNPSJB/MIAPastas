@@ -280,15 +280,6 @@ def insumosBaja(request,insumo_id):
 def datosInsumo(request,insumo_id= None):
     insumo= models.Insumo.objects.get( pk= insumo_id)
     insumo_data = serializers.serialize('json', [insumo,])
-
-    t = request.GET['b']
-    b = request.GET['t']
-    pedidos_list = re.findall("\d+",request.GET['pedidos'])
-    for i in range(0,len(pedidos_list)):
-        #los paso a INT para buscarlos despues
-        pedidos_list[i]= int(pedidos_list[i])
-        print "pedido entero: ",pedidos_list[i]
-
     return HttpResponse(insumo_data, content_type='json')
 
 
@@ -1347,44 +1338,35 @@ def lotesAlta(request):
     if request.method == "POST":
         lote_form = forms.LoteForm(request.POST)
         if lote_form.is_valid():
-            lote = lote_form.save(commit = False)
-            print "MIRAR ESTO"
-            print lote.producto_terminado, lote.pk
-            lote.stock_disponible = lote.cantidad_producida #stock inicial
-            
+            lote = lote_form.save(guardar = False)
             try:
                 receta = lote.producto_terminado.receta_set.get()
-                cant__producida= lote.cantidad_producida
-                detalles_receta = receta.recetadetalle_set.all()
-                falta_stock = False
-                errores = []
-                decrementos = []
-                decrementar_stock = []
-                for detalle_receta in  detalles_receta:
-                    cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
-                    diferencia = detalle_receta.insumo.stock - cant_decrementar
-                    if diferencia < 0:
-                        falta_stock = True
-                        errores.append('No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(diferencia * -1),detalle_receta.insumo.get_unidad_medida_display()))
-                    else:
-                        decrementar_stock.append({"insumo":detalle_receta.insumo,"cant":cant_decrementar})
-                if falta_stock:
-                    for e in errores:
-                        messages.error(request, e)
-                    return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
-                else:
-                    for i in decrementar_stock:
-                        i["insumo"].decrementar(i["cant"])
-                        messages.success(request, 'Se decrementaron %d %s de %s '%(i["cant"],i["insumo"].get_unidad_medida_display(),i["insumo"].nombre))
-                    lote.save()
-                    lote.producto_terminado.stock +=  lote.stock_disponible
-                    lote.producto_terminado.save()
-                    messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             except:
                 messages.error(request, 'No se creo el Lote ya que no hay receta asociada al Producto')
-                print lote.pk
-                return render(request,"lotesAlta.html",{"lote_form":lote_form}) #
-
+                return render(request,"lotesAlta.html",{"lote_form":lote_form})                
+            cant__producida= lote.cantidad_producida
+            detalles_receta = receta.recetadetalle_set.all()
+            errores = []
+            decrementar_stock = []
+            for detalle_receta in  detalles_receta:
+                cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
+                diferencia = detalle_receta.insumo.stock - cant_decrementar
+                if diferencia < 0:
+                    errores.append('No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(diferencia * -1),detalle_receta.insumo.get_unidad_medida_display()))
+                else:
+                    decrementar_stock.append({"insumo":detalle_receta.insumo,"cant":cant_decrementar})
+            if len(errores) > 0:
+                for e in errores:
+                    messages.error(request, e)
+                return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
+            else:
+                for i in decrementar_stock:
+                    i["insumo"].decrementar(i["cant"])
+                    messages.warning(request, 'Se decrementaron %d %s de %s '%(i["cant"],i["insumo"].get_unidad_medida_display(),i["insumo"].nombre))
+                lote.save()
+                lote.producto_terminado.stock +=  lote.cantidad_producida
+                lote.producto_terminado.save()
+                messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
@@ -1477,9 +1459,7 @@ def hojaDeRutaAlta(request):
         if hoja_ruta_instancia.tiene_algun_producto():
             if  entregas_factory.is_valid():
                 for e in entregas_factory:
-                    print "0- etrnega form ",e
                     entrega_instancia= e.save(hoja_ruta_instancia)
-                    print "1- ENTREGA ",entrega_instancia
                     if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
                         if entrega_instancia.pedido.tipo_pedido == 3:
                             estan_productos=0
@@ -1487,20 +1467,19 @@ def hojaDeRutaAlta(request):
                                 if hoja_ruta_instancia.lleva_producto(det.producto_terminado):
                                     estan_productos += 1
                             if estan_productos == 0:    
-                                messages.error(request,"No se cargo el pedido de cambio %s "%(entrega_instancia.pedido))
-                                print "---------------"*20
-                                print "id: ",entrega_instancia.pk
-                                entrega_instancia.delete()                    
-                        
+                                messages.error(request,"No se cargo el pedido de cambio %s ya que no hay productos "%(entrega_instancia.pedido))
+
+                                entrega_instancia.delete() 
+                                continue                       
                         entrega_instancia.pedido.activo=False #marco como entregado
                         entrega_instancia.pedido.save()
-
             else:
                 for form in entregas_factory:
                     for k,error in form.errors.items():
-                        print "error ",error
                         messages.error(request,error)                
                 return redirect("hojaDeRuta")
+                if not hoja_ruta_instancia.tiene_alguna_entrega:
+                    messages.error(request,"No hay ningun pedido para la Hoja de Ruta ")
         else:
             hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
