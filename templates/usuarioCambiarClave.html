@@ -38,7 +38,6 @@
 
 <!--                    <a class="btn btn-primary" href = "{% url 'usuarioEditar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-pencil" aria-hidden="true"> Aceptar </span></b></font></a> -->
                     <a class="btn btn-danger pull-right" href = "javascript:history.back()" ><font face="tahoma" ><b><span class="glyphicon glyphicon-remove" aria-hidden="true"> Cancelar </span></b></font></a>
-                    <!--<a class="btn btn-primary" href = "{% url 'usuarioCambiarClave' %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>-->
                     <button id ="cambiar-clave" type="button"  class="btn btn-primary"><font face="tahoma" ><b><span  class="glyphicon glyphicon-start" aria-hidden="true"> Aceptar </span></b></font></button>
                     {% endbuttons %}
                 </div>
@@ -54,7 +53,7 @@
         function cambiar(){
             var password = $("#pass").val();
             var password2 = $("#pass2").val();
-            if (password == password2){
+            if (password != password2){
                  BootstrapDialog.show({
                     title: "Error",
                     cssClass: 'error-dialog',
@@ -66,9 +65,18 @@
                                 dialogRef.close();
                  }}]});
             }else{
+                alert(password);
+                dato = JSON.stringify(password);
+                console.log(dato);
+                alert(dato);
                 $.ajax({
-                    method: "GET",
-                    url:'usuarioCambiarClave/{{usuario.pk}}/password/'
+                    method: "get",
+                    data: {'passw':password},
+                    dataType: 'json',
+                    url:'{% url 'usuarioCambiarClaveAjax' user.pk %}',
+                    success: function(){
+                        window.open('{% url 'usuario' %}',"_self")
+                    }
                 });
             }
         };

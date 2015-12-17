@@ -36,11 +36,13 @@ urlpatterns = [
     url(r'^signup$', views.signup, name='signup'),
     url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
     url(r'^usuarioEditar/(?P<usuario_id>[0-9]+)/$', views.usuarioEditar, name='usuarioEditar'),
-    url(r'^usuarioCambiarClave/(?P<usuario_id>[0-9]+)/(?P<password>[^/]+)/$', views.usuarioCambiarClave, name='usuarioCambiarClave'),
+    url(r'^usuarioCambiarClaveAjax/(?P<usuario_id>[0-9]+)/$', views.usuarioCambiarClave, name='usuarioCambiarClaveAjax'),
     url(r'^usuarios/admin/modificar/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminModificar,name='usuariosAdminModificar'),
     url(r'^usuarios/admin/baja/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminBaja,name='usuariosAdminBaja'),
     url(r'^usuarios/admin/modificar/quitar/grupo/(?P<usuario_id>[0-9]+)/(?P<grupo_usuario_id>[0-9]+)/$',views.usuariosAdminModificarQuitarGrupo,name='usuariosAdminModificarQuitarGrupo'),
     url(r'^usuarios/admin/modificar/agregar/grupo/(?P<usuario_id>[0-9]+)/(?P<grupo_id>[0-9]+)/$',views.usuariosAdminModificarAgregarGrupo,name='usuariosAdminModificarAgregarGrupo'),
+#/(?P<password>[^/]+)   usuarioCambiarClaveMostrar
+    url(r'^usuarioCambiarClave/(?P<usuario_id>[0-9]+)/$', views.usuarioCambiarClaveMostrar, name='usuarioCambiarClaveMostrar'),
 
 
     url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),

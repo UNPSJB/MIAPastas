@@ -39,8 +39,13 @@
 
                     </form>
                     {% buttons %}
+
+
                     <a class="btn btn-primary" href = "{% url 'usuarioEditar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-pencil" aria-hidden="true"> Editar </span></b></font></a>
-                    <a class="btn btn-primary" href = "{% url 'usuarioCambiarClave' %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>
+                    <a class="btn btn-primary" href = "{% url 'usuarioCambiarClaveMostrar' user.pk %}"><font face="tahoma" ><b><span  class="glyphicon glyphicon-lock" aria-hidden="true"> Cambiar clave </span></b></font></a>
+                    
+
+
 
                     {% endbuttons %}
                 </div>
@@ -58,7 +63,9 @@
         }
 
         function cambiar_clave(){
-            window.open('/usuario/clave/'+id+'',"_self")
+            alert(user.pk)
+            window.open('usuarioCambiarClave/{{user.pk}}/password/',"_self")
+            //window.open('/usuario/clave/'+id+'',"_self")
         }
 
         $("#editar-usuario").click(editar);

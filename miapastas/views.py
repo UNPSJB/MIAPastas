@@ -11,10 +11,12 @@ from django.http.response import HttpResponseRedirect
 from django.shortcuts import render_to_response
 from django.shortcuts import get_object_or_404
 from django.template.context import RequestContext
+from django.core import serializers
 
 from forms import SignUpForm, UsuarioEditarForm
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.decorators import permission_required
+import json
 
 from recetas import models
 from recetas import views
@@ -140,11 +142,21 @@ def usuarioEditar(request ,usuario_id):
 
 
 @login_required()
-def usuarioCambiarClave(request,usuario_id,password):
+def usuarioCambiarClave(request,usuario_id):    
+    password = request.GET['passw']
     usuario = auth_models.User.objects.get(pk=usuario_id)
     usuario.set_password(password)
     usuario.save()
-    return redirect('usuario')
+    messages.success(request,"Se realizo el cambio de clave")
+    return HttpResponse(json.dumps("ok"),content_type='json')
+
+
+
+@login_required()
+def usuarioCambiarClaveMostrar(request,usuario_id):
+    print "ENNN usuarioCambiarClaveMostrar"
+    usuario = auth_models.User.objects.get(pk=usuario_id)
+    return render(request, "usuarioCambiarClave.html", {"user":usuario})
 
 
 
