@@ -60,7 +60,7 @@ class ChoferForm(forms.ModelForm):
     
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -241,7 +241,7 @@ class ProveedorForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -303,7 +303,7 @@ class ProveedorModificarForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -343,9 +343,12 @@ class ProductoTerminadoForm(forms.ModelForm):
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
-        if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
-            raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
+       # if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
+        #    raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
         return nombre
+
+    '''
+
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
@@ -357,8 +360,7 @@ class ProductoTerminadoForm(forms.ModelForm):
             return cuit
         raise ValidationError("Cuit no valido")
         return cuit
-    '''
-    def save(self):
+        def save(self):
         producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
         print "EN FORM PRODDDDDDD",producto
         if producto.exists():
@@ -532,7 +534,7 @@ class ClienteModificarForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -591,7 +593,7 @@ class ClienteAltaForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:

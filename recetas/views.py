@@ -485,7 +485,7 @@ def proveedoresAlta(request):
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):
     p = models.Proveedor.objects.get(pk=proveedor_id)
-    messages.success(request, 'El Proveedor '+p.razon_social+', ha sido modificado correctamente.')
+    messages.success(request, 'El Proveedor '+p.razon_social+', ha sido dado de baja correctamente.')
     p.delete()
     #p.activo=False
     #p.save()

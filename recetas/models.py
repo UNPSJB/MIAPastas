@@ -163,7 +163,6 @@ class ProductoTerminado(models.Model):
     #http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/
     activo = models.BooleanField(default=True)
 
-    
 
     class Meta:
         permissions = (
@@ -175,7 +174,8 @@ class ProductoTerminado(models.Model):
         lotes = self.lote_set.all()
         cantidad = 0
         for lote in lotes: #hay que obtener la cantidad disponible en el deposito
-            cantidad += lote.stock_disponible - lote.stock_reservado
+            if lote.fecha_vencimiento >= date.today():
+                cantidad += lote.stock_disponible - lote.stock_reservado
         return cantidad
 
 
@@ -220,7 +220,7 @@ class Proveedor(models.Model):
     razon_social = models.CharField(max_length=100, unique=True)
     nombre_dueno = models.CharField(max_length=100)
     direccion = models.CharField(max_length=100)
-    email = models.CharField(max_length = 50) #blank=True indica que puede estar el campo vacio
+    email = models.EmailField(max_length = 50) #blank=True indica que puede estar el campo vacio
     localidad = models.CharField(max_length=50)
     numero_cuenta= models.PositiveIntegerField(unique=True)
     provincia = models.CharField(max_length=50)
