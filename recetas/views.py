@@ -752,6 +752,7 @@ def clientesModificar(request,cliente_id = None):
                 cliente_form = forms.ClienteModificarForm(initial={'cuit':cliente_instancia.cuit,'razon_social':cliente_instancia.razon_social,'nombre_dueno':cliente_instancia.nombre_dueno,'ciudad':cliente_instancia.ciudad,'direccion':cliente_instancia.direccion,'telefono':cliente_instancia.telefono,'email':cliente_instancia.email,'es_moroso':cliente_instancia.es_moroso})
                 return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
             cliente_form.save()
+            messages.success(request, 'El Cliente ha sido modificado correctamente.')
             return redirect('clientes')
         else:
             return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
@@ -770,6 +771,7 @@ def clientesAlta(request):
         cliente_form = forms.ClienteAltaForm(request.POST)
         if cliente_form.is_valid():
             cliente_form.save()
+            messages.success(request, 'El Cliente ha sido dado de alta correctamente.')
             return redirect('clientes')
     else:
         cliente_form = forms.ClienteAltaForm()
@@ -789,6 +791,7 @@ def clientesBaja(request,cliente_id =None):
         p.activo=False
         p.save()
         #p.delete()
+        messages.success(request, 'El Cliente ha sido dado dado de baja correctamente.')
     return redirect('clientes')
 
 
@@ -1299,6 +1302,7 @@ def lotes(request,lote_id=None):
 @permission_required('recetas.change_lote')
 def lotesModificar(request,lote_id=None):
     lote_instancia = models.Lote.objects.get(pk=lote_id)
+    #messages.success(request, 'Lote N ' + str(lote_instancia.nro_lote) + ' creado para el Producto: ' + str(lote_instancia.producto_terminado))
     return render(request,"lotesModificar.html",{"lote_form_modificar":forms.LoteForm() ,"lote_instancia":lote_instancia,"id":lote_id})
 
 
@@ -1317,32 +1321,37 @@ def lotesAlta(request):
             print "MIRAR ESTO"
             print lote.producto_terminado, lote.pk
             lote.stock_disponible = lote.cantidad_producida #stock inicial
-            #lote.save()
-            # actualizo stock del producto
-            lote.producto_terminado.stock +=  lote.stock_disponible
-            #lote.producto_terminado.save()
-            # disminuye stock de insumos
+            
             try:
                 receta = lote.producto_terminado.receta_set.get()
-                print receta ,"receeeeee"
                 cant__producida= lote.cantidad_producida
                 detalles_receta = receta.recetadetalle_set.all()
+                falta_stock = False
+                errores = []
+                decrementos = []
+                decrementar_stock = []
                 for detalle_receta in  detalles_receta:
                     cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
-                    detalle_receta.insumo.decrementar(cant_decrementar)
-                    if detalle_receta.insumo.stock < 0:
-                        messages.error(request, 'No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(detalle_receta.insumo.stock * -1),detalle_receta.insumo.get_unidad_medida_display()))
-                        return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
+                    diferencia = detalle_receta.insumo.stock - cant_decrementar
+                    if diferencia < 0:
+                        falta_stock = True
+                        errores.append('No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(diferencia * -1),detalle_receta.insumo.get_unidad_medida_display()))
                     else:
-                        messages.success(request, 'Se decrementaron %d %s de %s '%(cant_decrementar,detalle_receta.insumo.get_unidad_medida_display(),detalle_receta.insumo.nombre))
-                        print "LOTEEE", lote.pk, "___",lote.fecha_produccion
-
-                        lote.save()
-                        lote.producto_terminado.save()
-                        detalle_receta.insumo.save()
+                        decrementar_stock.append({"insumo":detalle_receta.insumo,"cant":cant_decrementar})
+                if falta_stock:
+                    for e in errores:
+                        messages.error(request, e)
+                    return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
+                else:
+                    for i in decrementar_stock:
+                        i["insumo"].decrementar(i["cant"])
+                        messages.success(request, 'Se decrementaron %d %s de %s '%(i["cant"],i["insumo"].get_unidad_medida_display(),i["insumo"].nombre))
+                    lote.save()
+                    lote.producto_terminado.stock +=  lote.stock_disponible
+                    lote.producto_terminado.save()
+                    messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             except:
                 messages.error(request, 'No se creo el Lote ya que no hay receta asociada al Producto')
-                print "asasdsadas--------"
                 print lote.pk
                 return render(request,"lotesAlta.html",{"lote_form":lote_form}) #
 
@@ -1434,14 +1443,27 @@ def hojaDeRutaAlta(request):
         for p_llevado in prod_llevados_factory:
             if p_llevado.is_valid():
                  p_llevado.save(hoja_ruta_instancia)
-            #print "ERRORES ",p_llevado.errors.as_data()
         if hoja_ruta_instancia.tiene_algun_producto():
             if  entregas_factory.is_valid():
                 for e in entregas_factory:
+                    print "0- etrnega form ",e
                     entrega_instancia= e.save(hoja_ruta_instancia)
+                    print "1- ENTREGA ",entrega_instancia
                     if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
+                        if entrega_instancia.pedido.tipo_pedido == 3:
+                            estan_productos=0
+                            for det in entrega_instancia.pedido.pedidoclientedetalle_set.all():
+                                if hoja_ruta_instancia.lleva_producto(det.producto_terminado):
+                                    estan_productos += 1
+                            if estan_productos == 0:    
+                                messages.error(request,"No se cargo el pedido de cambio %s "%(entrega_instancia.pedido))
+                                print "---------------"*20
+                                print "id: ",entrega_instancia.pk
+                                entrega_instancia.delete()                    
+                        
                         entrega_instancia.pedido.activo=False #marco como entregado
                         entrega_instancia.pedido.save()
+
             else:
                 for form in entregas_factory:
                     for k,error in form.errors.items():

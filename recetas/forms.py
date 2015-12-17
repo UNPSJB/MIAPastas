@@ -96,12 +96,18 @@ class ModificarStockInsumoForm(forms.Form):
     cantidad = forms.IntegerField()
     unidad_medida = forms.ChoiceField(choices=models.Insumo.UNIDADES)
     unidad_medida.empty_label="(----)"
+    
+    def clean_cantidad(self):
+        # tenbgo que validar que la cantidad no deje en negativo al stock de insumo#
+        cantidad = self.cleaned_data["cantidad"]
+        if self.cleaned_data["insumo"].stock + cantidad < 0:
+            raise ValidationError("No puede quedar el stock en Negativo")
+        return cantidad
+
     def save(self):
         insumo = self.cleaned_data["insumo"]
         cantidad = self.cleaned_data["cantidad"]
         unidad_medida = self.cleaned_data["unidad_medida"]
-        print "cantidad: ",cantidad
-        print "unidad_medida: ",unidad_medida
         insumo.modificar_stock(cantidad,int(unidad_medida))
         insumo.save()
 
@@ -336,7 +342,7 @@ class ProductoTerminadoForm(forms.ModelForm):
         return nombre
     '''
     def save(self):
-        producto = models.ProductoTerminado.eliminados.filter(nombre=self.cleaned_data['nombre'])
+        producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
         print "EN FORM PRODDDDDDD",producto
         if producto.exists():
             producto = producto.first()
@@ -897,6 +903,7 @@ class EntregaForm(forms.ModelForm):
         entrega = super(EntregaForm, self).save(commit=False)
         entrega.hoja_de_ruta = hoja_de_ruta
         entrega.save()
+        print "pk desde form", entrega.pk
         return entrega
 
     def clean_pedido(self):
