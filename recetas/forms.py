@@ -284,9 +284,10 @@ class ProductoTerminadoForm(forms.ModelForm):
         fields = ["nombre","precio","dias_vigencia"]
 
 
-
     def __init__(self, *args, **kwargs):
         super(ProductoTerminadoForm, self).__init__(*args, **kwargs)
+        self.fields['nombre'].label = "Nombre ( * )"
+        self.fields['dias_vigencia'].label = "Dias Vigencia ( * )"
         self.fields['precio'].label = "Precio Bolsin ( * )"
 
     def clean_nombre(self):
