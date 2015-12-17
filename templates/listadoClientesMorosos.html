@@ -49,7 +49,7 @@
                                     <td><a href="{% url 'ciudadConsulta' cliente.ciudad.id %}">{{cliente.ciudad}}</a></td>
                                     <td>{{cliente.direccion}}</td>
                                     <td>{{cliente.telefono}}</td>
-                                    <td>{{cliente.saldo}}</td>
+                                    <td>${{cliente.saldo}}</td>
                                 </tr>
                                 {% endfor %}
                               </tbody>
@@ -65,7 +65,7 @@
                     <div class="form-group">
                         <label for="totalAdeudado">TOTAL ADEUDADO</label>
                         <input type="text" class="form-control"
-                               value="{%saldos_totales clientes%}"
+                               value="${%saldos_totales clientes%}"
                                name="totalAdeudado" id="totalAdeudado" READONLY>
 
                     </div>

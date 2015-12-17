@@ -127,7 +127,7 @@ class InsumoForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(InsumoForm, self).__init__(*args, **kwargs)
         self.fields['nombre'].label = "Nombre ( * )"
-        self.fields['descripcion'].label = "Dscripcion ( * )"
+        self.fields['descripcion'].label = "Descripcion ( * )"
         self.fields['unidad_medida'].label = "Unidad de Medida ( * )"
 
 class RecetaForm(forms.ModelForm):
@@ -340,7 +340,7 @@ class ProductoTerminadoForm(forms.ModelForm):
         #if nombre.isalpha:
          #   raise ValidationError('El nombre debe tener solo letras.')
         return nombre
-
+    '''
     def save(self):
         producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
         print "EN FORM PRODDDDDDD",producto
@@ -352,7 +352,7 @@ class ProductoTerminadoForm(forms.ModelForm):
         else:
             print "NO EXISTEEEEEEEEE"
             return super(ProductoTerminadoForm, self).save()
-        
+    ''' 
 
 
 
@@ -371,7 +371,7 @@ class LoteStockForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LoteStockForm, self).__init__(*args, **kwargs)
         self.fields['stock_disponible'].label = "Stock (*)"
-        self.fields['cantidad_producida'].label = "producida(*)"
+        self.fields['cantidad_producida'].label = "Cantidad producida(*)"
         self.fields['cantidad'].label = "Cantidad ( * )"
         self.mensaje_error = ""
 
@@ -708,7 +708,7 @@ class PedidoClienteFijoForm(forms.ModelForm):
         if fecha < datetime.date.today() and self.my_arg == None:
             raise ValidationError("Fecha de inicio debe ser mayor o igual a la fecha actual")
         return fecha
-
+        
     def __init__(self, *args, **kwargs):
         self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteFijoForm, self).__init__(*args, **kwargs)
@@ -716,9 +716,7 @@ class PedidoClienteFijoForm(forms.ModelForm):
         self.fields['fecha_inicio'].label = "Fecha inicio (*)"
         self.fields['fecha_cancelacion'].label = "Fecha cancelacion"
         self.fields['dias'].label = "Dias (*)"
-
-
-
+        
 
 class PedidoClienteDetalleForm(forms.ModelForm):
     ''' 
@@ -737,13 +735,14 @@ class PedidoClienteOcacionalForm(forms.ModelForm):
         exclude = ['productos','tipo_pedido','activo']
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
-
+    
     def __init__(self, *args, **kwargs):
         self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteOcacionalForm, self).__init__(*args, **kwargs)
+        
         self.fields['cliente'].label = "Cliente (*)"
         self.fields['fecha_entrega'].label = "Fecha de entrega (*)"
-
+    
     def clean(self):
         ''' Metodo que realiza validaciones sobre los campos del Formulario.
             Se valida que el cliente no tenga pedidos ocacionales para ese mismo dia      
@@ -788,13 +787,13 @@ class PedidoClienteCambioForm(forms.ModelForm):
         widgets = {
            'fecha_entrega': forms.DateInput(attrs={'class': 'datepicker'})}
         exclude = ['productos','tipo_pedido','activo']
-
+    
     def __init__(self, *args, **kwargs):
         self.my_arg = kwargs.pop('my_arg') if 'my_arg' in kwargs else None
         super(PedidoClienteCambioForm, self).__init__(*args, **kwargs)
         self.fields['cliente'].label = "Cliente (*)"
         self.fields['fecha_entrega'].label = "Fecha de entrega (*)"
-
+    
     def clean(self):
             ''' 
                 Metodo que realiza validaciones sobre los campos del Formulario.
@@ -843,7 +842,11 @@ class LoteForm(forms.ModelForm):
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
         }
 
-
+    def __init__(self, *args, **kwargs):
+        super(LoteForm, self).__init__(*args, **kwargs)
+        self.fields['producto_terminado'].label = "Producto terminado ( * )"
+        self.fields['fecha_produccion'].label = "Fecha produccion ( * )"
+        self.fields['cantidad_producida'].label = "Cantidad producida ( * )"
     
     def save(self,commit=True):
         print "en metodo save del form de Lote"

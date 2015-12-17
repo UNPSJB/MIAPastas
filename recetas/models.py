@@ -17,6 +17,7 @@ class ManagerBajasLogicas(models.Manager):
     def get_queryset(self):
         return super(ManagerBajasLogicas, self).get_queryset().filter(activo=self.activo)
 
+
 '''
 class ManagerActivosHojasRutas(models.Manager):
     def get_queryset(self):
@@ -76,8 +77,6 @@ def stock_docena(cant):
 
 class Insumo(models.Model):
     FILTROS = ['nombre__icontains', 'stock__lte']
-
-
 
     NONE = 0
     GRAMO = 1
@@ -162,8 +161,7 @@ class ProductoTerminado(models.Model):
     activo = models.BooleanField(default=True)
     # Managers de chofer
 
-
-
+    
 
     class Meta:
         permissions = (

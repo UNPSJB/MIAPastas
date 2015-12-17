@@ -534,6 +534,8 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 
+
+"""
 def productosTerminadosAltaAjax(request):
     nombre = request.GET['nombre']
     nombre = forms.texto_lindo(nombre, True)
@@ -543,11 +545,8 @@ def productosTerminadosAltaAjax(request):
         return HttpResponse(json.dumps("1"),content_type='json')
     except:
         return HttpResponse(json.dumps("0"),content_type='json')
-    
 
 
-
-"""
 def productosTerminadosAlta(request):
     if request.method == "POST":
         producto_form = forms.ProductoTerminadoForm(request.POST)
@@ -567,7 +566,6 @@ def productosTerminadosAlta(request):
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 """
-
 
 
 @login_required()
@@ -931,6 +929,7 @@ def pedidosClientes(request,pedido_id=None):
         clientes = models.Cliente.objects.all()
         totales=dict()
         for pedido in pedidos:
+            print pedido.productos.all(), "ACAAAAAAAAaaaaaaaaaaaaaAA"
             for producto in pedido.productos.all():
                 if producto in totales:
                     totales[producto]=totales[producto]+producto.pedidoclientedetalle_set.all().get(pedido_cliente=pedido).cantidad_producto
@@ -1304,6 +1303,7 @@ def lotes(request,lote_id=None):
 @permission_required('recetas.change_lote')
 def lotesModificar(request,lote_id=None):
     lote_instancia = models.Lote.objects.get(pk=lote_id)
+    #messages.success(request, 'Lote N ' + str(lote_instancia.nro_lote) + ' creado para el Producto: ' + str(lote_instancia.producto_terminado))
     return render(request,"lotesModificar.html",{"lote_form_modificar":forms.LoteForm() ,"lote_instancia":lote_instancia,"id":lote_id})
 
 
@@ -1350,6 +1350,7 @@ def lotesAlta(request):
                     lote.save()
                     lote.producto_terminado.stock +=  lote.stock_disponible
                     lote.producto_terminado.save()
+                    messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             except:
                 messages.error(request, 'No se creo el Lote ya que no hay receta asociada al Producto')
                 print lote.pk
