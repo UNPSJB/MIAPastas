@@ -292,7 +292,6 @@
     <span class="c">#http://blog.p3infotech.in/2013/enforcing-minimum-and-maximum-values-in-django-model-fields/</span>
     <span class="n">activo</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">BooleanField</span><span class="p">(</span><span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
 
-    
 
     <span class="k">class</span> <span class="nc">Meta</span><span class="p">:</span>
         <span class="n">permissions</span> <span class="o">=</span> <span class="p">(</span>
@@ -304,7 +303,8 @@
         <span class="n">lotes</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lote_set</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
         <span class="n">cantidad</span> <span class="o">=</span> <span class="mi">0</span>
         <span class="k">for</span> <span class="n">lote</span> <span class="ow">in</span> <span class="n">lotes</span><span class="p">:</span> <span class="c">#hay que obtener la cantidad disponible en el deposito</span>
-            <span class="n">cantidad</span> <span class="o">+=</span> <span class="n">lote</span><span class="o">.</span><span class="n">stock_disponible</span> <span class="o">-</span> <span class="n">lote</span><span class="o">.</span><span class="n">stock_reservado</span>
+            <span class="k">if</span> <span class="n">lote</span><span class="o">.</span><span class="n">fecha_vencimiento</span> <span class="o">&gt;=</span> <span class="n">date</span><span class="o">.</span><span class="n">today</span><span class="p">():</span>
+                <span class="n">cantidad</span> <span class="o">+=</span> <span class="n">lote</span><span class="o">.</span><span class="n">stock_disponible</span> <span class="o">-</span> <span class="n">lote</span><span class="o">.</span><span class="n">stock_reservado</span>
         <span class="k">return</span> <span class="n">cantidad</span>
 
 
@@ -349,7 +349,7 @@
     <span class="n">razon_social</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">nombre_dueno</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
     <span class="n">direccion</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
-    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="c">#blank=True indica que puede estar el campo vacio</span>
+    <span class="n">email</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">EmailField</span><span class="p">(</span><span class="n">max_length</span> <span class="o">=</span> <span class="mi">50</span><span class="p">)</span> <span class="c">#blank=True indica que puede estar el campo vacio</span>
     <span class="n">localidad</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
     <span class="n">numero_cuenta</span><span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">PositiveIntegerField</span><span class="p">(</span><span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
     <span class="n">provincia</span> <span class="o">=</span> <span class="n">models</span><span class="o">.</span><span class="n">CharField</span><span class="p">(</span><span class="n">max_length</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
