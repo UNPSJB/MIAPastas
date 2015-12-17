@@ -340,6 +340,13 @@ class ProductoTerminadoForm(forms.ModelForm):
          #   raise ValidationError('El nombre debe tener solo letras.')
         return dias_vigencia
 
+    def clean_nombre(self):
+        nombre = self.cleaned_data['nombre']
+        nombre = texto_lindo(nombre, True)
+        if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
+            raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
+        return nombre
+
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
         pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
