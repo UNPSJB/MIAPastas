@@ -838,6 +838,7 @@ class LoteForm(forms.ModelForm):
     class Meta:
         model = models.Lote
         fields = ["producto_terminado","fecha_produccion","cantidad_producida"]
+
         widgets = {
            'fecha_produccion': forms.DateInput(attrs={'class': 'datepicker'}),
         }
@@ -845,6 +846,7 @@ class LoteForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super(LoteForm, self).__init__(*args, **kwargs)
         self.fields['producto_terminado'].label = "Producto terminado ( * )"
+        self.fields['producto_terminado'].queryset = models.ProductoTerminado.objects.filter(activo=True)
         self.fields['fecha_produccion'].label = "Fecha produccion ( * )"
         self.fields['cantidad_producida'].label = "Cantidad producida ( * )"
     
@@ -875,6 +877,11 @@ class LoteForm(forms.ModelForm):
             raise ValidationError("No se puede registrar una produccion para una fecha adelantada")
         return fecha
 
+    def clean_cantidad_producida(self):
+        cantidad = self.cleaned_data["cantidad_producida"]
+        if cantidad == 0:
+            raise ValidationError("Cantidad prodcida debe ser mayor a 0")
+        return cantidad
 
 #############################################################################
 ############################################################################

@@ -39,3 +39,19 @@ for i in range(1,4):
 		producto.stock +=100
 		producto.save()
 
+
+# Recorre lotes e indica que cantidades estan reservadas y cuales fueron dadas de baja.#
+for l in models.Lote.objects.all():
+    print "LOTE: ",l.nro_lote
+    reservado = 0
+    for d in l.productosllevadosdetalle_set.all():
+        reservado +=  d.cantidad
+    print " - total Reservado: ",reservado
+    perdido = 0
+    for d in l.perdidastock_set.all():
+        perdido += d.cantidad_perdida
+    print " - total Perdido : ",perdido
+    vendido = 0
+    for d in l.productosllevadosdetalle_set.all():
+    	vendido = d.cantidad - d.cantidad_sobrante
+    print "cantidad vendida ", vendido 
