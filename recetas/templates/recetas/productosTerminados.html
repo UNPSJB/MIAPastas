@@ -43,7 +43,7 @@
               <tbody>
                                  {% for p in productos %}
                                  <tr class="renglon select-item" data-id="{{p.id}}" id="renglon-{{p.id}}" data-recetas="{{p.receta_set.exists}}">
-                                    <td>{{p.nombre}}</td>
+                                    <td>{{p.id}} {{p.nombre}}</td>
                                     <td>{{p.stock}} Bolsines</td>
                                     <td>${{p.precio}}</td>
                                     <td>{{p.receta_set.all|join:", "}}</td>

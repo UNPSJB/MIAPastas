@@ -331,7 +331,7 @@ $("#boton-sobrantes-modificar").click(function(){
         console.log(listado_productos_entregados);
         if (hay_balance()){
             noty({
-               text: 'TODO LEGAL !!!',
+               text: 'OK !',
                layout: 'topCenter',
                closeWith: ['click', 'hover'],
                type: 'success'
@@ -380,7 +380,7 @@ $("#boton-sobrantes-modificar").click(function(){
 $(".input-entregas").change(function(){        
         console.log("quitar notifi error");   
         if (input_valido(this)){                 
-            $(this).notify("bien papa!",{  autoHideDelay: 800,className:"success",position:"right top"});      
+            $(this).notify("!",{  autoHideDelay: 800,className:"success",position:"right top"});      
         }
              
     });
