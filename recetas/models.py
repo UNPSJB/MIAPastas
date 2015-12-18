@@ -128,6 +128,9 @@ class Insumo(models.Model):
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
     activo = models.BooleanField(default=True)
     
+    class Meta:
+        ordering = ['nombre']
+
     # Control de stock
     def incrementar(self, cantidad, unidad=NONE):
         self.stock += self.CONVERT[unidad](cantidad)
@@ -559,9 +562,13 @@ class HojaDeRuta(models.Model):
         return tiene            
 
     def lleva_producto(self,p):
+        lleva = False
         for prod in self.productosllevados_set.all():
             if prod == p and prod.cantidad_enviada > 0:
-                return True
+                lleva=True
+                break
+        if lleva:
+            return True
         return False
 
          
