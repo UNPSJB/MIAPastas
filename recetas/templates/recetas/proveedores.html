@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% load staticfiles %}
 {% load bootstrap3 %}
-
+{% load recetas %}
 {% block contenido %}
 <!-- Este es el formulario de recetas -->
 <div class="container">
@@ -12,7 +12,7 @@
       <form class="form-inline">
           <div class="form-group">
             <label for="cuit">Cuit</label>
-            <input type="text" class="form-control" value="{{filtros.cuit}}" id="cuit" placeholder="Jane Doe" name="cuit">
+            <input type="text" class="form-control" value="{{filtros.cuit}}" id="cuit" placeholder="NN-NNNNNNNN-N" name="cuit">
           </div>
           <div class="form-group">
             <label for="razonSocial">Razón Social</label>
@@ -45,7 +45,7 @@
             </thead>
               <tbody>
             {% for proveedor in proveedores %}
-                <tr class="renglon select-item" data-id="{{proveedor.id}}" id="renglon-{{proveedor.id}}" data-pedidos="{{proveedor.pedidoproveedor_set.exists}}">
+                <tr class="renglon select-item" data-id="{{proveedor.id}}" id="renglon-{{proveedor.id}}" data-pedidos="{{proveedor.pedidoproveedor_set.exists}}" data-pendiente="{%estado pedidosPendientes proveedor.id%}">
                       <td>{{proveedor.cuit}}</td>
                       <td>{{proveedor.razon_social}}</td>
                       <td>{{proveedor.localidad}}</td>
@@ -86,6 +86,8 @@
             var $el = $(this);          //con this se referencia al objeto de clase select-item que ocaciono el evento, el id se define en el html
             id = $el.data()["id"];
             $el.addClass("danger");
+            pendiente = $el.data()["pendiente"];
+            console.log(pendiente);
             var _renglon = "";
             tiene_pedidos = $el.data()["pedidos"] == "True";
             _renglon= "#renglon-"+id;
@@ -163,8 +165,28 @@
             if(id==undefined){
                 mostrar_error();
             }else{
-            window.open('/proveedores/Modificar/'+id+'',"_self")
-        }}
+                if(pendiente=='True')
+                {
+                    BootstrapDialog.show({
+                            title: "Esta intentando Modificar",
+                            cssClass: 'error-dialog',
+                            message: "El PROVEEDOR que intenta MODIFICAR tiene Pedido/s Pendiente/s asociado/s. Cancele, Elimine o Recepcione dichos pedidos para realizar esta accion.",
+                            type: BootstrapDialog.TYPE_DANGER,
+                            buttons: [{
+                                    label: 'Aceptar',
+                                    action: function(dialogRef){
+                                        dialogRef.close();
+                                        }
+                                        }
+                            ]
+                        });
+                }
+                else
+                {
+                    window.open('/proveedores/Modificar/'+id+'',"_self")
+                }
+            }
+        }
 
 
         function consultar(){

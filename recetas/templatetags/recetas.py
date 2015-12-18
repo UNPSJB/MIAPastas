@@ -164,7 +164,15 @@ def devolver_input_cambio(entrega,detalle):
     for a in i:
         s = s + a
     print "por retornar s"
-    return s 
+    return s
+
+@register.simple_tag
+def estado(pedidosPendientes,proveedorid):
+    bandera = False
+    for id,estado in pedidosPendientes.items():
+        if id==proveedorid:
+            return estado
+    return bandera
 
 @register.simple_tag
 def devolver_input(entrega,p_llevado):
@@ -194,3 +202,4 @@ def devolver_input(entrega,p_llevado):
     for a in i:
         s=s+a
     return s
+

@@ -116,7 +116,8 @@ def choferesAlta(request):
         chofer_form = forms.ChoferForm(request.POST)
         print chofer_form['nombre'].value, "nombre choferrrr"
         if chofer_form.is_valid():
-            chofer_form.save()
+            chofer_instancia = chofer_form.save()
+            messages.success(request, 'El Chofer '+chofer_instancia.nombre+', ha sido creado correctamente.')
             return redirect('choferes')
     else:
         chofer_form = forms.ChoferForm()
@@ -138,6 +139,7 @@ def choferesModificar(request,chofer_id =None):
         chofer_form = forms.ChoferForm(request.POST,instance= chofer_instancia)
         if chofer_form.is_valid():
             chofer_form.save()
+            messages.success(request, 'El Chofer '+chofer_instancia.nombre+', ha sido modificado correctamente.')
             return redirect('choferes')
     else:
         chofer_form = forms.ChoferForm(instance= chofer_instancia)
@@ -161,6 +163,7 @@ def choferesBaja(request,chofer_id=None):
     if len(hojas_de_ruta) == 0:
         #chofer.delete()
         chofer.activo=False
+        messages.success(request, 'El Chofer '+chofer.nombre+', ha sido eliminado correctamente.')
         chofer.save()
     else:
         messages.error(request, 'El chofer: ' + chofer.nombre + ' no se puede eliminar porque tiene hojas de rutas pendientes')
@@ -207,6 +210,7 @@ def insumosAlta(request):
         insumo_form = forms.InsumoForm(request.POST)
         if insumo_form.is_valid():
             insumo_form.save()
+            messages.success(request, 'El Insumo ha sido dado de alta correctamente.')
             return redirect('insumos')
     else:
         insumo_form = forms.InsumoForm()
@@ -228,6 +232,7 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
         insumo_form = forms.InsumoForm(request.POST,instance= insumo_instancia)
         if insumo_form.is_valid():
             insumo_form.save()
+            messages.success(request, 'El Insumo: '+insumo_instancia.nombre+', ha sido modificado correctamente.')
         return redirect('insumos')
     else:
         insumo_form = forms.InsumoForm(instance= insumo_instancia)
@@ -423,12 +428,35 @@ def recetasBaja(request,receta_id):
 @login_required()
 @permission_required('recetas.add_proveedor')
 def proveedores(request,proveedor_id=None):
+
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
+        pedidos = p.pedidoproveedor_set.all()
+        bandera = False
+        for p in pedidos:
+            if p.estado_pedido==1:
+                bandera = True
+                break
         i = p.insumos.all()
-        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
+        pedidosPendientes = {}
+        pedidosPendientes[p.id]= bandera
+        print(pedidosPendientes,"dsadsadasdsadsadassdsdaddsadsadsa")
+        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i,"pedidosPendientes":pedidosPendientes})
     filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
+    pedidosPendientes = {}
+    bandera = False
+    print("que onda!!!")
+    for proveedor in proveedores:
+        pedidos = proveedor.pedidoproveedor_set.all()
+        for p in pedidos:
+            if p.estado_pedido==1:
+                bandera=True
+                break
+        pedidosPendientes[proveedor.id] = bandera
+        bandera = False
+    print("procese todo")
+
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
@@ -436,7 +464,8 @@ def proveedores(request,proveedor_id=None):
             return redirect('proveedores')
     else:
         proveedores_form = forms.ProveedorForm()
-    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+        print("entre al eslse")
+    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters,"pedidosPendientes":pedidosPendientes})
 
 @login_required()
 @permission_required('recetas.add_proveedor')
@@ -448,6 +477,7 @@ def proveedoresAlta(request):
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
             proveedor_instancia=proveedores_form.save()
+            messages.success(request, 'El Proveedor '+proveedor_instancia.razon_social+', ha sido dado de alta correctamente.')
             return redirect('proveedores')
         else:
             error = True    
@@ -463,6 +493,7 @@ def proveedoresAlta(request):
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):
     p = models.Proveedor.objects.get(pk=proveedor_id)
+    messages.success(request, 'El Proveedor '+p.razon_social+', ha sido modificado correctamente.')
     p.delete()
     #p.activo=False
     #p.save()
@@ -482,6 +513,7 @@ def proveedoresModificar(request,proveedor_id =None):
         proveedor_form = forms.ProveedorModificarForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
             proveedor_form.save()
+            messages.success(request, 'El Proveedor '+proveedor_instancia.razon_social+', ha sido modificado correctamente.')
             return redirect('proveedores')
         else:
             error = True
@@ -516,47 +548,38 @@ def productosTerminados(request,producto_id=None):
 @login_required()
 @permission_required('recetas.add_productoterminado')
 def productosTerminadosAlta(request):
+    print "AN ALTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
     if request.method == "POST":
         producto_form = forms.ProductoTerminadoForm(request.POST)
         if producto_form.is_valid():
             producto_form.save()
+            messages.success(request, 'El producto se dio de alta correctamente.')
+
             return redirect('productosTerminados')
     else:
         producto_form = forms.ProductoTerminadoForm()
     return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
 
 
-"""
-def productosTerminadosAltaAjax(request):
+
+def productosTerminadosAltaAjax(request,producto_id=None):
     nombre = request.GET['nombre']
     nombre = forms.texto_lindo(nombre, True)
-    print "EN AJAXXXXX", nombre
+    if producto_id == "2":
+        print "En el dos lpmmmmmmmmmmmmmmmmmmmmmmmmmmmmm"
+        producto = models.ProductoTerminado.objects.get(nombre=nombre)
+        producto.activo=True
+        producto.save()
+        messages.success(request, 'El producto: ' + producto.nombre +' se dio de alta nuevamente.')
+        return HttpResponse(json.dumps("1"),content_type='json')
     try:
-        producto = models.ProductoTerminado.eliminados.get(nombre=nombre)
+        producto = models.ProductoTerminado.objects.get(nombre=nombre)
+        if producto.activo== True:
+            return HttpResponse(json.dumps("0"),content_type='json')
+
         return HttpResponse(json.dumps("1"),content_type='json')
     except:
         return HttpResponse(json.dumps("0"),content_type='json')
-
-
-def productosTerminadosAlta(request):
-    if request.method == "POST":
-        producto_form = forms.ProductoTerminadoForm(request.POST)
-        if producto_form.is_valid():
-            nombre = producto_form.cleaned_data['nombre']
-            datos = models.ProductoTerminado.objects.filter(nombre__icontains=nombre)
-            if datos == None: #significa que no existe un producto con ese nombre. Ejemplo receta1 != Receta1 != ReCeTa1
-                producto_form.save()
-                messages.success(request, 'El Producto: ' + nombre + ', ha sido dado de alta correctamente.')
-                return redirect('productosTerminados')
-            else:
-                messages.error(request, 'El Producto: ' + nombre + ', ya existe.')
-                return HttpResponseRedirect('')
-                #return render(request,'productosTerminadosAlta.html',{"producto_form": producto_form})
-
-    else:
-        producto_form = forms.ProductoTerminadoForm()
-    return render(request, "productosTerminadosAlta.html", {"producto_form": producto_form})
-"""
 
 
 @login_required()
@@ -576,6 +599,7 @@ def productosTerminadosModificar(request,producto_id = None):
             print("el formulario es valido")
             producto_form.save()
             print(producto_instancia.stock)
+            messages.success(request, 'El producto: ' + producto_instancia.nombre + ', ha sido modificado correctamente.')
             return redirect('productosTerminados')
     else:
         producto_form = forms.ProductoTerminadoForm(instance= producto_instancia)
@@ -606,6 +630,7 @@ def productosTerminadosBaja(request, producto_id=None):
         messages.error(request, 'El producto: ' + p.nombre + ', se elimino correctamente junto a las recetas: %s .' % ", ".join(
             [ "%s" % r for r in p.receta_set.all()]
         ))
+        p.receta_set.get().delete()
         p.activo=False
         p.save()
     else:
@@ -659,6 +684,7 @@ def zonasAlta(request):
         zona_form = forms.ZonaForm(request.POST)
         if zona_form.is_valid():
             zona_form.save()
+            messages.success(request, 'La zona ha sido dada de alta correctamente.')
             return redirect('zonas')
     else:
         zona_form = forms.ZonaForm()
@@ -679,6 +705,7 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
         zona_form = forms.ZonaForm(request.POST,instance= zona_instancia)
         if zona_form.is_valid():
             zona_form.save()
+            messages.success(request, 'La zona '+zona_instancia.nombre+' ha sido modificada correctamente.')
         return redirect('zonas')
     else:
         zona_form = forms.ZonaForm(instance= zona_instancia)
@@ -751,6 +778,7 @@ def clientesModificar(request,cliente_id = None):
                 cliente_form = forms.ClienteModificarForm(initial={'cuit':cliente_instancia.cuit,'razon_social':cliente_instancia.razon_social,'nombre_dueno':cliente_instancia.nombre_dueno,'ciudad':cliente_instancia.ciudad,'direccion':cliente_instancia.direccion,'telefono':cliente_instancia.telefono,'email':cliente_instancia.email,'es_moroso':cliente_instancia.es_moroso})
                 return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
             cliente_form.save()
+            messages.success(request, 'El Cliente ha sido modificado correctamente.')
             return redirect('clientes')
         else:
             return render(request,"clientesModificar.html",{"cliente_form":cliente_form,"id":cliente_id})
@@ -769,6 +797,7 @@ def clientesAlta(request):
         cliente_form = forms.ClienteAltaForm(request.POST)
         if cliente_form.is_valid():
             cliente_form.save()
+            messages.success(request, 'El Cliente ha sido dado de alta correctamente.')
             return redirect('clientes')
     else:
         cliente_form = forms.ClienteAltaForm()
@@ -788,6 +817,7 @@ def clientesBaja(request,cliente_id =None):
         p.activo=False
         p.save()
         #p.delete()
+        messages.success(request, 'El Cliente ha sido dado dado de baja correctamente.')
     return redirect('clientes')
 
 
@@ -826,6 +856,7 @@ def ciudadesAlta(request):
         ciudad_form = forms.CiudadForm(request.POST)
         if ciudad_form.is_valid():
             ciudad_form.save()
+            messages.success(request, 'La ciudad ha sido dada alta correctamente.')
             return redirect('ciudades')
     else:
         ciudad_form = forms.CiudadForm()
@@ -846,6 +877,7 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
         ciudad_form = forms.CiudadForm(request.POST,instance= ciudad_instancia)
         if ciudad_form.is_valid():
             ciudad_form.save()
+            messages.success(request, 'La ciudad '+ciudad_instancia.nombre+ ' ha sido modificada correctamente.')
         return redirect('ciudades')
     else:
         ciudad_form = forms.CiudadForm(instance= ciudad_instancia)
@@ -864,6 +896,7 @@ def ciudadesBaja(request,ciudad_id =None):
         postcondicion: La ciudad ha sido dada de baja
     """
     p = models.Ciudad.objects.get(pk=ciudad_id)
+    messages.success(request, 'La ciudad '+p.nombre+ ' ha sido eliminada correctamente.')
     p.delete()
     return redirect('ciudades')
 
@@ -999,6 +1032,10 @@ def pedidosClienteBaja(request,pedido_id):
     print "en bajaaaaaaaaaaa"
     pedido = models.PedidoCliente.objects.get(pk=pedido_id)
     messages.success(request, 'El pedido: de '+pedido.cliente.razon_social + ', ha sido eliminada correctamente.')
+    if pedido.tipo_pedido == 1:
+        pedido.pedidofijo.fecha_cancelacion=date.today()
+        print pedido.pedidofijo.fecha_cancelacion, "FEHANC CANCEACONNNNNNNN"
+        pedido.pedidofijo.save()
     pedido.activo=False
     pedido.save()
     return redirect('pedidosCliente')
@@ -1124,7 +1161,7 @@ def pedidosProveedorAlta(request):
                     detalle_instancia.save()
 
 
-                messages.success(request, 'El Pedido ha sido registrada correctamente.')
+                messages.success(request, 'El Pedido Numero:'+str(pedido_proveedor_instancia.id)+' ha sido registrada correctamente.')
 
                 return redirect('pedidosProveedor')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
@@ -1174,7 +1211,7 @@ def pedidosProveedorModificar(request,pedido_id):
             if detalles_formset.is_valid():
                 print(detalles_formset)
                 detalles_formset.save()
-                messages.success(request, 'El Pedido ha sido modificado correctamente.')
+                messages.success(request, 'El Pedido Numero '+ str(pedido_proveedor_instancia.id)+' ha sido modificado correctamente.')
                 pedido_proveedor_instancia.save()
             return redirect('pedidosProveedor')
     else:
@@ -1220,7 +1257,7 @@ def pedidosProveedorRecepcionar(request,pedido_id):
                 detalle.insumo.stock +=detalle.cantidad_insumo
                 detalle.insumo.save()
                 print detalle.insumo.stock
-            messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
+            messages.success(request, 'El pedido realizado en la fecha: ' + pedido_proveedor_instancia.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + pedido_proveedor_instancia.proveedor.razon_social +', ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
     else:
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(instance=pedido_proveedor_instancia)
@@ -1358,6 +1395,7 @@ def loteStock(request,lote_id):
         lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
         if lote_form.is_valid():
             lote_form.save(lote_instancia)
+            messages.success(request, 'Lote N ' + str(lote_instancia.nro_lote) + ' modificado para el Producto: ' + str(lote_instancia.producto_terminado))
             return redirect("lotes")
     else:
         lote_form = forms.LoteStockForm(instance = lote_instancia)
