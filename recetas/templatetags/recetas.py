@@ -168,10 +168,14 @@ def devolver_input_cambio(entrega,detalle):
 
 @register.simple_tag
 def estado(pedidosPendientes,proveedorid):
+    print "EN ESTADOS"
     bandera = False
     for id,estado in pedidosPendientes.items():
         if id==proveedorid:
+            print "retorno estado",estado
             return estado
+    print "retorno bandera"
+    print bandera
     return bandera
 
 @register.simple_tag

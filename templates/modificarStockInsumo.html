@@ -8,8 +8,10 @@
         <div class="panel-heading"><p class="text-center login-title"><font face="tahoma" size="4" color="black"><b>Modificar stock insumo</b></font></p></div>
             <div class="panel-body">
                 <form action="{% url 'ModificarStockInsumos' %}" method="post" class="form" onsubmit = "return validar()">
-                    {% csrf_token %}
-                    {% bootstrap_form insumo_form layout='horizontal' %}
+                    {% csrf_token %}                    
+                        {% bootstrap_field insumo_form.insumo  layout='horizontal'%}
+                        {% bootstrap_field insumo_form.cantidad  layout='horizontal'%}
+                        {% bootstrap_field insumo_form.unidad_medida  layout='horizontal'%}
                     <p>&nbsp;</p>
                     {% buttons %}
                         <button type="submit" class="btn btn-primary">

@@ -432,16 +432,8 @@ def proveedores(request,proveedor_id=None):
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         pedidos = p.pedidoproveedor_set.all()
-        bandera = False
-        for p in pedidos:
-            if p.estado_pedido==1:
-                bandera = True
-                break
-        i = p.insumos.all()
-        pedidosPendientes = {}
-        pedidosPendientes[p.id]= bandera
-        print(pedidosPendientes,"dsadsadasdsadsadassdsdaddsadsadsa")
-        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i,"pedidosPendientes":pedidosPendientes})
+        i = p.insumos.all()        
+        return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
     filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
     pedidosPendientes = {}
@@ -1454,8 +1446,7 @@ def hojaDeRuta(request):
 
 @login_required()
 @permission_required('recetas.add_hojaderuta')
-def hojaDeRutaAlta(request):
-     
+def hojaDeRutaAlta(request):     
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
@@ -1473,10 +1464,9 @@ def hojaDeRutaAlta(request):
                             estan_productos=0
                             for det in entrega_instancia.pedido.pedidoclientedetalle_set.all():
                                 if hoja_ruta_instancia.lleva_producto(det.producto_terminado):
-                                    estan_productos += 1
+                                    estan_productos = estan_productos + 1
                             if estan_productos == 0:    
-                                messages.error(request,"No se cargo el pedido de cambio %s ya que no hay productos "%(entrega_instancia.pedido))
-
+                                messages.warning(request,"No se cargo el pedido de cambio %s ya que no hay productos "%(entrega_instancia.pedido))
                                 entrega_instancia.delete() 
                                 continue                       
                         entrega_instancia.pedido.activo=False #marco como entregado
@@ -1484,17 +1474,17 @@ def hojaDeRutaAlta(request):
             else:
                 for form in entregas_factory:
                     for k,error in form.errors.items():
-                        messages.error(request,error)                
-                return redirect("hojaDeRuta")
-                if not hoja_ruta_instancia.tiene_alguna_entrega:
-                    messages.error(request,"No hay ningun pedido para la Hoja de Ruta ")
+                        messages.warning(request,error)                
+                return redirect("hojaDeRuta")                
         else:
-            hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
             return redirect("hojaDeRuta")
-
+        if not hoja_ruta_instancia.tiene_alguna_entrega():
+            hoja_ruta_instancia.delete()
+            messages.error(request,"NO se creo la hoja de ruta ya que no hay ningun Pedido para la Hoja de Ruta ")
+            return redirect("hojaDeRuta")
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
-
+    
 
 
 

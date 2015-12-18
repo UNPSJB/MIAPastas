@@ -550,20 +550,26 @@ class HojaDeRuta(models.Model):
                             "cantidad_pedida":p.cantidad_pedida}) 
         return totales
 
+    def tiene_alguna_entrega(self):
+        if len(self.entrega_set.all()) > 0:
+            return True
+        return False    
+
     def tiene_algun_producto(self):
-        print "en tiene algun prod"
         tiene = False
         for p in self.productosllevados_set.all():
             if p.cantidad_enviada > 0:
                 tiene = True
                 break
-        print "retorno : ",tiene
-        return tiene            
+        if tiene:
+            return True
+        return False
+                    
 
     def lleva_producto(self,p):
         lleva = False
         for prod in self.productosllevados_set.all():
-            if prod == p and prod.cantidad_enviada > 0:
+            if prod.producto_terminado == p and prod.cantidad_enviada > 0:
                 lleva=True
                 break
         if lleva:
