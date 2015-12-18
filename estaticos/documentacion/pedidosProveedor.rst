@@ -1,4 +1,4 @@
-﻿Proveedores
+﻿Pedidos a Proveedores
 ====================================
 .. image:: _static/pedidos_proveedores/pedidos_ini.jpg
 

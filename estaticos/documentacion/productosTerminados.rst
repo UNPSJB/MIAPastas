@@ -35,6 +35,7 @@ Alta Producto Terminado
 
 .. image:: _static/productos_terminados/producto_alta.jpg
 
+
 (1)	Nombre de la sección en la que nos ubicamos, (2) descripción del producto a crear, (3) botón de guardar.
 
 
@@ -43,7 +44,9 @@ Eliminar Producto Terminado
 
 Seleccionar con un click el producto a eliminar, luego hacer click sobre el ícono de eliminar.
 
-.. image:: _static/products_terminados/producto_eliminar.jpg
+
+.. image:: _static/productos_terminados/productos_eliminar.jpg
+
 
 Al eliminar el producto terminado se elimina la receta asociada.
 

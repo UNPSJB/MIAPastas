@@ -167,7 +167,8 @@ function validarForm(){
             return true;
         }
     }
-    alert("El pedido debe tener al menos un detalle");
+    $("#id_producto").notify("El pedido debe tener al menos un detalle",{position:"top right"});
+
     return false;
 }
 
@@ -221,10 +222,10 @@ $(function() {
         var producto = Number($("#id_producto").val());
         var texto = document.getElementById('id_producto').options[document.getElementById('id_producto').selectedIndex].text;
         if ((cantidad == "") || (producto == "")){
-            alert("Debe llenar todos los campos");
+            $("#id_producto").notify("Debe llenar todos los campos",{position:"top right"});
         }else{
             if (!esFloatPositivo(cantidad)){
-                alert("debe ingresar una cantidad valida");
+                $("#cantidadProducto").notify("debe ingresar una cantidad valida",{position:"top right"});
             }else{
                  var ins = _.find(detalles,{producto:producto});
                  if ((ins != undefined && ins.delete_form == "on") || (ins==undefined)){
@@ -238,7 +239,7 @@ $(function() {
                         console.log(detalles);
                         armar_tabla();
                  }else{
-                    alert("Producto ya cargado");
+                    $("#id_producto").notify("Producto ya cargado",{position:"top right"});
                  }
             }
         }
