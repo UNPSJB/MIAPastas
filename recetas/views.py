@@ -432,7 +432,7 @@ def proveedores(request,proveedor_id=None):
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
         pedidos = p.pedidoproveedor_set.all()
-        i = p.insumos.all()        
+        i = p.insumos.all()
         return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
     filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)

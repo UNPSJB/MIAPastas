@@ -218,12 +218,12 @@ class RecetaDetalle(models.Model):
 class Proveedor(models.Model):
     FILTROS = ['cuit__icontains','razon_social__icontains','localidad__icontains']
     razon_social = models.CharField(max_length=100, unique=True)
-    nombre_dueno = models.CharField(max_length=100, unique=True)
-    direccion = models.CharField(max_length=100, unique=True)
+    nombre_dueno = models.CharField(max_length=100)
+    direccion = models.CharField(max_length=100)
     email = models.CharField(max_length = 50) #blank=True indica que puede estar el campo vacio
-    localidad = models.CharField(max_length=50, unique=True)
+    localidad = models.CharField(max_length=50)
     numero_cuenta= models.PositiveIntegerField(unique=True)
-    provincia = models.CharField(max_length=50, unique=True)
+    provincia = models.CharField(max_length=50)
     telefono= models.PositiveIntegerField()
     cuit= models.CharField(unique=True,max_length=20)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
