@@ -343,9 +343,11 @@ class ProductoTerminadoForm(forms.ModelForm):
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
-        if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
-            raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
+       # if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
+        #    raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
         return nombre
+
+    '''
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
@@ -357,8 +359,7 @@ class ProductoTerminadoForm(forms.ModelForm):
             return cuit
         raise ValidationError("Cuit no valido")
         return cuit
-    '''
-    def save(self):
+        def save(self):
         producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
         print "EN FORM PRODDDDDDD",producto
         if producto.exists():
