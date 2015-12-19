@@ -25,18 +25,18 @@ urlpatterns = [
 
 
 
-    url(r'^index$', views.index, name='index'),
+    url(r'^index/$', views.index, name='index'),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^ayuda$', views.ayuda, name='ayuda'),
-    url(r'^documentacion$',views.documentacion, name='documentacion'),
-    url(r'^login$', login, {'template_name': 'login.html', }, name="login"),
-    url(r'^logout$', logout, {'template_name': 'login.html', }, name="logout"),
-    url(r'^usuario$', views.usuario,name="usuario" ),
+    url(r'^ayuda/$', views.ayuda, name='ayuda'),
+    url(r'^documentacion/$',views.documentacion, name='documentacion'),
+    url(r'^login/$', login, {'template_name': 'login.html', }, name="login"),
+    url(r'^logout/$', logout, {'template_name': 'login.html', }, name="logout"),
+    url(r'^usuario/$', views.usuario,name="usuario" ),
 
 
 
-    url(r'^signup$', views.signup, name='signup'),
-    url(r'^usuariosAdmin$', views.usuariosAdmin, name='usuariosAdmin'),
+    url(r'^signup/$', views.signup, name='signup'),
+    url(r'^usuariosAdmin/$', views.usuariosAdmin, name='usuariosAdmin'),
     url(r'^usuarioEditar/(?P<usuario_id>[0-9]+)/$', views.usuarioEditar, name='usuarioEditar'),
     url(r'^usuarioCambiarClaveAjax/(?P<usuario_id>[0-9]+)/$', views.usuarioCambiarClave, name='usuarioCambiarClaveAjax'),
     url(r'^usuarios/admin/modificar/(?P<usuario_id>[0-9]+)/$',views.usuariosAdminModificar,name='usuariosAdminModificar'),
@@ -47,32 +47,32 @@ urlpatterns = [
     url(r'^usuarioCambiarClave/(?P<usuario_id>[0-9]+)/$', views.usuarioCambiarClaveMostrar, name='usuarioCambiarClaveMostrar'),
 
 
-    url(r'^recetasConsulta$',views.recetasConsulta,name='recetasConsulta'),
+    url(r'^recetasConsulta/$',views.recetasConsulta,name='recetasConsulta'),
 
 
-    url(r'^clientesConsulta$',views.clientesConsulta,name='clientesConsulta'),
-    url(r'^clientesModificar$',views.clientesModificar,name='clientesModificar'),
-    url(r'^proveedoresConsulta$',views.proveedoresConsulta,name='proveedoresConsulta'),
-    url(r'^proveedoresModificar$',views.proveedoresModificar,name='proveedoresModificar'),
-    url(r'^producciones$',views.producciones,name='producciones'),
-    url(r'^produccionesAlta$',views.produccionesAlta,name='produccionesAlta'),
-    url(r'^produccionesConsulta$',views.produccionesConsulta,name='produccionesConsulta'),
-    url(r'^produccionesModificar$',views.produccionesModificar,name='produccionesModificar'),
+    url(r'^clientesConsulta/$',views.clientesConsulta,name='clientesConsulta'),
+    url(r'^clientesModificar/$',views.clientesModificar,name='clientesModificar'),
+    url(r'^proveedoresConsulta/$',views.proveedoresConsulta,name='proveedoresConsulta'),
+    url(r'^proveedoresModificar/$',views.proveedoresModificar,name='proveedoresModificar'),
+    url(r'^producciones/$',views.producciones,name='producciones'),
+    url(r'^produccionesAlta/$',views.produccionesAlta,name='produccionesAlta'),
+    url(r'^produccionesConsulta/$',views.produccionesConsulta,name='produccionesConsulta'),
+    url(r'^produccionesModificar/$',views.produccionesModificar,name='produccionesModificar'),
 
-    url(r'^ciudadesModificar$',views.ciudadesModificar,name='ciudadesModificar'),
+    url(r'^ciudadesModificar/$',views.ciudadesModificar,name='ciudadesModificar'),
 
-    url(r'^listadoClientesMorosos$',views.listadoClientesMorosos,name='listadoClientesMorosos'),
-    url(r'^listadoClientesMorososFiltros$',views.listadoClientesMorososFiltros,name='listadoClientesMorososFiltros'),
-    url(r'^listadoClientesMorososExcel$',views.listadoClientesMorososExcel,name='listadoClientesMorososExcel'),
+    url(r'^listadoClientesMorosos/$',views.listadoClientesMorosos,name='listadoClientesMorosos'),
+    url(r'^listadoClientesMorososFiltros/$',views.listadoClientesMorososFiltros,name='listadoClientesMorososFiltros'),
+    url(r'^listadoClientesMorososExcel/$',views.listadoClientesMorososExcel,name='listadoClientesMorososExcel'),
 
-    url(r'^listadoProductosTerminadosDisponibles$',views.listadoProductosTerminadosDisponibles,name='listadoProductosTerminadosDisponibles'),
-    url(r'^listadoProductosTerminadosDisponiblesFiltros$',views.listadoProductosTerminadosDisponiblesFiltros,name='listadoProductosTerminadosDisponiblesFiltros'),
-    url(r'^listadoProductosTerminadosDisponiblesExcel$',views.listadoProductosTerminadosDisponiblesExcel,name='listadoProductosTerminadosDisponiblesExcel'),
+    url(r'^listadoProductosTerminadosDisponibles/$',views.listadoProductosTerminadosDisponibles,name='listadoProductosTerminadosDisponibles'),
+    url(r'^listadoProductosTerminadosDisponiblesFiltros/$',views.listadoProductosTerminadosDisponiblesFiltros,name='listadoProductosTerminadosDisponiblesFiltros'),
+    url(r'^listadoProductosTerminadosDisponiblesExcel/$',views.listadoProductosTerminadosDisponiblesExcel,name='listadoProductosTerminadosDisponiblesExcel'),
 
-    url(r'^listadoProductosMasVendidos$',views.listadoProductosMasVendidos,name='listadoProductosMasVendidos'),
-    url(r'^listadoProductosMasVendidosFiltros$',views.listadoProductosMasVendidosFiltros,name='listadoProductosMasVendidosFiltros'),
-    url(r'^listadoProductosMasVendidosExcel$',views.listadoProductosMasVendidosExcel,name='listadoProductosMasVendidosExcel'),
-    url(r'^listadoProductosMasVendidosGrafico$',views.ListadoProductosMasVendidosGrafico,name='ListadoProductosMasVendidosGrafico'),
+    url(r'^listadoProductosMasVendidos/$',views.listadoProductosMasVendidos,name='listadoProductosMasVendidos'),
+    url(r'^listadoProductosMasVendidosFiltros/$',views.listadoProductosMasVendidosFiltros,name='listadoProductosMasVendidosFiltros'),
+    url(r'^listadoProductosMasVendidosExcel/$',views.listadoProductosMasVendidosExcel,name='listadoProductosMasVendidosExcel'),
+    url(r'^listadoProductosMasVendidosGrafico/$',views.ListadoProductosMasVendidosGrafico,name='ListadoProductosMasVendidosGrafico'),
     url(r'^listadoHojasDeRutaFinalizadas/$',views.listadoHojasDeRutaFinalizadas,name='listadoHojasDeRutaFinalizadas'),
 
                     # Hechos en forms
@@ -158,19 +158,19 @@ urlpatterns = [
                 # FIN PRIMERA ENTREGA
 
     url(r'^cobrarCliente/$',recetasviews.cobrarCliente,name='cobrarCliente'),
-    url(r'^cobrarCliente/cobrarSaldo$',recetasviews.cobrarClienteClasificar,name='cobrarClienteClasificar'),
-    url(r'^cobrarCliente/facturar$',recetasviews.cobrarClienteFacturar,name='cobrarClienteFacturar'),
+    url(r'^cobrarCliente/cobrarSaldo/$',recetasviews.cobrarClienteClasificar,name='cobrarClienteClasificar'),
+    url(r'^cobrarCliente/facturar/$',recetasviews.cobrarClienteFacturar,name='cobrarClienteFacturar'),
     url(r'^cobrarCliente/Filtrado/(?P<cliente_id>[0-9]+)/$',recetasviews.cobrarClienteFiltrado,name='cobrarClienteFiltrado'),
-    url(r'^cobrarCliente/mostrarRecibos$',recetasviews.cobrarClienteMostrarRecibos,name='cobrarClienteMostrarRecibos'),
-    url(r'^cobrarCliente/facturas$',recetasviews.getFacturas,name='getFacturas'),
-    url(r'^cobrarCliente/recibos$',recetasviews.getRecibos,name='getRecibos'),
+    url(r'^cobrarCliente/mostrarRecibos/$',recetasviews.cobrarClienteMostrarRecibos,name='cobrarClienteMostrarRecibos'),
+    url(r'^cobrarCliente/facturas/$',recetasviews.getFacturas,name='getFacturas'),
+    url(r'^cobrarCliente/recibos/$',recetasviews.getRecibos,name='getRecibos'),
 
 
 
                 # INICIO SEGUNDA ENTREGA
 
-    url(r'^proveedores$',recetasviews.proveedores,name='proveedores'),
-    url(r'^proveedoresAlta$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
+    url(r'^proveedores/$',recetasviews.proveedores,name='proveedores'),
+    url(r'^proveedoresAlta/$',recetasviews.proveedoresAlta,name='proveedoresAlta'),
 
     url(r'^pedidosProveedor/$',recetasviews.pedidosProveedor,name='pedidosProveedor'),
     url(r'^pedidosProveedor/(?P<pedido_id>[0-9]+)/$',recetasviews.pedidosProveedor,name='pedidosProveedorConsulta'),
@@ -189,9 +189,9 @@ urlpatterns = [
      url(r'^hojaDeRuta/$',recetasviews.hojaDeRuta,name='hojaDeRuta'),
      url(r'^hojaDeRuta/generarTotales/$',recetasviews.generarTotales,name='generarTotales'),
      url(r'^hojaDeRuta/alta/$',recetasviews.hojaDeRutaAlta,name='hojaDeRutaAlta'),
-     url(r'^hojaDeRuta/mostrarRecibos/(?P<hoja_id>[0-9]+)$',recetasviews.HojaDeRutaMostrar,name='HojaDeRutaMostrar'),
+     url(r'^hojaDeRuta/mostrarRecibos/(?P<hoja_id>[0-9]+)/$',recetasviews.HojaDeRutaMostrar,name='HojaDeRutaMostrar'),
 
-     url(r'^rendicionDeReparto/mostrar/(?P<hoja_id>[0-9]+)$',recetasviews.RendicionDeRepartoMostrar,name='rendicionDeRepartoMostrar'),
+     url(r'^rendicionDeReparto/mostrar/(?P<hoja_id>[0-9]+)/$',recetasviews.RendicionDeRepartoMostrar,name='rendicionDeRepartoMostrar'),
      url(r'^rendicionDeReparto/mostrar/sinCobrar/$',recetasviews.rendicionHojasDeRutasSinCobrar,name='rendicionHojasDeRutasSinCobrar'),
 
 

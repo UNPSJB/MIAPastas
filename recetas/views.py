@@ -1389,7 +1389,7 @@ def hojaDeRuta(request):
         extras_factory_class = formset_factory(forms.ProductosLlevadosForm)
         entregas_factory_class = formset_factory(forms.EntregaForm)
         print productos,choferes, "EEEEEEEEEEEEEEEEEEEEEEEEE"
-        return render(request, "hojaDeRuta.html/",{"hojaDeRuta_form": hojaDeRuta_form,
+        return render(request, "hojaDeRuta.html",{"hojaDeRuta_form": hojaDeRuta_form,
                                                   "pedidos":pedidos_clientes_enviar,
                                                   "choferes":choferes,
                                                   "productos":productos,
@@ -1428,13 +1428,13 @@ def hojaDeRutaAlta(request):
                     for k,error in form.errors.items():
                         print "error ",error
                         messages.error(request,error)                
-                return redirect("hojaDeRuta/")
+                return redirect("hojaDeRuta")
         else:
             hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
-            return redirect("hojaDeRuta/")
+            return redirect("hojaDeRuta")
 
-    return redirect("HojaDeRutaMostrar/",hoja_ruta_instancia.pk)
+    return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
 
 
 
@@ -1445,7 +1445,7 @@ def hojaDeRutaAlta(request):
 @login_required()
 def HojaDeRutaMostrar(request,hoja_id):
     hoja = models.HojaDeRuta.objects.get(pk=hoja_id)
-    return render(request,"HojaDeRutaMostrar.html/",{"hoja_ruta":hoja})
+    return render(request,"HojaDeRutaMostrar.html",{"hoja_ruta":hoja})
 
 
 
@@ -1453,6 +1453,7 @@ def HojaDeRutaMostrar(request,hoja_id):
 
 @login_required()
 def generarTotales(request):
+    print "EN GENERAR TOTALES"
     pedidos_list = re.findall("\d+",request.GET['pedidos'])
     totales={}
     nombres={}
@@ -1503,8 +1504,8 @@ def rendicionReparto(request,hoja_id=None):
                 chofer.save()
                 hoja.save()
                 print "guarde la hgoja"
-            return redirect("rendicionDeRepartoMostrar/",hoja.id)
-    return render(request,"rendicionDeReparto.html/",{"hoja":hoja,
+            return redirect("rendicionDeRepartoMostrar",hoja.id)
+    return render(request,"rendicionDeReparto.html",{"hoja":hoja,
                                                      "detalles_factory":detalles_formset,
                                                      "prefix":prefix_detalles_entregas,
                                                      "prod_llevados_factory":prod_llevados_formset,
@@ -1521,7 +1522,7 @@ def rendicionHojasDeRutasSinCobrar(request):
 
     hojas = models.HojaDeRuta.objects.filter(rendida=True,pagado=False) 
     print hojas
-    return render(request,"rendicionHojasDeRutasSinCobrar.html/",{"hojas":hojas})
+    return render(request,"rendicionHojasDeRutasSinCobrar.html",{"hojas":hojas})
 
 
 
@@ -1548,14 +1549,14 @@ def RendicionDeRepartoMostrar(request,hoja_id):
             print "context"
 
             print request.session
-            return render_to_response('rendicionDeRepartoMostrar.html/',
+            return render_to_response('rendicionDeRepartoMostrar.html',
                                     {"hoja":hoja,
                                     "cobros_factory":cobros_form,
                                     "prefix_cobros":"cobros"}, 
                                     context_instance=RequestContext(request))
 
           
-    return render(request,"rendicionDeRepartoMostrar.html/",{"hoja":hoja,
+    return render(request,"rendicionDeRepartoMostrar.html",{"hoja":hoja,
                                                             "cobros_factory":cobros_form,
                                                             "prefix_cobros":"cobros"})
 
@@ -1565,7 +1566,7 @@ def RendicionDeRepartoMostrar(request,hoja_id):
 def rendicionHojasDeRutas(request):
     hojas = models.HojaDeRuta.objects.filter(rendida=False) #a futuro filtrar por hojas de rutas no rendidas
     print hojas
-    return render(request,"rendicionHojasDeRutas.html/",{"hojas":hojas})
+    return render(request,"rendicionHojasDeRutas.html",{"hojas":hojas})
 
 
 #********************************************************#
