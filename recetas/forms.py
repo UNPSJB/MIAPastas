@@ -349,6 +349,7 @@ class ProductoTerminadoForm(forms.ModelForm):
 
     '''
 
+
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
         pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
