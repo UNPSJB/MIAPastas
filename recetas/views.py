@@ -116,7 +116,8 @@ def choferesAlta(request):
         chofer_form = forms.ChoferForm(request.POST)
         print chofer_form['nombre'].value, "nombre choferrrr"
         if chofer_form.is_valid():
-            chofer_form.save()
+            chofer_instancia = chofer_form.save()
+            messages.success(request, 'El Chofer '+chofer_instancia.nombre+', ha sido creado correctamente.')
             return redirect('choferes')
     else:
         chofer_form = forms.ChoferForm()
@@ -138,6 +139,7 @@ def choferesModificar(request,chofer_id =None):
         chofer_form = forms.ChoferForm(request.POST,instance= chofer_instancia)
         if chofer_form.is_valid():
             chofer_form.save()
+            messages.success(request, 'El Chofer '+chofer_instancia.nombre+', ha sido modificado correctamente.')
             return redirect('choferes')
     else:
         chofer_form = forms.ChoferForm(instance= chofer_instancia)
@@ -161,6 +163,7 @@ def choferesBaja(request,chofer_id=None):
     if len(hojas_de_ruta) == 0:
         #chofer.delete()
         chofer.activo=False
+        messages.success(request, 'El Chofer '+chofer.nombre+', ha sido eliminado correctamente.')
         chofer.save()
     else:
         messages.error(request, 'El chofer: ' + chofer.nombre + ' no se puede eliminar porque tiene hojas de rutas pendientes')
@@ -207,6 +210,7 @@ def insumosAlta(request):
         insumo_form = forms.InsumoForm(request.POST)
         if insumo_form.is_valid():
             insumo_form.save()
+            messages.success(request, 'El Insumo ha sido dado de alta correctamente.')
             return redirect('insumos')
     else:
         insumo_form = forms.InsumoForm()
@@ -228,6 +232,7 @@ def insumosModificar(request,insumo_id =None): #zona id nunca va a ser none D:
         insumo_form = forms.InsumoForm(request.POST,instance= insumo_instancia)
         if insumo_form.is_valid():
             insumo_form.save()
+            messages.success(request, 'El Insumo: '+insumo_instancia.nombre+', ha sido modificado correctamente.')
         return redirect('insumos')
     else:
         insumo_form = forms.InsumoForm(instance= insumo_instancia)
@@ -275,15 +280,6 @@ def insumosBaja(request,insumo_id):
 def datosInsumo(request,insumo_id= None):
     insumo= models.Insumo.objects.get( pk= insumo_id)
     insumo_data = serializers.serialize('json', [insumo,])
-
-    t = request.GET['b']
-    b = request.GET['t']
-    pedidos_list = re.findall("\d+",request.GET['pedidos'])
-    for i in range(0,len(pedidos_list)):
-        #los paso a INT para buscarlos despues
-        pedidos_list[i]= int(pedidos_list[i])
-        print "pedido entero: ",pedidos_list[i]
-
     return HttpResponse(insumo_data, content_type='json')
 
 
@@ -432,12 +428,27 @@ def recetasBaja(request,receta_id):
 @login_required()
 @permission_required('recetas.add_proveedor')
 def proveedores(request,proveedor_id=None):
+
     if proveedor_id is not None:
         p = models.Proveedor.objects.get(pk=proveedor_id)
+        pedidos = p.pedidoproveedor_set.all()
         i = p.insumos.all()
         return render(request, "proveedoresConsulta.html",{"proveedor":p,"insumos":i})
     filters, mfilters = get_filtros(request.GET, models.Proveedor)
     proveedores = models.Proveedor.objects.filter(**mfilters)
+    pedidosPendientes = {}
+    bandera = False
+    print("que onda!!!")
+    for proveedor in proveedores:
+        pedidos = proveedor.pedidoproveedor_set.all()
+        for p in pedidos:
+            if p.estado_pedido==1:
+                bandera=True
+                break
+        pedidosPendientes[proveedor.id] = bandera
+        bandera = False
+    print("procese todo")
+
     if request.method == "POST":
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
@@ -445,7 +456,8 @@ def proveedores(request,proveedor_id=None):
             return redirect('proveedores')
     else:
         proveedores_form = forms.ProveedorForm()
-    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters})
+        print("entre al eslse")
+    return render(request, "recetas/proveedores.html",{"proveedores": proveedores,"proveedores_form": proveedores_form,"filtros":filters,"pedidosPendientes":pedidosPendientes})
 
 @login_required()
 @permission_required('recetas.add_proveedor')
@@ -457,6 +469,7 @@ def proveedoresAlta(request):
         proveedores_form = forms.ProveedorForm(request.POST)
         if proveedores_form.is_valid():
             proveedor_instancia=proveedores_form.save()
+            messages.success(request, 'El Proveedor '+proveedor_instancia.razon_social+', ha sido dado de alta correctamente.')
             return redirect('proveedores')
         else:
             error = True    
@@ -472,6 +485,7 @@ def proveedoresAlta(request):
 @csrf_exempt
 def proveedoresBaja(request,proveedor_id =None):
     p = models.Proveedor.objects.get(pk=proveedor_id)
+    messages.success(request, 'El Proveedor '+p.razon_social+', ha sido dado de baja correctamente.')
     p.delete()
     #p.activo=False
     #p.save()
@@ -491,6 +505,7 @@ def proveedoresModificar(request,proveedor_id =None):
         proveedor_form = forms.ProveedorModificarForm(request.POST,instance= proveedor_instancia)
         if proveedor_form.is_valid():
             proveedor_form.save()
+            messages.success(request, 'El Proveedor '+proveedor_instancia.razon_social+', ha sido modificado correctamente.')
             return redirect('proveedores')
         else:
             error = True
@@ -576,6 +591,7 @@ def productosTerminadosModificar(request,producto_id = None):
             print("el formulario es valido")
             producto_form.save()
             print(producto_instancia.stock)
+            messages.success(request, 'El producto: ' + producto_instancia.nombre + ', ha sido modificado correctamente.')
             return redirect('productosTerminados')
     else:
         producto_form = forms.ProductoTerminadoForm(instance= producto_instancia)
@@ -660,6 +676,7 @@ def zonasAlta(request):
         zona_form = forms.ZonaForm(request.POST)
         if zona_form.is_valid():
             zona_form.save()
+            messages.success(request, 'La zona ha sido dada de alta correctamente.')
             return redirect('zonas')
     else:
         zona_form = forms.ZonaForm()
@@ -680,6 +697,7 @@ def zonasModificar(request,zona_id =None): #zona id nunca va a ser none D:
         zona_form = forms.ZonaForm(request.POST,instance= zona_instancia)
         if zona_form.is_valid():
             zona_form.save()
+            messages.success(request, 'La zona '+zona_instancia.nombre+' ha sido modificada correctamente.')
         return redirect('zonas')
     else:
         zona_form = forms.ZonaForm(instance= zona_instancia)
@@ -830,6 +848,7 @@ def ciudadesAlta(request):
         ciudad_form = forms.CiudadForm(request.POST)
         if ciudad_form.is_valid():
             ciudad_form.save()
+            messages.success(request, 'La ciudad ha sido dada alta correctamente.')
             return redirect('ciudades')
     else:
         ciudad_form = forms.CiudadForm()
@@ -850,6 +869,7 @@ def ciudadesModificar(request,ciudad_id =None): #zona id nunca va a ser none D:
         ciudad_form = forms.CiudadForm(request.POST,instance= ciudad_instancia)
         if ciudad_form.is_valid():
             ciudad_form.save()
+            messages.success(request, 'La ciudad '+ciudad_instancia.nombre+ ' ha sido modificada correctamente.')
         return redirect('ciudades')
     else:
         ciudad_form = forms.CiudadForm(instance= ciudad_instancia)
@@ -868,6 +888,7 @@ def ciudadesBaja(request,ciudad_id =None):
         postcondicion: La ciudad ha sido dada de baja
     """
     p = models.Ciudad.objects.get(pk=ciudad_id)
+    messages.success(request, 'La ciudad '+p.nombre+ ' ha sido eliminada correctamente.')
     p.delete()
     return redirect('ciudades')
 
@@ -1132,7 +1153,7 @@ def pedidosProveedorAlta(request):
                     detalle_instancia.save()
 
 
-                messages.success(request, 'El Pedido ha sido registrada correctamente.')
+                messages.success(request, 'El Pedido Numero:'+str(pedido_proveedor_instancia.id)+' ha sido registrada correctamente.')
 
                 return redirect('pedidosProveedor')
         # se lo paso todo a la pagina para que muestre cuales fueron los errores.
@@ -1182,7 +1203,7 @@ def pedidosProveedorModificar(request,pedido_id):
             if detalles_formset.is_valid():
                 print(detalles_formset)
                 detalles_formset.save()
-                messages.success(request, 'El Pedido ha sido modificado correctamente.')
+                messages.success(request, 'El Pedido Numero '+ str(pedido_proveedor_instancia.id)+' ha sido modificado correctamente.')
                 pedido_proveedor_instancia.save()
             return redirect('pedidosProveedor')
     else:
@@ -1228,7 +1249,7 @@ def pedidosProveedorRecepcionar(request,pedido_id):
                 detalle.insumo.stock +=detalle.cantidad_insumo
                 detalle.insumo.save()
                 print detalle.insumo.stock
-            messages.success(request, 'El Pedido ha sido recepcionado correctamente.')
+            messages.success(request, 'El pedido realizado en la fecha: ' + pedido_proveedor_instancia.fecha_realizacion.strftime('%d/%m/%Y') + ', realizado al proveedor: ' + pedido_proveedor_instancia.proveedor.razon_social +', ha sido recepcionado correctamente.')
             return redirect('pedidosProveedor')
     else:
         pedido_proveedor_form = forms.PedidoProveedorRecepcionarForm(instance=pedido_proveedor_instancia)
@@ -1317,44 +1338,35 @@ def lotesAlta(request):
     if request.method == "POST":
         lote_form = forms.LoteForm(request.POST)
         if lote_form.is_valid():
-            lote = lote_form.save(commit = False)
-            print "MIRAR ESTO"
-            print lote.producto_terminado, lote.pk
-            lote.stock_disponible = lote.cantidad_producida #stock inicial
-            
+            lote = lote_form.save(guardar = False)
             try:
                 receta = lote.producto_terminado.receta_set.get()
-                cant__producida= lote.cantidad_producida
-                detalles_receta = receta.recetadetalle_set.all()
-                falta_stock = False
-                errores = []
-                decrementos = []
-                decrementar_stock = []
-                for detalle_receta in  detalles_receta:
-                    cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
-                    diferencia = detalle_receta.insumo.stock - cant_decrementar
-                    if diferencia < 0:
-                        falta_stock = True
-                        errores.append('No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(diferencia * -1),detalle_receta.insumo.get_unidad_medida_display()))
-                    else:
-                        decrementar_stock.append({"insumo":detalle_receta.insumo,"cant":cant_decrementar})
-                if falta_stock:
-                    for e in errores:
-                        messages.error(request, e)
-                    return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
-                else:
-                    for i in decrementar_stock:
-                        i["insumo"].decrementar(i["cant"])
-                        messages.success(request, 'Se decrementaron %d %s de %s '%(i["cant"],i["insumo"].get_unidad_medida_display(),i["insumo"].nombre))
-                    lote.save()
-                    lote.producto_terminado.stock +=  lote.stock_disponible
-                    lote.producto_terminado.save()
-                    messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             except:
                 messages.error(request, 'No se creo el Lote ya que no hay receta asociada al Producto')
-                print lote.pk
-                return render(request,"lotesAlta.html",{"lote_form":lote_form}) #
-
+                return render(request,"lotesAlta.html",{"lote_form":lote_form})                
+            cant__producida= lote.cantidad_producida
+            detalles_receta = receta.recetadetalle_set.all()
+            errores = []
+            decrementar_stock = []
+            for detalle_receta in  detalles_receta:
+                cant_decrementar =(detalle_receta.cantidad_insumo * cant__producida) / receta.cant_prod_terminado
+                diferencia = detalle_receta.insumo.stock - cant_decrementar
+                if diferencia < 0:
+                    errores.append('No se puede dar de alta el Lote. El insumo %s no tiene stock, faltan:  %d %s'%(detalle_receta.insumo,(diferencia * -1),detalle_receta.insumo.get_unidad_medida_display()))
+                else:
+                    decrementar_stock.append({"insumo":detalle_receta.insumo,"cant":cant_decrementar})
+            if len(errores) > 0:
+                for e in errores:
+                    messages.error(request, e)
+                return render(request,"lotesAlta.html",{"lote_form":lote_form}) 
+            else:
+                for i in decrementar_stock:
+                    i["insumo"].decrementar(i["cant"])
+                    messages.warning(request, 'Se decrementaron %d %s de %s '%(i["cant"],i["insumo"].get_unidad_medida_display(),i["insumo"].nombre))
+                lote.save()
+                lote.producto_terminado.stock +=  lote.cantidad_producida
+                lote.producto_terminado.save()
+                messages.success(request, 'Lote N ' + str(lote.nro_lote) + ' creado para el Producto: ' + str(lote.producto_terminado))
             return redirect("lotes")
     else:
         lote_form=forms.LoteForm()
@@ -1375,6 +1387,7 @@ def loteStock(request,lote_id):
         lote_form = forms.LoteStockForm(request.POST,instance=lote_instancia)
         if lote_form.is_valid():
             lote_form.save(lote_instancia)
+            messages.success(request, 'Lote N ' + str(lote_instancia.nro_lote) + ' modificado para el Producto: ' + str(lote_instancia.producto_terminado))
             return redirect("lotes")
     else:
         lote_form = forms.LoteStockForm(instance = lote_instancia)
@@ -1433,8 +1446,7 @@ def hojaDeRuta(request):
 
 @login_required()
 @permission_required('recetas.add_hojaderuta')
-def hojaDeRutaAlta(request):
-     
+def hojaDeRutaAlta(request):     
     hoja_form = forms.HojaDeRutaForm(request.POST)
     if hoja_form.is_valid():
         hoja_ruta_instancia = hoja_form.save()
@@ -1446,37 +1458,33 @@ def hojaDeRutaAlta(request):
         if hoja_ruta_instancia.tiene_algun_producto():
             if  entregas_factory.is_valid():
                 for e in entregas_factory:
-                    print "0- etrnega form ",e
                     entrega_instancia= e.save(hoja_ruta_instancia)
-                    print "1- ENTREGA ",entrega_instancia
                     if entrega_instancia.pedido.tipo_pedido == 2 or entrega_instancia.pedido.tipo_pedido == 3:
                         if entrega_instancia.pedido.tipo_pedido == 3:
                             estan_productos=0
                             for det in entrega_instancia.pedido.pedidoclientedetalle_set.all():
                                 if hoja_ruta_instancia.lleva_producto(det.producto_terminado):
-                                    estan_productos += 1
+                                    estan_productos = estan_productos + 1
                             if estan_productos == 0:    
-                                messages.error(request,"No se cargo el pedido de cambio %s "%(entrega_instancia.pedido))
-                                print "---------------"*20
-                                print "id: ",entrega_instancia.pk
-                                entrega_instancia.delete()                    
-                        
+                                messages.warning(request,"No se cargo el pedido de cambio %s ya que no hay productos "%(entrega_instancia.pedido))
+                                entrega_instancia.delete() 
+                                continue                       
                         entrega_instancia.pedido.activo=False #marco como entregado
                         entrega_instancia.pedido.save()
-
             else:
                 for form in entregas_factory:
                     for k,error in form.errors.items():
-                        print "error ",error
-                        messages.error(request,error)                
-                return redirect("hojaDeRuta")
+                        messages.warning(request,error)                
+                return redirect("hojaDeRuta")                
         else:
-            hoja_ruta_instancia.delete()
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
             return redirect("hojaDeRuta")
-
+        if not hoja_ruta_instancia.tiene_alguna_entrega():
+            hoja_ruta_instancia.delete()
+            messages.error(request,"NO se creo la hoja de ruta ya que no hay ningun Pedido para la Hoja de Ruta ")
+            return redirect("hojaDeRuta")
     return redirect("HojaDeRutaMostrar",hoja_ruta_instancia.pk)
-
+    
 
 
 

@@ -88,9 +88,9 @@
 
         $(".select-item").click(obtenerId);     //todos los elementos de clase "selec-item", al hacerles clic se ejecuta "obtenerId"
 
-        function eliminar() {
+       function eliminar() {
             window.open('/insumos/baja/'+id+'',"_self")
-        }
+       }
 
        function mostrar_error(){
             BootstrapDialog.show({
@@ -184,24 +184,7 @@
 
                 if (tiene_receta== true){
                     console.log("tiene detalles");
-                }else{
-                            BootstrapDialog.show({
-                                title: "Eliminar",
-                                cssClass: 'aviso-dialog',
-                                message: "¿Seguro que desea borrar?",
-                                type: BootstrapDialog.TYPE_WARNING,
-                                buttons: [{
-                                        label: 'Aceptar',
-                                        action: function(dialogRef){
-
-                                            window.open('/insumos/baja/'+id+'',"_self");
-                                            dialogRef.close();
-                                        }},{
-                                        label: 'Cancelar',
-                                        action:function(dialogRef){
-                                        dialogRef.close();
-                                }}]});
-                    }
+                }
             window.open('/insumos/'+id+'',"_self")
             }
         }

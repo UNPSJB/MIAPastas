@@ -256,6 +256,11 @@ var productosDicc = new Array();  //el key es el id_producto, y el valor es la c
 var productosNombresDicc = new Array(); //el key es el id_producto, y el valor es el nombre de ese roducto
 var productosExtrasDicc = new Array();
 
+console.log("INIZIANDO HOJA DE RUTA");
+{% if errores%}
+  var errores_view = {{errores}};
+console.log(errores_view);
+{% endif %}
 
         function mostrarModalExtras(){
 

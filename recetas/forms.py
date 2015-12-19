@@ -332,14 +332,31 @@ class ProductoTerminadoForm(forms.ModelForm):
         self.fields['precio'].label = "Precio Bolsin ( * )"
         self.fields['dias_vigencia'].label = "Dias vigencias ( * )"
 
+    def clean_dias_vigencia(self):
+        dias_vigencia = self.cleaned_data['dias_vigencia']
+        if dias_vigencia<=0:
+            raise ValidationError('La vigencia debe ser mayor a cero')
+        #if nombre.isalpha:
+         #   raise ValidationError('El nombre debe tener solo letras.')
+        return dias_vigencia
+
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
-        if models.Zona.objects.filter(nombre=nombre).exists():
+        if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
             raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
-        #if nombre.isalpha:
-         #   raise ValidationError('El nombre debe tener solo letras.')
         return nombre
+
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido")
+        return cuit
     '''
     def save(self):
         producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
@@ -848,16 +865,15 @@ class LoteForm(forms.ModelForm):
         self.fields['fecha_produccion'].label = "Fecha produccion ( * )"
         self.fields['cantidad_producida'].label = "Cantidad producida ( * )"
     
-    def save(self,commit=True):
+    def save(self,guardar = False):
         print "en metodo save del form de Lote"
-        # Sobrecargar save devuelve el objeto apunto de ser guardado
-        lote = super(LoteForm, self).save(commit=False)
+        lote = super(LoteForm, self).save(commit=False)    
         lote.stock_disponible = lote.cantidad_producida
         prod = lote.producto_terminado
         dias = prod.dias_vigencia
         delta = timedelta(days=dias)
         lote.fecha_vencimiento = lote.fecha_produccion + delta
-        if commit:
+        if guardar:
             lote.save()
         return lote
     

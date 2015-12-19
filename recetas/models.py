@@ -128,6 +128,9 @@ class Insumo(models.Model):
     unidad_medida = models.PositiveSmallIntegerField(choices=UNIDADES_BASICAS)
     activo = models.BooleanField(default=True)
     
+    class Meta:
+        ordering = ['nombre']
+
     # Control de stock
     def incrementar(self, cantidad, unidad=NONE):
         self.stock += self.CONVERT[unidad](cantidad)
@@ -215,12 +218,12 @@ class RecetaDetalle(models.Model):
 class Proveedor(models.Model):
     FILTROS = ['cuit__icontains','razon_social__icontains','localidad__icontains']
     razon_social = models.CharField(max_length=100, unique=True)
-    nombre_dueno = models.CharField(max_length=100, unique=True)
-    direccion = models.CharField(max_length=100, unique=True)
-    email = models.EmailField() #blank=True indica que puede estar el campo vacio
-    localidad = models.CharField(max_length=50, unique=True)
+    nombre_dueno = models.CharField(max_length=100)
+    direccion = models.CharField(max_length=100)
+    email = models.EmailField(max_length = 50) #blank=True indica que puede estar el campo vacio
+    localidad = models.CharField(max_length=50)
     numero_cuenta= models.PositiveIntegerField(unique=True)
-    provincia = models.CharField(max_length=50, unique=True)
+    provincia = models.CharField(max_length=50)
     telefono= models.PositiveIntegerField()
     cuit= models.CharField(unique=True,max_length=20)
     insumos= models.ManyToManyField(Insumo,related_name='proveedores')#con related_name='proveedores' los objetos insumos puede llamar a sus proveedores por "proveedores"
@@ -547,20 +550,30 @@ class HojaDeRuta(models.Model):
                             "cantidad_pedida":p.cantidad_pedida}) 
         return totales
 
+    def tiene_alguna_entrega(self):
+        if len(self.entrega_set.all()) > 0:
+            return True
+        return False    
+
     def tiene_algun_producto(self):
-        print "en tiene algun prod"
         tiene = False
         for p in self.productosllevados_set.all():
             if p.cantidad_enviada > 0:
                 tiene = True
                 break
-        print "retorno : ",tiene
-        return tiene            
+        if tiene:
+            return True
+        return False
+                    
 
     def lleva_producto(self,p):
+        lleva = False
         for prod in self.productosllevados_set.all():
-            if prod == p and prod.cantidad_enviada > 0:
-                return True
+            if prod.producto_terminado == p and prod.cantidad_enviada > 0:
+                lleva=True
+                break
+        if lleva:
+            return True
         return False
 
          
