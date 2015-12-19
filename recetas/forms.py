@@ -60,7 +60,7 @@ class ChoferForm(forms.ModelForm):
     
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -241,7 +241,7 @@ class ProveedorForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -303,7 +303,7 @@ class ProveedorModificarForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -515,7 +515,7 @@ class ClienteModificarForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:
@@ -574,7 +574,7 @@ class ClienteAltaForm(forms.ModelForm):
 
     def clean_cuit(self):
         cuit = self.cleaned_data['cuit']
-        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d$"
         result = re.match(pattern, cuit)
         print "esult ",result
         if result is not None:

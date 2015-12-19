@@ -17,7 +17,7 @@
                                 Pedido Fijo
                              {% else %}
                                 {% if tipo_pedido == "2" %}
-                                    Pedido Ocacional
+                                    Pedido Ocasional
                                 {% else %}
                                     {% if tipo_pedido == "3" %}
                                         Pedido de Cambio
@@ -146,7 +146,7 @@ function armar_tabla(){
 
 function validarForm(){
     if (_.size(detalles) == 0){
-         alert("Debe agregar al menos un detalle");
+          $("#id_producto").notify("Debe agregar al menos un detalle",{position:"top right"});
         return false;
     }else{
         armar_form();
@@ -176,17 +176,20 @@ $(function() {
 
   $("#add-detalle-receta").click(function(){
         var cantidad = parseInt($("#cantidadProducto").val());
-        var producto = parseInt($("#id_producto").val());
+        var producto = ($("#id_producto").val());
         var texto = document.getElementById('id_producto').options[document.getElementById('id_producto').selectedIndex].text;
         if ((cantidad == "") || (producto == "")){
-            alert("Debe llenar todos los campos");
+
+            $("#id_producto").notify("Debe llenar todos los campos",{position:"top right"});
+
         }else{
             if (!esEnteroPositivo(cantidad)){
-                alert("debe ingresar una cantidad valida");
+                $("#cantidadProducto").notify("debe ingresar una cantidad valida",{position:"top left"});
+
             }else{
                  var ins = _.find(detalles,{producto:producto});
                  if (ins != undefined){
-                    alert("Producto ya cargado");
+                    $("#id_producto").notify("Producto ya cargado",{position:"top right"});
                  }else{
                     detalles.push({cantidad: cantidad, producto: producto,i:"0",texto:texto});
                     armar_tabla();
