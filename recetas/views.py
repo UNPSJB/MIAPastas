@@ -932,6 +932,7 @@ def pedidosClientes(request,pedido_id=None):
         #filtros para filtrar por rango de fechas de entrega, varia para cada tipo
         filters, mfilters = get_filtros(request.GET, models.PedidoCliente)
         print "FILTROSSSS",mfilters," "
+
         pobj = Q(**mfilters)
 
         filters, mfilters = get_filtros(request.GET, models.PedidoFijo)
