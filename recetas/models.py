@@ -577,7 +577,13 @@ class HojaDeRuta(models.Model):
             return True
         return False
 
-         
+    def limpiar_reserva(self):
+        for p in self.productosllevados_set.all():
+            p.limpiar_reserva()
+    
+    def generar_detalles(self):
+        for p in self.productosllevados_set.all():
+            p.generar_detalles() 
 
 class ProductosLlevados(models.Model):
     cantidad_pedida = models.PositiveIntegerField(default=0)
@@ -610,6 +616,11 @@ class ProductosLlevados(models.Model):
         self.cantidad_enviada = (self.cantidad_pedida + self.cantidad_extra) - cantidad_buscada
         self.save()
 
+    def limpiar_reserva(self):
+        """ se encarga de devolver a cada lote, la cantidad que habia reservado """
+        print " EEEEEEEEEEEEEEEN LIMPIAR RESERVAAAA"
+        for d in self.productosllevadosdetalle_set.all():
+            d.lote.decrementar_stock_reservado(d.cantidad)
 
 class ProductosLlevadosDetalle(models.Model):
     cantidad = models.PositiveIntegerField()

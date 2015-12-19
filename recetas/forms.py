@@ -885,6 +885,8 @@ class HojaDeRutaForm(forms.ModelForm):
         self.fields['chofer'].label = "Chofer (*)"
 
 
+
+    
     
 class EntregaForm(forms.ModelForm):
     class Meta:

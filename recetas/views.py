@@ -1479,9 +1479,11 @@ def hojaDeRutaAlta(request):
                 return redirect("hojaDeRuta")                
         else:
             messages.error(request, 'No se pudo registrar la Hoja de Ruta ya que No hay productos para llevar')
+            hoja_ruta_instancia.limpiar_reserva()
             hoja_ruta_instancia.delete()
             return redirect("hojaDeRuta")
         if not hoja_ruta_instancia.tiene_alguna_entrega():
+            hoja_ruta_instancia.limpiar_reserva()
             hoja_ruta_instancia.delete()
             messages.error(request,"NO se creo la hoja de ruta ya que no hay ningun Pedido para la Hoja de Ruta ")
             return redirect("hojaDeRuta")
