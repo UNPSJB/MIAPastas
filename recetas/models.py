@@ -169,6 +169,7 @@ class ProductoTerminado(models.Model):
             ("ver_productos_terminados_disponibles", "Puede listar los productos disponibles"),
             ("ver_productos_mas_vendidos", "Puede listar los productos mas vendidos"),
         )
+        
 
     def stockDisponibleEnDeposito(self):
         lotes = self.lote_set.all()
