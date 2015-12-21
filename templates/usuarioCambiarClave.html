@@ -65,10 +65,8 @@
                                 dialogRef.close();
                  }}]});
             }else{
-                alert(password);
                 dato = JSON.stringify(password);
                 console.log(dato);
-                alert(dato);
                 $.ajax({
                     method: "get",
                     data: {'passw':password},
