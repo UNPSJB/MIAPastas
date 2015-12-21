@@ -312,6 +312,12 @@ class ProveedorModificarForm(forms.ModelForm):
         raise ValidationError("Cuit no valido")
         return cuit
 
+    
+
+
+
+
+
 
 
 class ProductoTerminadoForm(forms.ModelForm):
@@ -337,9 +343,36 @@ class ProductoTerminadoForm(forms.ModelForm):
     def clean_nombre(self):
         nombre = self.cleaned_data['nombre']
         nombre = texto_lindo(nombre, True)
+       # if models.ProductoTerminado.objects.filter(nombre=nombre).exists():
+        #    raise ValidationError('Ya existe un Producto Terminado con ese nombre.')
         return nombre
 
-    
+    '''
+
+
+    def clean_cuit(self):
+        cuit = self.cleaned_data['cuit']
+        pattern="\d\d-\d\d\d\d\d\d\d\d?-\d"
+        result = re.match(pattern, cuit)
+        print "esult ",result
+        if result is not None:
+            #if cuit_valido(cuit):
+            return cuit
+        raise ValidationError("Cuit no valido")
+        return cuit
+        def save(self):
+        producto = models.ProductoTerminado.objects.filter(nombre=self.cleaned_data['nombre'])
+        print "EN FORM PRODDDDDDD",producto
+        if producto.exists():
+            producto = producto.first()
+            producto.activo = True
+            producto.save()
+            return producto
+        else:
+            print "NO EXISTEEEEEEEEE"
+            return super(ProductoTerminadoForm, self).save()
+    ''' 
+
 
 
 class LoteStockForm(forms.ModelForm):
@@ -1012,7 +1045,7 @@ class CobroEntregaRendir(forms.Form):
         elif cantidad_abonada < entrega.precio_total():
             obj = models.Recibo
         else:
-            raise Validaciones("Se pago de Mas")
+            raise ValidationError("Se pago de Mas")
         o = obj.objects.filter(numero=nro_doc)       
         if len(o) > 0:   
             print "Error doc ya existe"         
