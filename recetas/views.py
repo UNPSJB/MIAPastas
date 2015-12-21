@@ -1702,6 +1702,8 @@ def cobrarClienteClasificar(request):
     entregas_para_recibo={}
     monto_recibo = 0
     monto_ingresado = monto
+    print "monto ",monto
+
     for entrega_id in entregas:
         entrega = models.Entrega.objects.get(pk=entrega_id)
         if monto == 0:
@@ -1741,6 +1743,9 @@ def cobrarClienteFacturar(request):
         monto_factura=Decimal(monto_factura)
         entrega = models.Entrega.objects.get(pk=para_factura[0]) #para obtener el saldo del cliente
         cliente=entrega.pedido.cliente
+        recibos_de_entrega = entrega.recibo_set.all()
+        for recibo in recibos_de_entrega:
+            cliente.saldo += float(recibo.monto_pagado)
         cliente.saldo -=float(monto_factura)
     if len(para_recibo) != 0:
         monto_recibo = re.sub('["]', '', monto_recibo[0])
